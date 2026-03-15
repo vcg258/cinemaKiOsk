@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<!--
+  templates/admin/movie/form.html
+  ─────────────────────────────────────────────────────────────────────────
+  UC-18 영화 등록 / UC-19 영화 수정 (관리자용)
+  ※ 등록(movie=null)과 수정(movie 존재)을 하나의 폼으로 처리
+
+  ▶ 기능 요약
+    - 포스터 업로드, 줄거리, 상영관 선택, 상영 시간/기간 입력
+    - 상영 시간 중복 시 해당 시간 등록 차단
+    - 정리 시간(20~30분) 자동 추가 후 자동 생성된 타임 확인
+    - 등록 완료 후 목록으로 이동
+
+  ▶ Controller → View 전달 Model 속성
+    - movie    : MovieDTO          수정 시 기존 영화 정보, 신규 등록 시 null
+                 └ movieId, title, genre, rating, runtime, director, actor,
+                   description, startAt, endAt
+    - theaters : List<TheaterDTO>  상영관 목록 (상영관 선택 드롭다운용)
+                 └ no, name, cost, cleanupTime
+
+  ▶ 연결 UC
+    ← UC-20 manage: 목록에서 '수정' 버튼 클릭 시 (?movieId={id})
+    → UC-20 manage: 저장 완료 후 /admin/movie/manage 로 이동
+
+  ▶ 파일 위치
+    templates/admin/movie/form.html
+  ─────────────────────────────────────────────────────────────────────────
+-->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
+
+<head>
+  <!-- 등록/수정 여부에 따라 동적 타이틀 -->
+  <title th:text="${movie != null} ? '영화 수정 | CineOS 관리자' : '영화 등록 | CineOS 관리자'">
+    영화 등록/수정 | CineOS 관리자
+  </title>
+</head>
+
+<body>
+<main>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       TODO: UC-18/19 영화 등록·수정 폼 구현
+       ─────────────────────────────────────────────────────────────────
+       구현 항목:
+         [ ] 페이지 제목 (등록 / 수정 동적 표시)
+               th:text="${movie != null} ? '영화 수정' : '영화 등록'"
+         [ ] 포스터 업로드 (파일 인풋 + 미리보기)
+               이미지 Blob 처리 — MovieController 담당자(준용)와 협의
+         [ ] 영화 제목 입력:  th:value="${movie?.title}"
+         [ ] 장르 선택
+         [ ] 관람 등급 선택:  ALL / 12 / 15 / 19
+         [ ] 러닝타임 입력 (분 단위)
+         [ ] 감독 입력
+         [ ] 주연 배우 입력 (쉼표 구분)
+         [ ] 줄거리 textarea
+         [ ] 상영 기간 선택 (시작일 ~ 종료일)
+         [ ] 상영관 선택 드롭다운
+               th:each="theater : ${theaters}"
+               th:option → th:value="${theater.no}", th:text="${theater.name}"
+         [ ] 자동 생성된 상영 타임 미리보기 + 중복 시간 경고
+               정리 시간(cleanupTime) 자동 반영
+         [ ] '저장' 버튼
+               신규: POST /api/admin/movie
+               수정: PUT  /api/admin/movie/{movieId}
+         [ ] '취소' 버튼 → /admin/movie/manage
+
+       ⚠ th:field는 DTO 필드명 기준으로 작성
+         예: th:field="*{title}"  (MovieDTO.title)
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="admin-placeholder">
+    <p>UC-18/19 영화 등록·수정 — 구현 예정</p>
+    <a th:href="@{/admin/movie/manage}" class="btn btn--ghost">← 목록으로</a>
+  </div>
+
+  <script th:src="@{/js/admin/movie-form.js}" th:if="${false}"></script>
+
+</main>
+</body>
+</html>

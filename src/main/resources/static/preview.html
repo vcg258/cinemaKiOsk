@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<!--
+  preview.html
+  ─────────────────────────────────────────────────────────────────────────
+  공통 레이아웃 정적 미리보기 파일.
+  Thymeleaf 없이 순수 HTML/CSS/JS로 렌더링.
+
+  ※ 이 파일은 개발 확인용이며 실제 서비스에서는 사용되지 않음.
+-->
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineOS — 레이아웃 미리보기</title>
+
+  <!-- 폰트 -->
+  <link rel="stylesheet" href="/css/fonts.css">
+  <!-- 디자인 토큰 -->
+  <link rel="stylesheet" href="/css/base.css">
+  <!-- 공용 컴포넌트 -->
+  <link rel="stylesheet" href="/css/components.css">
+
+  <style>
+    /* ── 미리보기 전용 스타일 ── */
+
+    /* 섹션 구분선 */
+    .preview-section {
+      padding: 40px 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .preview-section:last-child {
+      border-bottom: none;
+    }
+
+    /* 섹션 제목 */
+    .preview-section__title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--border-default);
+    }
+
+    /* 컴포넌트 행 */
+    .preview-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    /* 더미 영화 카드 그리드 */
+    .movie-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 16px;
+    }
+
+    /* 더미 포스터 색상 */
+    .dummy-poster-1 { background: linear-gradient(135deg, #1a1410 0%, #4f4537 100%); }
+    .dummy-poster-2 { background: linear-gradient(135deg, #001c38 0%, #2a88c8 100%); }
+    .dummy-poster-3 { background: linear-gradient(135deg, #003828 0%, #00ad74 100%); }
+    .dummy-poster-4 { background: linear-gradient(135deg, #380808 0%, #e03c3c 100%); }
+    .dummy-poster-5 { background: linear-gradient(135deg, #2e1800 0%, #ffb800 100%); }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══════════════════════════════════════════════
+       HEADER (nav.html 구조 그대로)
+  ══════════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="site-header__inner">
+
+      <!-- 로고 (SVG 없을 경우 텍스트 폴백) -->
+      <a href="/" class="site-header__logo-link" aria-label="CineOS 홈">
+        <img src="/images/logo_cineos.svg"
+             alt="CineOS"
+             class="site-header__logo"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+        <span style="display:none; font-size:1.3rem; font-weight:800; color:var(--color-brand-400);">
+          CineOS
+        </span>
+      </a>
+
+      <!-- 탭 네비게이션 -->
+      <nav class="site-nav" aria-label="주요 메뉴">
+        <ul class="nav-tab-list">
+          <li class="nav-tab-list__item">
+            <!-- 활성 탭 예시 -->
+            <a href="#" class="nav-tab nav-tab--active">현재 상영작</a>
+          </li>
+          <li class="nav-tab-list__item">
+            <a href="#" class="nav-tab">예매 조회</a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- 관리자 접근 버튼 -->
+      <a href="#" class="admin-access-btn" aria-label="관리자 로그인">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+             fill="currentColor" width="20" height="20">
+          <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2
+                   2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6
+                   9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71
+                   1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+        </svg>
+      </a>
+
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════
+       MAIN — 컴포넌트 쇼케이스
+  ══════════════════════════════════════════════ -->
+  <main class="site-main">
+
+    <!-- ── 1. 버튼 ── -->
+    <section class="preview-section">
+      <p class="preview-section__title">Buttons</p>
+
+      <div class="preview-row">
+        <button class="btn btn--primary">Primary 버튼</button>
+        <button class="btn btn--secondary">Secondary 버튼</button>
+        <button class="btn btn--ghost">Ghost 버튼</button>
+        <button class="btn btn--danger">Danger 버튼</button>
+      </div>
+      <div class="preview-row">
+        <button class="btn btn--primary btn--sm">Small</button>
+        <button class="btn btn--primary">Default</button>
+        <button class="btn btn--primary btn--lg">Large</button>
+        <button class="btn btn--primary" disabled>비활성</button>
+      </div>
+      <div class="preview-row" style="max-width:320px;">
+        <button class="btn btn--primary btn--full">전체 너비 버튼</button>
+      </div>
+    </section>
+
+    <!-- ── 2. 배지 (관람등급) ── -->
+    <section class="preview-section">
+      <p class="preview-section__title">Rating Badges</p>
+      <div class="preview-row">
+        <span class="badge badge--all">전체</span>
+        <span class="badge badge--12">12</span>
+        <span class="badge badge--15">15</span>
+        <span class="badge badge--18">18</span>
+      </div>
+    </section>
+
+    <!-- ── 3. 영화 카드 ── -->
+    <section class="preview-section">
+      <p class="preview-section__title">Movie Cards</p>
+      <div class="movie-grid">
+
+        <!-- 카드 1 -->
+        <div class="card card--clickable">
+          <div class="card__img-wrap dummy-poster-1">
+            <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+                         color:var(--text-muted);font-size:0.75rem;">포스터</span>
+          </div>
+          <div class="card__body">
+            <h3 class="card__title">영화 제목이 들어가는 자리입니다</h3>
+            <div class="card__meta">
+              <span class="badge badge--15">15</span>
+              <span>액션</span>
+              <span>130분</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 카드 2 -->
+        <div class="card card--clickable">
+          <div class="card__img-wrap dummy-poster-2"></div>
+          <div class="card__body">
+            <h3 class="card__title">두 번째 영화</h3>
+            <div class="card__meta">
+              <span class="badge badge--12">12</span>
+              <span>드라마</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 카드 3 — 매진 -->
+        <div class="card card--clickable">
+          <div class="card__img-wrap dummy-poster-3">
+            <div class="card__sold-out-overlay">
+              <span class="card__sold-out-label">매진</span>
+            </div>
+          </div>
+          <div class="card__body">
+            <h3 class="card__title">매진된 영화</h3>
+            <div class="card__meta">
+              <span class="badge badge--all">전체</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 카드 4 -->
+        <div class="card card--clickable">
+          <div class="card__img-wrap dummy-poster-4"></div>
+          <div class="card__body">
+            <h3 class="card__title">청불 영화</h3>
+            <div class="card__meta">
+              <span class="badge badge--18">18</span>
+              <span>스릴러</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 카드 5 -->
+        <div class="card card--clickable">
+          <div class="card__img-wrap dummy-poster-5"></div>
+          <div class="card__body">
+            <h3 class="card__title">다섯 번째 영화 제목</h3>
+            <div class="card__meta">
+              <span class="badge badge--15">15</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── 4. 폼 입력 ── -->
+    <section class="preview-section">
+      <p class="preview-section__title">Form Controls</p>
+      <div style="max-width: 400px; display:flex; flex-direction:column; gap:16px;">
+
+        <div class="form-group">
+          <label class="form-label form-label--required">휴대폰 번호</label>
+          <input type="tel" class="form-control" placeholder="01012345678">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">오류 상태</label>
+          <input type="text" class="form-control form-control--error"
+                 value="잘못된 입력">
+          <p class="form-error-msg">올바른 휴대폰 번호 형식으로 입력해 주세요.</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">상영관 선택</label>
+          <select class="form-control">
+            <option>1관 (일반)</option>
+            <option>2관 (IMAX)</option>
+            <option>3관 (리클라이너)</option>
+          </select>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── 5. 스텝 인디케이터 ── -->
+    <section class="preview-section">
+      <p class="preview-section__title">Step Indicator (예매 단계)</p>
+
+      <div class="steps">
+        <div class="step step--done">
+          <div class="step__circle">✓</div>
+          <span class="step__label">날짜</span>
+        </div>
+        <div class="step step--done">
+          <div class="step__circle">✓</div>
+          <span class="step__label">시간</span>
+        </div>
+        <div class="step step--active">
+          <div class="step__circle">3</div>
+          <span class="step__label">인원</span>
+        </div>
+        <div class="step">
+          <div class="step__circle">4</div>
+          <span class="step__label">좌석</span>
+        </div>
+        <div class="step">
+          <div class="step__circle">5</div>
+          <span class="step__label">결제</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 6. 스피너 ── -->
+    <section class="preview-section">
+      <p class="preview-section__title">Spinner</p>
+      <div class="preview-row" style="align-items:center; gap:24px;">
+        <div class="spinner"></div>
+        <span style="color:var(--text-secondary); font-size:0.9rem;">인라인 스피너</span>
+      </div>
+    </section>
+
+    <!-- ── 7. 알림 토스트 버튼 ── -->
+    <section class="preview-section">
+      <p class="preview-section__title">Toast Alerts (버튼 클릭으로 확인)</p>
+      <div class="preview-row">
+        <button class="btn btn--sm btn--ghost"
+                onclick="CineOS.alert.show('예매가 완료되었습니다.', 'success')">
+          Success
+        </button>
+        <button class="btn btn--sm btn--ghost"
+                onclick="CineOS.alert.show('결제에 실패하였습니다. 다시 시도해 주세요.', 'error')">
+          Error
+        </button>
+        <button class="btn btn--sm btn--ghost"
+                onclick="CineOS.alert.show('시간 초과로 예매가 취소되었습니다.', 'warning')">
+          Warning
+        </button>
+        <button class="btn btn--sm btn--ghost"
+                onclick="CineOS.alert.show('이미 다른 고객이 선택 중인 좌석입니다.', 'info')">
+          Info
+        </button>
+      </div>
+    </section>
+
+    <!-- ── 8. 모달 버튼 ── -->
+    <section class="preview-section">
+      <p class="preview-section__title">Modal (버튼 클릭으로 확인)</p>
+      <div class="preview-row">
+        <button class="btn btn--sm btn--secondary"
+                onclick="CineOS.modal.confirm({
+                  title: '예매 취소',
+                  message: '선택하신 좌석을 취소하시겠습니까?',
+                  onConfirm: () => CineOS.alert.show('취소되었습니다.', 'warning'),
+                  onCancel:  () => CineOS.alert.show('유지되었습니다.', 'info')
+                })">
+          Confirm 모달
+        </button>
+        <button class="btn btn--sm btn--secondary"
+                onclick="CineOS.modal.alert({
+                  title:   '예매 완료',
+                  message: '예매가 완료되었습니다. 즐거운 관람 되세요!',
+                  onClose: () => CineOS.alert.show('모달 닫힘', 'info')
+                })">
+          Alert 모달
+        </button>
+        <button class="btn btn--sm btn--ghost"
+                onclick="CineOS.loading.show(); setTimeout(() => CineOS.loading.hide(), 2000)">
+          Loading 스피너 (2초)
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ══════════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <a href="/" class="footer-home-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+           fill="currentColor" width="24" height="24">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+      <span>처음으로</span>
+    </a>
+    <div class="footer-clock">
+      <time id="footer-time">00:00</time>
+    </div>
+  </footer>
+
+  <!-- 모달 컨테이너 -->
+  <div id="modal-container" class="modal-overlay" aria-hidden="true"
+       role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal" role="document">
+      <div class="modal__header">
+        <h2 class="modal__title" id="modal-title">알림</h2>
+        <button type="button" class="modal__close-btn" id="modal-close-btn" aria-label="모달 닫기">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+               fill="currentColor" width="24" height="24">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5
+                     17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal__body" id="modal-body"></div>
+      <div class="modal__footer" id="modal-footer"></div>
+    </div>
+  </div>
+
+  <!-- 알림 컨테이너 -->
+  <div id="alert-container" class="alert-container"
+       aria-live="polite" aria-atomic="false" role="status"></div>
+
+  <!-- 공용 JS -->
+  <script src="/js/common.js"></script>
+
+  <!-- 푸터 시계 -->
+  <script>
+    (function () {
+      function updateClock() {
+        const now = new Date();
+        const hh  = String(now.getHours()).padStart(2, '0');
+        const mm  = String(now.getMinutes()).padStart(2, '0');
+        const el  = document.getElementById('footer-time');
+        if (el) el.textContent = `${hh}:${mm}`;
+      }
+      updateClock();
+      setInterval(updateClock, 60_000);
+    })();
+  </script>
+
+</body>
+</html>

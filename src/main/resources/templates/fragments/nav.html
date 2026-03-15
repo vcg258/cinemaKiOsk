@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!--
+  fragments/nav.html
+  ─────────────────────────────────────────────────────────────────────────
+  고객용 상단 네비게이션 fragment.
+  layout/base.html 의 <header> 에서 th:replace 로 삽입됨.
+
+  ▶ 포함 내용
+  - CineOS 로고 (홈 링크)
+  - 현재 상영작 탭 (UC-01)
+  - 예매 조회 탭 (UC-08)
+  - 관리자 접근 버튼 (hidden 스타일, UC-11로 이동)
+-->
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<body>
+
+<!-- ──────────────────────────────────────────────────────────────────────
+     th:fragment="nav"
+     base.html의 <header> 자리에 삽입되는 네비게이션 컴포넌트
+──────────────────────────────────────────────────────────────────────── -->
+<header class="site-header" th:fragment="nav">
+  <div class="site-header__inner">
+
+    <!-- ── 로고 ────────────────────────────────────────── -->
+    <!-- 클릭 시 메인(상영작 목록) 화면으로 이동 -->
+    <a th:href="@{/}" class="site-header__logo-link" aria-label="CineOS 홈으로 이동">
+      <img th:src="@{/images/logo_cineos.svg}"
+           src="/images/logo_cineos.svg"
+           alt="CineOS" class="site-header__logo">
+    </a>
+
+    <!-- ── 고객 탭 네비게이션 ──────────────────────────── -->
+    <!--
+      현재 활성 탭은 각 페이지 컨트롤러에서
+      모델에 activeTab 변수를 담아 전달:
+        e.g. model.addAttribute("activeTab", "movies");
+      탭 활성화 클래스: class="nav-tab nav-tab--active"
+    -->
+    <nav class="site-nav" aria-label="주요 메뉴">
+      <ul class="nav-tab-list">
+
+        <!-- 현재 상영작 탭 (UC-01) -->
+        <li class="nav-tab-list__item">
+          <a th:href="@{/movies}"
+             class="nav-tab"
+             th:classappend="${activeTab == 'movies'} ? ' nav-tab--active' : ''"
+             aria-current="${activeTab == 'movies'} ? 'page' : null">
+            현재 상영작
+          </a>
+        </li>
+
+        <!-- 예매 조회 탭 (UC-08) -->
+        <li class="nav-tab-list__item">
+          <a th:href="@{/mypage/lookup}"
+             class="nav-tab"
+             th:classappend="${activeTab == 'lookup'} ? ' nav-tab--active' : ''"
+             aria-current="${activeTab == 'lookup'} ? 'page' : null">
+            예매 조회
+          </a>
+        </li>
+
+      </ul>
+    </nav>
+
+    <!-- ── 관리자 접근 버튼 (UC-11) ─────────────────────── -->
+    <!--
+      키오스크 화면에서 눈에 잘 띄지 않도록 최소화.
+      관리자만 알고 있는 숨겨진 진입점 역할.
+    -->
+    <a th:href="@{/admin/login}"
+       class="admin-access-btn"
+       aria-label="관리자 로그인">
+      <!-- 열쇠 아이콘 -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+           fill="currentColor" width="20" height="20" aria-hidden="true">
+        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2
+                 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6
+                 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71
+                 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+      </svg>
+    </a>
+
+  </div>
+</header>
+
+</body>
+</html>

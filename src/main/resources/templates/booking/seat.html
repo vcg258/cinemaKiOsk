@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!--
+  templates/booking/seat.html
+  ─────────────────────────────────────────────────────────────────────────
+  UC-03: 예매하기 — 좌석 선택 단계 (고객용)
+
+  ▶ 기능 요약
+    - 선택된 상영 스케줄에 대한 좌석 맵 표시
+    - 좌석 상태: 선택 가능 / 선택 중 / 예매 완료
+    - WebSocket(STOMP/SockJS)으로 실시간 좌석 상태 동기화
+    - 여러 명 선택 시 바로 옆 좌석 자동 선택
+    - '다음' 버튼 → UC-04 결제 화면으로 이동
+
+  ▶ Controller → View 전달 Model 속성
+    - schedule  : ScheduleDTO    선택된 상영 스케줄 정보
+                  └ id, no, movieId, startTime, endTime
+    - theater   : TheaterDTO     상영관 정보 (좌석 구성 포함)
+                  └ no, policyId, cleanupTime, name, cost
+    - movie     : MovieDTO       예매 대상 영화 정보 (요약 표시용)
+                  └ movieId, title, rating
+
+  ▶ WebSocket 연결 정보
+    - 엔드포인트: /ws (SockJS)
+    - 구독 경로:  /topic/seat/{scheduleId}
+    - 발행 경로:  /app/seat/select, /app/seat/release
+    - 연결/해제:  static/js/booking/seat.js 의 connectWS() / disconnectWS()
+
+  ▶ 연결 UC
+    ← UC-03 schedule: 날짜·시간·인원 확정 후 진입
+    → UC-04: '다음' 버튼 클릭 시 /booking/payment 으로 이동
+
+  ▶ 파일 위치
+    templates/booking/seat.html
+  ─────────────────────────────────────────────────────────────────────────
+-->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main}, ~{::link})}">
+
+<head>
+  <title>좌석 선택 | CineOS</title>
+  <!-- 좌석 맵 전용 CSS -->
+  <link rel="stylesheet" th:href="@{/css/seat.css}">
+</head>
+
+<body>
+<main>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       TODO: UC-03 좌석 선택 콘텐츠 구현
+       ─────────────────────────────────────────────────────────────────
+       구현 항목:
+         [ ] 상단 예매 정보 요약 (영화명, 날짜, 시간, 상영관, 인원)
+         [ ] 좌석 맵 그리드
+               WebSocket 수신 데이터 기반으로 JS가 렌더링
+               상태별 CSS 클래스: .seat--available / .seat--selecting / .seat--taken
+         [ ] 스크린 표시 (상단)
+         [ ] 선택된 좌석 요약 + 가격 계산
+         [ ] '다음' 버튼 (좌석 미선택 시 disabled)
+               → /booking/payment 으로 이동
+         [ ] WebSocket 연결: connectWS(scheduleId)
+               연결 실패 시 fallback: 30초 간격 폴링으로 좌석 상태 조회
+         [ ] 이탈(navigate away) 시 disconnectWS() + 임시 점유 해제 발행
+
+       ⚠ 주의: seat.js 에서 scheduleId를 Thymeleaf로 전달받는 방법
+         <div id="seat-data"
+              th:data-schedule-id="${schedule.id}"
+              th:data-theater-no="${theater.no}">
+         </div>
+  ══════════════════════════════════════════════════════════════════ -->
+
+  <!-- JS에서 데이터를 읽어가기 위한 data 속성 컨테이너 -->
+  <div id="seat-data"
+       th:attr="data-schedule-id=${schedule != null ? schedule.id : ''},
+                data-theater-no=${theater != null ? theater.no : ''}">
+  </div>
+
+  <div class="booking-placeholder">
+    <p>UC-03 좌석 선택 — 구현 예정</p>
+    <a th:href="@{/movie/list}" class="btn btn--ghost">← 목록으로</a>
+  </div>
+
+  <!-- 페이지 전용 JS (WebSocket 포함) -->
+  <script th:src="@{/js/booking/seat.js}" th:if="${false}"></script>
+
+</main>
+</body>
+</html>

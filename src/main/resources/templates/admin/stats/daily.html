@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!--
+  templates/admin/stats/daily.html
+  ─────────────────────────────────────────────────────────────────────────
+  UC-12: 통계 확인 (일일) (관리자용)
+
+  ▶ 기능 요약
+    - 기본값: 오늘 ~ 일주일 전 통계 표시
+    - 날짜 범위 선택 → 해당 기간 통계 재조회
+    - 미래 날짜 선택 불가
+    - 선택 날짜 세부 내용 하단 표시
+
+  ▶ Controller → View 전달 Model 속성
+    - statistics : List<StatisticsDTO>  일별 통계 목록
+                   └ id, scheduleId, day, revenue, customerCount
+    - startDate  : String               조회 시작일 (yyyy-MM-dd)
+    - endDate    : String               조회 종료일 (yyyy-MM-dd)
+
+  ▶ 파일 위치
+    templates/admin/stats/daily.html
+  ─────────────────────────────────────────────────────────────────────────
+-->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
+
+<head>
+  <title>일일 통계 | CineOS 관리자</title>
+</head>
+
+<body>
+<main>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       TODO: UC-12 일일 통계 콘텐츠 구현
+       ─────────────────────────────────────────────────────────────────
+       구현 항목:
+         [ ] 날짜 범위 선택 (시작일 ~ 종료일)
+               max 속성으로 오늘 이후 선택 불가 처리
+         [ ] Chart.js 라인/바 차트 (일별 수익 또는 관람객 수)
+               admin-base.html 에 Chart.js CDN 포함되어 있음
+         [ ] 통계 테이블 (날짜 / 수익 / 관람객 수)
+               th:each="stat : ${statistics}"
+         [ ] 날짜 클릭 시 해당 일자 세부 내용 하단에 표시
+         [ ] 데이터 없는 날짜 → 0으로 처리
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="admin-placeholder">
+    <p>UC-12 일일 통계 — 구현 예정</p>
+  </div>
+
+  <!-- 페이지 전용 JS -->
+  <script th:src="@{/js/admin/stats.js}" th:if="${false}"></script>
+
+</main>
+</body>
+</html>

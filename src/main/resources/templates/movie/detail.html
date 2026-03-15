@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<!--
+  templates/movie/detail.html
+  ─────────────────────────────────────────────────────────────────────────
+  UC-02: 상영작 상세 조회 페이지 (고객용)
+
+  ▶ 기능 요약
+    - 영화 포스터 · 제목 · 장르 · 등급 · 러닝타임 · 감독 · 배우 · 줄거리 표시
+    - 전석 매진 / 당일 상영 종료 시 '예매하기' 버튼 비활성화 + '매진' 표시
+    - '예매하기' 버튼 클릭 → UC-03 (booking/schedule.html) 으로 이동
+
+  ▶ Controller → View 전달 Model 속성
+    - movie      : MovieDTO     영화 상세 정보
+                   └ movieId, title, genre, rating, runtime,
+                     director, actor, description, startAt, endAt
+    - isSoldOut  : Boolean      전석 매진 여부 (컨트롤러에서 판단)
+    - posterUrl  : String       포스터 이미지 경로 (별도 확인 필요 — MovieController 담당자와 협의)
+
+  ▶ 연결 UC
+    ← UC-01: 목록에서 영화 카드 클릭 시 진입
+    → UC-03: '예매하기' 버튼 클릭 시 /booking/schedule?movieId={id} 로 이동
+
+  ▶ 파일 위치
+    templates/movie/detail.html
+  ─────────────────────────────────────────────────────────────────────────
+-->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main}, ~{})}">
+
+<head>
+  <title th:text="${movie.title} + ' | CineOS'">영화 상세 | CineOS</title>
+</head>
+
+<body>
+<main>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       TODO: UC-02 상영작 상세 콘텐츠 구현
+       ─────────────────────────────────────────────────────────────────
+       구현 항목:
+         [ ] 포스터 이미지 (posterUrl — 백엔드 담당자와 필드명 협의 필요)
+         [ ] 영화 제목:    th:text="${movie.title}"
+         [ ] 장르:         th:text="${movie.genre}"
+         [ ] 관람 등급:    th:text="${movie.rating}"  (ALL / 12 / 15 / 19)
+         [ ] 러닝타임:     th:text="${movie.runtime}"  (분 단위)
+         [ ] 감독:         th:text="${movie.director}"
+         [ ] 주연 배우:    th:text="${movie.actor}"    (쉼표 구분 문자열)
+         [ ] 줄거리:       th:text="${movie.description}"
+         [ ] 상영 기간:    th:text="${movie.startAt} + ' ~ ' + ${movie.endAt}"
+         [ ] 예매하기 버튼: isSoldOut=true 이면 disabled 처리
+               th:disabled="${isSoldOut}"
+               th:text="${isSoldOut} ? '매진' : '예매하기'"
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="movie-detail-placeholder">
+    <p>UC-02 상영작 상세 — 구현 예정</p>
+    <!-- 뒤로가기 (임시) -->
+    <a th:href="@{/movie/list}" class="btn btn--ghost">← 목록으로</a>
+  </div>
+
+  <!-- 페이지 전용 JS (구현 시 static/js/movie/detail.js 로 분리) -->
+  <script th:src="@{/js/movie/detail.js}" th:if="${false}"></script>
+
+</main>
+</body>
+</html>

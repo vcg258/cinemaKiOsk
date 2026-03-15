@@ -1,0 +1,165 @@
+/* ============================================================
+   CINEMA KIOSK — Design Token (Color Variables)
+   Base theme: Dark (warm dark base)
+   Point color: #ffb800
+   ============================================================ */
+
+:root {
+
+  /* ----------------------------------------------------------
+     1. BRAND — #ffb800 골드 스케일
+        Shades 팔레트 + 밝은 Tint 보완
+     ---------------------------------------------------------- */
+  --color-brand-tint-50:  #fff8e6;   /* 배경 하이라이트         */
+  --color-brand-tint-100: #ffedcb;   /* 선택 영역 배경          */
+  --color-brand-tint-200: #ffdb7a;   /* 비활성 CTA / Warning Light */
+  --color-brand-400:      #ffb800;   /* ★ Primary CTA / Point   */
+  --color-brand-500:      #cd8e00;   /* 버튼 Hover              */
+  --color-brand-600:      #9d6600;   /* 버튼 Active / Pressed   */
+  --color-brand-700:      #714000;   /* 강조 텍스트 (on light)  */
+  --color-brand-800:      #4c1c00;   /* 다크 배경 포인트 텍스트 */
+
+
+  /* ----------------------------------------------------------
+     2. NEUTRAL — 웜 다크 스케일
+        신규: warm-white(본문), pure-white(라이트 서피스)
+     ---------------------------------------------------------- */
+  --color-neutral-50:  #f5f3ef;   /* 라이트 배경 (밝은 화면용)  */
+  --color-neutral-100: #dfe0df;   /* 보더 / 구분선             */
+  --color-neutral-200: #b6a999;   /* Muted 텍스트 / Placeholder */
+  --color-neutral-400: #4f4537;   /* 서피스 보더 / 매진 좌석    */
+  --color-neutral-700: #2e2820;   /* 카드 / 서피스 배경         */
+  --color-neutral-800: #1a1410;   /* 모달 배경                 */
+  --color-neutral-900: #0e0b08;   /* ★ 베이스 배경 (앱 전체)   */
+
+  /* ↓ 신규: 원시값이었던 색상에 이름 부여 */
+  --color-neutral-warm-white: #fff8f0; /* 본문 텍스트 따뜻한 흰색 */
+  --color-pure-white:         #ffffff; /* 순백 (라이트 테마 서피스) */
+
+
+  /* ----------------------------------------------------------
+     3. SEMANTIC — Success
+     ---------------------------------------------------------- */
+  --color-success-bg:      #e6faf3;   /* 라이트 알림 배경        */
+  --color-success-light:   #00e7a8;   /* 아이콘 / 강조 포인트    */
+  --color-success-main:    #00ad74;   /* ★ 텍스트 / 아이콘 주색  */
+  --color-success-dark:    #006b60;   /* 다크 모드 텍스트        */
+  --color-success-bg-dark: #003828;   /* 다크 배경 알림 배경     */
+
+
+  /* ----------------------------------------------------------
+     4. SEMANTIC — Error
+     ---------------------------------------------------------- */
+  --color-error-bg:      #fdeaea;   /* 라이트 오류 배경         */
+  --color-error-light:   #f08080;   /* 아이콘 / 강조 포인트     */
+  --color-error-main:    #e03c3c;   /* ★ 텍스트 / 아이콘 주색   */
+  --color-error-dark:    #a82020;   /* 다크 모드 텍스트         */
+  --color-error-bg-dark: #380808;   /* 다크 배경 오류 배경      */
+
+
+  /* ----------------------------------------------------------
+     5. SEMANTIC — Warning
+        포인트 컬러 겸용: 브랜드 스케일 변수로 참조
+     ---------------------------------------------------------- */
+  --color-warning-bg:      var(--color-brand-tint-50);  /* = #fff8e6 */
+  --color-warning-light:   var(--color-brand-tint-200); /* = #ffdb7a */
+  --color-warning-main:    var(--color-brand-400);      /* = #ffb800 */
+  --color-warning-dark:    var(--color-brand-700);      /* = #714000 */
+  --color-warning-bg-dark: #2e1800;   /* 다크 배경 경고 배경 (신규 원시값) */
+
+
+  /* ----------------------------------------------------------
+     6. SEMANTIC — Info
+        신규: 전체관람가 배지용 그린 원시값 추가
+     ---------------------------------------------------------- */
+  --color-info-bg:      #e8f4fc;   /* 라이트 안내 배경          */
+  --color-info-light:   #70b8e0;   /* 아이콘 / 강조 포인트      */
+  --color-info-main:    #2a88c8;   /* ★ 텍스트 / 아이콘 주색    */
+  --color-info-dark:    #005896;   /* 다크 모드 텍스트          */
+  --color-info-bg-dark: #001c38;   /* 다크 배경 안내 배경       */
+
+  /* ↓ 신규: 관람등급 배지 전용 원시값 */
+  --color-badge-green: #4caf50;    /* 전체관람가 배지 (기존 #4caf50 명명) */
+
+
+  /* ----------------------------------------------------------
+     7. SEAT STATE — 좌석 선택 화면 전용
+        신규: Spot / Highlight 팔레트 원시값 명명 후 참조
+     ---------------------------------------------------------- */
+
+  /* ↓ 신규: 하드코딩되어 있던 Spot / Highlight 팔레트 원시값 */
+  --color-spot-teal-800:      #005248;   /* 장애인석 Spot 팔레트    */
+  --color-highlight-rose-900: #402e32;   /* 커플석 Highlight 팔레트 */
+
+  /* ↓ 기존 하드코딩 → 이미 정의된 변수로 대체 */
+  --color-seat-empty:        var(--color-neutral-700);        /* #2e2820 */
+  --color-seat-empty-border: var(--color-neutral-400);        /* #4f4537 */
+  --color-seat-selected:     var(--color-brand-400);          /* #ffb800 */
+  --color-seat-booked:       var(--color-success-main);       /* #00ad74 */
+  --color-seat-sold-out:     var(--color-neutral-400);        /* #4f4537 */
+  --color-seat-disabled:     var(--color-spot-teal-800);      /* #005248 */
+  --color-seat-couple:       var(--color-highlight-rose-900); /* #402e32 */
+
+
+  /* ----------------------------------------------------------
+     8. ALPHA — 투명도가 포함된 오버레이/보더 원시값
+        rgba 값을 직접 사용하지 않고 이름으로 관리
+     ---------------------------------------------------------- */
+  --color-neutral-900-alpha-72: rgba(14, 11, 8, 0.72);     /* neutral-900 기반 딤 레이어          */
+  --color-neutral-100-alpha-15: rgba(223, 224, 223, 0.15); /* neutral-100 기반 미세 구분선         */
+  --color-neutral-400-alpha-12: rgba(79, 69, 55, 0.12);   /* neutral-400 기반 라이트 미세 구분선   */
+  --color-black-alpha-45:       rgba(0, 0, 0, 0.45);      /* 라이트 테마 딤 레이어                */
+
+
+  /* ----------------------------------------------------------
+     9. ALIAS — 컴포넌트에서 직접 참조하는 의미 단위
+        모든 원시값 → 변수 참조로 통일
+     ---------------------------------------------------------- */
+
+  /* 배경 레이어 */
+  --bg-base:    var(--color-neutral-900);          /* 앱 전체 최하단     */
+  --bg-surface: var(--color-neutral-700);          /* 카드 / 패널        */
+  --bg-modal:   var(--color-neutral-800);          /* 모달 / 오버레이    */
+  --bg-overlay: var(--color-neutral-900-alpha-72); /* 딤 레이어          */
+
+  /* 텍스트 */
+  --text-primary:   var(--color-neutral-warm-white); /* 본문 (#fff8f0)    */
+  --text-secondary: var(--color-neutral-200);        /* 서브 텍스트 / 레이블 */
+  --text-muted:     var(--color-neutral-400);        /* Placeholder / 비활성 */
+  --text-on-brand:  var(--color-brand-800);          /* 골드 버튼 위 텍스트 */
+
+  /* 보더 */
+  --border-default: var(--color-neutral-400);          /* 기본 구분선      */
+  --border-subtle:  var(--color-neutral-100-alpha-15); /* 미세 구분        */
+  --border-focus:   var(--color-brand-400);            /* 포커스 링        */
+
+  /* CTA 버튼 */
+  --btn-primary-bg:     var(--color-brand-400);
+  --btn-primary-hover:  var(--color-brand-500);
+  --btn-primary-active: var(--color-brand-600);
+  --btn-primary-text:   var(--color-brand-800);
+
+  /* 관람 등급 배지 */
+  --badge-all: var(--color-badge-green); /* 전체관람가  */
+  --badge-12:  var(--color-info-main);   /* 12세 이상   */
+  --badge-15:  var(--color-brand-400);   /* 15세 이상   */
+  --badge-18:  var(--color-error-main);  /* 청소년 관람불가 */
+}
+
+
+/* ============================================================
+   LIGHT THEME OVERRIDE
+   ============================================================ */
+[data-theme="light"] {
+  --bg-base:    var(--color-neutral-50);
+  --bg-surface: var(--color-pure-white);      /* #ffffff */
+  --bg-modal:   var(--color-pure-white);      /* #ffffff */
+  --bg-overlay: var(--color-black-alpha-45);  /* rgba(0,0,0,.45) */
+
+  --text-primary:   var(--color-neutral-900); /* #0e0b08 */
+  --text-secondary: var(--color-neutral-400);
+  --text-muted:     var(--color-neutral-200);
+
+  --border-default: var(--color-neutral-100);
+  --border-subtle:  var(--color-neutral-400-alpha-12); /* rgba(79,69,55,.12) */
+}

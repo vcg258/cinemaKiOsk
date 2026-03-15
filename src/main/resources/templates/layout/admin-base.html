@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<!--
+  layout/admin-base.html
+  ─────────────────────────────────────────────────────────────────────────
+  관리자용 공통 레이아웃 템플릿.
+  UC-11(관리자 로그인) 이후 접근 가능한 모든 관리자 화면에 사용.
+
+  ▶ 사용법
+  ──────────────────────────────────────────
+  <html xmlns:th="http://www.thymeleaf.org"
+        th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
+  <head>
+    <title>관리자 페이지 제목</title>
+    페이지별 추가 CSS
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+  </head>
+  <body>
+    <main>
+      관리자 페이지 고유 콘텐츠
+    </main>
+  </body>
+  </html>
+  ──────────────────────────────────────────
+
+  ▶ 주의사항
+  - 이 레이아웃은 UC-11 로그인 완료 후에만 접근 가능해야 함.
+  - 인증 처리는 Spring Security (컨트롤러/Security Config) 에서 담당.
+-->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:fragment="layout(title, content)"
+      lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- 동적 타이틀 -->
+  <title th:replace="${title}">CineOS 관리자</title>
+
+  <!-- ── 폰트 & 공통 CSS ──────────────────── -->
+  <link rel="stylesheet" th:href="@{/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/css/base.css}">
+  <link rel="stylesheet" th:href="@{/css/components.css}">
+  <!-- 관리자 전용 추가 스타일 -->
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+
+  <!-- ── 외부 CDN ──────────────────────────── -->
+  <!-- Axios: REST API 호출 -->
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist/axios.min.js"></script>
+  <!-- Chart.js: 통계 차트 (UC-12~16) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+
+<body class="admin-body">
+
+  <!-- ══════════════════════════════════════════════
+       ADMIN HEADER — 로고 + 관리자 전용 네비게이션
+  ══════════════════════════════════════════════ -->
+  <header class="admin-header">
+    <div class="admin-header__inner">
+
+      <!-- 로고 + 관리자 배지 -->
+      <a th:href="@{/admin/dashboard}" class="admin-header__logo-link">
+        <img th:src="@{/images/logo_cineos.svg}"
+             src="/images/logo_cineos.svg"
+             alt="CineOS 로고" class="admin-header__logo">
+        <span class="admin-badge">관리자</span>
+      </a>
+
+      <!-- 관리자 네비게이션 메뉴 -->
+      <nav class="admin-nav" aria-label="관리자 메뉴">
+        <ul class="admin-nav__list">
+
+          <!-- UC-12~16: 통계 확인 -->
+          <li class="admin-nav__item admin-nav__item--dropdown">
+            <button class="admin-nav__btn" aria-expanded="false" aria-haspopup="true">
+              통계
+              <!-- 드롭다운 화살표 아이콘 -->
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                   fill="currentColor" width="16" height="16" aria-hidden="true">
+                <path d="M7 10l5 5 5-5z"/>
+              </svg>
+            </button>
+            <ul class="admin-nav__dropdown" role="menu">
+              <li role="menuitem">
+                <a th:href="@{/admin/stats/daily}">일일 통계</a> <!-- UC-12 -->
+              </li>
+              <li role="menuitem">
+                <a th:href="@{/admin/stats/monthly}">월별 통계</a> <!-- UC-13 -->
+              </li>
+              <li role="menuitem">
+                <a th:href="@{/admin/stats/by-day}">요일별 통계</a> <!-- UC-14 -->
+              </li>
+              <li role="menuitem">
+                <a th:href="@{/admin/stats/by-hour}">시간대별 통계</a> <!-- UC-15 -->
+              </li>
+              <li role="menuitem">
+                <a th:href="@{/admin/stats/by-movie}">영화별 통계</a> <!-- UC-16 -->
+              </li>
+            </ul>
+          </li>
+
+          <!-- UC-17: 환불 처리 -->
+          <li class="admin-nav__item">
+            <a th:href="@{/admin/refund}" class="admin-nav__link">환불 처리</a>
+          </li>
+
+          <!-- UC-18~20: 영화 관리 -->
+          <li class="admin-nav__item">
+            <a th:href="@{/admin/movie/manage}" class="admin-nav__link">영화 관리</a>
+          </li>
+
+          <!-- UC-21: 상영관 관리 -->
+          <li class="admin-nav__item">
+            <a th:href="@{/admin/theater/edit}" class="admin-nav__link">상영관 관리</a>
+          </li>
+
+        </ul>
+      </nav>
+
+      <!-- 로그아웃 버튼 -->
+      <form th:action="@{/admin/logout}" method="post" class="admin-logout-form">
+        <!-- Spring Security CSRF 토큰 (Security 설정 시 활성화) -->
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"
+               th:if="${_csrf != null}">
+        <button type="submit" class="btn btn--ghost admin-logout-btn">로그아웃</button>
+      </form>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════
+       ADMIN LAYOUT BODY — 사이드바 + 메인 콘텐츠
+  ══════════════════════════════════════════════ -->
+  <div class="admin-layout">
+
+    <!-- 사이드바: 현재 섹션 내 세부 메뉴 (페이지별로 활성 항목 다름) -->
+    <aside class="admin-sidebar" aria-label="서브 메뉴">
+      <!--
+        각 관리자 페이지에서 sidebar fragment를 별도 정의하여
+        th:replace 로 이 자리를 교체하거나,
+        JS로 현재 URL 기반 활성 메뉴 표시 처리.
+        TODO: 필요 시 페이지별 사이드바 fragment 추가
+      -->
+    </aside>
+
+    <!-- 메인 콘텐츠 영역 -->
+    <main class="admin-main" th:replace="${content}">
+      <!-- 호출 페이지의 <main> 내용이 이 자리에 삽입됨 -->
+    </main>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       MODAL & ALERT (공용 fragment 재사용)
+  ══════════════════════════════════════════════ -->
+  <div th:replace="~{fragments/modal :: modal}"></div>
+  <div th:replace="~{fragments/alert :: alert-container}"></div>
+
+  <!-- ── 공통 JS ──────────────────────────── -->
+  <script th:src="@{/js/common.js}"></script>
+
+  <!-- 관리자 드롭다운 메뉴 토글 스크립트 -->
+  <script>
+    (function () {
+      /**
+       * 관리자 헤더의 드롭다운 메뉴(통계 등) 열기/닫기 처리.
+       * 버튼 클릭 시 aria-expanded 토글 + dropdown 표시/숨김.
+       */
+      const dropdownBtns = document.querySelectorAll('.admin-nav__btn[aria-haspopup]');
+
+      dropdownBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+
+          // 다른 열린 드롭다운 모두 닫기
+          dropdownBtns.forEach(b => {
+            b.setAttribute('aria-expanded', 'false');
+            b.closest('.admin-nav__item--dropdown')
+              ?.querySelector('.admin-nav__dropdown')
+              ?.classList.remove('is-open');
+          });
+
+          // 현재 버튼 토글
+          if (!isExpanded) {
+            btn.setAttribute('aria-expanded', 'true');
+            btn.closest('.admin-nav__item--dropdown')
+              ?.querySelector('.admin-nav__dropdown')
+              ?.classList.add('is-open');
+          }
+        });
+      });
+
+      // 바깥 클릭 시 모든 드롭다운 닫기
+      document.addEventListener('click', () => {
+        dropdownBtns.forEach(btn => {
+          btn.setAttribute('aria-expanded', 'false');
+          btn.closest('.admin-nav__item--dropdown')
+            ?.querySelector('.admin-nav__dropdown')
+            ?.classList.remove('is-open');
+        });
+      });
+    })();
+  </script>
+
+</body>
+</html>

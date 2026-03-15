@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<!--
+  templates/admin/stats/by-movie.html
+  ─────────────────────────────────────────────────────────────────────────
+  UC-16: 통계 확인 (영화별) (관리자용)
+
+  ▶ 기능 요약
+    - 기본값: 최신 등록 영화의 통계 표시
+    - 영화 선택 → 해당 영화 게시 기간의 일별 통계 요약 표시
+    - 미래 날짜 선택 불가
+
+  ▶ Controller → View 전달 Model 속성
+    - movies     : List<MovieDTO>       영화 목록 (선택 드롭다운용)
+                   └ movieId, title, startAt, endAt
+    - statistics : List<StatisticsDTO>  선택된 영화의 일별 통계
+                   └ id, scheduleId, revenue, customerCount
+    - selectedMovie : MovieDTO          현재 선택된 영화 (기본: 최신 등록)
+
+  ▶ 파일 위치
+    templates/admin/stats/by-movie.html
+  ─────────────────────────────────────────────────────────────────────────
+-->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
+
+<head>
+  <title>영화별 통계 | CineOS 관리자</title>
+</head>
+
+<body>
+<main>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       TODO: UC-16 영화별 통계 콘텐츠 구현
+       ─────────────────────────────────────────────────────────────────
+       구현 항목:
+         [ ] 영화 선택 드롭다운
+               th:each="movie : ${movies}"
+               th:option → th:value="${movie.movieId}", th:text="${movie.title}"
+               선택된 영화: th:selected="${movie.movieId == selectedMovie.movieId}"
+         [ ] Chart.js 차트 (선택 영화의 일별 수익 또는 관람객 수)
+         [ ] 통계 테이블 (날짜 / 수익 / 관람객 수)
+               th:each="stat : ${statistics}"
+         [ ] 날짜 클릭 시 세부 내용 하단 표시
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="admin-placeholder">
+    <p>UC-16 영화별 통계 — 구현 예정</p>
+  </div>
+
+  <script th:src="@{/js/admin/stats.js}" th:if="${false}"></script>
+
+</main>
+</body>
+</html>

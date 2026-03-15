@@ -1,0 +1,5 @@
+클래스명,어노테이션,접근자,반환타입,메서드 이름,파라미터,,클래스명: 해당 메서드가 속한 클래스명
+AdminController,"@GetMapper(""/find"")",public,AdminDTO,findAdminById,int Id,,메서드명: ex) getMovieList
+,,,"void, String, AdminDTO, ResponseEntity 등등",,"Model model, @valid DTO dto,
+BindingResult bindingResult",,"반환 타입: ex) List<MovieListResponseDTO>, void"
+,,,,,,,"파라미터: ex) String genre, String rating (없으면 -)"

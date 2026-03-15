@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<!--
+  templates/preview/layout.html
+  고객용 공통 레이아웃 미리보기 템플릿.
+  layout/base.html 을 실제로 상속받아 Thymeleaf 렌더링 확인.
+  접근: localhost:8080/preview
+-->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
+
+<head>
+  <title>레이아웃 미리보기 — CineOS</title>
+</head>
+
+<body>
+<main>
+
+  <div style="display:flex; flex-direction:column; gap:40px;">
+
+    <!-- ── 1. 버튼 ── -->
+    <section>
+      <p style="font-size:0.75rem; font-weight:700; letter-spacing:0.12em;
+                text-transform:uppercase; color:var(--text-muted);
+                margin-bottom:20px; padding-bottom:8px;
+                border-bottom:1px dashed var(--border-default);">Buttons</p>
+      <div style="display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+        <button class="btn btn--primary">Primary</button>
+        <button class="btn btn--secondary">Secondary</button>
+        <button class="btn btn--ghost">Ghost</button>
+        <button class="btn btn--danger">Danger</button>
+        <button class="btn btn--primary" disabled>비활성</button>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:12px;">
+        <button class="btn btn--primary btn--sm">Small</button>
+        <button class="btn btn--primary">Default</button>
+        <button class="btn btn--primary btn--lg">Large</button>
+      </div>
+    </section>
+
+    <!-- ── 2. 관람등급 배지 ── -->
+    <section>
+      <p style="font-size:0.75rem; font-weight:700; letter-spacing:0.12em;
+                text-transform:uppercase; color:var(--text-muted);
+                margin-bottom:20px; padding-bottom:8px;
+                border-bottom:1px dashed var(--border-default);">Rating Badges</p>
+      <div style="display:flex; gap:12px; align-items:center;">
+        <span class="badge badge--all">전체</span>
+        <span class="badge badge--12">12</span>
+        <span class="badge badge--15">15</span>
+        <span class="badge badge--18">18</span>
+      </div>
+    </section>
+
+    <!-- ── 3. 영화 카드 ── -->
+    <section>
+      <p style="font-size:0.75rem; font-weight:700; letter-spacing:0.12em;
+                text-transform:uppercase; color:var(--text-muted);
+                margin-bottom:20px; padding-bottom:8px;
+                border-bottom:1px dashed var(--border-default);">Movie Cards</p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:16px;">
+
+        <div class="card card--clickable">
+          <div class="card__img-wrap"
+               style="background:linear-gradient(135deg,#1a1410,#4f4537);">
+          </div>
+          <div class="card__body">
+            <h3 class="card__title">영화 제목 샘플</h3>
+            <div class="card__meta">
+              <span class="badge badge--15">15</span>
+              <span>액션 · 130분</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card card--clickable">
+          <div class="card__img-wrap"
+               style="background:linear-gradient(135deg,#001c38,#2a88c8);">
+          </div>
+          <div class="card__body">
+            <h3 class="card__title">두 번째 영화</h3>
+            <div class="card__meta">
+              <span class="badge badge--12">12</span>
+              <span>드라마</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 매진 카드 -->
+        <div class="card card--clickable">
+          <div class="card__img-wrap"
+               style="background:linear-gradient(135deg,#003828,#00ad74);">
+            <div class="card__sold-out-overlay">
+              <span class="card__sold-out-label">매진</span>
+            </div>
+          </div>
+          <div class="card__body">
+            <h3 class="card__title">매진된 영화</h3>
+            <div class="card__meta">
+              <span class="badge badge--all">전체</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── 4. 스텝 인디케이터 ── -->
+    <section>
+      <p style="font-size:0.75rem; font-weight:700; letter-spacing:0.12em;
+                text-transform:uppercase; color:var(--text-muted);
+                margin-bottom:20px; padding-bottom:8px;
+                border-bottom:1px dashed var(--border-default);">Step Indicator</p>
+      <div class="steps">
+        <div class="step step--done">
+          <div class="step__circle">✓</div>
+          <span class="step__label">날짜</span>
+        </div>
+        <div class="step step--done">
+          <div class="step__circle">✓</div>
+          <span class="step__label">시간</span>
+        </div>
+        <div class="step step--active">
+          <div class="step__circle">3</div>
+          <span class="step__label">인원</span>
+        </div>
+        <div class="step">
+          <div class="step__circle">4</div>
+          <span class="step__label">좌석</span>
+        </div>
+        <div class="step">
+          <div class="step__circle">5</div>
+          <span class="step__label">결제</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 5. 폼 ── -->
+    <section>
+      <p style="font-size:0.75rem; font-weight:700; letter-spacing:0.12em;
+                text-transform:uppercase; color:var(--text-muted);
+                margin-bottom:20px; padding-bottom:8px;
+                border-bottom:1px dashed var(--border-default);">Form Controls</p>
+      <div style="max-width:400px; display:flex; flex-direction:column; gap:16px;">
+        <div class="form-group">
+          <label class="form-label form-label--required">휴대폰 번호</label>
+          <input type="tel" class="form-control" placeholder="01012345678">
+        </div>
+        <div class="form-group">
+          <label class="form-label">오류 상태</label>
+          <input type="text" class="form-control form-control--error" value="잘못된 입력">
+          <p class="form-error-msg">올바른 휴대폰 번호 형식으로 입력해 주세요.</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">상영관 선택</label>
+          <select class="form-control">
+            <option>1관 (일반)</option>
+            <option>2관 (IMAX)</option>
+            <option>3관 (리클라이너)</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 6. 인터랙션 테스트 ── -->
+    <section>
+      <p style="font-size:0.75rem; font-weight:700; letter-spacing:0.12em;
+                text-transform:uppercase; color:var(--text-muted);
+                margin-bottom:20px; padding-bottom:8px;
+                border-bottom:1px dashed var(--border-default);">Toast & Modal (클릭으로 확인)</p>
+      <div style="display:flex; flex-wrap:wrap; gap:12px;">
+        <button class="btn btn--sm btn--ghost"
+                onclick="CineOS.alert.show('예매가 완료되었습니다.', 'success')">
+          Success 토스트
+        </button>
+        <button class="btn btn--sm btn--ghost"
+                onclick="CineOS.alert.show('결제에 실패하였습니다. 다시 시도해 주세요.', 'error')">
+          Error 토스트
+        </button>
+        <button class="btn btn--sm btn--ghost"
+                onclick="CineOS.alert.show('시간 초과로 예매가 취소되었습니다.', 'warning')">
+          Warning 토스트
+        </button>
+        <button class="btn btn--sm btn--secondary"
+                onclick="CineOS.modal.confirm({
+                  title: '예매 취소',
+                  message: '선택하신 좌석을 취소하시겠습니까?',
+                  onConfirm: () => CineOS.alert.show('취소 완료', 'warning'),
+                  onCancel:  () => CineOS.alert.show('유지되었습니다.', 'info')
+                })">
+          Confirm 모달
+        </button>
+        <button class="btn btn--sm btn--secondary"
+                onclick="CineOS.modal.alert({ title: '예매 완료', message: '즐거운 관람 되세요!' })">
+          Alert 모달
+        </button>
+        <button class="btn btn--sm btn--ghost"
+                onclick="CineOS.loading.show(); setTimeout(()=>CineOS.loading.hide(), 2000)">
+          Loading (2초)
+        </button>
+      </div>
+    </section>
+
+  </div>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<!--
+  fragments/alert.html
+  ─────────────────────────────────────────────────────────────────────────
+  토스트 알림 컨테이너 fragment.
+  base.html 및 admin-base.html 모두에서 th:replace 로 삽입됨.
+
+  ▶ JS 사용법 (common.js의 Alert API 사용)
+  ──────────────────────────────────────────
+  // 성공 알림
+  CineOS.alert.show('예매가 완료되었습니다.', 'success');
+
+  // 오류 알림
+  CineOS.alert.show('결제에 실패하였습니다. 다시 시도해 주세요.', 'error');
+
+  // 경고 알림
+  CineOS.alert.show('시간 초과로 예매가 취소되었습니다.', 'warning');
+
+  // 정보 알림
+  CineOS.alert.show('이미 다른 고객이 선택 중인 좌석입니다.', 'info');
+
+  // 직접 닫기
+  CineOS.alert.dismiss(alertElement);
+  ──────────────────────────────────────────
+
+  ▶ 알림 타입 & 스타일
+  - success : --color-success-* 계열 (초록)
+  - error   : --color-error-*   계열 (빨강)
+  - warning : --color-warning-* 계열 (노랑/골드)
+  - info    : --color-info-*    계열 (파랑)
+
+  ▶ 동작
+  - 화면 상단 중앙에 쌓이는 형태로 표시
+  - 기본 3초 후 자동 사라짐 (duration 옵션으로 변경 가능)
+  - 닫기(×) 버튼으로 수동 제거 가능
+-->
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<body>
+
+<!-- ──────────────────────────────────────────────────────────────────────
+     th:fragment="alert-container"
+     토스트 알림이 동적으로 추가/제거되는 컨테이너.
+     JS(CineOS.alert.show())가 이 안에 알림 요소를 append.
+──────────────────────────────────────────────────────────────────────── -->
+<div th:fragment="alert-container"
+     id="alert-container"
+     class="alert-container"
+     aria-live="polite"
+     aria-atomic="false"
+     role="status">
+  <!--
+    ▶ JS가 동적으로 아래와 같은 구조의 요소를 이 컨테이너에 추가:
+
+    <div class="alert alert--{type}" role="alert" aria-live="assertive">
+      <div class="alert__icon">
+        SVG 아이콘 (타입별 상이)
+      </div>
+      <span class="alert__message">알림 메시지 텍스트</span>
+      <button type="button" class="alert__close-btn" aria-label="알림 닫기">×</button>
+    </div>
+
+    타입 클래스:
+    - .alert--success
+    - .alert--error
+    - .alert--warning
+    - .alert--info
+  -->
+</div>
+
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<!--
+  templates/booking/schedule.html
+  ─────────────────────────────────────────────────────────────────────────
+  UC-03: 예매하기 — 날짜 · 시간 · 인원 선택 단계 (고객용)
+
+  ▶ 기능 요약
+    - 예매 흐름: 날짜 선택 → 시간대 선택 → 인원(성인/청소년) 입력
+    - 날짜/시간 선택 후 다음 단계(좌석 선택)로 이동
+    - 영화 시작 5분 후 초과 시 UC-02 상세 페이지로 복귀
+
+  ▶ Controller → View 전달 Model 속성
+    - movie     : MovieDTO         예매 대상 영화 정보
+                  └ movieId, title, rating, runtime, posterUrl
+    - schedules : List<ScheduleDTO> 해당 영화의 상영 스케줄 목록
+                  └ id, no(상영관번호), movieId, startTime, endTime
+
+  ▶ 연결 UC
+    ← UC-02: '예매하기' 버튼 클릭 시 진입 (?movieId={id})
+    → UC-03 seat: 날짜·시간·인원 확정 후 /booking/seat 으로 이동
+
+  ▶ 파일 위치
+    templates/booking/schedule.html
+  ─────────────────────────────────────────────────────────────────────────
+-->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main}, ~{})}">
+
+<head>
+  <title>날짜 · 시간 선택 | CineOS</title>
+</head>
+
+<body>
+<main>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       TODO: UC-03 날짜·시간·인원 선택 콘텐츠 구현
+       ─────────────────────────────────────────────────────────────────
+       구현 항목:
+         [ ] 영화 정보 요약 헤더 (제목, 등급, 런타임)
+         [ ] 날짜 선택 버튼 그룹
+               schedules 에서 날짜만 추출하여 중복 제거 후 표시
+               th:each="schedule : ${schedules}"
+         [ ] 시간대 선택 버튼 그룹
+               선택된 날짜에 해당하는 schedule 목록 표시
+               schedule.startTime ~ schedule.endTime
+         [ ] 인원 선택 (성인 / 청소년, 스피너 UI)
+               최소 1명 이상 선택 필수
+         [ ] '다음' 버튼 → /booking/seat 으로 이동
+               (선택된 scheduleId, 인원 수를 세션 또는 쿼리스트링으로 전달)
+         [ ] 영화 시작 5분 후 경과 시 경고 후 /movie/{id} 로 redirect
+               (서버 or JS 타이머로 처리)
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="booking-placeholder">
+    <p>UC-03 날짜·시간·인원 선택 — 구현 예정</p>
+    <a th:href="@{/movie/list}" class="btn btn--ghost">← 목록으로</a>
+  </div>
+
+  <!-- 페이지 전용 JS (구현 시 static/js/booking/schedule.js 로 분리) -->
+  <script th:src="@{/js/booking/schedule.js}" th:if="${false}"></script>
+
+</main>
+</body>
+</html>
