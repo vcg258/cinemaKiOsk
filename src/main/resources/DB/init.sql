@@ -11,7 +11,7 @@ FLUSH PRIVILEGES;
 
 USE `cinema_kiosk`;
 
-CREATE TABLE IF NOT EXISTS `admin` # 외래키 없음
+CREATE TABLE IF NOT EXISTS `admin` # FK (X)
 (
     `admin_id`    BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '관리자 인덱스',
     `login_id`    VARCHAR(30)        NOT NULL UNIQUE COMMENT '관리자 아이디',
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `admin` # 외래키 없음
 insert into admin (login_id, password, name, admin_phone, level, UUID, create_at)
 values (1, 1, '관리자', '010-1234-5678', '0', null, now());
 
-CREATE TABLE IF NOT EXISTS `members` # 외래키 없음
+CREATE TABLE IF NOT EXISTS `members` # FK (X)
 (
     `phone`      VARCHAR(20) PRIMARY KEY COMMENT '회원 번호',
     `point`      INT UNSIGNED NULL DEFAULT 0 COMMENT '포인트',
@@ -34,69 +34,70 @@ CREATE TABLE IF NOT EXISTS `members` # 외래키 없음
 ) COMMENT '회원(포인트)';
 
 
-CREATE TABLE IF NOT EXISTS `seat_policy` #외래키 없음
+CREATE TABLE IF NOT EXISTS `seat_policy` # FK (X)
 (
     `policy_id` CHAR(36) PRIMARY KEY COMMENT '좌석 아이디',
     `name`      VARCHAR(20)     NULL COMMENT '좌석 이름',
     `cost`      BIGINT UNSIGNED NULL DEFAULT 0 COMMENT '좌석 비용'
 ) COMMENT '좌석 정책';
 
-CREATE TABLE IF NOT EXISTS `bonus_policy` # 외래키 없음
+CREATE TABLE IF NOT EXISTS `bonus_policy` # FK (X)
 (
     `id`          BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT COMMENT '적립 정책 인덱스',
     `policy_name` VARCHAR(20)     NULL COMMENT '정책 이름',
     `give_value`  BIGINT UNSIGNED NULL COMMENT '적립 비율',
     `start_at`    DATETIME        NULL COMMENT '시작일',
-    `expired_at`  DATETIME        NULL COMMENT '만료일',
-    `activation`  BOOLEAN         NULL COMMENT '활성화 여부 (필요할까 싶긴해)'
+    `end_at`      DATETIME        NULL COMMENT '만료일',
+    `activation`  BOOLEAN         NULL COMMENT '활성화 여부'
 ) COMMENT '적립 행사 정책(자체 이벤트)';
 
-CREATE TABLE IF NOT EXISTS `movie_images` # 외래키 없음
-(
-    `title` VARCHAR(100) PRIMARY KEY COMMENT '영화 제목',
-    `poster` MEDIUMBLOB NOT NULL COMMENT '영화 포스터 (16MB)'
-) COMMENT '영화 이미지';
-
-CREATE TABLE IF NOT EXISTS `movie` # 외래키 없음(?)
+CREATE TABLE IF NOT EXISTS `movie` # FK (X)
 (
     `movie_id`    BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '영화 인덱스',
     `title`       VARCHAR(100)                   NOT NULL COMMENT '영화 제목',
     `genre`       VARCHAR(50)                    NOT NULL COMMENT '장르',
     `rating`      ENUM ('ALL', '12', '15', '19') NOT NULL COMMENT '관람 등급',
-    `runtime`     BIGINT UNSIGNED                NOT NULL COMMENT '상영 시간(분?, 초?)',
+    `runtime`     BIGINT UNSIGNED                NOT NULL COMMENT '상영 시간(분)',
     `director`    VARCHAR(50)                    NOT NULL COMMENT '감독이름',
-    `actors`      VARCHAR(255)                   NULL COMMENT '배우(쉼표로 구분(?))',
+    `actors`      VARCHAR(255)                   NULL COMMENT '배우(쉼표로 구분)',
     `description` TEXT                           NULL COMMENT '줄거리',
     `start_at`    DATE                           NOT NULL COMMENT '상영 시작일',
     `end_at`      DATE                           NULL COMMENT '상영 종료일',
-    `create_at`   DATE                           NULL COMMENT '영화 등록일',
-    CONSTRAINT `fk_movie_title` FOREIGN KEY (`title`) REFERENCES movie_images (`title`)
-        ON DELETE CASCADE ON UPDATE CASCADE
+    `create_at`   DATE                           NULL COMMENT '영화 등록일'
 ) COMMENT '영화';
 
-CREATE TABLE IF NOT EXISTS `coupon` # 외래키 없음
-(
-    `coupon_id`   BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT COMMENT '쿠폰 인덱스',
-    `coupon_num`  VARCHAR(12) NOT NULL COMMENT '쿠폰 번호', # - 빼고 12자리? 아님 넣고 14자리?
-    `validity_at` DATETIME    NOT NULL COMMENT '유효기간',
-    `is_status`   BOOLEAN     NOT NULL DEFAULT FALSE COMMENT '사용여부 (사용 = true, 미사용 = false)'
-) COMMENT '쿠폰 내역(?)';
-
-CREATE TABLE IF NOT EXISTS `discount_policy` # 외래키 없음(?)
+CREATE TABLE IF NOT EXISTS `discount_policy` # FK (X)
 (
     `id`             BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT COMMENT '할인 정책 인덱스',
-    `coupon_id`      BIGINT UNSIGNED                       NULL COMMENT '쿠폰 인덱스 FK',
     `policy_name`    VARCHAR(20)                           NULL COMMENT '정책 이름',
     `discount_type`  ENUM ('RATIO', 'WON')                 NULL COMMENT '할인 방식',
     `discount_value` BIGINT UNSIGNED                       NULL COMMENT '할인 값',
     `condition_type` ENUM ('TIME', 'AGE', 'JOB', 'COUPON') NULL COMMENT '할인 유형',
     `start_at`       DATETIME                              NULL COMMENT '시작일',
-    `expired_at`     DATETIME                              NULL COMMENT '만료일',
-    `activation`     BOOLEAN                               NULL COMMENT '활성화 여부 (필요할까 싶긴해)',
-    CONSTRAINT `fk_discount_policy_coupon_id` FOREIGN KEY (`coupon_id`) REFERENCES coupon (`coupon_id`)
-        ON DELETE CASCADE ON UPDATE CASCADE
+    `end_at`         DATETIME                              NULL COMMENT '만료일',
+    `activation`     BOOLEAN                               NULL COMMENT '활성화 여부'
 ) COMMENT '할인 행사 정책(자체 이벤트)';
+
 -- --------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `movie_images`
+(
+    `no`       BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '영화 인덱스',
+    `title_id` BIGINT UNSIGNED COMMENT '영화 제목',
+    `poster`   MEDIUMBLOB NOT NULL COMMENT '영화 포스터 (16MB)',
+    CONSTRAINT `fk_movie_title` FOREIGN KEY (`title_id`) REFERENCES movie (`movie_id`)
+        ON DELETE CASCADE ON UPDATE CASCADE
+) COMMENT '영화 이미지';
+
+CREATE TABLE IF NOT EXISTS `coupon`
+(
+    `coupon_num` VARCHAR(12) NOT NULL COMMENT '쿠폰 번호',
+    `policy_id`  BIGINT UNSIGNED COMMENT '할인 정책 인덱스 FK',
+    `end_at`     DATETIME    NOT NULL COMMENT '유효기간',
+    `status`     BOOLEAN     NOT NULL DEFAULT FALSE COMMENT '사용여부 (사용가능 = true, 불가능 = false)',
+    CONSTRAINT `fk_discount_policy_coupon_id` FOREIGN KEY (`policy_id`) REFERENCES discount_policy (`id`)
+        ON DELETE CASCADE ON UPDATE CASCADE
+) COMMENT '쿠폰 내역';
 
 CREATE TABLE IF NOT EXISTS `theater`
 (
@@ -109,11 +110,11 @@ CREATE TABLE IF NOT EXISTS `theater`
 
 CREATE TABLE IF NOT EXISTS `schedule`
 (
-    `id`         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '스케줄 인덱스',
-    `no`         BIGINT UNSIGNED NOT NULL COMMENT '상영관 번호 FK',
-    `movie_id`   BIGINT UNSIGNED NOT NULL COMMENT '영화 번호 FK',
-    `start_time` DATETIME        NULL COMMENT '상영 시작 시간',
-    `end_time`   DATETIME        NULL COMMENT '상영 종료 시간',
+    `id`       BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '스케줄 인덱스',
+    `no`       BIGINT UNSIGNED NOT NULL COMMENT '상영관 번호 FK',
+    `movie_id` BIGINT UNSIGNED NOT NULL COMMENT '영화 번호 FK',
+    `start_at` DATETIME        NULL COMMENT '상영 시작 시간',
+    `end_at`   DATETIME        NULL COMMENT '상영 종료 시간',
     CONSTRAINT `fk_schedule_theater_no` FOREIGN KEY (`no`) REFERENCES theater (`no`)
         ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_schedule_movie_id` FOREIGN KEY (`movie_id`) REFERENCES movie (`movie_id`)
@@ -135,10 +136,10 @@ CREATE TABLE IF NOT EXISTS statistics
 
 CREATE TABLE IF NOT EXISTS `reservation_details`
 (
-    `id`               varchar(36) PRIMARY KEY COMMENT '예매 고유번호, uuid',
-    `schedule_id`      BIGINT UNSIGNED NOT NULL COMMENT '스케쥴 아이디 FK',
-    `phone`            VARCHAR(20)     NULL COMMENT '회원 번호 FK', # NOT NULL -> NULL 이유 : 비회원일 경우 NULL
-    `reservation_time` DATETIME        NULL COMMENT '예매 기준시',
+    `id`          varchar(36) PRIMARY KEY COMMENT '예매 고유번호, uuid',
+    `schedule_id` BIGINT UNSIGNED NOT NULL COMMENT '스케쥴 아이디 FK',
+    `phone`       VARCHAR(20)     NULL COMMENT '회원 번호 FK', # NOT NULL -> NULL 이유 : 비회원일 경우 NULL
+    `create_at`   DATETIME        NULL COMMENT '예매 기준시',
     CONSTRAINT `fk_reservation_details_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES schedule (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_reservation_details_members_phone` FOREIGN KEY (`phone`) REFERENCES members (`phone`)
@@ -162,7 +163,7 @@ CREATE TABLE IF NOT EXISTS `payment_details`
 (
     `id`                 CHAR(36) PRIMARY KEY COMMENT '결제 고유번호',
     `reservation_id`     varchar(36)                  NOT NULL COMMENT '예매 내역 FK',
-    `bonus_policy_id`    BIGINT UNSIGNED              NULL COMMENT '적립 정책 FK', # NOT NULL -> NULL 이유 : 비회원일 경우 NULL
+    `bonus_policy_id`    BIGINT UNSIGNED              NULL COMMENT '적립 정책 FK',  # NOT NULL -> NULL 이유 : 비회원일 경우 NULL
     `discount_policy_id` BIGINT UNSIGNED              NULL COMMENT '할인 정책 FK, 할인 없는 경우 NULL',
     `cost`               BIGINT UNSIGNED              NOT NULL COMMENT '결제 금액',
     `time`               DATETIME                     NOT NULL COMMENT '결제 시간',
@@ -184,7 +185,7 @@ CREATE TABLE IF NOT EXISTS `point_history`
     `phone`        VARCHAR(20)          NOT NULL COMMENT '회원 번호 FK',
     `type`         ENUM ('EARN', 'USE') NOT NULL COMMENT '적립 / 사용',
     `amount_point` BIGINT UNSIGNED      NOT NULL COMMENT '사용할 포인트',
-    `change_at`    DATETIME             NOT NULL COMMENT '포인트 변경일',
+    `create_at`    DATETIME             NOT NULL COMMENT '포인트 변경일',
     CONSTRAINT `fk_point_history_payment_id` FOREIGN KEY (`payment_id`) REFERENCES payment_details (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_point_history_phone` FOREIGN KEY (`phone`) REFERENCES members (`phone`)
