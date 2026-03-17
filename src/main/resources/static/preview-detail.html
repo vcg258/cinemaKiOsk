@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<!--
+  preview-detail.html
+  UC-02 상영작 상세 페이지 독립 프리뷰 (서버 없이 브라우저에서 바로 열기 가능)
+  경로: src/main/resources/static/preview-detail.html
+-->
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UC-02 프리뷰 | CineOS</title>
+
+  <link rel="stylesheet" href="./css/fonts.css">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/movie.css">
+</head>
+
+<body>
+
+  <!-- ══ HEADER ══════════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a href="./preview-list.html" class="site-header__logo-link" aria-label="CineOS 홈">
+        <img src="./images/logo_cineos.svg" alt="CineOS" class="site-header__logo"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <span style="display:none;font-size:1.3rem;font-weight:800;color:var(--color-brand-400)">CineOS</span>
+      </a>
+      <nav class="site-nav" aria-label="주요 메뉴">
+        <ul class="nav-tab-list">
+          <li class="nav-tab-list__item">
+            <a href="./preview-list.html" class="nav-tab nav-tab--active">현재 상영작</a>
+          </li>
+          <li class="nav-tab-list__item">
+            <a href="#" class="nav-tab">예매 조회</a>
+          </li>
+        </ul>
+      </nav>
+      <a href="#" class="admin-access-btn" aria-label="관리자 로그인">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+          <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+        </svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- ══ MAIN ════════════════════════════════════════════════ -->
+  <main class="site-main" id="main-content">
+    <!-- JS가 렌더링할 자리 -->
+  </main>
+
+  <!-- ══ FOOTER ══════════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <a href="./preview-list.html" class="footer-home-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+      <span>처음으로</span>
+    </a>
+    <div class="footer-clock"><time id="footer-time">00:00</time></div>
+  </footer>
+
+  <!-- 모달 -->
+  <div id="modal-container" class="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal" role="document">
+      <div class="modal__header">
+        <h2 class="modal__title" id="modal-title"></h2>
+        <button type="button" class="modal__close-btn" id="modal-close-btn" aria-label="모달 닫기">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal__body" id="modal-body"></div>
+      <div class="modal__footer" id="modal-footer"></div>
+    </div>
+  </div>
+  <div id="alert-container" class="alert-container" aria-live="polite" role="status"></div>
+
+  <!-- ══ JS ══════════════════════════════════════════════════ -->
+  <script src="./js/common.js"></script>
+  <script>
+
+    /* ── 목 데이터 (일반 / 매진 두 케이스 포함) ────────────────── */
+    const MOCK_MOVIES = {
+      normal: {
+        movieId: 1,
+        title: '범죄도시 4',
+        genre: '액션',
+        rating: '15',
+        runtime: 109,
+        director: '허명행',
+        actor: '마동석, 김무열, 박지환, 이동휘',
+        description:
+          '괴물형사 마석도(마동석)와 서울 광수대는 신종 마약 사건을 수사하던 중 ' +
+          '필리핀에서 활동하는 국제 범죄 조직의 실체를 파악하게 된다.\n\n' +
+          '막대한 자금력과 무기를 동원하는 조직의 배후를 쫓던 마석도는 ' +
+          '조직의 최수장 백창기(김무열)와 마주하게 되고, ' +
+          '광수대는 거대한 범죄 조직에 맞서 새로운 작전을 펼친다.',
+        startAt: '2024.04.24',
+        endAt: '2024.07.10',
+        soldOut: false,
+        posterUrl: './images/placeholder-poster.jpg',
+      },
+      soldOut: {
+        movieId: 3,
+        title: '파묘',
+        genre: '공포',
+        rating: '15',
+        runtime: 134,
+        director: '장재현',
+        actor: '최민식, 유해진, 김고은, 이도현',
+        description:
+          '거액의 의뢰를 받은 무속인 화림(김고은)과 봉길(이도현)은 ' +
+          '묘를 이장하면 집안의 문제가 해결될 것이라는 미국 LA 교포 부잣집을 찾아간다.\n\n' +
+          '수상한 묏자리에서 기이한 현상이 잇따르자 화림은 ' +
+          '최고의 풍수사 상덕(최민식)과 장의사 영근(유해진)을 불러들인다.',
+        startAt: '2024.02.22',
+        endAt: null,
+        soldOut: true,
+        posterUrl: './images/placeholder-poster.jpg',
+      },
+    };
+
+    /* ── 등급 배지 매핑 ─────────────────────────────────────── */
+    const RATING_BADGE = {
+      'ALL': { cls: 'badge--all', text: '전체관람가' },
+      '12':  { cls: 'badge--12',  text: '12세'       },
+      '15':  { cls: 'badge--15',  text: '15세'       },
+      '19':  { cls: 'badge--18',  text: '청소년불가'  },
+    };
+
+    /* ── 런타임 포맷 ────────────────────────────────────────── */
+    function formatRuntime(minutes) {
+      const h = Math.floor(minutes / 60);
+      const m = minutes % 60;
+      return (h > 0 ? h + '시간 ' : '') + (m > 0 ? m + '분' : '');
+    }
+
+    /* ── 상세 페이지 렌더링 ─────────────────────────────────── */
+    function renderDetail(movie) {
+      const badge = RATING_BADGE[movie.rating] || { cls: '', text: movie.rating };
+      const main  = document.getElementById('main-content');
+
+      main.innerHTML = `
+        <!-- 뒤로가기 -->
+        <div class="detail-back-wrap">
+          <a href="./preview-list.html" class="btn btn--ghost btn--sm detail-back-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                 fill="currentColor" width="18" height="18">
+              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+            목록으로
+          </a>
+        </div>
+
+        <!-- 히어로 -->
+        <section class="movie-detail__hero">
+
+          <!-- 포스터 -->
+          <div class="movie-detail__poster-wrap">
+            <img class="movie-detail__poster-img"
+                 src="${movie.posterUrl}"
+                 alt="${movie.title} 포스터"
+                 onerror="this.src='./images/placeholder-poster.jpg'">
+            ${movie.soldOut
+              ? '<div class="movie-detail__sold-out-badge" aria-label="매진">매진</div>'
+              : ''}
+          </div>
+
+          <!-- 정보 -->
+          <div class="movie-detail__info">
+            <h1 class="movie-detail__title">${movie.title}</h1>
+
+            <div class="movie-detail__tags">
+              <span class="badge ${badge.cls}">${badge.text}</span>
+              <span class="movie-detail__genre">${movie.genre}</span>
+            </div>
+
+            <dl class="movie-detail__specs">
+
+              <div class="movie-detail__spec-row">
+                <dt class="movie-detail__spec-label">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
+                  </svg>
+                  상영 시간
+                </dt>
+                <dd class="movie-detail__spec-value">${formatRuntime(movie.runtime)}</dd>
+              </div>
+
+              <div class="movie-detail__spec-row">
+                <dt class="movie-detail__spec-label">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                    <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+                  </svg>
+                  감독
+                </dt>
+                <dd class="movie-detail__spec-value">${movie.director}</dd>
+              </div>
+
+              ${movie.actor ? `
+              <div class="movie-detail__spec-row">
+                <dt class="movie-detail__spec-label">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                  </svg>
+                  주연
+                </dt>
+                <dd class="movie-detail__spec-value">${movie.actor}</dd>
+              </div>` : ''}
+
+              <div class="movie-detail__spec-row">
+                <dt class="movie-detail__spec-label">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                    <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/>
+                  </svg>
+                  상영 기간
+                </dt>
+                <dd class="movie-detail__spec-value">
+                  ${movie.startAt}${movie.endAt ? ' ~ ' + movie.endAt : ''}
+                </dd>
+              </div>
+
+            </dl>
+
+            <div class="movie-detail__actions">
+              <button type="button"
+                      class="btn btn--primary btn--lg btn--full"
+                      id="btn-book"
+                      ${movie.soldOut ? 'disabled' : ''}
+                      data-movie-id="${movie.movieId}">
+                ${movie.soldOut ? '매진' : '예매하기'}
+              </button>
+              ${movie.soldOut
+                ? '<p class="movie-detail__sold-out-msg">현재 모든 좌석이 매진되었습니다.</p>'
+                : ''}
+            </div>
+          </div>
+
+        </section>
+
+        ${movie.description ? `
+        <section class="movie-detail__synopsis">
+          <h2 class="movie-detail__section-title">줄거리</h2>
+          <p class="movie-detail__synopsis-text">${movie.description}</p>
+        </section>` : ''}
+      `;
+
+      /* 예매 버튼 이벤트 */
+      const btn = document.getElementById('btn-book');
+      if (btn && !btn.disabled) {
+        btn.addEventListener('click', () => {
+          CineOS.alert.show(`예매 페이지로 이동합니다. (movieId: ${movie.movieId})`, 'info');
+        });
+      }
+    }
+
+    /* ── 케이스 전환 버튼 ───────────────────────────────────── */
+    function addToggleBar(currentKey) {
+      const bar = document.createElement('div');
+      bar.style.cssText =
+        'position:fixed;bottom:80px;right:24px;display:flex;flex-direction:column;' +
+        'gap:8px;z-index:200;';
+
+      const makeBtn = (label, key) => {
+        const b = document.createElement('button');
+        b.className = 'btn btn--sm ' + (currentKey === key ? 'btn--primary' : 'btn--ghost');
+        b.textContent = label;
+        b.addEventListener('click', () => { currentCase = key; renderDetail(MOCK_MOVIES[key]); addToggleBar(key); });
+        return b;
+      };
+
+      // 기존 bar 제거
+      document.querySelector('.preview-toggle-bar')?.remove();
+      bar.classList.add('preview-toggle-bar');
+      bar.appendChild(makeBtn('일반 케이스', 'normal'));
+      bar.appendChild(makeBtn('매진 케이스', 'soldOut'));
+      document.body.appendChild(bar);
+    }
+
+    /* ── 초기화 ─────────────────────────────────────────────── */
+    let currentCase = 'normal';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderDetail(MOCK_MOVIES[currentCase]);
+      addToggleBar(currentCase);
+
+      // 푸터 시계
+      const el = document.getElementById('footer-time');
+      const now = new Date();
+      el.textContent =
+        String(now.getHours()).padStart(2,'0') + ':' +
+        String(now.getMinutes()).padStart(2,'0');
+    });
+
+  </script>
+
+</body>
+</html>
