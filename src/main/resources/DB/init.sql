@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `coupon`
     `coupon_num` VARCHAR(12) PRIMARY KEY NOT NULL COMMENT '쿠폰 번호',
     `policy_id`  BIGINT UNSIGNED COMMENT '할인 정책 인덱스 FK',
 #     `end_at`     DATETIME    NOT NULL COMMENT '유효기간',
-    `status`     BOOLEAN     NOT NULL DEFAULT FALSE COMMENT '사용여부 (사용가능 = true, 불가능 = false)',
+    `status`     BOOLEAN                 NOT NULL DEFAULT FALSE COMMENT '사용여부 (사용가능 = true, 불가능 = false)',
     CONSTRAINT `fk_discount_policy_coupon_id` FOREIGN KEY (`policy_id`) REFERENCES discount_policy (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT '쿠폰 내역';
@@ -161,19 +161,19 @@ CREATE TABLE IF NOT EXISTS `reservation_seat`
 
 CREATE TABLE IF NOT EXISTS `payment_details`
 (
-    `id`                 CHAR(36) PRIMARY KEY COMMENT '결제 고유번호',
-    `reservation_id`     varchar(36)                  NOT NULL COMMENT '예매 내역 FK',
-    `bonus_policy_id`    BIGINT UNSIGNED              NULL COMMENT '적립 정책 FK',  # NOT NULL -> NULL 이유 : 비회원일 경우 NULL
-    `discount_policy_id` BIGINT UNSIGNED              NULL COMMENT '할인 정책 FK, 할인 없는 경우 NULL',
-    `cost`               BIGINT UNSIGNED              NOT NULL COMMENT '결제 금액',
-    `time`               DATETIME                     NOT NULL COMMENT '결제 시간',
-    `use_point`          BIGINT UNSIGNED              NULL DEFAULT 0 COMMENT '사용 포인트',
-    `status`             ENUM ('PAY','RETURN','FAIL') NOT NULL COMMENT '결제 내용',
+    `id`              CHAR(36) PRIMARY KEY COMMENT '결제 고유번호',
+    `reservation_id`  varchar(36)                  NOT NULL COMMENT '예매 내역 FK',
+    `bonus_policy_id` BIGINT UNSIGNED              NULL COMMENT '적립 정책 FK', # NOT NULL -> NULL 이유 : 비회원일 경우 NULL
+    `coupon_num`      VARCHAR(12)                  NULL COMMENT '할인 쿠폰 FK',
+    `cost`            BIGINT UNSIGNED              NOT NULL COMMENT '결제 금액',
+    `time`            DATETIME                     NOT NULL COMMENT '결제 시간',
+    `use_point`       BIGINT UNSIGNED              NULL DEFAULT 0 COMMENT '사용 포인트',
+    `status`          ENUM ('PAY','RETURN','FAIL') NOT NULL COMMENT '결제 내용',
     CONSTRAINT `fk_payment_details_reservation_id` FOREIGN KEY (`reservation_id`) REFERENCES reservation_details (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_payment_details_bonus_policy_id` FOREIGN KEY (`bonus_policy_id`) REFERENCES bonus_policy (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_payment_details_discount_policy_id` FOREIGN KEY (`discount_policy_id`) REFERENCES discount_policy (id)
+    CONSTRAINT `fk_payment_details_coupon_num` FOREIGN KEY (`coupon_num`) REFERENCES coupon (coupon_num)
         ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT '결제 내역';
 
