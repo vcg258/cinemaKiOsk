@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS `coupon`
 (
     `coupon_num` VARCHAR(12) PRIMARY KEY NOT NULL COMMENT '쿠폰 번호',
     `policy_id`  BIGINT UNSIGNED COMMENT '할인 정책 인덱스 FK',
-    `end_at`     DATETIME    NOT NULL COMMENT '유효기간',
+#     `end_at`     DATETIME    NOT NULL COMMENT '유효기간',
     `status`     BOOLEAN     NOT NULL DEFAULT FALSE COMMENT '사용여부 (사용가능 = true, 불가능 = false)',
     CONSTRAINT `fk_discount_policy_coupon_id` FOREIGN KEY (`policy_id`) REFERENCES discount_policy (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE
