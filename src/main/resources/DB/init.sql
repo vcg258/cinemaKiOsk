@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `discount_policy` # FK (X)
 
 CREATE TABLE IF NOT EXISTS `coupon`
 (
-    `coupon_num` VARCHAR(12) NOT NULL COMMENT '쿠폰 번호',
+    `coupon_num` VARCHAR(12) PRIMARY KEY NOT NULL COMMENT '쿠폰 번호',
     `policy_id`  BIGINT UNSIGNED COMMENT '할인 정책 인덱스 FK',
     `end_at`     DATETIME    NOT NULL COMMENT '유효기간',
     `status`     BOOLEAN     NOT NULL DEFAULT FALSE COMMENT '사용여부 (사용가능 = true, 불가능 = false)',
@@ -113,8 +113,8 @@ CREATE TABLE IF NOT EXISTS `schedule`
     `id`       BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '스케줄 인덱스',
     `no`       BIGINT UNSIGNED NOT NULL COMMENT '상영관 번호 FK',
     `movie_id` BIGINT UNSIGNED NOT NULL COMMENT '영화 번호 FK',
-    `start_at` DATETIME        NULL COMMENT '상영 시작 시간',
-    `end_at`   DATETIME        NULL COMMENT '상영 종료 시간',
+    `start_at` DATETIME        NULL COMMENT '상영 시작 시간', # NOT NULL? NULL?
+    `end_at`   DATETIME        NULL COMMENT '상영 종료 시간', # NOT NULL? NULL?
     CONSTRAINT `fk_schedule_theater_no` FOREIGN KEY (`no`) REFERENCES theater (`no`)
         ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_schedule_movie_id` FOREIGN KEY (`movie_id`) REFERENCES movie (`movie_id`)
@@ -168,7 +168,7 @@ CREATE TABLE IF NOT EXISTS `payment_details`
     `cost`               BIGINT UNSIGNED              NOT NULL COMMENT '결제 금액',
     `time`               DATETIME                     NOT NULL COMMENT '결제 시간',
     `use_point`          BIGINT UNSIGNED              NULL DEFAULT 0 COMMENT '사용 포인트',
-    `status`             ENUM ('PAY','RETURN','FAIL') NOT NULL COMMENT '결제 내용', # NULL -> NOT NULL
+    `status`             ENUM ('PAY','RETURN','FAIL') NOT NULL COMMENT '결제 내용',
     CONSTRAINT `fk_payment_details_reservation_id` FOREIGN KEY (`reservation_id`) REFERENCES reservation_details (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_payment_details_bonus_policy_id` FOREIGN KEY (`bonus_policy_id`) REFERENCES bonus_policy (`id`)
