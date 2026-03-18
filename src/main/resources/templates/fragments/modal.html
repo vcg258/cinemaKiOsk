@@ -5,6 +5,16 @@
   공용 모달 오버레이 fragment.
   base.html 및 admin-base.html 모두에서 th:replace 로 삽입됨.
 
+  ▶ 포함된 fragment 목록
+  ──────────────────────────────────────────
+  1. th:fragment="modal"
+     공용 모달 컨테이너 (확인/알림/커스텀 콘텐츠 공용)
+
+  2. th:fragment="phoneVerifyModal"
+     UC-05 휴대폰 인증 팝업 콘텐츠
+     payment.html 에서 CineOS.modal.open() 으로 삽입하여 사용
+     (auth/phone-verify.html 을 별도 페이지로 분리하지 않고 여기에 통합)
+
   ▶ JS 사용법 (common.js의 Modal API 사용)
   ──────────────────────────────────────────
   // 기본 확인 모달
@@ -22,7 +32,8 @@
     onClose: () => { ... }
   });
 
-  // 커스텀 콘텐츠 모달
+  // 휴대폰 인증 모달 열기 (UC-05)
+  // payment.js 에서 포인트 버튼 클릭 시 호출
   CineOS.modal.open({
     title:   '휴대폰 인증',
     content: document.getElementById('phone-verify-content').innerHTML,
@@ -90,6 +101,46 @@
     </div>
 
   </div>
+</div>
+
+
+<!-- ──────────────────────────────────────────────────────────────────────
+     th:fragment="phoneVerifyModal"
+     UC-05: 휴대폰 인증 팝업 콘텐츠 (hidden 상태로 DOM에 존재)
+     payment.js 에서 포인트 버튼 클릭 시 CineOS.modal.open() 에 이 content 삽입.
+
+     에러 메시지 (명세 기준 — 임의 변경 금지)
+       - 미등록 번호: "등록되지 않은 번호입니다."
+       - 형식 오류:   "올바른 휴대폰 번호 형식으로 입력해 주세요."
+──────────────────────────────────────────────────────────────────────── -->
+<div th:fragment="phoneVerifyModal"
+     id="phone-verify-content"
+     style="display:none;"
+     aria-hidden="true">
+
+  <!-- 안내 문구 -->
+  <p class="phone-verify__guide">
+    포인트 사용을 위해 휴대폰 번호를 입력해 주세요.
+  </p>
+
+  <!-- 휴대폰 번호 입력 필드 -->
+  <div class="phone-verify__field">
+    <label for="phone-verify-input" class="sr-only">휴대폰 번호</label>
+    <input type="tel"
+           id="phone-verify-input"
+           class="input"
+           inputmode="numeric"
+           maxlength="11"
+           placeholder="01012345678"
+           autocomplete="off">
+    <!-- 에러 메시지 영역: JS에서 텍스트 주입 후 표시 -->
+    <span class="phone-verify__error" id="phone-verify-error" aria-live="polite"></span>
+  </div>
+
+  <!--
+    버튼은 CineOS.modal.open() 호출 시 footer 영역에 동적으로 구성.
+    payment.js 에서 onConfirm 콜백으로 POST /api/auth/phone 호출.
+  -->
 </div>
 
 </body>

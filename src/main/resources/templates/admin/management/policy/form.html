@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<!--
+  templates/admin/management/policy/form.html
+  ─────────────────────────────────────────────────────────────────────────
+  정책 등록 (관리자용)
+  ※ UC 명세 외 팀 합의로 추가된 페이지
+  ※ 적립 정책(BonusPolicy) / 할인 정책(DiscountPolicy) 등록
+
+  ▶ 기능 요약
+    - 정책 유형 선택 (적립 / 할인)
+    - 유형에 따라 입력 폼 동적 전환
+    - 등록 완료 후 목록으로 복귀
+
+  ▶ Controller → View 전달 Model 속성
+    - 없음 (신규 등록 폼이므로 빈 상태)
+
+  ▶ API 연동
+    - 적립 정책 등록: POST /api/admin/policy/bonus
+                      Body: BonusPolicyDTO { policyName, giveValue }
+    - 할인 정책 등록: POST /api/admin/policy/discount
+                      Body: DiscountPolicyDTO { policyName, discountType,
+                                                discountValue, conditionType }
+
+  ▶ 연결 페이지
+    ← admin/management/policy/list.html (목록에서 진입)
+    → admin/management/policy/list.html (등록 완료 후 복귀)
+
+  ▶ 파일 위치
+    templates/admin/management/policy/form.html
+  ─────────────────────────────────────────────────────────────────────────
+-->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
+
+<head>
+  <title>정책 등록 | CineOS 관리자</title>
+</head>
+
+<body>
+<main>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       TODO: 정책 등록 구현
+       ─────────────────────────────────────────────────────────────────
+       구현 항목:
+         [ ] 정책 유형 선택 라디오 버튼
+               적립 정책 / 할인 정책
+               선택에 따라 아래 입력 필드 전환 (JS)
+
+         [ ] 적립 정책 입력 필드 (유형 = 적립 선택 시 표시)
+               - 정책명 (policyName)
+               - 적립 비율 (giveValue, %)
+
+         [ ] 할인 정책 입력 필드 (유형 = 할인 선택 시 표시)
+               - 정책명 (policyName)
+               - 할인 유형 (discountType): RATIO(비율) / WON(금액)
+               - 할인값 (discountValue)
+               - 적용 조건 (conditionType): TIME / AGE / JOB
+
+         [ ] '등록' 버튼 → POST /api/admin/policy/bonus 또는 /discount
+               성공: /admin/management/policy/list 로 이동
+               실패: 에러 메시지 표시
+
+         [ ] '취소' 버튼 → /admin/management/policy/list
+  ══════════════════════════════════════════════════════════════════ -->
+
+  <div class="admin-placeholder">
+    <p>정책 등록 — 구현 예정</p>
+    <a th:href="@{/admin/management/policy/list}" class="btn btn--ghost">← 목록으로</a>
+  </div>
+
+</main>
+</body>
+</html>

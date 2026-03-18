@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!--
+  templates/admin/management/policy/manage.html
+  ─────────────────────────────────────────────────────────────────────────
+  정책 수정 (관리자용)
+  ※ UC 명세 외 팀 합의로 추가된 페이지
+  ※ 적립 정책(BonusPolicy) / 할인 정책(DiscountPolicy) 수정
+
+  ▶ 기능 요약
+    - 기존 정책 정보 불러와서 수정
+    - 정책 유형(type)에 따라 입력 필드 다르게 표시
+
+  ▶ URL 파라미터
+    - type : String   "bonus" | "discount"
+    - id   : Long     수정할 정책 ID
+
+  ▶ Controller → View 전달 Model 속성
+    - policyType       : String              "bonus" 또는 "discount"
+    - bonusPolicy      : BonusPolicyDTO      type=bonus 일 때 주입
+                         └ id, policyName, giveValue
+    - discountPolicy   : DiscountPolicyDTO   type=discount 일 때 주입
+                         └ id, policyName, discountType, discountValue, conditionType
+
+  ▶ API 연동
+    - 적립 정책 수정: PUT /api/admin/policy/bonus/{id}
+                      Body: BonusPolicyDTO
+    - 할인 정책 수정: PUT /api/admin/policy/discount/{id}
+                      Body: DiscountPolicyDTO
+
+  ▶ 연결 페이지
+    ← admin/management/policy/list.html (목록에서 진입)
+    → admin/management/policy/list.html (수정 완료 후 복귀)
+
+  ▶ 파일 위치
+    templates/admin/management/policy/manage.html
+  ─────────────────────────────────────────────────────────────────────────
+-->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
+
+<head>
+  <title>정책 수정 | CineOS 관리자</title>
+</head>
+
+<body>
+<main>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       TODO: 정책 수정 구현
+       ─────────────────────────────────────────────────────────────────
+       구현 항목:
+         [ ] 정책 유형 표시 (수정 불가 읽기 전용)
+               th:text="${policyType == 'bonus'} ? '적립 정책' : '할인 정책'"
+
+         [ ] 적립 정책 수정 필드 (policyType == 'bonus' 일 때 표시)
+               th:if="${policyType == 'bonus'}"
+               - 정책명: th:value="${bonusPolicy.policyName}"
+               - 적립 비율: th:value="${bonusPolicy.giveValue}"
+
+         [ ] 할인 정책 수정 필드 (policyType == 'discount' 일 때 표시)
+               th:if="${policyType == 'discount'}"
+               - 정책명: th:value="${discountPolicy.policyName}"
+               - 할인 유형(discountType): th:value="${discountPolicy.discountType}"
+               - 할인값: th:value="${discountPolicy.discountValue}"
+               - 적용 조건(conditionType): th:value="${discountPolicy.conditionType}"
+
+         [ ] '저장' 버튼 → PUT /api/admin/policy/{type}/{id}
+               성공: /admin/management/policy/list 로 이동
+               실패: 에러 메시지 표시
+
+         [ ] '취소' 버튼 → /admin/management/policy/list
+  ══════════════════════════════════════════════════════════════════ -->
+
+  <div class="admin-placeholder">
+    <p>정책 수정 — 구현 예정</p>
+    <a th:href="@{/admin/management/policy/list}" class="btn btn--ghost">← 목록으로</a>
+  </div>
+
+</main>
+</body>
+</html>

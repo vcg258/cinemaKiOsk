@@ -4,16 +4,16 @@ No,패키지,클래스,역할,담당자
 3,,Websocket,공유를 위한 설정,혜윰
 4,,,,
 5,,,,
-6,controller,SeatController,좌석 정보 확인을 위한 rest 컨트롤러,
-7,,AuthContoller,관리자 인증을 위한 rest 컨트롤러,
-8,,MainController,고객을 위한 키오스크 컨트롤러,
-9,,AdminController,관리자 페이지를 위한 컨트롤러,
-10,,MovieController,영화 정보 관리를 위한 컨트롤러,준용
-11,,ScheduleController,"스케쥴 조회, 스케쥴 등록/삭제를 위한 컨트롤러",
-12,,StatisticsController,통계조회용 컨트롤러,
-13,,PolicyController,정책(할인) 조회/등록/수정 컨트롤러,
-14,,MemberController,회원 조회/등록/포인트조회 컨트롤러 ,
-15,,FileController,파일을 등록하고 제어하는 컨트롤러,
+6,controller,,좌석 정보 확인을 위한 rest 컨트롤러,
+7,,,관리자 인증을 위한 rest 컨트롤러,
+8,,,고객을 위한 키오스크 컨트롤러,
+9,,,관리자 페이지를 위한 컨트롤러,
+10,,,영화 정보 관리를 위한 컨트롤러,준용
+11,,,"스케쥴 조회, 스케쥴 등록/삭제를 위한 컨트롤러",
+12,,,통계조회용 컨트롤러,
+13,,,정책(할인) 조회/등록/수정 컨트롤러,
+14,,,회원 조회/등록/포인트조회 컨트롤러,
+15,,FileController,파일을 등록하고 제어하는 컨트롤러,준용
 16,,,,
 17,,,,
 18,service,AuthServiece,인증 기능을 제공하는 서비스,
@@ -46,7 +46,7 @@ No,패키지,클래스,역할,담당자
 45,,PaymentDetailsDTO,결제 내역을 담기위한 DTO,
 46,,PointHistoryDTO,포인트 내역을 담기위한 DTO,
 47,,FileDTO,이미지 데이터를 위한 DTO,
-48,,,,
+48,,CouponDTO,쿠폰  내역과 할인정보를 같이 사용하기 위한 DTO,
 49,,,,
 50,vo,AdminVO,admin 테이블 대응 VO,
 51,,MembersVO,mebers 테이블 대응 VO,
@@ -61,7 +61,7 @@ No,패키지,클래스,역할,담당자
 60,,ReservationSeatVO,reservation_seat 테이블 대응 VO,
 61,,PaymentDetailsVO,payment_details 테이블 대응 VO,
 62,,PointHistoryVO,point_history 테이블 대응 VO,
-63,,,,
+63,,CouponVO,coupon 테이블 + 할인 정책 테이블 대응 VO,
 64,,,,
 65,,,,
 66,,,,
@@ -79,39 +79,320 @@ No,패키지,클래스,역할,담당자
 78,,ReservationSeatMapper,Mybaits 예매 좌석,
 79,,PaymentDetailsMapper,Mybaits 결제 내역,
 80,,PointHistoryMapper,Mybaits 포인트 내역,
-81,,,,
+81,,CouponMapper,Mybaits 쿠폰 내역,
 82,,,,
-83,repository,AdminRepository,JPA 기본 CRUD,
-84,,MovieRepository,JPA 기본 CRUD,
-85,,ScheduleRepository,JPA 기본 CRUD,
-86,,TheaterRepository,JPA 기본 CRUD,
-87,,SeatPolicyRepository,JPA 기본 CRUD,
-88,,ReservationDetailsRepository,JPA 기본 CRUD,
-89,,ReservationSeatRepository,JPA 기본 CRUD,
-90,,PaymentDetailsRepository,JPA 기본 CRUD,
-91,,BonusPolicyRepository,JPA 기본 CRUD,
-92,,DiscountPolicyRepository,JPA 기본 CRUD,
-93,,PointHistoryRepository,JPA 기본 CRUD,
-94,,MembersRepository,JPA 기본 CRUD,
-95,,StatisticsRepository,JPA 기본 CRUD,
-96,,,,
-97,,,,
+83,,,,
+84,repository,AdminRepository,JPA 기본 CRUD,
+85,,MovieRepository,,
+86,,ScheduleRepository,,
+87,,TheaterRepository,,
+88,,SeatPolicyRepository,,
+89,,ReservationDetailsRepository,,
+90,,ReservationSeatRepository,,
+91,,PaymentDetailsRepository,,
+92,,BonusPolicyRepository,,
+93,,DiscountPolicyRepository,,
+94,,PointHistoryRepository,,
+95,,MembersRepository,,
+96,,StatisticsRepository,,
+97,,CouponRepository,,
 98,,,,
 99,,,,
 100,,,,
-101,domain(entity),Admin,JPA Entity 관리자,
-102,,Movie,JPA Entity  회원,
-103,,Schedule,JPA Entity 영화,
-104,,Theater,JPA Entity 좌석정책,
-105,,SeatPolicy,JPA Entity 적립 행사 정책,
-106,,ReservationDetails,JPA Entity 할인 행사 정책,
-107,,ReservationSeat,JPA Entity 상영관,
-108,,PaymentDetails,JPA Entity 상영 스케줄,
-109,,BonusPolicy,JPA Entity 통계,
-110,,DiscountPolicy,JPA Entity 예매 내역,
-111,,PointHistory,JPA Entity 예매 좌석,
-112,,Members,JPA Entity 결제 내역,
-113,,Statistics,JPA Entity 포인트 내역,
-114,,,,
-115,,,,
-116,templete,,,
+101,,,,
+102,domain(entity),Admin,JPA Entity 관리자,
+103,,Movie,JPA Entity 영화,
+104,,Schedule,JPA Entity 상영스케줄,
+105,,Theater,JPA Entity 상영관,
+106,,SeatPolicy,JPA Entity 좌석 정책,
+107,,ReservationDetails,JPA Entity 예매내역,
+108,,ReservationSeat,JPA Entity 예매좌석,
+109,,PaymentDetails,JPA Entity 거래내역,
+110,,BonusPolicy,JPA Entity 적립 행사 정책,
+111,,DiscountPolicy,JPA Entity 할인 행사 정책,
+112,,PointHistory,JPA Entity 포인트 내역,
+113,,Members,JPA Entity 회원,
+114,,Statistics,JPA Entity 통계,
+115,,Coupon,JPA Entity 쿠폰내역,
+116,,,,
+117,templete,,,
+118,"src/main/resources/
+│
+├── templates/
+│├── layout/
+││├── base.html # 공통 레이아웃 (헤더·푸터·CDN)
+││└── admin-base.html # 관리자 레이아웃
+│├── fragments/
+││├── nav.html # 상단 네비게이션
+││├── modal.html # 공용 모달 컴포넌트
+││└── alert.html # 에러·성공 알림 fragments
+│├── movie/ # UC-01~02
+││├── list.html # UC-01 상영작 목록
+││└── detail.html # UC-02 상영작 상세
+│├── booking/ # UC-03
+││├── schedule.html # UC-03 날짜·시간 선택
+││└── seat.html # UC-03 좌석 선택 (WebSocket)
+│├── payment/ # UC-04~07
+││├── payment.html # UC-04~06 결제·포인트
+││└── confirm >>  result.html # UC-07 예매 완료·적립 안내
+│├── mypage/ # UC-08 >> 외부 예약은 배제. 후순위 예정
+││├── lookup.html # UC-08 예매 조회 (번호 입력)
+││└── booking-detail.html # UC-08 예매 상세·취소
+│├── auth/ # UC-05
+││ └── phone-verify.html # UC-05 휴대폰 인증 팝업
+│├── admin/
+││├── login/
+│││ └── main.html # UC-11 관리자 로그인
+││├── statistics/
+│││├── dashboard.html # 통계 대시보드 홈
+│││└── stats/ # UC-12~16
+│││  ├── daily.html # UC-12 일일 통계
+│││  ├── monthly.html # UC-13 월별 통계
+│││  ├── by-day.html # UC-14 요일별
+│││  ├── by-hour.html # UC-15 시간대별
+│││  └── by-movie.html # UC-16 영화별
+││├── management/ #관리 하는 페이지 모음
+│││├── movie/ # UC-18~20
+││││├── form.html # UC-18~19 영화 등록·수정
+││││└── manage.html # UC-20 영화 삭제·상영 중지
+│││├── theater/ # UC-21
+││││├── edit.html # UC-21 상영관 정보 수정
+││││└── refund.html # UC-17 환불 처리
+│││└── seat/ # 시트정보에 대한 처리
+││││└── edit.html # 시트 정보 수정
+│││├── policy/ #정책에 대한 수정
+││││├── list.html # 정책 리스트?
+││││├── form.html # 정책 등록
+││││└── manage.html # 정책 수정
+││└── refund.html # UC-17 환불 처리
+│└── error/
+││├── 404.html
+││└── 500.html
+│
+├── static/
+│ ├── css/
+│ │ ├── base.css # CSS 변수·리셋·타이포그래피
+│ │ ├── components.css # 공용 컴포넌트 (버튼·카드·모달)
+│ │ ├── movie.css # 영화 목록·상세
+│ │ ├── seat.css # 좌석 맵 스타일
+│ │ ├── payment.css # 결제 단계별 UI
+│ │ ├── admin.css # 관리자 전용 테마
+│ │ └── fonts.css # @font-face 선언
+│ │
+│ ├── fonts/
+│ │ ├── Pretendard-Regular.woff2
+│ │ ├── Pretendard-Regular.woff
+│ │ ├── Pretendard-Medium.woff2
+│ │ ├── Pretendard-Medium.woff
+│ │ ├── Pretendard-SemiBold.woff2
+│ │ ├── Pretendard-SemiBold.woff
+│ │ ├── Pretendard-Bold.woff2
+│ │ ├── Pretendard-Bold.woff
+│ │ ├── Pretendard-ExtraBold.woff2
+│ │ └── Pretendard-ExtraBold.woff
+│ │
+│ ├── js/
+│ │ ├── common.js # 공용 유틸 (fetch wrapper·에러핸들러)
+│ │ ├── movie/
+│ │ │ ├── list.js # 필터·검색·탭 동작
+│ │ │ └── detail.js # 매진 여부·예매 버튼 처리
+│ │ ├── booking/
+│ │ │ ├── schedule.js # 날짜·시간·인원 선택 흐름
+│ │ │ ├── seat.js # WebSocket 좌석 실시간 동기화
+│ │ │ ├── payment.js # 타이머·할인·포인트 로직
+│ │ │ └── confirm.js # 예매 완료 처리
+│ │ ├── mypage/
+│ │ │ └── lookup.js # 번호 입력·조회 분기 로직
+│ │ └── admin/
+│ │ ├── stats.js # 차트 공통 초기화 (Chart.js)
+│ │ ├── movie-form.js # 포스터 업로드·시간 중복 검증
+│ │ ├── refund.js # 환불 조회·10분 경과 처리
+│ │ └── theater.js # 좌석 구성 편집기
+│ │
+│ └── images/
+│ ├── logo.svg
+│ └── placeholder-poster.png # 포스터 없을 때 기본 이미지
+│
+└── application.yml # DB·WebSocket·세션 설정",,,
+119,,,,
+120,,,,
+121,,,,
+122,,,,
+123,,,,
+124,,,,
+125,,,,
+126,,movie controller,,
+127,,,,
+128,,,,
+129,,,,
+130,,,,
+131,,,,
+132,,예매에 대한 부분 쪼갬. 역할 확실히 분담 및 controller와 일치 시키기,,
+133,,,,
+134,,,,
+135,,해당 페이지가 필요한 이유가... 뭘까요? 현장 발권하고 끝이면 필요 없으거 같아요,,
+136,,,,
+137,,,,
+138,,,,
+139,,,,
+140,,controller와 트리구조 일치화시킴,,
+141,,,,
+142,,,,
+143,,,,
+144,,,,
+145,,,,
+146,,,,
+147,,,,
+148,,,,
+149,,,,
+150,,,,
+151,,,,
+152,,,,
+153,,,,
+154,,,,
+155,,,,
+156,,,,
+157,,,,
+158,,,,
+159,,,,
+160,,,,
+161,,,,
+162,,,,
+163,,,,
+164,,,,
+165,,,,
+166,,,,
+167,,,,
+168,,,,
+169,,,,
+170,,,,
+171,,,,
+172,,,,
+173,,,,
+174,,,,
+175,,,,
+176,,,,
+177,,,,
+178,,,,
+179,,,,
+180,,,,
+181,,,,
+182,,,,
+183,,,,
+184,,,,
+185,,,,
+186,,,,
+187,,,,
+188,,,,
+189,,,,
+190,,,,
+191,,,,
+192,,,,
+193,,,,
+194,,,,
+195,,,,
+196,,,,
+197,,,,
+198,,,,
+199,,,,
+200,,,,
+201,,,,
+202,,,,
+203,,,,
+204,,,,
+205,,,,
+206,,,,
+207,,,,
+208,,,,
+209,,,,
+210,,,,
+211,,,,
+212,,,,
+213,,,,
+214,,,,
+215,,,,
+216,,,,
+217,,,,
+218,,,,
+219,,,,
+220,,,,
+221,,,,
+222,,,,
+223,,,,
+224,,,,
+225,,,,
+226,,,,
+227,,,,
+228,,,,
+229,,,,
+230,,,,
+231,,,,
+232,,,,
+233,,,,
+234,,,,
+235,,,,
+236,,,,
+237,,,,
+238,,,,
+239,,,,
+240,,,,
+241,,,,
+242,,,,
+243,,,,
+244,,,,
+245,,,,
+246,,,,
+247,,,,
+248,,,,
+249,,,,
+250,,,,
+251,,,,
+252,,,,
+253,,,,
+254,,,,
+255,,,,
+256,,,,
+257,,,,
+258,,,,
+259,,,,
+260,,,,
+261,,,,
+262,,,,
+263,,,,
+264,,,,
+265,,,,
+266,,,,
+267,,,,
+268,,,,
+269,,,,
+270,,,,
+271,,,,
+272,,,,
+273,,,,
+274,,,,
+275,,,,
+276,,,,
+277,,,,
+278,,,,
+279,,,,
+280,,,,
+281,,,,
+282,,,,
+283,,,,
+284,,,,
+285,,,,
+286,,,,
+287,,,,
+288,,,,
+289,,,,
+290,,,,
+291,,,,
+292,,,,
+293,,,,
+294,,,,
+295,,,,
+296,,,,
+297,,,,
+298,,,,
+299,,,,
+300,,,,

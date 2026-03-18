@@ -87,6 +87,112 @@ const RATING_LABEL = {
 };
 
 
+/* ════════════════════════════════════════════════════════════════════
+   ⚠ 더미 데이터 — 백엔드 API 연동 완료 후 이 블록 전체 삭제
+   ──────────────────────────────────────────────────────────────────
+   /api/movies 호출 실패 시 (백엔드 미구동) fallback으로 사용.
+   status: 'NOW' = 현재 상영 중, 'UPCOMING' = 상영 예정 탭 구분용.
+   실제 API 응답에는 status 필드가 없을 수 있음 — 백엔드 확인 필요.
+   ════════════════════════════════════════════════════════════════════ */
+const DUMMY_MOVIES = [
+  // ── 현재 상영 중 ────────────────────────────────────────────────
+  {
+    movieId:  1,
+    title:    '범죄도시 5',
+    genre:    '액션',
+    rating:   '15',
+    runtime:  109,
+    posterUrl: '/images/placeholder-poster.jpg',
+    soldOut:  false,
+    status:   'NOW',
+  },
+  {
+    movieId:  2,
+    title:    '하얼빈',
+    genre:    '드라마',
+    rating:   '12',
+    runtime:  114,
+    posterUrl: '/images/placeholder-poster.jpg',
+    soldOut:  false,
+    status:   'NOW',
+  },
+  {
+    movieId:  3,
+    title:    '소방관',
+    genre:    '드라마',
+    rating:   '12',
+    runtime:  121,
+    posterUrl: '/images/placeholder-poster.jpg',
+    soldOut:  false,
+    status:   'NOW',
+  },
+  {
+    movieId:  4,
+    title:    '미키 17',
+    genre:    'SF',
+    rating:   '15',
+    runtime:  137,
+    posterUrl: '/images/placeholder-poster.jpg',
+    soldOut:  true,
+    status:   'NOW',
+  },
+  {
+    movieId:  5,
+    title:    '캡틴 아메리카: 브레이브 뉴 월드',
+    genre:    '액션',
+    rating:   '12',
+    runtime:  118,
+    posterUrl: '/images/placeholder-poster.jpg',
+    soldOut:  false,
+    status:   'NOW',
+  },
+  {
+    movieId:  6,
+    title:    '스노우화이트',
+    genre:    '판타지',
+    rating:   'ALL',
+    runtime:  109,
+    posterUrl: '/images/placeholder-poster.jpg',
+    soldOut:  false,
+    status:   'NOW',
+  },
+  // ── 상영 예정 ───────────────────────────────────────────────────
+  {
+    movieId:  7,
+    title:    '어벤져스: 둠스데이',
+    genre:    '액션',
+    rating:   '12',
+    runtime:  150,
+    posterUrl: '/images/placeholder-poster.jpg',
+    soldOut:  false,
+    status:   'UPCOMING',
+  },
+  {
+    movieId:  8,
+    title:    '미션 임파서블 8',
+    genre:    '액션',
+    rating:   '15',
+    runtime:  163,
+    posterUrl: '/images/placeholder-poster.jpg',
+    soldOut:  false,
+    status:   'UPCOMING',
+  },
+  {
+    movieId:  9,
+    title:    '세실리아',
+    genre:    '공포',
+    rating:   '19',
+    runtime:  102,
+    posterUrl: '/images/placeholder-poster.jpg',
+    soldOut:  false,
+    status:   'UPCOMING',
+  },
+];
+/* ════════════════════════════════════════════════════════════════════
+   더미 데이터 끝
+   ════════════════════════════════════════════════════════════════════ */
+
+
 /* ────────────────────────────────────────────────────────────────────────
    2. 상태 (State) — 현재 선택된 필터/탭/검색어를 하나의 객체로 관리.
    변경 시 반드시 setState() 를 통해 갱신하고 fetchMovies() 를 재호출.
@@ -395,13 +501,34 @@ async function loadMovies() {
     }
 
   } catch (err) {
-    // 에러 안내: CineOS.alert 토스트 표시 후 빈 결과 상태로 전환
-    console.error('[UC-01] 영화 목록 조회 실패:', err);
-    CineOS.alert.show(
-      err?.message || '영화 목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',
-      'error'
-    );
-    showEmpty('영화 목록을 불러오지 못했습니다.');
+    /* ════════════════════════════════════════════════════════════════════
+       ⚠ 더미 데이터 fallback — 백엔드 API 연동 완료 후 catch 블록 전체를
+         아래 한 줄로 교체할 것:
+           CineOS.alert.show('영화 목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.', 'error');
+           showEmpty('영화 목록을 불러오지 못했습니다.');
+       ════════════════════════════════════════════════════════════════════ */
+
+    // API 실패 로그 (개발 중 확인용 — 사용자에게는 에러 토스트 미표시)
+    console.warn('[UC-01] /api/movies 호출 실패 → 더미 데이터 fallback 사용:', err);
+
+    // 현재 탭에 맞는 더미 데이터만 필터링
+    // NOW 탭 = status:'NOW', UPCOMING 탭 = status:'UPCOMING'
+    const statusKey = state.tab === 'now' ? 'NOW' : 'UPCOMING';
+    const fallback  = DUMMY_MOVIES.filter(m => m.status === statusKey);
+
+    if (fallback.length === 0) {
+      // 해당 탭에 더미 데이터도 없으면 빈 결과 표시
+      const emptyMsg = state.tab === 'now'
+        ? '현재 상영 중인 영화가 없습니다.'
+        : '상영 예정 영화가 없습니다.';
+      showEmpty(emptyMsg);
+    } else {
+      renderCards(fallback);
+      showGrid();
+    }
+    /* ════════════════════════════════════════════════════════════════════
+       더미 데이터 fallback 끝
+       ════════════════════════════════════════════════════════════════════ */
   }
 }
 

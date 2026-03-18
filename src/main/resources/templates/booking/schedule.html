@@ -7,17 +7,21 @@
   ▶ 기능 요약
     - 예매 흐름: 날짜 선택 → 시간대 선택 → 인원(성인/청소년) 입력
     - 날짜/시간 선택 후 다음 단계(좌석 선택)로 이동
-    - 영화 시작 5분 후 초과 시 UC-02 상세 페이지로 복귀
+    - 이미 지난 상영 시간은 자동 비활성화
 
   ▶ Controller → View 전달 Model 속성
-    - movie     : MovieDTO         예매 대상 영화 정보
-                  └ movieId, title, rating, runtime, posterUrl
-    - schedules : List<ScheduleDTO> 해당 영화의 상영 스케줄 목록
-                  └ id, no(상영관번호), movieId, startTime, endTime
+    - movie       : MovieDTO          예매 대상 영화 정보
+                    └ movieId, title, rating, runtime
+    - schedules   : List<ScheduleDTO> 해당 영화의 상영 스케줄 목록
+                    └ id, no(상영관번호), movieId, startTime, endTime
+    - posterUrl   : String            포스터 이미지 경로
+    - theaterCost : Integer           기본 좌석 요금 (SeatPolicy 기준)
+                    TODO: 백엔드 TheaterDTO 또는 SeatPolicyDTO에서 주입
 
   ▶ 연결 UC
     ← UC-02: '예매하기' 버튼 클릭 시 진입 (?movieId={id})
     → UC-03 seat: 날짜·시간·인원 확정 후 /booking/seat 으로 이동
+      (scheduleId, adultCount, teenCount 를 쿼리 파라미터로 전달)
 
   ▶ 파일 위치
     templates/booking/schedule.html
@@ -31,33 +35,251 @@
 </head>
 
 <body>
-<main>
+<main class="schedule-main">
 
   <!-- ══════════════════════════════════════════════════════════════════
-       TODO: UC-03 날짜·시간·인원 선택 콘텐츠 구현
-       ─────────────────────────────────────────────────────────────────
-       구현 항목:
-         [ ] 영화 정보 요약 헤더 (제목, 등급, 런타임)
-         [ ] 날짜 선택 버튼 그룹
-               schedules 에서 날짜만 추출하여 중복 제거 후 표시
-               th:each="schedule : ${schedules}"
-         [ ] 시간대 선택 버튼 그룹
-               선택된 날짜에 해당하는 schedule 목록 표시
-               schedule.startTime ~ schedule.endTime
-         [ ] 인원 선택 (성인 / 청소년, 스피너 UI)
-               최소 1명 이상 선택 필수
-         [ ] '다음' 버튼 → /booking/seat 으로 이동
-               (선택된 scheduleId, 인원 수를 세션 또는 쿼리스트링으로 전달)
-         [ ] 영화 시작 5분 후 경과 시 경고 후 /movie/{id} 로 redirect
-               (서버 or JS 타이머로 처리)
+       예매 단계 표시기 (Steps)
+       components.css의 .steps 컴포넌트 사용
+       현재 단계: 1단계 (날짜·시간 선택)
   ══════════════════════════════════════════════════════════════════ -->
-  <div class="booking-placeholder">
-    <p>UC-03 날짜·시간·인원 선택 — 구현 예정</p>
-    <a th:href="@{/movie/list}" class="btn btn--ghost">← 목록으로</a>
+  <ol class="steps" aria-label="예매 단계">
+    <li class="steps__item steps__item--active" aria-current="step">
+      <span class="steps__num">1</span>
+      <span class="steps__label">날짜·시간</span>
+    </li>
+    <li class="steps__item">
+      <span class="steps__num">2</span>
+      <span class="steps__label">좌석</span>
+    </li>
+    <li class="steps__item">
+      <span class="steps__num">3</span>
+      <span class="steps__label">결제</span>
+    </li>
+  </ol>
+
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       영화 정보 요약 헤더
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="schedule-movie-summary" aria-label="선택한 영화 정보">
+    <!-- 포스터 썸네일 -->
+    <img
+      th:src="${posterUrl} ?: @{/images/placeholder-poster.png}"
+      th:alt="${movie.title} + ' 포스터'"
+      src="/images/placeholder-poster.png"
+      alt="포스터"
+      class="schedule-movie-summary__poster"
+      onerror="this.src='/images/placeholder-poster.png'"
+    >
+
+    <div class="schedule-movie-summary__info">
+      <!-- 영화 제목 -->
+      <h1 class="schedule-movie-summary__title" th:text="${movie.title}">영화 제목</h1>
+
+      <!-- 등급 배지 + 런타임 -->
+      <div class="schedule-movie-summary__meta">
+        <span class="badge"
+              th:classappend="
+                ${movie.rating == 'ALL'} ? 'badge--all' :
+                ${movie.rating == '12'}  ? 'badge--12'  :
+                ${movie.rating == '15'}  ? 'badge--15'  :
+                ${movie.rating == '19'}  ? 'badge--18'  : ''"
+              th:text="
+                ${movie.rating == 'ALL'} ? '전체관람가'    :
+                ${movie.rating == '12'}  ? '12세'          :
+                ${movie.rating == '15'}  ? '15세'          :
+                ${movie.rating == '19'}  ? '청소년관람불가' : ${movie.rating}">
+          등급
+        </span>
+        <!-- 런타임: JS에서 "1시간 49분" 형식으로 변환 -->
+        <span class="schedule-movie-summary__runtime"
+              id="schedule-runtime"
+              th:data-runtime="${movie.runtime}"
+              th:text="${movie.runtime} + '분'">-</span>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       날짜 선택 섹션
+       SCHEDULES_DATA에서 날짜만 추출·중복 제거하여 버튼으로 표시.
+       실제 버튼 렌더링은 JS(renderDates())가 담당.
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="schedule-section" aria-labelledby="label-date">
+    <h2 class="schedule-section__title" id="label-date">날짜 선택</h2>
+
+    <!-- 날짜 버튼 그룹: JS에서 동적 생성 -->
+    <div class="date-btn-group"
+         id="date-btn-group"
+         role="group"
+         aria-labelledby="label-date">
+      <!-- renderDates()가 여기에 버튼 삽입 -->
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       시간 선택 섹션
+       날짜 선택 후 활성화. 선택된 날짜의 스케줄 목록을 카드로 표시.
+       처음에는 hidden 상태, 날짜 선택 시 JS가 hidden 해제.
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="schedule-section" aria-labelledby="label-time" id="time-section" hidden>
+    <h2 class="schedule-section__title" id="label-time">시간 선택</h2>
+
+    <!-- 시간 카드 그룹: JS에서 동적 생성 -->
+    <div class="time-card-group"
+         id="time-card-group"
+         role="group"
+         aria-labelledby="label-time">
+      <!-- renderTimeSlots()가 여기에 카드 삽입 -->
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       인원 선택 섹션
+       날짜·시간 선택 후 활성화. 성인/청소년 스피너 UI.
+       처음에는 hidden 상태, 시간 선택 시 JS가 hidden 해제.
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="schedule-section" aria-labelledby="label-people" id="people-section" hidden>
+    <h2 class="schedule-section__title" id="label-people">인원 선택</h2>
+
+    <div class="people-selector">
+
+      <!-- 성인 -->
+      <div class="people-row">
+        <div class="people-row__label-wrap">
+          <span class="people-row__label">성인</span>
+          <!-- 요금 표시: JS에서 THEATER_COST 기반으로 주입 -->
+          <span class="people-row__price" id="adult-price">-</span>
+        </div>
+        <div class="people-spinner" role="group" aria-label="성인 인원 선택">
+
+          <!-- 감소 버튼 (최소 0명, 단 성인+청소년 합계 1명 이상 유지) -->
+          <button type="button"
+                  class="people-spinner__btn people-spinner__btn--minus"
+                  id="adult-minus"
+                  aria-label="성인 1명 감소">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                 fill="currentColor" width="20" height="20" aria-hidden="true">
+              <path d="M19 13H5v-2h14v2z"/>
+            </svg>
+          </button>
+
+          <!-- 현재 인원 수 (초기값 1) -->
+          <span class="people-spinner__count"
+                id="adult-count"
+                aria-live="polite"
+                aria-atomic="true">1</span>
+
+          <!-- 증가 버튼 (성인+청소년 합계 최대 8명) -->
+          <button type="button"
+                  class="people-spinner__btn people-spinner__btn--plus"
+                  id="adult-plus"
+                  aria-label="성인 1명 증가">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                 fill="currentColor" width="20" height="20" aria-hidden="true">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- 청소년 -->
+      <div class="people-row">
+        <div class="people-row__label-wrap">
+          <span class="people-row__label">청소년</span>
+          <span class="people-row__price" id="teen-price">-</span>
+        </div>
+        <div class="people-spinner" role="group" aria-label="청소년 인원 선택">
+
+          <button type="button"
+                  class="people-spinner__btn people-spinner__btn--minus"
+                  id="teen-minus"
+                  aria-label="청소년 1명 감소">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                 fill="currentColor" width="20" height="20" aria-hidden="true">
+              <path d="M19 13H5v-2h14v2z"/>
+            </svg>
+          </button>
+
+          <span class="people-spinner__count"
+                id="teen-count"
+                aria-live="polite"
+                aria-atomic="true">0</span>
+
+          <button type="button"
+                  class="people-spinner__btn people-spinner__btn--plus"
+                  id="teen-plus"
+                  aria-label="청소년 1명 증가">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                 fill="currentColor" width="20" height="20" aria-hidden="true">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 합계 금액 표시 -->
+    <div class="people-total">
+      <span class="people-total__label">합계</span>
+      <span class="people-total__amount" id="total-price">-</span>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       하단 고정 액션 바 — '다음' 버튼
+       날짜·시간이 선택되지 않으면 disabled 유지.
+       JS에서 선택 완료 시 disabled 해제.
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="schedule-action-bar">
+    <button type="button"
+            class="btn btn--primary btn--lg btn--full"
+            id="btn-next"
+            disabled
+            aria-disabled="true">
+      다음 — 좌석 선택
+    </button>
   </div>
 
-  <!-- 페이지 전용 JS (구현 시 static/js/booking/schedule.js 로 분리) -->
-  <script th:src="@{/js/booking/schedule.js}" th:if="${false}"></script>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       Thymeleaf → JS 데이터 브릿지
+       schedules 목록과 영화 정보를 JSON으로 직렬화하여 JS에서 사용.
+       th:inline="javascript" 로 서버 데이터를 안전하게 JS 변수로 전달.
+  ══════════════════════════════════════════════════════════════════ -->
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+
+    /**
+     * 서버에서 전달된 상영 스케줄 전체 목록.
+     * @type {Array<{id:number, no:number, movieId:number, startTime:string, endTime:string}>}
+     * 예시: [{ id: 1, no: 1, movieId: 10, startTime: "2026-03-20T14:00", endTime: "2026-03-20T16:30" }]
+     */
+    const SCHEDULES_DATA = /*[[${schedules}]]*/ [];
+
+    /**
+     * 서버에서 전달된 영화 기본 정보.
+     * @type {{movieId:number, title:string, rating:string, runtime:number}}
+     */
+    const MOVIE_DATA = /*[[${movie}]]*/ {};
+
+    /**
+     * 기본 좌석 요금 (원 단위).
+     * TODO: 백엔드 SeatPolicy.cost 확정 후 실제 값으로 교체.
+     * @type {number}
+     */
+    const THEATER_COST = /*[[${theaterCost != null ? theaterCost : 15000}]]*/ 15000;
+
+    /*]]>*/
+  </script>
+
+  <!-- 페이지 전용 JS -->
+  <script th:src="@{/js/booking/schedule.js}"></script>
 
 </main>
 </body>

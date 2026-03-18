@@ -1,53 +1,45 @@
 <!DOCTYPE html>
 <!--
-  templates/admin/stats/by-movie.html
+  templates/admin/statistics/dashboard.html
   ─────────────────────────────────────────────────────────────────────────
-  UC-16: 통계 확인 (영화별) (관리자용)
+  관리자 대시보드 홈 (관리자용)
+  UC-11 로그인 후 진입하는 메인 화면
 
   ▶ 기능 요약
-    - 기본값: 최신 등록 영화의 통계 표시
-    - 영화 선택 → 해당 영화 게시 기간의 일별 통계 요약 표시
-    - 미래 날짜 선택 불가
+    - 관리자 메뉴 진입점 화면 (통계/환불/영화관리/상영관관리)
+    - 간단한 오늘의 통계 요약 표시 (선택 구현)
 
   ▶ Controller → View 전달 Model 속성
-    - movies     : List<MovieDTO>       영화 목록 (선택 드롭다운용)
-                   └ movieId, title, startAt, endAt
-    - statistics : List<StatisticsDTO>  선택된 영화의 일별 통계
-                   └ id, scheduleId, revenue, customerCount
-    - selectedMovie : MovieDTO          현재 선택된 영화 (기본: 최신 등록)
+    - todayStats : StatisticsDTO  오늘 통계 요약 (선택)
+                   └ revenue, customerCount
 
   ▶ 파일 위치
-    templates/admin/stats/by-movie.html
+    templates/admin/statistics/dashboard.html
   ─────────────────────────────────────────────────────────────────────────
 -->
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
 
 <head>
-  <title>영화별 통계 | CineOS 관리자</title>
+  <title>대시보드 | CineOS 관리자</title>
 </head>
 
 <body>
 <main>
 
   <!-- ══════════════════════════════════════════════════════════════════
-       TODO: UC-16 영화별 통계 콘텐츠 구현
+       TODO: 관리자 대시보드 콘텐츠 구현
        ─────────────────────────────────────────────────────────────────
        구현 항목:
-         [ ] 영화 선택 드롭다운
-               th:each="movie : ${movies}"
-               th:option → th:value="${movie.movieId}", th:text="${movie.title}"
-               선택된 영화: th:selected="${movie.movieId == selectedMovie.movieId}"
-         [ ] Chart.js 차트 (선택 영화의 일별 수익 또는 관람객 수)
-         [ ] 통계 테이블 (날짜 / 수익 / 관람객 수)
-               th:each="stat : ${statistics}"
-         [ ] 날짜 클릭 시 세부 내용 하단 표시
+         [ ] 환영 메시지 + 현재 날짜/시각
+         [ ] 오늘의 요약 카드 (수익, 관람객 수) — 선택 구현
+               th:text="${todayStats?.revenue}"
+               th:text="${todayStats?.customerCount}"
+         [ ] 빠른 메뉴 바로가기 카드 (통계/환불/영화관리/상영관관리)
   ══════════════════════════════════════════════════════════════════ -->
   <div class="admin-placeholder">
-    <p>UC-16 영화별 통계 — 구현 예정</p>
+    <p>관리자 대시보드 — 구현 예정</p>
   </div>
-
-  <script th:src="@{/js/admin/stats.js}" th:if="${false}"></script>
 
 </main>
 </body>
