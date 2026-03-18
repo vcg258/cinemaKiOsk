@@ -80,14 +80,14 @@ CREATE TABLE IF NOT EXISTS `discount_policy` # FK (X)
 
 -- --------------------------------------------------------------------------------------------------------------------
 
-CREATE TABLE IF NOT EXISTS `movie_images`
-(
-    `no`       BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '영화이미지 인덱스',
-    `title_id` BIGINT UNSIGNED NOT NULL COMMENT '영화 제목 아이디',
-    `poster`   MEDIUMBLOB      NOT NULL COMMENT '영화 포스터 (16MB)',
-    CONSTRAINT `fk_movie_title` FOREIGN KEY (`title_id`) REFERENCES movie (`movie_id`)
-        ON DELETE CASCADE ON UPDATE CASCADE
-) COMMENT '영화 이미지';
+# CREATE TABLE IF NOT EXISTS `movie_images`
+# (
+#     `no`       BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '영화이미지 인덱스',
+#     `title_id` BIGINT UNSIGNED NOT NULL COMMENT '영화 제목 아이디',
+#     `poster`   VARCHAR(50)     NOT NULL COMMENT '영화 포스터',
+#     CONSTRAINT `fk_movie_title` FOREIGN KEY (`title_id`) REFERENCES movie (`movie_id`)
+#         ON DELETE CASCADE ON UPDATE CASCADE
+# ) COMMENT '영화 이미지';
 
 CREATE TABLE IF NOT EXISTS `coupon`
 (
