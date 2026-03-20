@@ -36,17 +36,6 @@
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════════════════
-       TODO: 좌석 정책 목록 테이블 구현
-       ─────────────────────────────────────────────────────────────────
-       구현 항목:
-         [ ] 좌석 정책 목록 테이블
-               th:each="policy : ${seatPolicies}"
-               컬럼: 정책 ID / 좌석 이름 / 요금 / 수정
-         [ ] '수정' 버튼 → th:href="@{/admin/management/seat/edit(policyId=${policy.policyId})}"
-         [ ] 좌석 정책이 없을 경우 빈 상태 메시지 표시
-               th:if="${#lists.isEmpty(seatPolicies)}"
-  ══════════════════════════════════════════════════════════════════ -->
   <div class="admin-table-wrap">
     <table class="admin-data-table">
       <thead>
@@ -66,18 +55,25 @@
           </td>
         </tr>
 
-        <!-- TODO: 좌석 정책 목록 행 반복 -->
-        <!--
+        <!-- 좌석 정책 목록 행 반복 -->
         <tr th:each="policy : ${seatPolicies}">
+
+          <!-- 정책 ID -->
           <td th:text="${policy.policyId}">-</td>
+
+          <!-- 좌석 이름 (예: 일반석, 리클라이너, 천연가죽) -->
           <td th:text="${policy.name}">-</td>
-          <td th:text="${#numbers.formatInteger(policy.cost, 1, 'COMMA') + '원'}">-</td>
+
+          <!-- 좌석 요금: 천 단위 구분자 포맷 -->
+          <td th:text="${#numbers.formatInteger(policy.cost, 1, 'COMMA')} + '원'">-</td>
+
+          <!-- 수정 버튼: 좌석 정책 수정 폼으로 이동 -->
           <td class="admin-data-table__actions">
             <a th:href="@{/admin/management/seat/edit(policyId=${policy.policyId})}"
                class="btn btn--sm btn--ghost">수정</a>
           </td>
+
         </tr>
-        -->
 
       </tbody>
     </table>

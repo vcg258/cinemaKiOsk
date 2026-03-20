@@ -6,18 +6,19 @@
 
   ▶ 기능 요약
     - 결제 완료 후 예매 확인증 표시
-    - 자동 포인트 적립 완료 메시지 표시
-    - 포인트 적립 실패 시 안내 문구 표시
+    - 자동 포인트 적립 완료 메시지 표시 (earnedPoints > 0)
+    - 포인트 적립 실패 시 안내 문구 표시 (earnedPoints == 0)
     - 티켓 출력 / 처음으로 돌아가기 버튼
 
   ▶ Controller → View 전달 Model 속성
     - movie        : MovieDTO              영화 정보
+                     └ title, rating
     - schedule     : ScheduleDTO          결제된 상영 스케줄
+                     └ startTime(LocalDateTime), no
     - reservation  : ReservationDetailsDTO 예매 내역
-                     └ id, scheduleId, phone, reservationTime, seatNumber(List)
+                     └ id, phone, reservationTime(LocalDateTime), seatNumber(List<String>)
     - payment      : PaymentDetailsDTO    결제 내역
-                     └ id, reservationId, bonusPolicyId, discountPolicyId,
-                       cost, time, usePoint, status(PAY/RETURN/FAIL)
+                     └ id, cost, time(LocalDateTime), usePoint, status(PAY/RETURN/FAIL)
     - earnedPoints : Long                 이번 결제로 적립된 포인트 (0이면 적립 실패)
 
   ▶ 연결 UC
@@ -36,34 +37,228 @@
 </head>
 
 <body>
-<main>
+<main class="result-main">
 
   <!-- ══════════════════════════════════════════════════════════════════
-       TODO: UC-07 예매 완료 확인증 구현
-       ─────────────────────────────────────────────────────────────────
-       구현 항목:
-         [ ] 예매 번호:  th:text="${reservation.id}"
-         [ ] 영화명:     th:text="${movie.title}"
-         [ ] 상영 일시:  th:text="${schedule.startTime}"
-         [ ] 상영관:     th:text="${schedule.no} + '관'"
-         [ ] 좌석:       th:each="seat : ${reservation.seatNumber}"
-         [ ] 결제 금액:  th:text="${payment.cost}"
-         [ ] 결제 일시:  th:text="${payment.time}"
-         [ ] 포인트 적립 메시지
-               earnedPoints > 0 → "○○ 포인트 적립 완료"
-               earnedPoints = 0 → "포인트 적립 불가 -- 회원 정보를 확인해 주세요"
-               th:if / th:unless 로 분기
-         [ ] 티켓 출력 버튼 (window.print() 또는 출력 전용 뷰 이동)
-         [ ] '처음으로' 버튼 → th:href="@{/}"
+       상단 성공 헤더: 체크마크 아이콘 + 제목 + 예매번호
   ══════════════════════════════════════════════════════════════════ -->
-  <div class="booking-placeholder">
-    <p>UC-07 예매 완료 확인증 — 구현 예정</p>
-    <a th:href="@{/}" class="btn btn--primary">처음으로</a>
+  <div class="result-header">
+
+    <!-- 체크마크 아이콘 (SVG 인라인) -->
+    <div class="result-icon" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+           viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+
+    <!-- 메인 타이틀 -->
+    <h1 class="result-title">예매가 완료되었습니다</h1>
+
+    <!-- 예매 번호 부제목 (reservation.id 가 없을 경우 안전하게 처리) -->
+    <p class="result-subtitle">
+      예매번호:
+      <strong th:text="${reservation != null} ? ${reservation.id} : '-'">-</strong>
+    </p>
+
   </div>
 
-  <!-- 페이지 전용 JS -->
-  <script th:src="@{/js/booking/result.js}" th:if="${false}"></script>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       포인트 적립 배너
+       ─────────────────────────────────────────────────────────────────
+       두 가지 케이스를 Thymeleaf + JS 조합으로 처리:
+
+       [A] 적립 성공 (earnedPoints > 0):
+           - 이 요소는 기본 hidden 상태
+           - result.js의 initPointBanner() 가 data-point 속성을 읽어
+             earnedPoints > 0 이면 hidden 해제하고 포인트 값 표시
+
+       [B] 적립 실패 (earnedPoints == 0 또는 null):
+           - Thymeleaf th:if 로 .point-fail-notice 표시
+           - 전화번호 미등록 / 포인트 정책 미해당 등의 상황
+  ══════════════════════════════════════════════════════════════════ -->
+
+  <!-- [A] 포인트 적립 성공 배너: JS가 hidden 해제 -->
+  <div id="point-earn-banner"
+       class="point-earn-banner"
+       hidden
+       th:attr="data-point=${earnedPoints != null} ? ${earnedPoints} : 0"
+       aria-live="polite">
+    <!-- 별 아이콘 -->
+    <svg class="point-earn-banner__icon"
+         xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+         viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+    </svg>
+    <!-- 적립 메시지: JS가 earned-point-value 에 포인트 값 주입 -->
+    <span><strong id="earned-point-value"></strong> 포인트가 적립되었습니다</span>
+  </div>
+
+  <!-- [B] 포인트 적립 불가 안내: earnedPoints == 0 이면 Thymeleaf가 표시 -->
+  <div th:if="${earnedPoints == null or earnedPoints == 0}"
+       class="point-fail-notice"
+       role="note"
+       aria-label="포인트 적립 불가 안내">
+    <!-- 정보 아이콘 -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+         viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+         aria-hidden="true">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    포인트 적립이 처리되지 않았습니다. 회원 정보를 확인해 주세요.
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       예매 확인증 본체 (티켓 카드)
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="result-ticket" role="region" aria-label="예매 확인증">
+
+    <!-- ── 카드 상단: 영화 제목 + 등급 배지 ─────────────────────── -->
+    <div class="result-ticket__header">
+      <h2 class="result-ticket__movie-title"
+          th:text="${movie != null} ? ${movie.title} : '영화 정보 없음'">
+        영화 제목
+      </h2>
+      <!-- 관람 등급 배지 -->
+      <span class="badge badge--sm"
+            th:if="${movie != null}"
+            th:classappend="${movie.rating == 'ALL'} ? 'badge--all' :
+                            (${movie.rating == '12'}  ? 'badge--12'  :
+                            (${movie.rating == '15'}  ? 'badge--15'  : 'badge--18'))"
+            th:text="${movie.rating == 'ALL'} ? '전체관람가' : (${movie.rating} + '세 이상')">
+        등급
+      </span>
+    </div>
+
+    <!-- ── 카드 본체: 정보 행 목록 ────────────────────────────────── -->
+    <div class="result-ticket__body">
+
+      <!-- 상영 일시 (data-iso 속성: result.js가 한국어 날짜로 변환) -->
+      <div class="result-row">
+        <span class="result-row__label">상영 일시</span>
+        <span class="result-row__value"
+              th:if="${schedule != null}"
+              th:attr="data-iso=${schedule.startTime}"
+              th:text="${#temporals.format(schedule.startTime, 'yyyy.MM.dd HH:mm')}">
+          일시
+        </span>
+        <span class="result-row__value" th:unless="${schedule != null}">-</span>
+      </div>
+
+      <!-- 상영관 -->
+      <div class="result-row">
+        <span class="result-row__label">상영관</span>
+        <span class="result-row__value"
+              th:text="${schedule != null} ? (${schedule.no} + '관') : '-'">
+          상영관
+        </span>
+      </div>
+
+      <!-- 좌석 (복수 좌석을 태그 형태로 나열) -->
+      <div class="result-row">
+        <span class="result-row__label">좌석</span>
+        <div class="result-seat-list"
+             th:if="${reservation != null and !#lists.isEmpty(reservation.seatNumber)}">
+          <!-- 좌석 번호 반복 출력 (예: A3, B5 등) -->
+          <span class="result-seat-tag"
+                th:each="seat : ${reservation.seatNumber}"
+                th:text="${seat}">
+            좌석
+          </span>
+        </div>
+        <span class="result-row__value"
+              th:unless="${reservation != null and !#lists.isEmpty(reservation.seatNumber)}">
+          -
+        </span>
+      </div>
+
+      <!-- 결제 일시 (data-iso 속성: result.js가 한국어 날짜로 변환) -->
+      <div class="result-row">
+        <span class="result-row__label">결제 일시</span>
+        <span class="result-row__value"
+              th:if="${payment != null}"
+              th:attr="data-iso=${payment.time}"
+              th:text="${#temporals.format(payment.time, 'yyyy.MM.dd HH:mm')}">
+          결제일시
+        </span>
+        <span class="result-row__value" th:unless="${payment != null}">-</span>
+      </div>
+
+      <!-- 포인트 사용 (usePoint > 0 인 경우만 표시) -->
+      <div class="result-row"
+           th:if="${payment != null and payment.usePoint != null and payment.usePoint > 0}">
+        <span class="result-row__label">포인트 사용</span>
+        <span class="result-row__value"
+              th:text="'-' + ${#numbers.formatInteger(payment.usePoint, 1, 'COMMA')} + 'P'">
+          포인트
+        </span>
+      </div>
+
+      <!-- 결제 금액 (강조 행) -->
+      <div class="result-row result-row--total">
+        <span class="result-row__label">결제 금액</span>
+        <span class="result-row__value"
+              th:text="${payment != null} ? (${#numbers.formatInteger(payment.cost, 1, 'COMMA')} + '원') : '-'">
+          금액
+        </span>
+      </div>
+
+    </div><!-- /.result-ticket__body -->
+  </div><!-- /.result-ticket -->
+
+
+  <!-- ── 페이지 전용 JS ──────────────────────────────────────────── -->
+  <!--
+      result.js 담당 기능:
+        - [data-iso] 요소를 한국어 날짜 형식으로 변환
+        - #point-earn-banner 의 data-point 값을 읽어 배너 표시
+        - #btn-print 클릭 → window.print()
+        - #btn-go-home 클릭 → /movie/list 이동
+  -->
+  <script th:src="@{/js/booking/result.js}"></script>
 
 </main>
+
+
+<!-- ══════════════════════════════════════════════════════════════════
+     하단 고정 버튼 바
+     ─────────────────────────────────────────────────────────────────
+     [티켓 출력] → id="btn-print"  → result.js 가 window.print() 호출
+     [처음으로]  → id="btn-go-home" → result.js 가 /movie/list 이동
+     (레이아웃 fragment 바깥에 배치해 body 끝에 렌더링)
+══════════════════════════════════════════════════════════════════ -->
+<div class="result-action-bar">
+  <!-- 티켓 출력 버튼 -->
+  <button id="btn-print"
+          type="button"
+          class="btn btn--outline btn--lg"
+          aria-label="티켓 출력">
+    <!-- 프린터 아이콘 -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+         viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+         aria-hidden="true" style="margin-right:6px;">
+      <polyline points="6 9 6 2 18 2 18 9"/>
+      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+      <rect x="6" y="14" width="12" height="8"/>
+    </svg>
+    티켓 출력
+  </button>
+
+  <!-- 처음으로 버튼 -->
+  <button id="btn-go-home"
+          type="button"
+          class="btn btn--primary btn--lg"
+          aria-label="처음으로 돌아가기">
+    처음으로
+  </button>
+</div>
+
 </body>
 </html>

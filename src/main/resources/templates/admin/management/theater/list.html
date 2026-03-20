@@ -37,18 +37,6 @@
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════════════════
-       TODO: 상영관 목록 테이블 구현
-       ─────────────────────────────────────────────────────────────────
-       구현 항목:
-         [ ] 상영관 목록 테이블
-               th:each="theater : ${theaters}"
-               컬럼: 상영관 번호 / 좌석 정책명 / 좌석 요금 / 정리 시간(분) / 수정
-         [ ] '수정' 버튼 → th:href="@{/admin/management/theater/edit(no=${theater.no})}"
-         [ ] 상영관이 없을 경우 빈 상태 메시지 표시
-               th:if="${#lists.isEmpty(theaters)}"
-         [ ] 비고: 진행 중 예매가 있을 경우 수정 시 변동 안내 → edit.html에서 처리
-  ══════════════════════════════════════════════════════════════════ -->
   <div class="admin-table-wrap">
     <table class="admin-data-table">
       <thead>
@@ -69,19 +57,31 @@
           </td>
         </tr>
 
-        <!-- TODO: 상영관 목록 행 반복 -->
-        <!--
+        <!-- 상영관 목록 행 반복 -->
         <tr th:each="theater : ${theaters}">
-          <td th:text="${theater.no + '관'}">-</td>
-          <td th:text="${theater.seatPolicy != null ? theater.seatPolicy.name : '-'}">-</td>
-          <td th:text="${theater.seatPolicy != null ? #numbers.formatInteger(theater.seatPolicy.cost, 1, 'COMMA') + '원' : '-'}">-</td>
-          <td th:text="${theater.cleanupTime + '분'}">-</td>
+
+          <!-- 상영관 번호 (예: "1관") -->
+          <td th:text="${theater.no} + '관'">-</td>
+
+          <!-- 좌석 정책명: seatPolicy 없으면 '-' -->
+          <td th:text="${theater.seatPolicy != null} ? ${theater.seatPolicy.name} : '-'">-</td>
+
+          <!-- 좌석 요금: 천 단위 구분자 포맷 -->
+          <td th:text="${theater.seatPolicy != null}
+                       ? (${#numbers.formatInteger(theater.seatPolicy.cost, 1, 'COMMA')} + '원')
+                       : '-'">-</td>
+
+          <!-- 정리 시간(분) -->
+          <td th:text="${theater.cleanupTime} + '분'">-</td>
+
+          <!-- 수정 버튼: UC-21 상영관 수정 폼으로 이동
+               진행 중 예매가 있을 경우 변동 안내는 edit.html에서 처리 -->
           <td class="admin-data-table__actions">
             <a th:href="@{/admin/management/theater/edit(no=${theater.no})}"
                class="btn btn--sm btn--ghost">수정</a>
           </td>
+
         </tr>
-        -->
 
       </tbody>
     </table>

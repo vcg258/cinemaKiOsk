@@ -622,3 +622,219 @@
   max-width: 680px;
   width: 100%;
 }
+
+
+/* ──────────────────────────────────────────────────────────
+   11. 예매 완료 확인증 (.result-*)
+       UC-07: payment/result.html 에서만 사용
+   ────────────────────────────────────────────────────────── */
+
+/* 전체 페이지 컨테이너: 결제 페이지와 동일한 중앙 정렬 구조 */
+.result-main {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 32px 20px 120px; /* 하단 버튼 바 여백 */
+}
+
+/* 상단 성공 아이콘 + 제목 영역 */
+.result-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  padding: 32px 0 24px;
+}
+
+/* 체크마크 아이콘 원형 배경 */
+.result-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: var(--color-brand-tint-100);
+  color: var(--color-brand-400);
+}
+
+/* "예매 완료" 제목 */
+.result-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* 예매번호 부제목 */
+.result-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* 포인트 적립 성공 배너 (JS에서 hidden 해제) */
+.point-earn-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  background-color: var(--color-brand-tint-100);
+  border: 1.5px solid var(--color-brand-400);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.point-earn-banner__icon {
+  color: var(--color-brand-400);
+  flex-shrink: 0;
+}
+
+/* 적립 포인트 숫자 강조 */
+.point-earn-banner strong {
+  color: var(--color-brand-400);
+  font-weight: 700;
+}
+
+/* 포인트 적립 불가 안내 (earnedPoints == 0일 때 Thymeleaf로 표시) */
+.point-fail-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* 확인증 본체 카드 */
+.result-ticket {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* 카드 상단 제목 (영화명 영역) */
+.result-ticket__header {
+  padding: 20px 24px;
+  background-color: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.result-ticket__movie-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 6px;
+}
+
+/* 정보 행 목록 */
+.result-ticket__body {
+  padding: 0 24px;
+}
+
+/* 개별 정보 행 */
+.result-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.95rem;
+}
+
+/* 마지막 행 구분선 제거 */
+.result-row:last-child {
+  border-bottom: none;
+}
+
+/* 레이블 (왼쪽) */
+.result-row__label {
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* 값 (오른쪽) */
+.result-row__value {
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: right;
+  word-break: break-all;
+}
+
+/* 결제 금액 강조 행 */
+.result-row--total .result-row__label {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.result-row--total .result-row__value {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--color-brand-400);
+}
+
+/* 좌석 목록 (여러 좌석 나열) */
+.result-seat-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.result-seat-tag {
+  display: inline-block;
+  padding: 2px 10px;
+  background-color: var(--bg-base);
+  border: 1px solid var(--border-default);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* 하단 버튼 바 */
+.result-action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: 12px 24px 16px;
+  background-color: var(--bg-surface);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* 버튼 최대 너비 */
+.result-action-bar .btn {
+  max-width: 320px;
+  width: 100%;
+}
+
+/* ── @media print: 화면에서만 필요한 요소 숨김 ──────────────── */
+@media print {
+  /* 네비게이션·버튼 바·배너 숨김 */
+  .site-nav,
+  .result-action-bar,
+  .point-earn-banner,
+  .point-fail-notice {
+    display: none !important;
+  }
+
+  /* 티켓 카드 전체 출력 */
+  .result-ticket {
+    border: 1px solid #ccc;
+    box-shadow: none;
+  }
+}

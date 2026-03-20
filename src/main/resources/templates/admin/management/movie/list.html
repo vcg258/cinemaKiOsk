@@ -42,22 +42,6 @@
     </a>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════════════════
-       TODO: 영화 목록 테이블 구현
-       ─────────────────────────────────────────────────────────────────
-       구현 항목:
-         [ ] 영화 목록 테이블
-               th:each="movie : ${movies}"
-               컬럼: 포스터 썸네일 / 제목 / 장르 / 등급(badge) / 상영 기간 / 상태 / 액션
-         [ ] 상태 배지
-               상영 중   → badge--success
-               상영 예정 → badge--info
-               상영 종료 → badge--muted
-         [ ] '수정' 버튼 → th:href="@{/admin/management/movie/form(movieId=${movie.movieId})}"
-         [ ] '상영 관리' 버튼 → th:href="@{/admin/management/movie/manage(movieId=${movie.movieId})}"
-         [ ] 영화가 없을 경우 빈 상태 메시지 표시
-               th:if="${#lists.isEmpty(movies)}"
-  ══════════════════════════════════════════════════════════════════ -->
   <div class="admin-table-wrap">
     <table class="admin-data-table">
       <thead>
@@ -80,43 +64,83 @@
           </td>
         </tr>
 
-        <!-- TODO: 영화 목록 행 반복 -->
         <!--
-        <tr th:each="movie : ${movies}">
+          영화 목록 행 반복.
+
+          th:with 로 상태 값을 미리 계산해 td 안에서 반복 사용.
+            now          : 현재 LocalDateTime
+            movieStatus  : 'ENDED' / 'UPCOMING' / 'NOW'
+              - endAt < now   → 'ENDED'   (상영 종료)
+              - startAt > now → 'UPCOMING'(상영 예정)
+              - 그 외          → 'NOW'    (상영 중)
+        -->
+        <tr th:each="movie : ${movies}"
+            th:with="now=${#temporals.createNow()},
+                     movieStatus=${movie.endAt != null and movie.endAt.isBefore(now)}
+                                 ? 'ENDED'
+                                 : (${movie.startAt != null and movie.startAt.isAfter(now)}
+                                   ? 'UPCOMING'
+                                   : 'NOW')">
+
+          <!-- 포스터 썸네일 -->
           <td>
+            <!--
+              TODO: 백엔드 파일 서빙 엔드포인트 확정 후 th:src URL 수정.
+                    현재는 /api/file/{movieId} 로 임시 설정.
+            -->
             <img th:src="@{/api/file/{id}(id=${movie.movieId})}"
-                 src="/images/placeholder-poster.png"
-                 alt="포스터" style="height:60px; object-fit:cover; border-radius:4px;">
+                 src="/images/placeholder-poster.jpg"
+                 alt="포스터"
+                 style="height:60px; width:42px; object-fit:cover; border-radius:4px;"
+                 onerror="this.src='/images/placeholder-poster.jpg'">
           </td>
+
+          <!-- 영화 제목 -->
           <td th:text="${movie.title}">영화 제목</td>
+
+          <!-- 장르 -->
           <td th:text="${movie.genre}">장르</td>
+
+          <!-- 관람 등급 배지 -->
           <td>
             <span class="badge badge--sm"
-                  th:classappend="
-                    ${movie.rating == 'ALL'} ? 'badge--all' :
-                    ${movie.rating == '12'}  ? 'badge--12'  :
-                    ${movie.rating == '15'}  ? 'badge--15'  :
-                    ${movie.rating == '19'}  ? 'badge--18'  : ''"
-                  th:text="${movie.rating == 'ALL'} ? '전체' : movie.rating + '세'">
+                  th:classappend="${movie.rating == 'ALL'} ? 'badge--all' :
+                                  (${movie.rating == '12'}  ? 'badge--12'  :
+                                  (${movie.rating == '15'}  ? 'badge--15'  : 'badge--18'))"
+                  th:text="${movie.rating == 'ALL'} ? '전체' : (${movie.rating} + '세')">
               등급
             </span>
           </td>
+
+          <!-- 상영 기간 (startAt ~ endAt) -->
           <td>
             <span th:text="${#temporals.format(movie.startAt, 'yyyy.MM.dd')}">-</span>
-            ~
-            <span th:text="${#temporals.format(movie.endAt,   'yyyy.MM.dd')}">-</span>
+            &nbsp;~&nbsp;
+            <span th:text="${#temporals.format(movie.endAt, 'yyyy.MM.dd')}">-</span>
           </td>
+
+          <!-- 상태 배지: movieStatus 기준으로 색상·텍스트 분기 -->
           <td>
-            상태 배지 — JS 또는 th:classappend로 처리
+            <span class="badge badge--sm"
+                  th:classappend="${movieStatus == 'ENDED'}    ? 'badge--muted'   :
+                                  (${movieStatus == 'UPCOMING'} ? 'badge--info'    : 'badge--success')"
+                  th:text="${movieStatus == 'ENDED'}    ? '상영 종료' :
+                            (${movieStatus == 'UPCOMING'} ? '상영 예정'  : '상영 중')">
+              상태
+            </span>
           </td>
+
+          <!-- 관리 버튼 -->
           <td class="admin-data-table__actions">
+            <!-- UC-19: 영화 수정 폼으로 이동 -->
             <a th:href="@{/admin/management/movie/form(movieId=${movie.movieId})}"
                class="btn btn--sm btn--ghost">수정</a>
+            <!-- UC-20: 상영 관리(종료 처리) 페이지로 이동 -->
             <a th:href="@{/admin/management/movie/manage(movieId=${movie.movieId})}"
                class="btn btn--sm btn--outline-danger">상영 관리</a>
           </td>
+
         </tr>
-        -->
 
       </tbody>
     </table>
