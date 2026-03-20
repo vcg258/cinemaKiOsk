@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<!--
+  templates/admin/management/seat/edit.html
+  좌석 정보 수정 (UC 명세 외 팀 합의 페이지)
+  ← theater/edit.html에서 "좌석 편집" 버튼 클릭 시 진입 (?policyId={id})
+  Model: theater(TheaterDTO), seatPolicies(List<SeatPolicyVO>),
+         seats(List<SeatStatusDTO>)
+  SeatPolicyVO: policyId, name, cost, isRecliner(Boolean)
+  SeatStatusDTO: seatId, row, col, policyId
+-->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
+
+<head>
+  <title>좌석 정보 수정 | CineOS 관리자</title>
+</head>
+
+<body>
+<main>
+
+  <!-- 페이지 헤더 (상영관 번호 + 이름 표시) -->
+  <div class="admin-page-header">
+    <h1 class="admin-page-header__title"
+        th:text="${theater?.no + '관 — ' + theater?.name}">
+      상영관 좌석 편집
+    </h1>
+    <a th:href="@{/admin/management/theater/edit}" class="btn btn--ghost">
+      ← 상영관 관리로
+    </a>
+  </div>
+
+  <!-- ─────────────────────────────────────────────
+       좌석 정책 목록 (요금·리클라이너 수정 가능)
+  ───────────────────────────────────────────── -->
+  <div class="admin-form-card">
+    <h2 class="admin-form-card__title">좌석 정책</h2>
+    <div class="admin-table-wrap">
+      <table class="admin-data-table">
+        <thead>
+          <tr>
+            <th>정책명</th>
+            <th>요금 (원)</th>
+            <th>리클라이너 여부</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="policy : ${seatPolicies}">
+            <td th:text="${policy.name}">정책명</td>
+            <td>
+              <input type="number" class="input input--sm"
+                     th:value="${policy.cost}"
+                     th:attr="data-policy-id=${policy.policyId}"
+                     min="0">
+            </td>
+            <td>
+              <!-- 리클라이너 여부 체크박스 -->
+              <input type="checkbox"
+                     th:checked="${policy.isRecliner}"
+                     th:attr="data-policy-id=${policy.policyId}"
+                     class="admin-checkbox">
+            </td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(seatPolicies)}">
+            <td colspan="3" class="admin-data-table__empty">정책 없음</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────
+       좌석 배치 그리드 — 행·열별 정책 드롭다운
+  ───────────────────────────────────────────── -->
+  <div class="admin-form-card">
+    <h2 class="admin-form-card__title">좌석 배치</h2>
+
+    <!-- 스크린 방향 표시 -->
+    <div class="seat-screen" aria-hidden="true">
+      <div class="seat-screen__bar"></div>
+      <p class="seat-screen__label">SCREEN</p>
+    </div>
+
+    <!--
+      좌석 그리드
+      th:each로 행(row)을 묶어 렌더링.
+      각 좌석 셀: 정책 드롭다운으로 유형 변경 가능.
+      백엔드 협의: 행 단위 그룹핑은 서버에서 Map<row, List<SeatStatusDTO>>로 전달하거나
+                   JS에서 재구성 (seats 배열 → 행별 groupBy)
+    -->
+    <div class="seat-map" id="seatGrid">
+      <div th:each="seat : ${seats}"
+           class="seat-edit-cell"
+           th:attr="data-seat-id=${seat.seatId},
+                    data-row=${seat.row},
+                    data-col=${seat.col}">
+        <!-- 좌석 이름 (A1, B2 등) -->
+        <span class="seat-edit-cell__name"
+              th:text="${seat.row + seat.col}">A1</span>
+        <!-- 정책 선택 드롭다운 -->
+        <select class="input input--xs seat-policy-select"
+                th:attr="data-seat-id=${seat.seatId}">
+          <option th:each="policy : ${seatPolicies}"
+                  th:value="${policy.policyId}"
+                  th:text="${policy.name}"
+                  th:selected="${policy.policyId == seat.policyId}">
+            정책명
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 저장 / 취소 버튼 -->
+    <div class="admin-form-actions">
+      <a th:href="@{/admin/management/theater/edit}" class="btn btn--ghost">
+        취소
+      </a>
+      <button type="button" class="btn btn--primary"
+              onclick="submitSeatEdit()">
+        저장
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * 좌석 배치 저장 — PUT /api/admin/theater/{no}/seats
+     * 각 좌석의 seatId + 선택된 policyId를 배열로 수집해 전송
+     */
+    async function submitSeatEdit() {
+      const theaterNo = /*[[${theater?.no}]]*/ null;
+
+      /* 모든 좌석 정책 드롭다운 값 수집 */
+      const seats = Array.from(document.querySelectorAll('.seat-policy-select'))
+        .map(select => ({
+          seatId:   select.getAttribute('data-seat-id'),
+          policyId: select.value
+        }));
+
+      try {
+        await CineOS.api.put('/api/admin/theater/' + theaterNo + '/seats', { seats });
+        CineOS.alert.success('좌석 배치가 저장되었습니다.');
+        setTimeout(() => window.location.href = '/admin/management/theater/edit', 800);
+      } catch (err) {
+        CineOS.alert.error(err.message || '저장에 실패하였습니다.');
+      }
+    }
+  </script>
+
+</main>
+</body>
+</html>

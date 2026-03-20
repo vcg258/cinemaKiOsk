@@ -54,69 +54,18 @@
 <body class="admin-body">
 
   <!-- ══════════════════════════════════════════════
-       ADMIN HEADER — 로고 + 관리자 전용 네비게이션
+       ADMIN HEADER — 로고 + 로그아웃만 (네비는 사이드바로 이동)
   ══════════════════════════════════════════════ -->
   <header class="admin-header">
     <div class="admin-header__inner">
 
       <!-- 로고 + 관리자 배지 -->
-      <a th:href="@{/admin/dashboard}" class="admin-header__logo-link">
+      <a th:href="@{/admin/statistics/dashboard}" class="admin-header__logo-link">
         <img th:src="@{/images/logo_cineos.svg}"
              src="/images/logo_cineos.svg"
              alt="CineOS 로고" class="admin-header__logo">
         <span class="admin-badge">관리자</span>
       </a>
-
-      <!-- 관리자 네비게이션 메뉴 -->
-      <nav class="admin-nav" aria-label="관리자 메뉴">
-        <ul class="admin-nav__list">
-
-          <!-- UC-12~16: 통계 확인 -->
-          <li class="admin-nav__item admin-nav__item--dropdown">
-            <button class="admin-nav__btn" aria-expanded="false" aria-haspopup="true">
-              통계
-              <!-- 드롭다운 화살표 아이콘 -->
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                   fill="currentColor" width="16" height="16" aria-hidden="true">
-                <path d="M7 10l5 5 5-5z"/>
-              </svg>
-            </button>
-            <ul class="admin-nav__dropdown" role="menu">
-              <li role="menuitem">
-                <a th:href="@{/admin/stats/daily}">일일 통계</a> <!-- UC-12 -->
-              </li>
-              <li role="menuitem">
-                <a th:href="@{/admin/stats/monthly}">월별 통계</a> <!-- UC-13 -->
-              </li>
-              <li role="menuitem">
-                <a th:href="@{/admin/stats/by-day}">요일별 통계</a> <!-- UC-14 -->
-              </li>
-              <li role="menuitem">
-                <a th:href="@{/admin/stats/by-hour}">시간대별 통계</a> <!-- UC-15 -->
-              </li>
-              <li role="menuitem">
-                <a th:href="@{/admin/stats/by-movie}">영화별 통계</a> <!-- UC-16 -->
-              </li>
-            </ul>
-          </li>
-
-          <!-- UC-17: 환불 처리 -->
-          <li class="admin-nav__item">
-            <a th:href="@{/admin/refund}" class="admin-nav__link">환불 처리</a>
-          </li>
-
-          <!-- UC-18~20: 영화 관리 -->
-          <li class="admin-nav__item">
-            <a th:href="@{/admin/movie/manage}" class="admin-nav__link">영화 관리</a>
-          </li>
-
-          <!-- UC-21: 상영관 관리 -->
-          <li class="admin-nav__item">
-            <a th:href="@{/admin/theater/edit}" class="admin-nav__link">상영관 관리</a>
-          </li>
-
-        </ul>
-      </nav>
 
       <!-- 로그아웃 버튼 -->
       <form th:action="@{/admin/logout}" method="post" class="admin-logout-form">
@@ -129,18 +78,84 @@
   </header>
 
   <!-- ══════════════════════════════════════════════
-       ADMIN LAYOUT BODY — 사이드바 + 메인 콘텐츠
+       ADMIN LAYOUT BODY — 사이드바(네비) + 메인 콘텐츠
   ══════════════════════════════════════════════ -->
   <div class="admin-layout">
 
-    <!-- 사이드바: 현재 섹션 내 세부 메뉴 (페이지별로 활성 항목 다름) -->
-    <aside class="admin-sidebar" aria-label="서브 메뉴">
-      <!--
-        각 관리자 페이지에서 sidebar fragment를 별도 정의하여
-        th:replace 로 이 자리를 교체하거나,
-        JS로 현재 URL 기반 활성 메뉴 표시 처리.
-        TODO: 필요 시 페이지별 사이드바 fragment 추가
-      -->
+    <!-- ── 좌측 사이드바 네비게이션 ─────────────── -->
+    <aside class="admin-sidebar" aria-label="관리자 메뉴">
+      <nav>
+        <ul class="admin-sidebar-menu">
+
+          <!-- 대시보드 -->
+          <li class="admin-sidebar-menu__item">
+            <a th:href="@{/admin/statistics/dashboard}" data-nav="dashboard">
+              대시보드
+            </a>
+          </li>
+
+          <!-- ── 통계 섹션 (UC-12~16) ── -->
+          <li class="admin-sidebar-menu__section">통계</li>
+
+          <li class="admin-sidebar-menu__item">
+            <a th:href="@{/admin/statistics/stats/daily}" data-nav="stats-daily">
+              일일 통계
+            </a>
+          </li>
+          <li class="admin-sidebar-menu__item">
+            <a th:href="@{/admin/statistics/stats/monthly}" data-nav="stats-monthly">
+              월별 통계
+            </a>
+          </li>
+          <li class="admin-sidebar-menu__item">
+            <a th:href="@{/admin/statistics/stats/by-day}" data-nav="stats-by-day">
+              요일별 통계
+            </a>
+          </li>
+          <li class="admin-sidebar-menu__item">
+            <a th:href="@{/admin/statistics/stats/by-hour}" data-nav="stats-by-hour">
+              시간대별 통계
+            </a>
+          </li>
+          <li class="admin-sidebar-menu__item">
+            <a th:href="@{/admin/statistics/stats/by-movie}" data-nav="stats-by-movie">
+              영화별 통계
+            </a>
+          </li>
+
+          <!-- ── 운영 섹션 ── -->
+          <li class="admin-sidebar-menu__section">운영</li>
+
+          <!-- UC-17: 환불 처리 -->
+          <li class="admin-sidebar-menu__item">
+            <a th:href="@{/admin/refund}" data-nav="refund">
+              환불 처리
+            </a>
+          </li>
+
+          <!-- UC-18~20: 영화 관리 -->
+          <li class="admin-sidebar-menu__item">
+            <a th:href="@{/admin/management/movie/manage}" data-nav="movie">
+              영화 관리
+            </a>
+          </li>
+
+          <!-- UC-21: 상영관 관리 -->
+          <li class="admin-sidebar-menu__item">
+            <a th:href="@{/admin/management/theater/edit}" data-nav="theater">
+              상영관 관리
+            </a>
+          </li>
+
+          <!-- 정책 관리 -->
+          <li class="admin-sidebar-menu__item">
+            <a th:href="@{/admin/management/policy/list}" data-nav="policy">
+              정책 관리
+            </a>
+          </li>
+
+        </ul>
+      </nav>
     </aside>
 
     <!-- 메인 콘텐츠 영역 -->
@@ -159,46 +174,34 @@
   <!-- ── 공통 JS ──────────────────────────── -->
   <script th:src="@{/js/common.js}"></script>
 
-  <!-- 관리자 드롭다운 메뉴 토글 스크립트 -->
+  <!-- 사이드바 현재 URL 기반 활성 메뉴 표시 -->
   <script>
     (function () {
       /**
-       * 관리자 헤더의 드롭다운 메뉴(통계 등) 열기/닫기 처리.
-       * 버튼 클릭 시 aria-expanded 토글 + dropdown 표시/숨김.
+       * 현재 pathname을 읽어서 매칭되는 사이드바 링크에 is-active 클래스 부여.
+       * data-nav 속성 값으로 간단히 매핑.
        */
-      const dropdownBtns = document.querySelectorAll('.admin-nav__btn[aria-haspopup]');
+      const path = window.location.pathname;
 
-      dropdownBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+      /* pathname → data-nav 키 매핑 테이블 */
+      const navMap = [
+        { key: 'dashboard',      match: /\/admin\/statistics\/dashboard/ },
+        { key: 'stats-daily',    match: /\/stats\/daily/ },
+        { key: 'stats-monthly',  match: /\/stats\/monthly/ },
+        { key: 'stats-by-day',   match: /\/stats\/by-day/ },
+        { key: 'stats-by-hour',  match: /\/stats\/by-hour/ },
+        { key: 'stats-by-movie', match: /\/stats\/by-movie/ },
+        { key: 'refund',         match: /\/admin\/refund/ },
+        { key: 'movie',          match: /\/management\/movie/ },
+        { key: 'theater',        match: /\/management\/theater|\/management\/seat/ },
+        { key: 'policy',         match: /\/management\/policy/ },
+      ];
 
-          // 다른 열린 드롭다운 모두 닫기
-          dropdownBtns.forEach(b => {
-            b.setAttribute('aria-expanded', 'false');
-            b.closest('.admin-nav__item--dropdown')
-              ?.querySelector('.admin-nav__dropdown')
-              ?.classList.remove('is-open');
-          });
-
-          // 현재 버튼 토글
-          if (!isExpanded) {
-            btn.setAttribute('aria-expanded', 'true');
-            btn.closest('.admin-nav__item--dropdown')
-              ?.querySelector('.admin-nav__dropdown')
-              ?.classList.add('is-open');
-          }
-        });
-      });
-
-      // 바깥 클릭 시 모든 드롭다운 닫기
-      document.addEventListener('click', () => {
-        dropdownBtns.forEach(btn => {
-          btn.setAttribute('aria-expanded', 'false');
-          btn.closest('.admin-nav__item--dropdown')
-            ?.querySelector('.admin-nav__dropdown')
-            ?.classList.remove('is-open');
-        });
+      navMap.forEach(({ key, match }) => {
+        if (match.test(path)) {
+          const link = document.querySelector(`[data-nav="${key}"]`);
+          if (link) link.classList.add('is-active');
+        }
       });
     })();
   </script>

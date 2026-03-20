@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<!--
+  templates/admin/management/movie/list.html
+  ─────────────────────────────────────────────────────────────────────────
+  영화 목록 (관리자용 진입점)
+  UC-18~20 관련 작업의 시작 화면
+
+  ▶ 기능 요약
+    - 등록된 전체 영화 목록 표시 (상영 중 / 상영 예정 / 상영 종료)
+    - '새 영화 등록' 버튼 → UC-18 폼 이동
+    - 각 항목에 '수정' → UC-19 폼 이동 / '상영 관리' → UC-20 이동
+
+  ▶ Controller → View 전달 Model 속성
+    - movies : List<MovieDTO>  전체 영화 목록
+               └ movieId, title, genre, rating, startAt, endAt
+
+  ▶ 파일 위치
+    templates/admin/management/movie/list.html
+  ─────────────────────────────────────────────────────────────────────────
+-->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
+
+<head>
+  <title>영화 목록 | CineOS 관리자</title>
+</head>
+
+<body>
+<main>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       페이지 헤더: 제목 + 새 영화 등록 버튼
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="admin-page-header">
+    <div>
+      <h1 class="admin-page-title">영화 목록</h1>
+      <p class="admin-page-subtitle">등록된 전체 영화를 조회하고 관리합니다.</p>
+    </div>
+    <!-- UC-18: 영화 등록 폼으로 이동 -->
+    <a th:href="@{/admin/management/movie/form}" class="btn btn--primary">
+      + 새 영화 등록
+    </a>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       TODO: 영화 목록 테이블 구현
+       ─────────────────────────────────────────────────────────────────
+       구현 항목:
+         [ ] 영화 목록 테이블
+               th:each="movie : ${movies}"
+               컬럼: 포스터 썸네일 / 제목 / 장르 / 등급(badge) / 상영 기간 / 상태 / 액션
+         [ ] 상태 배지
+               상영 중   → badge--success
+               상영 예정 → badge--info
+               상영 종료 → badge--muted
+         [ ] '수정' 버튼 → th:href="@{/admin/management/movie/form(movieId=${movie.movieId})}"
+         [ ] '상영 관리' 버튼 → th:href="@{/admin/management/movie/manage(movieId=${movie.movieId})}"
+         [ ] 영화가 없을 경우 빈 상태 메시지 표시
+               th:if="${#lists.isEmpty(movies)}"
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="admin-table-wrap">
+    <table class="admin-data-table">
+      <thead>
+        <tr>
+          <th>포스터</th>
+          <th>제목</th>
+          <th>장르</th>
+          <th>등급</th>
+          <th>상영 기간</th>
+          <th>상태</th>
+          <th>관리</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- 데이터 없을 때 안내 행 -->
+        <tr th:if="${movies == null or #lists.isEmpty(movies)}">
+          <td colspan="7" style="text-align:center; padding: 3rem; color: var(--text-muted);">
+            등록된 영화가 없습니다.
+          </td>
+        </tr>
+
+        <!-- TODO: 영화 목록 행 반복 -->
+        <!--
+        <tr th:each="movie : ${movies}">
+          <td>
+            <img th:src="@{/api/file/{id}(id=${movie.movieId})}"
+                 src="/images/placeholder-poster.png"
+                 alt="포스터" style="height:60px; object-fit:cover; border-radius:4px;">
+          </td>
+          <td th:text="${movie.title}">영화 제목</td>
+          <td th:text="${movie.genre}">장르</td>
+          <td>
+            <span class="badge badge--sm"
+                  th:classappend="
+                    ${movie.rating == 'ALL'} ? 'badge--all' :
+                    ${movie.rating == '12'}  ? 'badge--12'  :
+                    ${movie.rating == '15'}  ? 'badge--15'  :
+                    ${movie.rating == '19'}  ? 'badge--18'  : ''"
+                  th:text="${movie.rating == 'ALL'} ? '전체' : movie.rating + '세'">
+              등급
+            </span>
+          </td>
+          <td>
+            <span th:text="${#temporals.format(movie.startAt, 'yyyy.MM.dd')}">-</span>
+            ~
+            <span th:text="${#temporals.format(movie.endAt,   'yyyy.MM.dd')}">-</span>
+          </td>
+          <td>
+            상태 배지 — JS 또는 th:classappend로 처리
+          </td>
+          <td class="admin-data-table__actions">
+            <a th:href="@{/admin/management/movie/form(movieId=${movie.movieId})}"
+               class="btn btn--sm btn--ghost">수정</a>
+            <a th:href="@{/admin/management/movie/manage(movieId=${movie.movieId})}"
+               class="btn btn--sm btn--outline-danger">상영 관리</a>
+          </td>
+        </tr>
+        -->
+
+      </tbody>
+    </table>
+  </div>
+
+</main>
+</body>
+</html>

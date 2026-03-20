@@ -1,24 +1,9 @@
 <!DOCTYPE html>
 <!--
   templates/admin/statistics/stats/daily.html
-  ─────────────────────────────────────────────────────────────────────────
-  UC-12: 통계 확인 (일일) (관리자용)
-
-  ▶ 기능 요약
-    - 기본값: 오늘 ~ 일주일 전 통계 표시
-    - 날짜 범위 선택 → 해당 기간 통계 재조회
-    - 미래 날짜 선택 불가
-    - 선택 날짜 세부 내용 하단 표시
-
-  ▶ Controller → View 전달 Model 속성
-    - statistics : List<StatisticsDTO>  일별 통계 목록
-                   └ id, scheduleId, day, revenue, customerCount
-    - startDate  : String               조회 시작일 (yyyy-MM-dd)
-    - endDate    : String               조회 종료일 (yyyy-MM-dd)
-
-  ▶ 파일 위치
-    templates/admin/statistics/stats/daily.html
-  ─────────────────────────────────────────────────────────────────────────
+  UC-12: 통계 확인 (일일)
+  Model: statistics(List<StatisticsDTO>), startDate(String), endDate(String)
+  StatisticsDTO: id, scheduleId, day, revenue, customerCount
 -->
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
@@ -30,25 +15,79 @@
 <body>
 <main>
 
-  <!-- ══════════════════════════════════════════════════════════════════
-       TODO: UC-12 일일 통계 콘텐츠 구현
-       ─────────────────────────────────────────────────────────────────
-       구현 항목:
-         [ ] 날짜 범위 선택 (시작일 ~ 종료일)
-               max 속성으로 오늘 이후 선택 불가 처리
-         [ ] Chart.js 라인/바 차트 (일별 수익 또는 관람객 수)
-               admin-base.html 에 Chart.js CDN 포함되어 있음
-         [ ] 통계 테이블 (날짜 / 수익 / 관람객 수)
-               th:each="stat : ${statistics}"
-         [ ] 날짜 클릭 시 해당 일자 세부 내용 하단에 표시
-         [ ] 데이터 없는 날짜 → 0으로 처리
-  ══════════════════════════════════════════════════════════════════ -->
-  <div class="admin-placeholder">
-    <p>UC-12 일일 통계 — 구현 예정</p>
+  <!-- 페이지 헤더 -->
+  <div class="admin-page-header">
+    <h1 class="admin-page-header__title">일일 통계</h1>
+    <p class="admin-page-header__subtitle">일별 매출 및 관람객 현황</p>
+  </div>
+
+  <!-- STAT_TYPE: stats.js에서 차트 타입 분기에 사용 -->
+  <script th:inline="javascript">
+    const STAT_TYPE = 'daily';
+    /* 서버에서 내려온 통계 데이터 — JS로 차트 렌더링 시 사용 */
+    const STAT_DATA = /*[[${statistics}]]*/ [];
+  </script>
+
+  <!-- 날짜 범위 필터 -->
+  <div class="admin-date-filter">
+    <div class="admin-date-filter__group">
+      <label for="startDate" class="admin-date-filter__label">시작일</label>
+      <input type="date" id="startDate" class="admin-date-filter__input input"
+             th:value="${startDate}">
+    </div>
+    <span class="admin-date-filter__sep">~</span>
+    <div class="admin-date-filter__group">
+      <label for="endDate" class="admin-date-filter__label">종료일</label>
+      <input type="date" id="endDate" class="admin-date-filter__input input"
+             th:value="${endDate}">
+    </div>
+    <button type="button" class="btn btn--primary admin-date-filter__btn"
+            onclick="fetchAndRenderStats(
+              document.getElementById('startDate').value,
+              document.getElementById('endDate').value
+            )">
+      조회
+    </button>
+  </div>
+
+  <!-- 차트 영역 -->
+  <div class="admin-chart-card">
+    <div class="admin-chart-card__header">
+      <h2 class="admin-chart-card__title">일별 추이</h2>
+    </div>
+    <div class="admin-chart-wrap">
+      <!-- Chart.js 캔버스 — stats.js에서 renderChart()로 그림 -->
+      <canvas id="statsChart" aria-label="일일 통계 차트" role="img"></canvas>
+    </div>
+  </div>
+
+  <!-- 통계 테이블 -->
+  <div class="admin-table-wrap">
+    <table class="admin-data-table" id="statsTable">
+      <thead>
+        <tr>
+          <th>날짜</th>
+          <th>수익 (원)</th>
+          <th>관람객 (명)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- SSR: 초기 데이터 렌더링 -->
+        <tr th:each="stat : ${statistics}">
+          <td th:text="${stat.scheduleId}">-</td>
+          <td th:text="${#numbers.formatInteger(stat.revenue, 0, 'COMMA')}">0</td>
+          <td th:text="${stat.customerCount}">0</td>
+        </tr>
+        <!-- 데이터 없을 때 안내 행 -->
+        <tr th:if="${#lists.isEmpty(statistics)}">
+          <td colspan="3" class="admin-data-table__empty">조회된 데이터가 없습니다.</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <!-- 페이지 전용 JS -->
-  <script th:src="@{/js/admin/stats.js}" th:if="${false}"></script>
+  <script th:src="@{/js/admin/stats.js}"></script>
 
 </main>
 </body>

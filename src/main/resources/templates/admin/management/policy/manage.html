@@ -1,39 +1,11 @@
 <!DOCTYPE html>
 <!--
   templates/admin/management/policy/manage.html
-  ─────────────────────────────────────────────────────────────────────────
-  정책 수정 (관리자용)
-  ※ UC 명세 외 팀 합의로 추가된 페이지
-  ※ 적립 정책(BonusPolicy) / 할인 정책(DiscountPolicy) 수정
-
-  ▶ 기능 요약
-    - 기존 정책 정보 불러와서 수정
-    - 정책 유형(type)에 따라 입력 필드 다르게 표시
-
-  ▶ URL 파라미터
-    - type : String   "bonus" | "discount"
-    - id   : Long     수정할 정책 ID
-
-  ▶ Controller → View 전달 Model 속성
-    - policyType       : String              "bonus" 또는 "discount"
-    - bonusPolicy      : BonusPolicyDTO      type=bonus 일 때 주입
-                         └ id, policyName, giveValue
-    - discountPolicy   : DiscountPolicyDTO   type=discount 일 때 주입
-                         └ id, policyName, discountType, discountValue, conditionType
-
-  ▶ API 연동
-    - 적립 정책 수정: PUT /api/admin/policy/bonus/{id}
-                      Body: BonusPolicyDTO
-    - 할인 정책 수정: PUT /api/admin/policy/discount/{id}
-                      Body: DiscountPolicyDTO
-
-  ▶ 연결 페이지
-    ← admin/management/policy/list.html (목록에서 진입)
-    → admin/management/policy/list.html (수정 완료 후 복귀)
-
-  ▶ 파일 위치
-    templates/admin/management/policy/manage.html
-  ─────────────────────────────────────────────────────────────────────────
+  정책 수정 (UC 명세 외 팀 합의)
+  URL 파라미터: ?type=bonus|discount &id={id}
+  Model: policyType(String), bonusPolicy(BonusPolicyDTO), discountPolicy(DiscountPolicyDTO)
+  BonusPolicyDTO: id, policyName, giveValue
+  DiscountPolicyDTO: id, policyName, discountType, discountValue, conditionType
 -->
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
@@ -45,36 +17,139 @@
 <body>
 <main>
 
-  <!-- ══════════════════════════════════════════════════════════════════
-       TODO: 정책 수정 구현
-       ─────────────────────────────────────────────────────────────────
-       구현 항목:
-         [ ] 정책 유형 표시 (수정 불가 읽기 전용)
-               th:text="${policyType == 'bonus'} ? '적립 정책' : '할인 정책'"
-
-         [ ] 적립 정책 수정 필드 (policyType == 'bonus' 일 때 표시)
-               th:if="${policyType == 'bonus'}"
-               - 정책명: th:value="${bonusPolicy.policyName}"
-               - 적립 비율: th:value="${bonusPolicy.giveValue}"
-
-         [ ] 할인 정책 수정 필드 (policyType == 'discount' 일 때 표시)
-               th:if="${policyType == 'discount'}"
-               - 정책명: th:value="${discountPolicy.policyName}"
-               - 할인 유형(discountType): th:value="${discountPolicy.discountType}"
-               - 할인값: th:value="${discountPolicy.discountValue}"
-               - 적용 조건(conditionType): th:value="${discountPolicy.conditionType}"
-
-         [ ] '저장' 버튼 → PUT /api/admin/policy/{type}/{id}
-               성공: /admin/management/policy/list 로 이동
-               실패: 에러 메시지 표시
-
-         [ ] '취소' 버튼 → /admin/management/policy/list
-  ══════════════════════════════════════════════════════════════════ -->
-
-  <div class="admin-placeholder">
-    <p>정책 수정 — 구현 예정</p>
-    <a th:href="@{/admin/management/policy/list}" class="btn btn--ghost">← 목록으로</a>
+  <!-- 페이지 헤더 -->
+  <div class="admin-page-header">
+    <h1 class="admin-page-header__title">정책 수정</h1>
+    <p class="admin-page-header__subtitle"
+       th:text="${policyType == 'bonus'} ? '적립 정책 수정' : '할인 정책 수정'">
+    </p>
   </div>
+
+  <div class="admin-form-card">
+
+    <!-- 정책 유형 표시 (수정 불가 읽기 전용) -->
+    <div class="admin-form-group">
+      <label class="admin-form-label">정책 유형</label>
+      <input type="text" class="input" readonly
+             th:value="${policyType == 'bonus'} ? '적립 정책' : '할인 정책'">
+    </div>
+
+    <!-- 공통: 정책명 -->
+    <div class="admin-form-group">
+      <label for="policyName" class="admin-form-label admin-form-label--required">정책명</label>
+      <input type="text" id="policyName" class="input"
+             th:value="${policyType == 'bonus'} ? ${bonusPolicy?.policyName} : ${discountPolicy?.policyName}"
+             required>
+    </div>
+
+    <!-- ── 적립 정책 수정 필드 ─────────────── -->
+    <div th:if="${policyType == 'bonus'}">
+      <div class="admin-form-group">
+        <label for="giveValue" class="admin-form-label admin-form-label--required">
+          적립 비율 (%)
+        </label>
+        <input type="number" id="giveValue" class="input"
+               th:value="${bonusPolicy?.giveValue}"
+               min="0" max="100" step="0.1">
+      </div>
+      <!-- 히든: 적립 정책 ID -->
+      <input type="hidden" id="policyId" th:value="${bonusPolicy?.id}">
+    </div>
+
+    <!-- ── 할인 정책 수정 필드 ─────────────── -->
+    <div th:if="${policyType == 'discount'}">
+      <div class="admin-form-group">
+        <label for="discountType" class="admin-form-label admin-form-label--required">
+          할인 유형
+        </label>
+        <select id="discountType" class="input">
+          <option value="RATIO" th:selected="${discountPolicy?.discountType == 'RATIO'}">비율 (%)</option>
+          <option value="WON"   th:selected="${discountPolicy?.discountType == 'WON'}">금액 (원)</option>
+        </select>
+      </div>
+      <div class="admin-form-group">
+        <label for="discountValue" class="admin-form-label admin-form-label--required">
+          할인값
+        </label>
+        <input type="number" id="discountValue" class="input"
+               th:value="${discountPolicy?.discountValue}"
+               min="0">
+      </div>
+      <div class="admin-form-group">
+        <label for="conditionType" class="admin-form-label admin-form-label--required">
+          적용 조건
+        </label>
+        <select id="conditionType" class="input">
+          <option value="TIME" th:selected="${discountPolicy?.conditionType == 'TIME'}">시간</option>
+          <option value="AGE"  th:selected="${discountPolicy?.conditionType == 'AGE'}">나이</option>
+          <option value="JOB"  th:selected="${discountPolicy?.conditionType == 'JOB'}">직업</option>
+        </select>
+      </div>
+      <!-- 히든: 할인 정책 ID -->
+      <input type="hidden" id="policyId" th:value="${discountPolicy?.id}">
+    </div>
+
+    <!-- 폼 액션 -->
+    <div class="admin-form-actions">
+      <a th:href="@{/admin/management/policy/list}" class="btn btn--ghost">
+        취소
+      </a>
+      <button type="button" class="btn btn--primary"
+              onclick="submitPolicyUpdate()">
+        저장
+      </button>
+    </div>
+
+  </div>
+
+  <!-- 페이지 전용 인라인 스크립트 -->
+  <script th:inline="javascript">
+    /* 현재 정책 유형 — 저장 시 API 분기에 사용 */
+    const POLICY_TYPE = /*[[${policyType}]]*/ 'bonus';
+
+    /**
+     * 정책 수정 저장 — PUT /api/admin/policy/{type}/{id}
+     */
+    async function submitPolicyUpdate() {
+      const policyId   = document.getElementById('policyId').value;
+      const policyName = document.getElementById('policyName').value.trim();
+
+      if (!policyName) {
+        CineOS.alert.error('정책명을 입력해 주세요.');
+        return;
+      }
+
+      let body;
+
+      if (POLICY_TYPE === 'bonus') {
+        const giveValue = parseFloat(document.getElementById('giveValue').value);
+        if (isNaN(giveValue)) {
+          CineOS.alert.error('적립 비율을 입력해 주세요.');
+          return;
+        }
+        body = { policyName, giveValue };
+
+      } else {
+        const discountType  = document.getElementById('discountType').value;
+        const discountValue = parseFloat(document.getElementById('discountValue').value);
+        const conditionType = document.getElementById('conditionType').value;
+
+        if (isNaN(discountValue)) {
+          CineOS.alert.error('할인값을 입력해 주세요.');
+          return;
+        }
+        body = { policyName, discountType, discountValue, conditionType };
+      }
+
+      try {
+        await CineOS.api.put('/api/admin/policy/' + POLICY_TYPE + '/' + policyId, body);
+        CineOS.alert.success('정책이 수정되었습니다.');
+        setTimeout(() => window.location.href = '/admin/management/policy/list', 800);
+      } catch (err) {
+        CineOS.alert.error(err.message || '수정에 실패하였습니다.');
+      }
+    }
+  </script>
 
 </main>
 </body>

@@ -1,29 +1,12 @@
 <!DOCTYPE html>
 <!--
   templates/admin/management/policy/list.html
-  ─────────────────────────────────────────────────────────────────────────
-  정책 목록 (관리자용)
-  ※ UC 명세 외 팀 합의로 추가된 페이지
-  ※ 적립 정책(BonusPolicy) + 할인 정책(DiscountPolicy) 통합 관리
-
-  ▶ 기능 요약
-    - 등록된 적립 정책·할인 정책 목록 조회
-    - 정책 등록·수정 페이지로 이동
-
-  ▶ Controller → View 전달 Model 속성
-    - bonusPolicies    : List<BonusPolicyDTO>
-                         └ id, policyName, giveValue(적립 비율)
-    - discountPolicies : List<DiscountPolicyDTO>
-                         └ id, policyName, discountType(RATIO/WON),
-                           discountValue, conditionType(TIME/AGE/JOB)
-
-  ▶ 연결 페이지
-    → admin/management/policy/form.html   (정책 등록)
-    → admin/management/policy/manage.html (정책 수정)
-
-  ▶ 파일 위치
-    templates/admin/management/policy/list.html
-  ─────────────────────────────────────────────────────────────────────────
+  정책 목록 (UC 명세 외 팀 합의)
+  적립 정책(BonusPolicy) + 할인 정책(DiscountPolicy) 통합 관리
+  Model: bonusPolicies(List<BonusPolicyDTO>), discountPolicies(List<DiscountPolicyDTO>)
+  BonusPolicyDTO: id, policyName, giveValue
+  DiscountPolicyDTO: id, policyName, discountType(RATIO/WON),
+                     discountValue, conditionType(TIME/AGE/JOB)
 -->
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
@@ -35,31 +18,144 @@
 <body>
 <main>
 
-  <!-- ══════════════════════════════════════════════════════════════════
-       TODO: 정책 목록 구현
-       ─────────────────────────────────────────────────────────────────
-       구현 항목:
-         [ ] 탭 또는 섹션으로 적립 정책 / 할인 정책 구분 표시
-
-         [ ] 적립 정책 목록
-               th:each="policy : ${bonusPolicies}"
-               policyName / giveValue(%) 표시
-               '수정' 버튼 → /admin/management/policy/manage?type=bonus&id={policy.id}
-               '삭제' 버튼 → DELETE /api/admin/policy/bonus/{id}
-
-         [ ] 할인 정책 목록
-               th:each="policy : ${discountPolicies}"
-               policyName / discountType / discountValue / conditionType 표시
-               '수정' 버튼 → /admin/management/policy/manage?type=discount&id={policy.id}
-               '삭제' 버튼 → DELETE /api/admin/policy/discount/{id}
-
-         [ ] '정책 등록' 버튼 → /admin/management/policy/form
-  ══════════════════════════════════════════════════════════════════ -->
-
-  <div class="admin-placeholder">
-    <p>정책 목록 — 구현 예정</p>
-    <a th:href="@{/admin/management/policy/form}" class="btn btn--primary">정책 등록</a>
+  <!-- 페이지 헤더 + 정책 등록 버튼 -->
+  <div class="admin-page-header">
+    <h1 class="admin-page-header__title">정책 관리</h1>
+    <a th:href="@{/admin/management/policy/form}" class="btn btn--primary">
+      + 정책 등록
+    </a>
   </div>
+
+  <!-- ─────────────────────────────────────────────
+       적립 정책 목록
+  ───────────────────────────────────────────── -->
+  <div class="admin-form-card">
+    <h2 class="admin-form-card__title">적립 정책</h2>
+    <div class="admin-table-wrap">
+      <table class="admin-data-table">
+        <thead>
+          <tr>
+            <th>정책명</th>
+            <th>적립 비율 (%)</th>
+            <th>관리</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="policy : ${bonusPolicies}">
+            <td th:text="${policy.policyName}">정책명</td>
+            <td th:text="${policy.giveValue + '%'}">0%</td>
+            <td class="admin-data-table__actions">
+              <!-- 수정 버튼 -->
+              <a th:href="@{/admin/management/policy/manage(type='bonus', id=${policy.id})}"
+                 class="btn btn--ghost btn--sm">
+                수정
+              </a>
+              <!-- 삭제 버튼 -->
+              <button type="button"
+                      class="btn btn--danger btn--sm"
+                      th:attr="data-id=${policy.id}, data-name=${policy.policyName}"
+                      onclick="deletePolicy('bonus', this)">
+                삭제
+              </button>
+            </td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(bonusPolicies)}">
+            <td colspan="3" class="admin-data-table__empty">등록된 적립 정책이 없습니다.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────
+       할인 정책 목록
+  ───────────────────────────────────────────── -->
+  <div class="admin-form-card">
+    <h2 class="admin-form-card__title">할인 정책</h2>
+    <div class="admin-table-wrap">
+      <table class="admin-data-table">
+        <thead>
+          <tr>
+            <th>정책명</th>
+            <th>할인 유형</th>
+            <th>할인값</th>
+            <th>적용 조건</th>
+            <th>관리</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="policy : ${discountPolicies}">
+            <td th:text="${policy.policyName}">정책명</td>
+
+            <!-- discountType: RATIO(비율) / WON(금액) -->
+            <td th:switch="${policy.discountType}">
+              <span th:case="'RATIO'">비율</span>
+              <span th:case="'WON'">금액</span>
+              <span th:case="*" th:text="${policy.discountType}">-</span>
+            </td>
+
+            <!-- 할인값 (비율이면 %, 금액이면 원) -->
+            <td>
+              <span th:if="${policy.discountType == 'RATIO'}"
+                    th:text="${policy.discountValue + '%'}">0%</span>
+              <span th:if="${policy.discountType == 'WON'}"
+                    th:text="${#numbers.formatInteger(policy.discountValue, 0, 'COMMA') + '원'}">0원</span>
+            </td>
+
+            <!-- conditionType: TIME / AGE / JOB -->
+            <td th:switch="${policy.conditionType}">
+              <span th:case="'TIME'">시간</span>
+              <span th:case="'AGE'">나이</span>
+              <span th:case="'JOB'">직업</span>
+              <span th:case="*" th:text="${policy.conditionType}">-</span>
+            </td>
+
+            <td class="admin-data-table__actions">
+              <a th:href="@{/admin/management/policy/manage(type='discount', id=${policy.id})}"
+                 class="btn btn--ghost btn--sm">
+                수정
+              </a>
+              <button type="button"
+                      class="btn btn--danger btn--sm"
+                      th:attr="data-id=${policy.id}, data-name=${policy.policyName}"
+                      onclick="deletePolicy('discount', this)">
+                삭제
+              </button>
+            </td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(discountPolicies)}">
+            <td colspan="5" class="admin-data-table__empty">등록된 할인 정책이 없습니다.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * 정책 삭제 — DELETE /api/admin/policy/{type}/{id}
+     * @param {string} type  'bonus' | 'discount'
+     * @param {HTMLElement} btn  data-id, data-name 포함
+     */
+    async function deletePolicy(type, btn) {
+      const id   = btn.getAttribute('data-id');
+      const name = btn.getAttribute('data-name');
+
+      const confirmed = await CineOS.modal.confirm(
+        '정책 삭제',
+        '《' + name + '》 정책을 삭제하시겠습니까?'
+      );
+      if (!confirmed) return;
+
+      try {
+        await CineOS.api.delete('/api/admin/policy/' + type + '/' + id);
+        CineOS.alert.success('정책이 삭제되었습니다.');
+        setTimeout(() => location.reload(), 800);
+      } catch (err) {
+        CineOS.alert.error(err.message || '삭제에 실패하였습니다.');
+      }
+    }
+  </script>
 
 </main>
 </body>

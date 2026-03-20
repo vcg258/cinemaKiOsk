@@ -1,24 +1,9 @@
 <!DOCTYPE html>
 <!--
   templates/admin/statistics/stats/by-movie.html
-  ─────────────────────────────────────────────────────────────────────────
-  UC-16: 통계 확인 (영화별) (관리자용)
-
-  ▶ 기능 요약
-    - 기본값: 최신 등록 영화의 통계 표시
-    - 영화 선택 → 해당 영화 게시 기간의 일별 통계 요약 표시
-    - 미래 날짜 선택 불가
-
-  ▶ Controller → View 전달 Model 속성
-    - movies     : List<MovieDTO>       영화 목록 (선택 드롭다운용)
-                   └ movieId, title, startAt, endAt
-    - statistics : List<StatisticsDTO>  선택된 영화의 일별 통계
-                   └ id, scheduleId, revenue, customerCount
-    - selectedMovie : MovieDTO          현재 선택된 영화 (기본: 최신 등록)
-
-  ▶ 파일 위치
-    templates/admin/statistics/stats/by-movie.html
-  ─────────────────────────────────────────────────────────────────────────
+  UC-16: 통계 확인 (영화별)
+  Model: movies(List<MovieDTO>), statistics(List<StatisticsDTO>),
+         selectedMovie(MovieDTO) — 기본: 최신 등록 영화
 -->
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
@@ -30,24 +15,69 @@
 <body>
 <main>
 
-  <!-- ══════════════════════════════════════════════════════════════════
-       TODO: UC-16 영화별 통계 콘텐츠 구현
-       ─────────────────────────────────────────────────────────────────
-       구현 항목:
-         [ ] 영화 선택 드롭다운
-               th:each="movie : ${movies}"
-               th:option → th:value="${movie.movieId}", th:text="${movie.title}"
-               선택된 영화: th:selected="${movie.movieId == selectedMovie.movieId}"
-         [ ] Chart.js 차트 (선택 영화의 일별 수익 또는 관람객 수)
-         [ ] 통계 테이블 (날짜 / 수익 / 관람객 수)
-               th:each="stat : ${statistics}"
-         [ ] 날짜 클릭 시 세부 내용 하단 표시
-  ══════════════════════════════════════════════════════════════════ -->
-  <div class="admin-placeholder">
-    <p>UC-16 영화별 통계 — 구현 예정</p>
+  <div class="admin-page-header">
+    <h1 class="admin-page-header__title">영화별 통계</h1>
+    <p class="admin-page-header__subtitle">영화별 매출 및 관람객 현황</p>
   </div>
 
-  <script th:src="@{/js/admin/stats.js}" th:if="${false}"></script>
+  <script th:inline="javascript">
+    const STAT_TYPE = 'by-movie';
+    const STAT_DATA = /*[[${statistics}]]*/ [];
+    /* 현재 선택된 영화 ID — 영화 변경 select 이벤트 시 사용 */
+    const SELECTED_MOVIE_ID = /*[[${selectedMovie?.movieId}]]*/ null;
+  </script>
+
+  <!-- 영화 선택 드롭다운 -->
+  <div class="admin-date-filter">
+    <div class="admin-date-filter__group">
+      <label for="movieSelect" class="admin-date-filter__label">영화 선택</label>
+      <select id="movieSelect" class="admin-date-filter__input input"
+              onchange="fetchAndRenderStats(null, null, this.value)">
+        <option th:each="movie : ${movies}"
+                th:value="${movie.movieId}"
+                th:text="${movie.title}"
+                th:selected="${movie.movieId == selectedMovie?.movieId}">
+          영화 제목
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- 차트 -->
+  <div class="admin-chart-card">
+    <div class="admin-chart-card__header">
+      <h2 class="admin-chart-card__title"
+          th:text="${selectedMovie?.title + ' — 일별 추이'}">영화별 추이</h2>
+    </div>
+    <div class="admin-chart-wrap">
+      <canvas id="statsChart" aria-label="영화별 통계 차트" role="img"></canvas>
+    </div>
+  </div>
+
+  <!-- 통계 테이블 -->
+  <div class="admin-table-wrap">
+    <table class="admin-data-table" id="statsTable">
+      <thead>
+        <tr>
+          <th>날짜</th>
+          <th>수익 (원)</th>
+          <th>관람객 (명)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="stat : ${statistics}">
+          <td th:text="${stat.scheduleId}">-</td>
+          <td th:text="${#numbers.formatInteger(stat.revenue, 0, 'COMMA')}">0</td>
+          <td th:text="${stat.customerCount}">0</td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(statistics)}">
+          <td colspan="3" class="admin-data-table__empty">조회된 데이터가 없습니다.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script th:src="@{/js/admin/stats.js}"></script>
 
 </main>
 </body>

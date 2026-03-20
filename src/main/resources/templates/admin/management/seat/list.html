@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<!--
+  templates/admin/management/seat/list.html
+  ─────────────────────────────────────────────────────────────────────────
+  좌석 정책 목록 (관리자용 진입점)
+
+  ▶ 기능 요약
+    - 등록된 좌석 정책 목록 표시 (일반석 / 리클라이너 / 천연가죽 등)
+    - 각 항목에 '수정' 버튼 → 좌석 정보 수정 폼 이동
+
+  ▶ Controller → View 전달 Model 속성
+    - seatPolicies : List<SeatPolicyDTO>  전체 좌석 정책 목록
+                     └ policyId, name, cost
+
+  ▶ 파일 위치
+    templates/admin/management/seat/list.html
+  ─────────────────────────────────────────────────────────────────────────
+-->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
+
+<head>
+  <title>좌석 정책 목록 | CineOS 관리자</title>
+</head>
+
+<body>
+<main>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       페이지 헤더
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="admin-page-header">
+    <div>
+      <h1 class="admin-page-title">좌석 정책 목록</h1>
+      <p class="admin-page-subtitle">좌석 유형별 정책(요금·이름)을 조회하고 수정합니다.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       TODO: 좌석 정책 목록 테이블 구현
+       ─────────────────────────────────────────────────────────────────
+       구현 항목:
+         [ ] 좌석 정책 목록 테이블
+               th:each="policy : ${seatPolicies}"
+               컬럼: 정책 ID / 좌석 이름 / 요금 / 수정
+         [ ] '수정' 버튼 → th:href="@{/admin/management/seat/edit(policyId=${policy.policyId})}"
+         [ ] 좌석 정책이 없을 경우 빈 상태 메시지 표시
+               th:if="${#lists.isEmpty(seatPolicies)}"
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="admin-table-wrap">
+    <table class="admin-data-table">
+      <thead>
+        <tr>
+          <th>정책 ID</th>
+          <th>좌석 이름</th>
+          <th>요금</th>
+          <th>관리</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- 데이터 없을 때 안내 행 -->
+        <tr th:if="${seatPolicies == null or #lists.isEmpty(seatPolicies)}">
+          <td colspan="4" style="text-align:center; padding: 3rem; color: var(--text-muted);">
+            등록된 좌석 정책이 없습니다.
+          </td>
+        </tr>
+
+        <!-- TODO: 좌석 정책 목록 행 반복 -->
+        <!--
+        <tr th:each="policy : ${seatPolicies}">
+          <td th:text="${policy.policyId}">-</td>
+          <td th:text="${policy.name}">-</td>
+          <td th:text="${#numbers.formatInteger(policy.cost, 1, 'COMMA') + '원'}">-</td>
+          <td class="admin-data-table__actions">
+            <a th:href="@{/admin/management/seat/edit(policyId=${policy.policyId})}"
+               class="btn btn--sm btn--ghost">수정</a>
+          </td>
+        </tr>
+        -->
+
+      </tbody>
+    </table>
+  </div>
+
+</main>
+</body>
+</html>

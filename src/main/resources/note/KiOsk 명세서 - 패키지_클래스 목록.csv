@@ -1,5 +1,5 @@
 No,패키지,클래스,역할,담당자
-1,config,MapperConfig,modelmapper 설정,
+1,config,MapperConfig,modelmapper 설정 ( X ) 자체 변환 메서드 작성,X
 2,,SecurityConfig,보안 설정(보류),
 3,,Websocket,공유를 위한 설정,혜윰
 4,,,,
@@ -134,12 +134,7 @@ No,패키지,클래스,역할,담당자
 ││└── seat.html # UC-03 좌석 선택 (WebSocket)
 │├── payment/ # UC-04~07
 ││├── payment.html # UC-04~06 결제·포인트
-││└── confirm >>  result.html # UC-07 예매 완료·적립 안내
-│├── mypage/ # UC-08 >> 외부 예약은 배제. 후순위 예정
-││├── lookup.html # UC-08 예매 조회 (번호 입력)
-││└── booking-detail.html # UC-08 예매 상세·취소
-│├── auth/ # UC-05
-││ └── phone-verify.html # UC-05 휴대폰 인증 팝업
+││└── result.html # UC-07 예매 완료·적립 안내
 │├── admin/
 ││├── login/
 │││ └── main.html # UC-11 관리자 로그인
@@ -151,20 +146,22 @@ No,패키지,클래스,역할,담당자
 │││  ├── by-day.html # UC-14 요일별
 │││  ├── by-hour.html # UC-15 시간대별
 │││  └── by-movie.html # UC-16 영화별
-││├── management/ #관리 하는 페이지 모음
-│││├── movie/ # UC-18~20
-││││├── form.html # UC-18~19 영화 등록·수정
-││││└── manage.html # UC-20 영화 삭제·상영 중지
-│││├── theater/ # UC-21
-││││├── edit.html # UC-21 상영관 정보 수정
-││││└── refund.html # UC-17 환불 처리
-│││└── seat/ # 시트정보에 대한 처리
-││││└── edit.html # 시트 정보 수정
-│││├── policy/ #정책에 대한 수정
-││││├── list.html # 정책 리스트?
-││││├── form.html # 정책 등록
-││││└── manage.html # 정책 수정
-││└── refund.html # UC-17 환불 처리
+││└── management/ #관리 하는 페이지 모음
+││  ├── movie/ # UC-18~20
+││  │├── list.html # 영화 목록 (관리)
+││  │├── form.html # UC-18~19 영화 등록·수정
+││  │└── manage.html # UC-20 영화 삭제·상영 중지
+││  ├── theater/ # UC-21
+││  │├── list.html # 상영관 목록
+││  │└── edit.html # UC-21 상영관 정보 수정
+││  ├── seat/ # 시트정보에 대한 처리
+││  │├── list.html # 좌석 목록
+││  │└── edit.html # 시트 정보 수정
+││  ├── policy/ #정책에 대한 수정
+││  │├── list.html # 정책 리스트?
+││  │├── form.html # 정책 등록
+││  │└── manage.html # 정책 수정
+││  └── refund.html # UC-17 환불 처리
 │└── error/
 ││├── 404.html
 ││└── 500.html
@@ -200,7 +197,7 @@ No,패키지,클래스,역할,담당자
 │ │ │ ├── schedule.js # 날짜·시간·인원 선택 흐름
 │ │ │ ├── seat.js # WebSocket 좌석 실시간 동기화
 │ │ │ ├── payment.js # 타이머·할인·포인트 로직
-│ │ │ └── confirm.js # 예매 완료 처리
+│ │ │ └── result.js # 예매 완료 처리
 │ │ ├── mypage/
 │ │ │ └── lookup.js # 번호 입력·조회 분기 로직
 │ │ └── admin/
@@ -220,8 +217,10 @@ No,패키지,클래스,역할,담당자
 122,,,,
 123,,,,
 124,,,,
-125,,,,
-126,,movie controller,,
+125,,,"거래 내역이랑 다른 회원, 예매내역, 스케줄 등으로 이어져있고
+ DTO안에 객체를 변수로 지정해놓음 그러므로 join을 사용하지
+ 않고 Mybatis로 체인형식으로 불러오는걸로 생각하면 됨",
+126,,,,
 127,,,,
 128,,,,
 129,,,,
@@ -230,7 +229,7 @@ No,패키지,클래스,역할,담당자
 132,,예매에 대한 부분 쪼갬. 역할 확실히 분담 및 controller와 일치 시키기,,
 133,,,,
 134,,,,
-135,,해당 페이지가 필요한 이유가... 뭘까요? 현장 발권하고 끝이면 필요 없으거 같아요,,
+135,,,,
 136,,,,
 137,,,,
 138,,,,

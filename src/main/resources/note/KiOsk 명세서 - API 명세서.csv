@@ -1,5 +1,0 @@
-기능명,Method,URL,입력 객체(JSON),반환 타입,필수여부,설명,,,구분 컬럼은 Request / Response 둘 중 하나만 입력
-회원가입,get,/api/seatReservation,null,List<DTO>,Y,페이지 입장 후 좌석에 대한 정보들을 받아오는 api,,,"기능명·Method·URL은 첫 번째 행에만 작성, 이후 행은 빈칸"
-,post,,"{""rno"" : rno, ""data"" : ""data""}",,,,,,"항목명 = 필드명 (ex: movieId, genre)"
-,delete,,,,,,,,"타입 = 자바 or JSON 타입 (ex: Long, String, List<Object>)"
-,put,,,,,,,,필수여부 = Y / N

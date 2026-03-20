@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<!--
+  templates/admin/management/refund.html
+  UC-17: 환불 처리
+  Model: reservation(ReservationDetailsDTO), payment(PaymentDetailsDTO),
+         movie(MovieDTO), schedule(ScheduleDTO), isRefundable(Boolean)
+  에러 메시지(명세 고정):
+    - 10분 경과: "환불 가능 시간이 초과되었습니다."
+    - 이미 환불: "이미 환불 처리된 예매입니다."
+    - 조회 없음: "해당 예매를 찾을 수 없습니다."
+    - 환불 실패: "환불 처리에 실패하였습니다. 다시 시도해 주세요."
+-->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
+
+<head>
+  <title>환불 처리 | CineOS 관리자</title>
+</head>
+
+<body>
+<main>
+
+  <!-- 페이지 헤더 -->
+  <div class="admin-page-header">
+    <h1 class="admin-page-header__title">환불 처리</h1>
+    <p class="admin-page-header__subtitle">예매번호 또는 휴대폰 번호로 환불을 처리합니다.</p>
+  </div>
+
+  <!-- ─────────────────────────────────────────────
+       조회 폼 — 예매번호 / 휴대폰 번호 탭 전환
+  ───────────────────────────────────────────── -->
+  <div class="admin-form-card">
+
+    <!-- 탭 버튼 -->
+    <div class="admin-tab-group" role="tablist" aria-label="조회 방법 선택">
+      <button type="button" id="tabReservation"
+              class="admin-tab-btn admin-tab-btn--active"
+              role="tab" aria-selected="true" aria-controls="panelReservation"
+              onclick="switchTab('reservation')">
+        예매번호
+      </button>
+      <button type="button" id="tabPhone"
+              class="admin-tab-btn"
+              role="tab" aria-selected="false" aria-controls="panelPhone"
+              onclick="switchTab('phone')">
+        휴대폰 번호
+      </button>
+    </div>
+
+    <!-- 예매번호 조회 패널 -->
+    <div id="panelReservation" role="tabpanel" aria-labelledby="tabReservation">
+      <div class="admin-form-group" style="display: flex; gap: 8px; align-items: flex-end;">
+        <div style="flex: 1;">
+          <label for="reservationId" class="admin-form-label">예매번호</label>
+          <input type="text" id="reservationId" class="input"
+                 placeholder="예매번호를 입력하세요">
+        </div>
+        <button type="button" class="btn btn--primary"
+                onclick="searchReservation('id')">
+          조회
+        </button>
+      </div>
+    </div>
+
+    <!-- 휴대폰 번호 조회 패널 -->
+    <div id="panelPhone" role="tabpanel" aria-labelledby="tabPhone" hidden>
+      <div class="admin-form-group" style="display: flex; gap: 8px; align-items: flex-end;">
+        <div style="flex: 1;">
+          <label for="phoneNumber" class="admin-form-label">휴대폰 번호</label>
+          <input type="tel" id="phoneNumber" class="input"
+                 placeholder="숫자만 입력 (예: 01012345678)">
+        </div>
+        <button type="button" class="btn btn--primary"
+                onclick="searchReservation('phone')">
+          조회
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ─────────────────────────────────────────────
+       조회 결과 영역 (JS로 표시/숨김)
+       SSR: reservation이 있을 때 초기 렌더링
+  ───────────────────────────────────────────── -->
+  <div id="refundResult"
+       class="admin-form-card"
+       th:classappend="${reservation == null} ? 'is-hidden' : ''">
+
+    <!-- 예매 정보 테이블 -->
+    <h2 class="admin-form-card__title">예매 정보</h2>
+    <div class="admin-table-wrap">
+      <table class="admin-data-table">
+        <tbody>
+          <tr>
+            <th>영화명</th>
+            <td id="resultMovieTitle"
+                th:text="${movie?.title}">-</td>
+          </tr>
+          <tr>
+            <th>상영 일시</th>
+            <td id="resultScheduleTime"
+                th:text="${schedule?.startTime}">-</td>
+          </tr>
+          <tr>
+            <th>좌석</th>
+            <td id="resultSeats">-</td>
+          </tr>
+          <tr>
+            <th>결제 금액</th>
+            <td id="resultAmount"
+                th:text="${payment != null} ? ${#numbers.formatInteger(payment.totalAmount, 0, 'COMMA') + '원'} : '-'">
+              -
+            </td>
+          </tr>
+          <tr>
+            <th>할인 수단</th>
+            <td id="resultDiscount">
+              <span th:if="${payment?.discountPolicyName != null}"
+                    th:text="${payment.discountPolicyName}">-</span>
+              <span th:if="${payment?.discountPolicyName == null}">없음</span>
+            </td>
+          </tr>
+          <tr>
+            <th>예약 상태</th>
+            <td id="resultStatus"
+                th:text="${payment?.status}">-</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 환불 가능 여부 + 환불 버튼 (SSR 초기화, JS에서도 동적 처리) -->
+    <div class="admin-form-actions" id="refundActionArea">
+
+      <!-- 환불 가능 시 버튼 활성화 -->
+      <div th:if="${isRefundable == true}">
+        <button type="button" class="btn btn--primary" id="btnRefund"
+                th:attr="data-reservation-id=${reservation?.reservationId}"
+                onclick="confirmRefund()">
+          환불 처리
+        </button>
+      </div>
+
+      <!-- 환불 불가 시 메시지 (명세 고정) -->
+      <div th:if="${isRefundable == false}">
+        <p class="admin-error-msg" id="refundExpiredMsg">
+          환불 가능 시간이 초과되었습니다.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!--
+    숨겨진 데이터 전달용 — JS에서 schedule.startTime 읽어 10분 초과 판정
+    refund.js → checkRefundExpired() 에서 사용
+  -->
+  <div id="scheduleData"
+       th:attr="data-start-time=${schedule?.startTime},
+                data-reservation-id=${reservation?.reservationId}"
+       hidden>
+  </div>
+
+  <!-- 페이지 전용 JS -->
+  <script th:src="@{/js/admin/refund.js}"></script>
+
+</main>
+</body>
+</html>

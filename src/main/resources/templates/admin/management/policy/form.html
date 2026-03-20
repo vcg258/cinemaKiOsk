@@ -1,33 +1,10 @@
 <!DOCTYPE html>
 <!--
   templates/admin/management/policy/form.html
-  ─────────────────────────────────────────────────────────────────────────
-  정책 등록 (관리자용)
-  ※ UC 명세 외 팀 합의로 추가된 페이지
-  ※ 적립 정책(BonusPolicy) / 할인 정책(DiscountPolicy) 등록
-
-  ▶ 기능 요약
-    - 정책 유형 선택 (적립 / 할인)
-    - 유형에 따라 입력 폼 동적 전환
-    - 등록 완료 후 목록으로 복귀
-
-  ▶ Controller → View 전달 Model 속성
-    - 없음 (신규 등록 폼이므로 빈 상태)
-
-  ▶ API 연동
-    - 적립 정책 등록: POST /api/admin/policy/bonus
-                      Body: BonusPolicyDTO { policyName, giveValue }
-    - 할인 정책 등록: POST /api/admin/policy/discount
-                      Body: DiscountPolicyDTO { policyName, discountType,
-                                                discountValue, conditionType }
-
-  ▶ 연결 페이지
-    ← admin/management/policy/list.html (목록에서 진입)
-    → admin/management/policy/list.html (등록 완료 후 복귀)
-
-  ▶ 파일 위치
-    templates/admin/management/policy/form.html
-  ─────────────────────────────────────────────────────────────────────────
+  정책 등록 (UC 명세 외 팀 합의)
+  적립 정책: POST /api/admin/policy/bonus  { policyName, giveValue }
+  할인 정책: POST /api/admin/policy/discount { policyName, discountType, discountValue, conditionType }
+  Model: 없음 (신규 등록 전용)
 -->
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
@@ -39,35 +16,152 @@
 <body>
 <main>
 
-  <!-- ══════════════════════════════════════════════════════════════════
-       TODO: 정책 등록 구현
-       ─────────────────────────────────────────────────────────────────
-       구현 항목:
-         [ ] 정책 유형 선택 라디오 버튼
-               적립 정책 / 할인 정책
-               선택에 따라 아래 입력 필드 전환 (JS)
-
-         [ ] 적립 정책 입력 필드 (유형 = 적립 선택 시 표시)
-               - 정책명 (policyName)
-               - 적립 비율 (giveValue, %)
-
-         [ ] 할인 정책 입력 필드 (유형 = 할인 선택 시 표시)
-               - 정책명 (policyName)
-               - 할인 유형 (discountType): RATIO(비율) / WON(금액)
-               - 할인값 (discountValue)
-               - 적용 조건 (conditionType): TIME / AGE / JOB
-
-         [ ] '등록' 버튼 → POST /api/admin/policy/bonus 또는 /discount
-               성공: /admin/management/policy/list 로 이동
-               실패: 에러 메시지 표시
-
-         [ ] '취소' 버튼 → /admin/management/policy/list
-  ══════════════════════════════════════════════════════════════════ -->
-
-  <div class="admin-placeholder">
-    <p>정책 등록 — 구현 예정</p>
-    <a th:href="@{/admin/management/policy/list}" class="btn btn--ghost">← 목록으로</a>
+  <!-- 페이지 헤더 -->
+  <div class="admin-page-header">
+    <h1 class="admin-page-header__title">정책 등록</h1>
+    <p class="admin-page-header__subtitle">적립 또는 할인 정책을 등록합니다.</p>
   </div>
+
+  <div class="admin-form-card">
+
+    <!-- 정책 유형 선택 라디오 버튼 -->
+    <div class="admin-form-group">
+      <label class="admin-form-label admin-form-label--required">정책 유형</label>
+      <div class="admin-radio-group">
+        <label class="admin-radio-label">
+          <input type="radio" name="policyType" value="bonus"
+                 checked onchange="switchPolicyType('bonus')">
+          적립 정책
+        </label>
+        <label class="admin-radio-label">
+          <input type="radio" name="policyType" value="discount"
+                 onchange="switchPolicyType('discount')">
+          할인 정책
+        </label>
+      </div>
+    </div>
+
+    <!-- 공통: 정책명 -->
+    <div class="admin-form-group">
+      <label for="policyName" class="admin-form-label admin-form-label--required">정책명</label>
+      <input type="text" id="policyName" class="input"
+             placeholder="정책명을 입력하세요" required>
+    </div>
+
+    <!-- ── 적립 정책 전용 필드 ─────────────── -->
+    <div id="bonusFields">
+      <div class="admin-form-group">
+        <label for="giveValue" class="admin-form-label admin-form-label--required">
+          적립 비율 (%)
+        </label>
+        <input type="number" id="giveValue" class="input"
+               placeholder="예: 5"
+               min="0" max="100" step="0.1">
+        <p class="admin-form-hint">결제 금액의 입력한 % 적립</p>
+      </div>
+    </div>
+
+    <!-- ── 할인 정책 전용 필드 (기본 숨김) ── -->
+    <div id="discountFields" hidden>
+      <div class="admin-form-group">
+        <label for="discountType" class="admin-form-label admin-form-label--required">
+          할인 유형
+        </label>
+        <select id="discountType" class="input">
+          <option value="RATIO">비율 (%)</option>
+          <option value="WON">금액 (원)</option>
+        </select>
+      </div>
+      <div class="admin-form-group">
+        <label for="discountValue" class="admin-form-label admin-form-label--required">
+          할인값
+        </label>
+        <input type="number" id="discountValue" class="input"
+               placeholder="비율이면 %, 금액이면 원 단위"
+               min="0">
+      </div>
+      <div class="admin-form-group">
+        <label for="conditionType" class="admin-form-label admin-form-label--required">
+          적용 조건
+        </label>
+        <select id="conditionType" class="input">
+          <option value="TIME">시간 (특정 시간대)</option>
+          <option value="AGE">나이 (연령 조건)</option>
+          <option value="JOB">직업 (직업 조건)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 폼 액션 -->
+    <div class="admin-form-actions">
+      <a th:href="@{/admin/management/policy/list}" class="btn btn--ghost">
+        취소
+      </a>
+      <button type="button" class="btn btn--primary"
+              onclick="submitPolicyForm()">
+        등록
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    /**
+     * 정책 유형 라디오 변경 시 전용 필드 전환
+     * @param {'bonus'|'discount'} type
+     */
+    function switchPolicyType(type) {
+      document.getElementById('bonusFields').hidden    = (type !== 'bonus');
+      document.getElementById('discountFields').hidden = (type !== 'discount');
+    }
+
+    /**
+     * 정책 등록 폼 제출
+     * 유형에 따라 API 엔드포인트 분기
+     */
+    async function submitPolicyForm() {
+      const type       = document.querySelector('input[name="policyType"]:checked').value;
+      const policyName = document.getElementById('policyName').value.trim();
+
+      if (!policyName) {
+        CineOS.alert.error('정책명을 입력해 주세요.');
+        return;
+      }
+
+      let body;
+      let url;
+
+      if (type === 'bonus') {
+        const giveValue = parseFloat(document.getElementById('giveValue').value);
+        if (isNaN(giveValue)) {
+          CineOS.alert.error('적립 비율을 입력해 주세요.');
+          return;
+        }
+        url  = '/api/admin/policy/bonus';
+        body = { policyName, giveValue };
+
+      } else {
+        const discountType  = document.getElementById('discountType').value;
+        const discountValue = parseFloat(document.getElementById('discountValue').value);
+        const conditionType = document.getElementById('conditionType').value;
+
+        if (isNaN(discountValue)) {
+          CineOS.alert.error('할인값을 입력해 주세요.');
+          return;
+        }
+        url  = '/api/admin/policy/discount';
+        body = { policyName, discountType, discountValue, conditionType };
+      }
+
+      try {
+        await CineOS.api.post(url, body);
+        CineOS.alert.success('정책이 등록되었습니다.');
+        setTimeout(() => window.location.href = '/admin/management/policy/list', 800);
+      } catch (err) {
+        CineOS.alert.error(err.message || '등록에 실패하였습니다.');
+      }
+    }
+  </script>
 
 </main>
 </body>

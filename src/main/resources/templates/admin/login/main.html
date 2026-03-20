@@ -1,27 +1,9 @@
 <!DOCTYPE html>
 <!--
   templates/admin/login/main.html
-  ─────────────────────────────────────────────────────────────────────────
-  UC-11: 관리자 로그인 (관리자용)
-  ※ 로그인 페이지는 admin-base.html 사용 안 함 (헤더/사이드바 불필요)
-
-  ▶ 기능 요약
-    - 아이디 + 비밀번호 입력 후 로그인
-    - 실패 시 경고창 표시
-
-  ▶ Controller → View 전달 Model 속성
-    - loginError : Boolean   로그인 실패 시 true (Spring Security 리다이렉트 파라미터)
-                             th:if="${loginError}" 로 경고 메시지 표시
-
-  ▶ 에러 메시지 (명세 기준 — 임의 변경 금지)
-    - 로그인 실패: 경고창 표시 (alert 또는 인라인 메시지)
-
-  ▶ 연결 UC
-    → 로그인 성공: /admin/dashboard 으로 이동
-
-  ▶ 파일 위치
-    templates/admin/login/main.html
-  ─────────────────────────────────────────────────────────────────────────
+  UC-11: 관리자 로그인
+  ※ admin-base.html 레이아웃 미사용 (헤더/사이드바 불필요)
+  로그인 실패 시 loginError=true → 에러 메시지 표시
 -->
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 
@@ -37,24 +19,78 @@
 
 <body class="admin-body admin-login-body">
 
-  <!-- ══════════════════════════════════════════════════════════════════
-       TODO: UC-11 관리자 로그인 콘텐츠 구현
-       ─────────────────────────────────────────────────────────────────
-       구현 항목:
-         [ ] 로고 이미지 + "관리자" 타이틀
-         [ ] 로그인 폼 (Spring Security 기본 URL 사용 권장: POST /admin/login)
-               - 아이디 입력 필드: name="loginId"  (AdminVO.loginId)
-               - 비밀번호 입력 필드: name="password" (AdminVO.password)
-               - CSRF 토큰: th:if="${_csrf != null}"
-         [ ] 로그인 실패 메시지
-               th:if="${loginError}" → 경고창 또는 인라인 메시지
-               "아이디 또는 비밀번호가 올바르지 않습니다."
-         [ ] '로그인' 버튼 (submit)
-  ══════════════════════════════════════════════════════════════════ -->
-
   <main class="admin-login-container">
-    <div class="admin-placeholder">
-      <p>UC-11 관리자 로그인 — 구현 예정</p>
+    <div class="admin-login-card">
+
+      <!-- 로고 + 관리자 타이틀 -->
+      <div class="admin-login-card__header">
+        <img th:src="@{/images/logo_cineos.svg}"
+             src="/images/logo_cineos.svg"
+             alt="CineOS 로고"
+             class="admin-login-card__logo">
+        <span class="admin-badge">관리자</span>
+      </div>
+
+      <!-- 로그인 실패 에러 메시지 (UC-11: 명세 문구 고정) -->
+      <div class="admin-login-card__error"
+           th:if="${loginError}"
+           role="alert">
+        아이디 또는 비밀번호가 올바르지 않습니다.
+      </div>
+
+      <!--
+        로그인 폼
+        Spring Security 기본 URL → POST /admin/login
+        필드명: loginId (AdminVO.loginId), password (AdminVO.password)
+      -->
+      <form class="admin-login-card__form"
+            th:action="@{/admin/login}"
+            method="post"
+            autocomplete="off">
+
+        <!-- CSRF 토큰 (Spring Security 활성화 시 자동 삽입) -->
+        <input type="hidden"
+               th:name="${_csrf.parameterName}"
+               th:value="${_csrf.token}"
+               th:if="${_csrf != null}">
+
+        <!-- 아이디 입력 -->
+        <div class="admin-form-group">
+          <label for="loginId" class="admin-form-label admin-form-label--required">
+            아이디
+          </label>
+          <input type="text"
+                 id="loginId"
+                 name="loginId"
+                 class="input"
+                 placeholder="관리자 아이디"
+                 autocomplete="username"
+                 required
+                 autofocus>
+        </div>
+
+        <!-- 비밀번호 입력 -->
+        <div class="admin-form-group">
+          <label for="password" class="admin-form-label admin-form-label--required">
+            비밀번호
+          </label>
+          <input type="password"
+                 id="password"
+                 name="password"
+                 class="input"
+                 placeholder="비밀번호"
+                 autocomplete="current-password"
+                 required>
+        </div>
+
+        <!-- 로그인 버튼 -->
+        <div class="admin-form-actions">
+          <button type="submit" class="btn btn--primary" style="width: 100%;">
+            로그인
+          </button>
+        </div>
+
+      </form>
     </div>
   </main>
 

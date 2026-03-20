@@ -1,25 +1,11 @@
 <!DOCTYPE html>
 <!--
   templates/admin/management/theater/edit.html
-  ─────────────────────────────────────────────────────────────────────────
-  UC-21: 상영관 정보 수정 (관리자용)
-
-  ▶ 기능 요약
-    - 상영관 목록 선택 → 해당 상영관 정보 표시
-    - 기본 정리 시간, 좌석 정보(요금, 리클라이너 여부) 수정
-    - 진행 중 예매 있을 경우 변동 사항 안내 메시지
-
-  ▶ Controller → View 전달 Model 속성
-    - theaters    : List<TheaterDTO>      전체 상영관 목록 (선택 드롭다운용)
-                    └ no, name, cost, cleanupTime
-    - theater     : TheaterDTO            현재 선택된 상영관 정보 (기본: 첫 번째)
-    - seatPolicies: List<SeatPolicyDTO>   좌석 정책 목록
-                    └ policyId, name, cost
-    - hasActiveReservation : Boolean      진행 중 예매 여부
-
-  ▶ 파일 위치
-    templates/admin/management/theater/edit.html
-  ─────────────────────────────────────────────────────────────────────────
+  UC-21: 상영관 정보 수정
+  Model: theaters(List<TheaterDTO>), theater(TheaterDTO),
+         seatPolicies(List<SeatPolicyDTO>), hasActiveReservation(Boolean)
+  TheaterDTO: no, name, cost, cleanupTime
+  SeatPolicyDTO: policyId, name, cost
 -->
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
@@ -31,30 +17,117 @@
 <body>
 <main>
 
-  <!-- ══════════════════════════════════════════════════════════════════
-       TODO: UC-21 상영관 정보 수정 구현
-       ─────────────────────────────────────────────────────────────────
-       구현 항목:
-         [ ] 상영관 선택 드롭다운
-               th:each="t : ${theaters}"
-               선택 변경 시 JS로 해당 상영관 정보 로드 또는 폼 제출
-         [ ] 진행 중 예매 있을 때 안내 배너
-               th:if="${hasActiveReservation}"
-               "현재 진행 중인 예매가 있습니다. 수정 내용은 기존 예매에 영향을 줄 수 있습니다."
-         [ ] 기본 정리 시간 수정 (분 단위)
-               th:value="${theater.cleanupTime}"
-         [ ] 좌석 구성 편집기
-               seatPolicies 기반으로 좌석 유형별 요금 / 리클라이너 여부 수정
-               th:each="policy : ${seatPolicies}"
-               policyId / name / cost 입력
-         [ ] '저장' 버튼 → PUT /api/admin/theater/{no}
-         [ ] '취소' 버튼 (변경사항 초기화)
-  ══════════════════════════════════════════════════════════════════ -->
-  <div class="admin-placeholder">
-    <p>UC-21 상영관 정보 수정 — 구현 예정</p>
+  <!-- 페이지 헤더 -->
+  <div class="admin-page-header">
+    <h1 class="admin-page-header__title">상영관 관리</h1>
+    <p class="admin-page-header__subtitle">상영관 정보 및 좌석 구성을 수정합니다.</p>
   </div>
 
-  <script th:src="@{/js/admin/theater.js}" th:if="${false}"></script>
+  <!-- 진행 중 예매 존재 시 안내 배너 (명세 기준) -->
+  <div class="admin-warning-banner"
+       th:if="${hasActiveReservation}"
+       role="alert">
+    현재 진행 중인 예매가 있습니다. 수정 내용은 기존 예매에 영향을 줄 수 있습니다.
+  </div>
+
+  <!-- 상영관 선택 드롭다운 -->
+  <div class="admin-form-card">
+    <div class="admin-form-group">
+      <label for="theaterSelect" class="admin-form-label">상영관 선택</label>
+      <select id="theaterSelect" class="input"
+              onchange="loadTheaterInfo(this.value)">
+        <option th:each="t : ${theaters}"
+                th:value="${t.no}"
+                th:text="${t.no + '관 — ' + t.name}"
+                th:selected="${t.no == theater?.no}">
+          상영관
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- 상영관 수정 폼 -->
+  <div class="admin-form-card">
+    <form id="theaterForm" autocomplete="off">
+
+      <input type="hidden" id="theaterNo" th:value="${theater?.no}">
+
+      <!-- 정리 시간 -->
+      <div class="admin-form-group">
+        <label for="cleanupTime" class="admin-form-label admin-form-label--required">
+          정리 시간 (분)
+        </label>
+        <input type="number" id="cleanupTime" name="cleanupTime"
+               class="input"
+               min="0" max="60"
+               placeholder="예: 20"
+               th:value="${theater?.cleanupTime}"
+               onchange="validateCleanupTime()">
+        <p class="admin-form-hint">
+          상영 종료 후 다음 스케줄까지의 정리 시간 (분 단위)
+        </p>
+      </div>
+
+      <!-- 좌석 정책 목록 -->
+      <div class="admin-form-group">
+        <label class="admin-form-label">좌석 구성 및 요금</label>
+
+        <div class="admin-table-wrap">
+          <table class="admin-data-table">
+            <thead>
+              <tr>
+                <th>정책명</th>
+                <th>요금 (원)</th>
+                <th>좌석 편집</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="policy : ${seatPolicies}">
+                <td th:text="${policy.name}">정책명</td>
+                <td>
+                  <!-- 요금 인라인 수정 인풋 -->
+                  <input type="number"
+                         class="input input--sm policy-cost-input"
+                         th:value="${policy.cost}"
+                         th:attr="data-policy-id=${policy.policyId}"
+                         min="0"
+                         onchange="validateCost(this)">
+                </td>
+                <td>
+                  <!-- 해당 정책의 좌석 편집 → seat/edit.html -->
+                  <a th:href="@{/admin/management/seat/edit(policyId=${policy.policyId})}"
+                     class="btn btn--ghost btn--sm">
+                    좌석 편집
+                  </a>
+                </td>
+              </tr>
+              <tr th:if="${#lists.isEmpty(seatPolicies)}">
+                <td colspan="3" class="admin-data-table__empty">
+                  등록된 좌석 정책이 없습니다.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 폼 액션 -->
+      <div class="admin-form-actions">
+        <button type="button" class="btn btn--ghost"
+                onclick="loadTheaterInfo(document.getElementById('theaterNo').value)">
+          초기화
+        </button>
+        <button type="button" class="btn btn--primary"
+                onclick="submitTheaterForm()">
+          저장
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- 페이지 전용 JS -->
+  <script th:src="@{/js/admin/theater.js}"></script>
 
 </main>
 </body>

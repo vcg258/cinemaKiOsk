@@ -1049,3 +1049,37 @@ select.form-control {
   padding: 32px;
   overflow-x: auto;
 }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   에러 페이지 (404 / 500)
+   templates/error/404.html, error/500.html 에서 사용
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* 에러 페이지 전체 중앙 정렬 컨테이너 */
+.error-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;          /* 헤더/푸터 제외 공간 채우기 */
+  text-align: center;
+  padding: 40px 24px;
+  gap: 16px;
+}
+
+/* 에러 코드 (404, 500 등) */
+.error-page__code {
+  font-size: 6rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-brand-400);  /* 브랜드 골드 강조 */
+  margin: 0;
+}
+
+/* 에러 안내 메시지 */
+.error-page__message {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  margin: 0 0 8px;
+}

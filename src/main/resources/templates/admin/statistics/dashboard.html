@@ -1,21 +1,8 @@
 <!DOCTYPE html>
 <!--
   templates/admin/statistics/dashboard.html
-  ─────────────────────────────────────────────────────────────────────────
-  관리자 대시보드 홈 (관리자용)
-  UC-11 로그인 후 진입하는 메인 화면
-
-  ▶ 기능 요약
-    - 관리자 메뉴 진입점 화면 (통계/환불/영화관리/상영관관리)
-    - 간단한 오늘의 통계 요약 표시 (선택 구현)
-
-  ▶ Controller → View 전달 Model 속성
-    - todayStats : StatisticsDTO  오늘 통계 요약 (선택)
-                   └ revenue, customerCount
-
-  ▶ 파일 위치
-    templates/admin/statistics/dashboard.html
-  ─────────────────────────────────────────────────────────────────────────
+  관리자 대시보드 홈 — UC-11 로그인 후 진입 메인 화면
+  Model: todayStats(StatisticsDTO, optional) - revenue, customerCount
 -->
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
@@ -27,19 +14,64 @@
 <body>
 <main>
 
-  <!-- ══════════════════════════════════════════════════════════════════
-       TODO: 관리자 대시보드 콘텐츠 구현
-       ─────────────────────────────────────────────────────────────────
-       구현 항목:
-         [ ] 환영 메시지 + 현재 날짜/시각
-         [ ] 오늘의 요약 카드 (수익, 관람객 수) — 선택 구현
-               th:text="${todayStats?.revenue}"
-               th:text="${todayStats?.customerCount}"
-         [ ] 빠른 메뉴 바로가기 카드 (통계/환불/영화관리/상영관관리)
-  ══════════════════════════════════════════════════════════════════ -->
-  <div class="admin-placeholder">
-    <p>관리자 대시보드 — 구현 예정</p>
+  <!-- 페이지 헤더 -->
+  <div class="admin-page-header">
+    <h1 class="admin-page-header__title">대시보드</h1>
+    <p class="admin-page-header__subtitle" id="dashboardDate"></p>
   </div>
+
+  <!-- 오늘의 요약 카드 (todayStats 있을 때만 표시) -->
+  <div class="admin-stat-grid" th:if="${todayStats != null}">
+    <div class="admin-stat-card">
+      <p class="admin-stat-card__label">오늘 수익</p>
+      <p class="admin-stat-card__value"
+         th:text="${#numbers.formatInteger(todayStats.revenue, 0, 'COMMA') + '원'}">0원</p>
+    </div>
+    <div class="admin-stat-card">
+      <p class="admin-stat-card__label">오늘 관람객</p>
+      <p class="admin-stat-card__value"
+         th:text="${todayStats.customerCount + '명'}">0명</p>
+    </div>
+  </div>
+
+  <!-- 빠른 메뉴 바로가기 카드 -->
+  <div class="admin-stat-grid">
+    <a th:href="@{/admin/statistics/stats/daily}" class="admin-stat-card admin-stat-card--link">
+      <p class="admin-stat-card__label">통계</p>
+      <p class="admin-stat-card__desc">일일·월별·요일별·시간대별·영화별 통계 확인</p>
+    </a>
+    <a th:href="@{/admin/refund}" class="admin-stat-card admin-stat-card--link">
+      <p class="admin-stat-card__label">환불 처리</p>
+      <p class="admin-stat-card__desc">예매번호 또는 휴대폰 번호로 환불 처리</p>
+    </a>
+    <a th:href="@{/admin/management/movie/manage}" class="admin-stat-card admin-stat-card--link">
+      <p class="admin-stat-card__label">영화 관리</p>
+      <p class="admin-stat-card__desc">영화 등록·수정·상영 중지</p>
+    </a>
+    <a th:href="@{/admin/management/theater/edit}" class="admin-stat-card admin-stat-card--link">
+      <p class="admin-stat-card__label">상영관 관리</p>
+      <p class="admin-stat-card__desc">상영관 정보 및 좌석 구성 수정</p>
+    </a>
+    <a th:href="@{/admin/management/policy/list}" class="admin-stat-card admin-stat-card--link">
+      <p class="admin-stat-card__label">정책 관리</p>
+      <p class="admin-stat-card__desc">적립 정책·할인 정책 등록·수정</p>
+    </a>
+  </div>
+
+  <script>
+    /* 현재 날짜·요일·시각 — JS로 처리 (SSR 불필요) */
+    (function () {
+      const el = document.getElementById('dashboardDate');
+      if (!el) return;
+      const now = new Date();
+      const days = ['일', '월', '화', '수', '목', '금', '토'];
+      const pad = n => String(n).padStart(2, '0');
+      el.textContent =
+        now.getFullYear() + '년 ' + (now.getMonth() + 1) + '월 ' + now.getDate() + '일 '
+        + '(' + days[now.getDay()] + ') '
+        + pad(now.getHours()) + ':' + pad(now.getMinutes());
+    })();
+  </script>
 
 </main>
 </body>

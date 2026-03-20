@@ -39,25 +39,24 @@
     <nav class="site-nav" aria-label="주요 메뉴">
       <ul class="nav-tab-list">
 
-        <!-- 현재 상영작 탭 (UC-01) -->
+        <!--
+          현재 상영작 탭 (UC-01)
+          URL: /movie/list (MovieController.movieList)
+          activeTab 값 'movies'를 컨트롤러가 model에 담아 전달할 때 활성 표시.
+        -->
         <li class="nav-tab-list__item">
-          <a th:href="@{/movies}"
+          <a th:href="@{/movie/list}"
              class="nav-tab"
              th:classappend="${activeTab == 'movies'} ? ' nav-tab--active' : ''"
-             aria-current="${activeTab == 'movies'} ? 'page' : null">
+             th:attr="aria-current=${activeTab == 'movies'} ? 'page' : null">
             현재 상영작
           </a>
         </li>
 
-        <!-- 예매 조회 탭 (UC-08) -->
-        <li class="nav-tab-list__item">
-          <a th:href="@{/mypage/lookup}"
-             class="nav-tab"
-             th:classappend="${activeTab == 'lookup'} ? ' nav-tab--active' : ''"
-             aria-current="${activeTab == 'lookup'} ? 'page' : null">
-            예매 조회
-          </a>
-        </li>
+        <!--
+          NOTE: UC-08 예매 조회(마이페이지)는 팀 합의로 제거됨.
+          현장 발권만 운영하므로 해당 탭 삭제.
+        -->
 
       </ul>
     </nav>
