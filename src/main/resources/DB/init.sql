@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `members` # FK (X)
 (
     `phone`      VARCHAR(20) PRIMARY KEY COMMENT '회원 번호',
     `point`      INT UNSIGNED NULL DEFAULT 0 COMMENT '포인트',
-    `created_at` DATETIME     NULL COMMENT '생성일'
+    `created_at` DATETIME     NOT NULL COMMENT '생성일' # NULL -> NOT NULL
 ) COMMENT '회원(포인트)';
 
 
@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS `discount_policy` # FK (X)
     `condition_type` ENUM ('TIME', 'AGE', 'JOB', 'COUPON') NULL COMMENT '할인 유형',
     `start_at`       DATETIME                              NULL COMMENT '시작일',
     `end_at`         DATETIME                              NULL COMMENT '만료일',
-    `activation`     BOOLEAN                               NULL COMMENT '활성화 여부'
+    `activation`     BOOLEAN                               NULL COMMENT '활성화 여부 (활성화 = True, 비활성화 = False)'
 ) COMMENT '할인 행사 정책(자체 이벤트)';
 
 -- --------------------------------------------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS `discount_policy` # FK (X)
 CREATE TABLE IF NOT EXISTS `coupon`
 (
     `coupon_num` VARCHAR(12) PRIMARY KEY NOT NULL COMMENT '쿠폰 번호',
-    `policy_id`  BIGINT UNSIGNED COMMENT '할인 정책 인덱스 FK',
+    `policy_id`  BIGINT UNSIGNED NOT NULL COMMENT '할인 정책 인덱스 FK',
 #     `end_at`     DATETIME    NOT NULL COMMENT '유효기간',
     `status`     BOOLEAN                 NOT NULL DEFAULT FALSE COMMENT '사용여부 (사용가능 = true, 불가능 = false)',
     CONSTRAINT `fk_discount_policy_coupon_id` FOREIGN KEY (`policy_id`) REFERENCES discount_policy (`id`)
@@ -185,7 +185,7 @@ CREATE TABLE IF NOT EXISTS `point_history`
     `phone`        VARCHAR(20)          NOT NULL COMMENT '회원 번호 FK',
     `type`         ENUM ('EARN', 'USE') NOT NULL COMMENT '적립 / 사용',
     `amount_point` BIGINT UNSIGNED      NOT NULL COMMENT '사용할 포인트',
-    `create_at`    DATETIME             NOT NULL COMMENT '포인트 변경일',
+    `create_at`    DATETIME             NOT NULL COMMENT '포인트 변경일', # TODO BaseTime안쓸시 change_at
     CONSTRAINT `fk_point_history_payment_id` FOREIGN KEY (`payment_id`) REFERENCES payment_details (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_point_history_phone` FOREIGN KEY (`phone`) REFERENCES members (`phone`)
