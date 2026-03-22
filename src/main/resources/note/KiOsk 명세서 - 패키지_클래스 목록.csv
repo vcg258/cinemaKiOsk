@@ -198,8 +198,6 @@ No,패키지,클래스,역할,담당자
 │ │ │ ├── seat.js # WebSocket 좌석 실시간 동기화
 │ │ │ ├── payment.js # 타이머·할인·포인트 로직
 │ │ │ └── result.js # 예매 완료 처리
-│ │ ├── mypage/
-│ │ │ └── lookup.js # 번호 입력·조회 분기 로직
 │ │ └── admin/
 │ │ ├── stats.js # 차트 공통 초기화 (Chart.js)
 │ │ ├── movie-form.js # 포스터 업로드·시간 중복 검증

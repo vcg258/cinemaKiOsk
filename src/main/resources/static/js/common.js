@@ -505,8 +505,88 @@ const CineOS = (function () {
 
 
   /* =====================================================================
-     6. 전역 에러 핸들러 등록
-     catch되지 않은 Promise reject를 토스트 알림으로 표시.
+     6. 네비게이션 관리자 버튼 — 5회 연속 탭 → /admin/login 이동
+     ─────────────────────────────────────────────────────────────────────
+     · 대상 요소 : #nav-admin-btn (fragments/nav.html 안의 <button>)
+     · 홈 화면(home.html)은 별도 home.js에서 동일 패턴으로 처리하며,
+       이 코드는 base.html 레이아웃을 사용하는 모든 페이지에서 동작함.
+     · 탭 횟수는 .admin-access-btn__dot--filled 클래스로 시각 피드백.
+     · 마지막 탭 이후 3초 이내에 추가 탭이 없으면 카운터 자동 리셋.
+     ===================================================================== */
+  document.addEventListener('DOMContentLoaded', function initNavAdminBtn() {
+    /** nav 관리자 버튼 요소 */
+    const btn = document.getElementById('nav-admin-btn');
+
+    /* home.html 등 nav fragment가 없는 페이지에서는 조용히 종료 */
+    if (!btn) return;
+
+    /** 버튼 내부 도트 요소 목록 (5개 고정) */
+    const dots = btn.querySelectorAll('.admin-access-btn__dot');
+
+    /** 현재 누적 탭 횟수 */
+    let count = 0;
+
+    /** 자동 리셋 타이머 ID */
+    let resetTimer = null;
+
+    /** 이동에 필요한 연속 탭 횟수 */
+    const TAP_REQUIRED = 5;
+
+    /** 마지막 탭 이후 카운터 리셋까지 대기 시간 (ms) */
+    const TAP_RESET_MS = 3000;
+
+    /**
+     * 누적 탭 횟수에 맞게 도트 UI 업데이트.
+     * n개 도트를 브랜드 골드로 채우고 나머지는 빈 원으로 표시.
+     * @param {number} n - 채울 도트 수 (0 이상 5 이하)
+     */
+    function updateDots(n) {
+      dots.forEach(function (dot, i) {
+        /* i < n 이면 채워진(골드) 상태, 아니면 빈 상태 */
+        dot.classList.toggle('admin-access-btn__dot--filled', i < n);
+      });
+    }
+
+    /**
+     * 버튼 클릭(탭) 핸들러.
+     * 5회 연속 탭 시 /admin/login 으로 이동.
+     * 탭 간격이 TAP_RESET_MS 를 초과하면 카운터 초기화.
+     */
+    btn.addEventListener('click', function handleNavAdminTap() {
+      /* 탭 카운트 증가 및 도트 시각화 */
+      count++;
+      updateDots(count);
+
+      /* 기존 리셋 타이머 취소 (새 탭이 들어왔으므로 시간을 다시 셈) */
+      if (resetTimer) {
+        clearTimeout(resetTimer);
+        resetTimer = null;
+      }
+
+      /* 5회 달성 → 관리자 로그인으로 이동 */
+      if (count >= TAP_REQUIRED) {
+        count = 0;
+        updateDots(0);
+        window.location.href = '/admin/login';
+        return;
+      }
+
+      /*
+       * TAP_RESET_MS 이내에 추가 탭이 없으면 카운터 리셋.
+       * (관객이 실수로 몇 번 눌렀다가 멈춘 경우 자동 초기화)
+       */
+      resetTimer = setTimeout(function () {
+        count = 0;
+        updateDots(0);
+        resetTimer = null;
+      }, TAP_RESET_MS);
+    });
+  });
+
+
+  /* =====================================================================
+     7. 전역 에러 핸들러 등록
+     catch 되지 않은 Promise reject를 토스트 알림으로 표시.
      ===================================================================== */
   window.addEventListener('unhandledrejection', (event) => {
     // 개발 환경에서는 콘솔에도 출력

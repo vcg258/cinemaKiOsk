@@ -23,9 +23,6 @@ seat로 갈 때 scheduledDTO를 담아서 보내기",,
 PaymentController","@PostMapping(""/payment"")",public,void,postPayment,"ReservationDTO reservationDTO, Model model",예매내역을 받아서 이것저것 채워서 결제 정보를 저장하고 결과창으로 이동,,
 ,"@GetMapping(""/result"")",public,void,getResult,@RequestParam(“”),,,
 "@Controller
-@RequestMapping(""/mypage"")
-MypageController","@GetMapping(""/lookup"")",public,void,,,,,
-,"@GetMapping(""/booking-detail"")",public,void,,,,,
 "@Controller
 @RequestMapping(""/admin/login"")
 LoginController","@GetMapping(""/main"")",public,void,getMain,,로그인 화면 보여주기,,

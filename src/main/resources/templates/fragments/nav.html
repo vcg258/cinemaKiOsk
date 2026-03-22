@@ -8,7 +8,6 @@
   ▶ 포함 내용
   - CineOS 로고 (홈 링크)
   - 현재 상영작 탭 (UC-01)
-  - 예매 조회 탭 (UC-08)
   - 관리자 접근 버튼 (hidden 스타일, UC-11로 이동)
 -->
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
@@ -53,31 +52,34 @@
           </a>
         </li>
 
-        <!--
-          NOTE: UC-08 예매 조회(마이페이지)는 팀 합의로 제거됨.
-          현장 발권만 운영하므로 해당 탭 삭제.
-        -->
-
       </ul>
     </nav>
 
     <!-- ── 관리자 접근 버튼 (UC-11) ─────────────────────── -->
     <!--
-      키오스크 화면에서 눈에 잘 띄지 않도록 최소화.
-      관리자만 알고 있는 숨겨진 진입점 역할.
+      5회 연속 탭 시 /admin/login 이동 (common.js initNavAdminBtn 처리).
+      직접 href 없음 — <button> 태그로 변경하여 터치 면적을 충분히 확보.
+      aria-hidden/tabindex=-1 : 일반 관객의 스크린리더·키보드 탐색 노출 방지.
     -->
-    <a th:href="@{/admin/login}"
-       class="admin-access-btn"
-       aria-label="관리자 로그인">
-      <!-- 열쇠 아이콘 -->
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-           fill="currentColor" width="20" height="20" aria-hidden="true">
-        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2
-                 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6
-                 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71
-                 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
-      </svg>
-    </a>
+    <button type="button"
+            id="nav-admin-btn"
+            class="admin-access-btn"
+            aria-hidden="true"
+            tabindex="-1">
+
+      <!-- 탭 카운트 피드백 도트 (5개 고정, common.js가 --filled 클래스 토글) -->
+      <span class="admin-access-btn__dots" aria-hidden="true">
+        <i class="admin-access-btn__dot"></i>
+        <i class="admin-access-btn__dot"></i>
+        <i class="admin-access-btn__dot"></i>
+        <i class="admin-access-btn__dot"></i>
+        <i class="admin-access-btn__dot"></i>
+      </span>
+
+      <!-- 버튼 레이블 -->
+      <span class="admin-access-btn__label">관리</span>
+
+    </button>
 
   </div>
 </header>

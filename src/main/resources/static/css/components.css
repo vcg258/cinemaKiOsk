@@ -151,23 +151,72 @@ ul, ol {
   background-color: var(--color-brand-tint-100);
 }
 
-/* 관리자 접근 버튼: 최소화하여 눈에 안 띄게 */
+/* ── 관리자 접근 버튼 ─────────────────────────────────────
+   5회 연속 탭으로 /admin/login 진입 (common.js 처리).
+   아이콘만 있던 작은 원에서 직사각형 면 버튼으로 변경 →
+   키오스크 터치 환경에서 충분한 탭 면적 확보.                 */
 .admin-access-btn {
   flex-shrink: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  color: var(--text-muted);                /* 흐린 색상으로 숨김 */
-  opacity: 0.4;                            /* 반투명 처리 */
-  transition: opacity 0.2s;
+  gap: 6px;
+
+  /* 충분한 터치 면적 */
+  padding: 8px 18px 10px;
+  min-width: 58px;
+
+  background: rgba(46, 40, 32, 0.45);
+  border: 1px solid rgba(79, 69, 55, 0.4);
+  border-radius: 6px;
+
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+
+  opacity: 0.55;                           /* 일반 관객 눈에 잘 안 띄게 */
+  transition: opacity 0.2s, background 0.2s, border-color 0.2s;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.admin-access-btn:hover {
+.admin-access-btn:hover,
+.admin-access-btn:active {
   opacity: 1;
+  background: rgba(79, 69, 55, 0.6);
+  border-color: rgba(255, 184, 0, 0.35);
   color: var(--text-secondary);
+}
+
+/* 탭 카운트 피드백 — 도트 5개 */
+.admin-access-btn__dots {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.admin-access-btn__dot {
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+/* JS에서 추가 → 브랜드 골드로 채워짐 */
+.admin-access-btn__dot--filled {
+  background: var(--color-brand-400);
+  border-color: var(--color-brand-400);
+}
+
+.admin-access-btn__label {
+  display: block;
+  pointer-events: none;
 }
 
 /* 메인 콘텐츠 영역: 헤더/푸터를 제외한 공간 차지 */

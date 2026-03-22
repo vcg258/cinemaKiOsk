@@ -121,12 +121,18 @@
     </div>
   </div>
 
-  <script>
+  <!--
+    th:inline="javascript" 필수: Thymeleaf가 /*[[...]]*/  패턴을 처리하려면
+    반드시 이 속성이 있어야 한다. 없으면 ${theater?.no} 가 null literal로 고정됨.
+  -->
+  <script th:inline="javascript">
+    /*<![CDATA[*/
     /**
      * 좌석 배치 저장 — PUT /api/admin/theater/{no}/seats
      * 각 좌석의 seatId + 선택된 policyId를 배열로 수집해 전송
      */
     async function submitSeatEdit() {
+      /* 현재 상영관 번호 — Thymeleaf SSR 주입 */
       const theaterNo = /*[[${theater?.no}]]*/ null;
 
       /* 모든 좌석 정책 드롭다운 값 수집 */
@@ -144,6 +150,7 @@
         CineOS.alert.error(err.message || '저장에 실패하였습니다.');
       }
     }
+    /*]]>*/
   </script>
 
 </main>
