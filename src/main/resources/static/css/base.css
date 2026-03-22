@@ -3,6 +3,16 @@
    기본 테마: 다크(웜 다크), 관리자 라이트 테마 오버라이드 포함
    ===================================================== */
 
+/*
+ * [hidden] 속성 강제 적용.
+ * CSS 클래스(display: flex/grid 등)가 HTML hidden 속성을 덮어쓰는 것을 방지.
+ * JS에서 element.hidden = true/false 로 요소 표시를 제어할 때 정상 동작하려면
+ * !important 로 [hidden] 을 최우선 적용해야 함.
+ */
+[hidden] {
+  display: none !important;
+}
+
 :root {
 
   /* --- Brand: 골드 (#ffb800) 스케일 --- */

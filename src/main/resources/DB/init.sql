@@ -80,21 +80,21 @@ CREATE TABLE IF NOT EXISTS `discount_policy` # FK (X)
 
 -- --------------------------------------------------------------------------------------------------------------------
 
-CREATE TABLE IF NOT EXISTS `movie_images`
-(
-    `no`       BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '영화이미지 인덱스',
-    `title_id` BIGINT UNSIGNED NOT NULL COMMENT '영화 제목 아이디',
-    `poster`   MEDIUMBLOB      NOT NULL COMMENT '영화 포스터 (16MB)',
-    CONSTRAINT `fk_movie_title` FOREIGN KEY (`title_id`) REFERENCES movie (`movie_id`)
-        ON DELETE CASCADE ON UPDATE CASCADE
-) COMMENT '영화 이미지';
+# CREATE TABLE IF NOT EXISTS `movie_images`
+# (
+#     `no`       BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '영화이미지 인덱스',
+#     `title_id` BIGINT UNSIGNED NOT NULL COMMENT '영화 제목 아이디',
+#     `poster`   VARCHAR(50)     NOT NULL COMMENT '영화 포스터',
+#     CONSTRAINT `fk_movie_title` FOREIGN KEY (`title_id`) REFERENCES movie (`movie_id`)
+#         ON DELETE CASCADE ON UPDATE CASCADE
+# ) COMMENT '영화 이미지';
 
 CREATE TABLE IF NOT EXISTS `coupon`
 (
-    `coupon_num` VARCHAR(12) NOT NULL COMMENT '쿠폰 번호',
+    `coupon_num` VARCHAR(12) PRIMARY KEY NOT NULL COMMENT '쿠폰 번호',
     `policy_id`  BIGINT UNSIGNED COMMENT '할인 정책 인덱스 FK',
-    `end_at`     DATETIME    NOT NULL COMMENT '유효기간',
-    `status`     BOOLEAN     NOT NULL DEFAULT FALSE COMMENT '사용여부 (사용가능 = true, 불가능 = false)',
+#     `end_at`     DATETIME    NOT NULL COMMENT '유효기간',
+    `status`     BOOLEAN                 NOT NULL DEFAULT FALSE COMMENT '사용여부 (사용가능 = true, 불가능 = false)',
     CONSTRAINT `fk_discount_policy_coupon_id` FOREIGN KEY (`policy_id`) REFERENCES discount_policy (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT '쿠폰 내역';
@@ -113,8 +113,8 @@ CREATE TABLE IF NOT EXISTS `schedule`
     `id`       BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '스케줄 인덱스',
     `no`       BIGINT UNSIGNED NOT NULL COMMENT '상영관 번호 FK',
     `movie_id` BIGINT UNSIGNED NOT NULL COMMENT '영화 번호 FK',
-    `start_at` DATETIME        NULL COMMENT '상영 시작 시간',
-    `end_at`   DATETIME        NULL COMMENT '상영 종료 시간',
+    `start_at` DATETIME        NULL COMMENT '상영 시작 시간', # NOT NULL? NULL?
+    `end_at`   DATETIME        NULL COMMENT '상영 종료 시간', # NOT NULL? NULL?
     CONSTRAINT `fk_schedule_theater_no` FOREIGN KEY (`no`) REFERENCES theater (`no`)
         ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_schedule_movie_id` FOREIGN KEY (`movie_id`) REFERENCES movie (`movie_id`)
@@ -161,19 +161,19 @@ CREATE TABLE IF NOT EXISTS `reservation_seat`
 
 CREATE TABLE IF NOT EXISTS `payment_details`
 (
-    `id`                 CHAR(36) PRIMARY KEY COMMENT '결제 고유번호',
-    `reservation_id`     varchar(36)                  NOT NULL COMMENT '예매 내역 FK',
-    `bonus_policy_id`    BIGINT UNSIGNED              NULL COMMENT '적립 정책 FK',  # NOT NULL -> NULL 이유 : 비회원일 경우 NULL
-    `discount_policy_id` BIGINT UNSIGNED              NULL COMMENT '할인 정책 FK, 할인 없는 경우 NULL',
-    `cost`               BIGINT UNSIGNED              NOT NULL COMMENT '결제 금액',
-    `time`               DATETIME                     NOT NULL COMMENT '결제 시간',
-    `use_point`          BIGINT UNSIGNED              NULL DEFAULT 0 COMMENT '사용 포인트',
-    `status`             ENUM ('PAY','RETURN','FAIL') NOT NULL COMMENT '결제 내용', # NULL -> NOT NULL
+    `id`              CHAR(36) PRIMARY KEY COMMENT '결제 고유번호',
+    `reservation_id`  varchar(36)                  NOT NULL COMMENT '예매 내역 FK',
+    `bonus_policy_id` BIGINT UNSIGNED              NULL COMMENT '적립 정책 FK', # NOT NULL -> NULL 이유 : 비회원일 경우 NULL
+    `coupon_num`      VARCHAR(12)                  NULL COMMENT '할인 쿠폰 FK',
+    `cost`            BIGINT UNSIGNED              NOT NULL COMMENT '결제 금액',
+    `time`            DATETIME                     NOT NULL COMMENT '결제 시간',
+    `use_point`       BIGINT UNSIGNED              NULL DEFAULT 0 COMMENT '사용 포인트',
+    `status`          ENUM ('PAY','RETURN','FAIL') NOT NULL COMMENT '결제 내용',
     CONSTRAINT `fk_payment_details_reservation_id` FOREIGN KEY (`reservation_id`) REFERENCES reservation_details (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_payment_details_bonus_policy_id` FOREIGN KEY (`bonus_policy_id`) REFERENCES bonus_policy (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_payment_details_discount_policy_id` FOREIGN KEY (`discount_policy_id`) REFERENCES discount_policy (id)
+    CONSTRAINT `fk_payment_details_coupon_num` FOREIGN KEY (`coupon_num`) REFERENCES coupon (coupon_num)
         ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT '결제 내역';
 

@@ -209,6 +209,90 @@ public class PreviewController {
     }
 
     /**
+     * [MOCK] UC-01 영화 목록 API.
+     * ─────────────────────────────────────────────────────────────────────────
+     * list.js 의 fetchMovies() → GET /api/movies 호출에 응답하는 임시 REST 엔드포인트.
+     *
+     * ▶ 왜 필요한가
+     *   list.html 은 SSR 없이 JS 가 직접 /api/movies 를 fetch 해서 카드를 렌더링함.
+     *   백엔드 실제 API 가 붙기 전까지 이 엔드포인트가 없으면 axios 가 HTML 에러
+     *   페이지를 200 OK 로 받아버려 catch 블록이 타지 않고 로딩 스피너만 남음.
+     *
+     * ▶ 실제 API 연동 시 이 메서드 삭제할 것.
+     *
+     * @param status  'NOW' | 'UPCOMING' (list.js 가 ?status=NOW 형태로 전달)
+     * @return        더미 MovieDTO Map 리스트 (JSON)
+     */
+    @GetMapping("/api/movies")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public List<Map<String, Object>> apiMovieList(
+            @RequestParam(defaultValue = "NOW") String status) {
+
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        if ("NOW".equalsIgnoreCase(status)) {
+            /* 현재 상영 중 더미 6편 */
+            Map<String, Object> m1 = dummyMovie(1L, "범죄도시 5", "15");
+            m1.put("genre",    "액션");
+            m1.put("soldOut",  false);
+            m1.put("status",   "NOW");
+            result.add(m1);
+
+            Map<String, Object> m2 = dummyMovie(2L, "하얼빈", "12");
+            m2.put("genre",    "드라마");
+            m2.put("soldOut",  false);
+            m2.put("status",   "NOW");
+            result.add(m2);
+
+            Map<String, Object> m3 = dummyMovie(3L, "소방관", "12");
+            m3.put("genre",    "드라마");
+            m3.put("soldOut",  false);
+            m3.put("status",   "NOW");
+            result.add(m3);
+
+            Map<String, Object> m4 = dummyMovie(4L, "미키 17", "15");
+            m4.put("genre",    "SF");
+            m4.put("soldOut",  true);   /* 매진 테스트용 */
+            m4.put("status",   "NOW");
+            result.add(m4);
+
+            Map<String, Object> m5 = dummyMovie(5L, "캡틴 아메리카: 브레이브 뉴 월드", "12");
+            m5.put("genre",    "액션");
+            m5.put("soldOut",  false);
+            m5.put("status",   "NOW");
+            result.add(m5);
+
+            Map<String, Object> m6 = dummyMovie(6L, "스노우화이트", "ALL");
+            m6.put("genre",    "판타지");
+            m6.put("soldOut",  false);
+            m6.put("status",   "NOW");
+            result.add(m6);
+
+        } else {
+            /* 상영 예정 더미 3편 */
+            Map<String, Object> u1 = dummyMovie(7L, "어벤져스: 둠스데이", "12");
+            u1.put("genre",    "액션");
+            u1.put("soldOut",  false);
+            u1.put("status",   "UPCOMING");
+            result.add(u1);
+
+            Map<String, Object> u2 = dummyMovie(8L, "미션 임파서블 8", "15");
+            u2.put("genre",    "액션");
+            u2.put("soldOut",  false);
+            u2.put("status",   "UPCOMING");
+            result.add(u2);
+
+            Map<String, Object> u3 = dummyMovie(9L, "세실리아", "19");
+            u3.put("genre",    "공포");
+            u3.put("soldOut",  false);
+            u3.put("status",   "UPCOMING");
+            result.add(u3);
+        }
+
+        return result;
+    }
+
+    /**
      * UC-02 상영작 상세.
      * templates/movie/detail.html
      *
