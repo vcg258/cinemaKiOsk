@@ -13,7 +13,7 @@ import java.util.List;
 @ToString(exclude = "pointHistory")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member {
+public class Member extends TimeBaseEntity {
     @Column(length = 20)
     @Id private String phone; // 회원 번호
     @Column(columnDefinition = "INT UNSIGNED DEFAULT 0")

@@ -24,8 +24,9 @@ public class Schedule {
 //    @JoinColumn(name = "movie_id", columnDefinition = "BIGINT UNSIGNED", foreignKey = @ForeignKey(name = "fk_schedule_movie_id"))
     @Column(name = "movie_id", nullable = false, columnDefinition = "BIGINT UNSIGNED")
     private Long movie; // 영화 번호 FK
-//    @Column(columnDefinition = "DATETIME DEFAULT NOW()")
-//    private LocalDateTime startAt; // 상영 시작 시간
+
+    @Column(columnDefinition = "DATETIME DEFAULT NOW()")
+    private LocalDateTime startAt; // 상영 시작 시간
     private LocalDateTime endAt; // 상영 종료 시간
 
 }

@@ -1,6 +1,7 @@
 package com.example.cinemakiosk.domain.PointHistory;
 
 import com.example.cinemakiosk.domain.Member;
+import com.example.cinemakiosk.domain.TimeBaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PointHistory {
+public class PointHistory extends TimeBaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT UNSIGNED")
     @Id private Long pointId; // 포인트 인덱스
@@ -29,6 +30,6 @@ public class PointHistory {
     private Type type; // 적립 / 사용 ('EARN', 'USE')
     @Column(nullable = false, columnDefinition = "BIGINT UNSIGNED")
     private Long amountPoint; // 사용할 포인트
-    @Column(nullable = false, columnDefinition = "DATETIME DEFAULT NOW()")
-    private LocalDateTime createAt; // 포인트 변경일
+//    @Column(nullable = false, columnDefinition = "DATETIME DEFAULT NOW()")
+//    private LocalDateTime createAt; // 포인트 변경일
 }
