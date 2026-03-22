@@ -332,8 +332,8 @@
   transform: translateY(-2px);
 }
 
-/* 다른 사람이 임시 점유 중인 좌석 */
-.seat--held {
+/* 다른 사람이 임시 점유 중인 좌석 (JS에서 seat--selecting 클래스 사용) */
+.seat--selecting {
   background-color: var(--color-neutral-800);
   border-color: var(--color-neutral-400);
   color: var(--text-muted);

@@ -118,16 +118,20 @@
         <span class="booking-info-card__movie-title"
               th:text="${movie != null ? movie.title : '-'}">영화 제목</span>
         <span class="badge badge--sm"
-              th:classappend="
-                ${movie.rating == 'ALL'} ? 'badge--all' :
-                ${movie.rating == '12'}  ? 'badge--12'  :
-                ${movie.rating == '15'}  ? 'badge--15'  :
-                ${movie.rating == '19'}  ? 'badge--18'  : ''"
-              th:text="
-                ${movie.rating == 'ALL'} ? '전체관람가'    :
-                ${movie.rating == '12'}  ? '12세'          :
-                ${movie.rating == '15'}  ? '15세'          :
-                ${movie.rating == '19'}  ? '청소년관람불가' : ${movie.rating}">
+              th:classappend="${movie.rating == 'ALL'     ? 'badge--all' :
+                               movie.rating == '12'      ? 'badge--12'  :
+                               movie.rating == 'TWELVE'  ? 'badge--12'  :
+                               movie.rating == '15'      ? 'badge--15'  :
+                               movie.rating == 'FIFTEEN' ? 'badge--15'  :
+                               movie.rating == '19'      ? 'badge--18'  :
+                               movie.rating == 'NINETEEN'? 'badge--18'  : ''}"
+              th:text="${movie.rating == 'ALL'      ? '전체관람가'    :
+                        movie.rating == '12'        ? '12세'          :
+                        movie.rating == 'TWELVE'    ? '12세'          :
+                        movie.rating == '15'        ? '15세'          :
+                        movie.rating == 'FIFTEEN'   ? '15세'          :
+                        movie.rating == '19'        ? '청소년관람불가' :
+                        movie.rating == 'NINETEEN'  ? '청소년관람불가' : movie.rating}">
           등급
         </span>
       </div>
@@ -186,66 +190,68 @@
     </div>
   </section>
 
-
+<!-- 청소년 할인은 자리 정하기 전에 고객이 선택하고,  -->
   <!-- ══════════════════════════════════════════════════════════════════
        할인 정책 선택 (UC-04)
        서버에서 내려온 discountPolicies 목록을 라디오 카드로 표시.
        "할인 없음"이 기본 선택.
        선택 시 JS가 할인 금액 계산 후 가격 요약 업데이트.
   ══════════════════════════════════════════════════════════════════ -->
-  <section class="payment-section" aria-labelledby="label-discount">
-    <h2 class="payment-section__title" id="label-discount">할인 선택</h2>
+<!--  <section class="payment-section" aria-labelledby="label-discount">-->
+<!--    <h2 class="payment-section__title" id="label-discount">할인 선택</h2>-->
 
-    <div class="discount-options"
-         id="discount-options"
-         role="radiogroup"
-         aria-labelledby="label-discount">
+<!--    <div class="discount-options"-->
+<!--         id="discount-options"-->
+<!--         role="radiogroup"-->
+<!--         aria-labelledby="label-discount">-->
 
-      <!-- 할인 없음 (기본 선택) -->
-      <label class="discount-option" data-discount-id="0" data-type="" data-value="0">
-        <input type="radio" name="discount" value="0" checked class="discount-option__radio"
-               aria-label="할인 없음">
-        <span class="discount-option__content">
-          <span class="discount-option__name">할인 없음</span>
-          <span class="discount-option__amount">0원</span>
-        </span>
-      </label>
+<!--      &lt;!&ndash; 할인 없음 (기본 선택) &ndash;&gt;-->
+<!--      <label class="discount-option" data-discount-id="0" data-type="" data-value="0">-->
+<!--        <input type="radio" name="discount" value="0" checked class="discount-option__radio"-->
+<!--               aria-label="할인 없음">-->
+<!--        <span class="discount-option__content">-->
+<!--          <span class="discount-option__name">할인 없음</span>-->
+<!--          <span class="discount-option__amount">0원</span>-->
+<!--        </span>-->
+<!--      </label>-->
 
-      <!--
-        할인 정책 목록 (SSR).
-        - discountType: RATIO(비율 할인 %) / WON(금액 할인 원)
-        - discountValue: 비율이면 20(=20%), 금액이면 2000(=2,000원)
-        JS에서 .discount-option__amount 텍스트를 실시간으로 계산·업데이트.
-      -->
-      <th:block th:if="${discountPolicies != null and not #lists.isEmpty(discountPolicies)}">
-        <label class="discount-option"
-               th:each="policy : ${discountPolicies}"
-               th:data-discount-id="${policy.id}"
-               th:data-type="${policy.discountType}"
-               th:data-value="${policy.discountValue}">
-          <input type="radio" name="discount"
-                 th:value="${policy.id}"
-                 class="discount-option__radio"
-                 th:aria-label="${policy.policyName}">
-          <span class="discount-option__content">
-            <!-- 정책 이름 -->
-            <span class="discount-option__name"
-                  th:text="${policy.policyName}">정책명</span>
-            <!-- 할인 금액: JS에서 기본 요금 기준으로 계산하여 채움 -->
-            <span class="discount-option__amount">-</span>
-          </span>
-        </label>
-      </th:block>
+<!--      &lt;!&ndash;-->
+<!--        할인 정책 목록 (SSR).-->
+<!--        - discountType: RATIO(비율 할인 %) / WON(금액 할인 원)-->
+<!--        - discountValue: 비율이면 20(=20%), 금액이면 2000(=2,000원)-->
+<!--        JS에서 .discount-option__amount 텍스트를 실시간으로 계산·업데이트.-->
+<!--      &ndash;&gt;-->
+<!--      <th:block th:if="${discountPolicies != null and not #lists.isEmpty(discountPolicies)}">-->
+<!--        <label class="discount-option"-->
+<!--               th:each="policy : ${discountPolicies}"-->
+<!--               th:data-discount-id="${policy.id}"-->
+<!--               th:data-type="${policy.discountType}"-->
+<!--               th:data-value="${policy.discountValue}">-->
+<!--          <input type="radio" name="discount"-->
+<!--                 th:value="${policy.id}"-->
+<!--                 class="discount-option__radio"-->
+<!--                 th:aria-label="${policy.policyName}">-->
+<!--          <span class="discount-option__content">-->
+<!--            &lt;!&ndash; 정책 이름 &ndash;&gt;-->
+<!--            <span class="discount-option__name"-->
+<!--                  th:text="${policy.policyName}">정책명</span>-->
+<!--            &lt;!&ndash; 할인 금액: JS에서 기본 요금 기준으로 계산하여 채움 &ndash;&gt;-->
+<!--            <span class="discount-option__amount">-</span>-->
+<!--          </span>-->
+<!--        </label>-->
+<!--      </th:block>-->
 
-      <!-- 적용 가능한 할인이 없을 때 안내 문구 -->
-      <p class="discount-empty"
-         th:if="${discountPolicies == null or #lists.isEmpty(discountPolicies)}">
-        현재 적용 가능한 할인이 없습니다.
-      </p>
+<!--      &lt;!&ndash; 적용 가능한 할인이 없을 때 안내 문구 &ndash;&gt;-->
+<!--      <p class="discount-empty"-->
+<!--         th:if="${discountPolicies == null or #lists.isEmpty(discountPolicies)}">-->
+<!--        현재 적용 가능한 할인이 없습니다.-->
+<!--      </p>-->
 
-    </div>
-  </section>
+<!--    </div>-->
+<!--  </section>-->
 
+<!-- 여기부터 모달창으로 바꾸기.
+회원 여부를 먼저 묻고, 입력하면 적립(결제 완료 시) & 쿠폰 및 포인트 사용 여부 묻는 단계 추가 -->
 
   <!-- ══════════════════════════════════════════════════════════════════
        포인트 사용 (UC-05 인증 → UC-06 사용)
@@ -264,7 +270,7 @@
     <!-- ① 인증 전: 인증 버튼 -->
     <!-- JS initPage()에서 MEMBER_PHONE이 있으면 즉시 hidden 처리 -->
     <div class="point-auth-wrap" id="point-auth-wrap">
-      <p class="point-guide">포인트 사용을 위해 휴대폰 번호 인증이 필요합니다.</p>
+      <p class="point-guide">포인트 사용을 위해 휴대폰 번호 인증이 필요합니다. </p>
       <button type="button"
               class="btn btn--secondary"
               id="btn-point-auth"
@@ -320,7 +326,7 @@
     </div>
   </section>
 
-
+<!--결제 금액 섹션이랑 결제 수단 섹션 합치기 css 고려 클래스명이랑 아이디 다시 생각해봐야 함-->
   <!-- ══════════════════════════════════════════════════════════════════
        결제 금액 요약 (실시간 계산)
        기본 요금 - 할인 - 포인트 사용 = 최종 결제 금액

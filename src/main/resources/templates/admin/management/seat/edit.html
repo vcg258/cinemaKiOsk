@@ -5,8 +5,9 @@
   ← theater/edit.html에서 "좌석 편집" 버튼 클릭 시 진입 (?policyId={id})
   Model: theater(TheaterDTO), seatPolicies(List<SeatPolicyVO>),
          seats(List<SeatStatusDTO>)
-  SeatPolicyVO: policyId, name, cost, isRecliner(Boolean)
+  SeatPolicyVO: policyId, name, cost   ← isRecliner 필드 없음 (DB seat_policy 테이블에 컬럼 없음)
   SeatStatusDTO: seatId, row, col, policyId
+  리클라이너 여부: seat_policy.name 에 "리클라이너" 포함 여부로 판단
 -->
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
@@ -18,10 +19,11 @@
 <body>
 <main>
 
-  <!-- 페이지 헤더 (상영관 번호 + 이름 표시) -->
+  <!-- 페이지 헤더 (상영관 번호 표시)
+       theater 테이블에 name 컬럼 없음 → no + '관' 형식으로만 표시 -->
   <div class="admin-page-header">
     <h1 class="admin-page-header__title"
-        th:text="${theater?.no + '관 — ' + theater?.name}">
+        th:text="${theater?.no + '관 — 좌석 편집'}">
       상영관 좌석 편집
     </h1>
     <a th:href="@{/admin/management/theater/edit}" class="btn btn--ghost">
@@ -53,11 +55,16 @@
                      min="0">
             </td>
             <td>
-              <!-- 리클라이너 여부 체크박스 -->
+              <!--
+                리클라이너 여부: DB seat_policy 테이블에 is_recliner 컬럼 없음.
+                seat_policy.name 에 "리클라이너" 포함 여부로 판단 (읽기 전용 표시).
+                수정은 정책명(name) 변경으로 간접 관리.
+              -->
               <input type="checkbox"
-                     th:checked="${policy.isRecliner}"
+                     th:checked="${#strings.contains(policy.name, '리클라이너')}"
                      th:attr="data-policy-id=${policy.policyId}"
-                     class="admin-checkbox">
+                     class="admin-checkbox"
+                     disabled>
             </td>
           </tr>
           <tr th:if="${#lists.isEmpty(seatPolicies)}">

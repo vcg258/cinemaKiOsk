@@ -128,10 +128,20 @@
       <!-- 관람 등급 배지 -->
       <span class="badge badge--sm"
             th:if="${movie != null}"
-            th:classappend="${movie.rating == 'ALL'} ? 'badge--all' :
-                            (${movie.rating == '12'}  ? 'badge--12'  :
-                            (${movie.rating == '15'}  ? 'badge--15'  : 'badge--18'))"
-            th:text="${movie.rating == 'ALL'} ? '전체관람가' : (${movie.rating} + '세 이상')">
+            th:classappend="${movie.rating == 'ALL'     ? 'badge--all' :
+                             movie.rating == '12'      ? 'badge--12'  :
+                             movie.rating == 'TWELVE'  ? 'badge--12'  :
+                             movie.rating == '15'      ? 'badge--15'  :
+                             movie.rating == 'FIFTEEN' ? 'badge--15'  :
+                             movie.rating == '19'      ? 'badge--18'  :
+                             movie.rating == 'NINETEEN'? 'badge--18'  : ''}"
+            th:text="${movie.rating == 'ALL'      ? '전체관람가'    :
+                      movie.rating == '12'        ? '12세'          :
+                      movie.rating == 'TWELVE'    ? '12세'          :
+                      movie.rating == '15'        ? '15세'          :
+                      movie.rating == 'FIFTEEN'   ? '15세'          :
+                      movie.rating == '19'        ? '청소년관람불가' :
+                      movie.rating == 'NINETEEN'  ? '청소년관람불가' : movie.rating}">
         등급
       </span>
     </div>

@@ -1,10 +1,15 @@
 package com.example.cinemakiosk.controller;
 
+import com.example.cinemakiosk.domain.MovieEntity;
+import com.example.cinemakiosk.dto.MovieDTO;
+import com.example.cinemakiosk.repository.MovieRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * PreviewController — view 브랜치 전용 임시 컨트롤러
@@ -38,6 +44,11 @@ import java.util.Map;
  */
 @Controller
 public class PreviewController {
+
+    // ── 실제 DB 조회용 Repository 주입 ──────────────────────────────────────
+    // MovieService가 아직 없으므로 Repository 직접 사용. 머지 시 삭제.
+    @Autowired
+    private MovieRepository movieRepository;
 
     // ══════════════════════════════════════════════════════════════════
     // 헬퍼 — 더미 데이터 팩토리
@@ -95,15 +106,18 @@ public class PreviewController {
     }
 
     /**
-     * TheaterDTO 더미 생성.
+     * TheaterVO 더미 생성.
      * theater/edit.html, seat/edit.html, booking/seat.html 에서 공통 사용.
+     *
+     * ▶ theater 테이블에 name 컬럼 없음 (init.sql 기준).
+     *   TheaterVO: no, policyId, cleanupTime 만 존재.
      *
      * @param no 상영관 번호
      */
     private Map<String, Object> dummyTheater(int no) {
         Map<String, Object> t = new HashMap<>();
         t.put("no",          no);
-        t.put("name",        no + "관");
+        /* name 제거 — DB theater 테이블에 name 컬럼 없음 */
         /* cost: 기본 좌석 요금 — seat.html에서 SEAT_COST 초기값으로 사용 */
         t.put("cost",        14000);
         t.put("cleanupTime", 20);
@@ -114,17 +128,20 @@ public class PreviewController {
      * SeatPolicyVO 더미 생성.
      * theater/edit.html, seat/edit.html 에서 정책 목록으로 사용.
      *
-     * @param policyId  정책 ID
-     * @param name      정책명
-     * @param cost      요금
-     * @param isRecliner 리클라이너 여부 (seat/edit.html 체크박스용)
+     * ▶ DB seat_policy 테이블에 is_recliner 컬럼 없음 (init.sql 기준).
+     *   SeatPolicyVO: policyId, name, cost 만 존재.
+     *   리클라이너 여부는 name 에 "리클라이너" 포함 여부로 View 에서 판단.
+     *
+     * @param policyId 정책 ID (CHAR(36) UUID 형식)
+     * @param name     정책명 — "리클라이너" 포함 시 View 체크박스 자동 체크
+     * @param cost     요금
      */
-    private Map<String, Object> dummySeatPolicy(long policyId, String name, int cost, boolean isRecliner) {
+    private Map<String, Object> dummySeatPolicy(String policyId, String name, int cost) {
         Map<String, Object> p = new HashMap<>();
-        p.put("policyId",   policyId);
-        p.put("name",       name);
-        p.put("cost",       cost);
-        p.put("isRecliner", isRecliner);
+        p.put("policyId", policyId);
+        p.put("name",     name);
+        p.put("cost",     cost);
+        /* isRecliner 제거 — DB 컬럼 없음, name으로 판단 */
         return p;
     }
 
@@ -209,108 +226,113 @@ public class PreviewController {
     }
 
     /**
-     * [MOCK] UC-01 영화 목록 API.
+     * UC-01 영화 목록 API — 실제 DB 조회.
      * ─────────────────────────────────────────────────────────────────────────
-     * list.js 의 fetchMovies() → GET /api/movies 호출에 응답하는 임시 REST 엔드포인트.
+     * list.js 의 fetchMovies() → GET /api/movies?status=NOW|UPCOMING 호출에 응답.
      *
-     * ▶ 왜 필요한가
-     *   list.html 은 SSR 없이 JS 가 직접 /api/movies 를 fetch 해서 카드를 렌더링함.
-     *   백엔드 실제 API 가 붙기 전까지 이 엔드포인트가 없으면 axios 가 HTML 에러
-     *   페이지를 200 OK 로 받아버려 catch 블록이 타지 않고 로딩 스피너만 남음.
+     * ▶ NOW     : MovieRepository.findNowPlaying() 사용 (startAt <= now <= endAt)
+     * ▶ UPCOMING: startAt > now 인 영화를 findAll() 후 stream 필터링
+     *             (MovieRepository에 별도 쿼리 없으므로 임시 처리)
      *
+     * ▶ posterUrl / soldOut 은 MovieDTO에 없는 필드 → list.js 기본값(placeholder/false)으로 처리됨.
      * ▶ 실제 API 연동 시 이 메서드 삭제할 것.
      *
-     * @param status  'NOW' | 'UPCOMING' (list.js 가 ?status=NOW 형태로 전달)
-     * @return        더미 MovieDTO Map 리스트 (JSON)
+     * @param status 'NOW' | 'UPCOMING'
+     * @return MovieDTO 리스트 (JSON)
      */
     @GetMapping("/api/movies")
-    @org.springframework.web.bind.annotation.ResponseBody
-    public List<Map<String, Object>> apiMovieList(
+    @ResponseBody
+    public List<MovieDTO> apiMovieList(
             @RequestParam(defaultValue = "NOW") String status) {
 
-        List<Map<String, Object>> result = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        List<MovieEntity> entities;
 
         if ("NOW".equalsIgnoreCase(status)) {
-            /* 현재 상영 중 더미 6편 */
-            Map<String, Object> m1 = dummyMovie(1L, "범죄도시 5", "15");
-            m1.put("genre",    "액션");
-            m1.put("soldOut",  false);
-            m1.put("status",   "NOW");
-            result.add(m1);
-
-            Map<String, Object> m2 = dummyMovie(2L, "하얼빈", "12");
-            m2.put("genre",    "드라마");
-            m2.put("soldOut",  false);
-            m2.put("status",   "NOW");
-            result.add(m2);
-
-            Map<String, Object> m3 = dummyMovie(3L, "소방관", "12");
-            m3.put("genre",    "드라마");
-            m3.put("soldOut",  false);
-            m3.put("status",   "NOW");
-            result.add(m3);
-
-            Map<String, Object> m4 = dummyMovie(4L, "미키 17", "15");
-            m4.put("genre",    "SF");
-            m4.put("soldOut",  true);   /* 매진 테스트용 */
-            m4.put("status",   "NOW");
-            result.add(m4);
-
-            Map<String, Object> m5 = dummyMovie(5L, "캡틴 아메리카: 브레이브 뉴 월드", "12");
-            m5.put("genre",    "액션");
-            m5.put("soldOut",  false);
-            m5.put("status",   "NOW");
-            result.add(m5);
-
-            Map<String, Object> m6 = dummyMovie(6L, "스노우화이트", "ALL");
-            m6.put("genre",    "판타지");
-            m6.put("soldOut",  false);
-            m6.put("status",   "NOW");
-            result.add(m6);
-
+            /* 현재 상영 중: startAt <= now AND endAt >= now */
+            entities = movieRepository.findNowPlaying(now);
         } else {
-            /* 상영 예정 더미 3편 */
-            Map<String, Object> u1 = dummyMovie(7L, "어벤져스: 둠스데이", "12");
-            u1.put("genre",    "액션");
-            u1.put("soldOut",  false);
-            u1.put("status",   "UPCOMING");
-            result.add(u1);
-
-            Map<String, Object> u2 = dummyMovie(8L, "미션 임파서블 8", "15");
-            u2.put("genre",    "액션");
-            u2.put("soldOut",  false);
-            u2.put("status",   "UPCOMING");
-            result.add(u2);
-
-            Map<String, Object> u3 = dummyMovie(9L, "세실리아", "19");
-            u3.put("genre",    "공포");
-            u3.put("soldOut",  false);
-            u3.put("status",   "UPCOMING");
-            result.add(u3);
+            /* 상영 예정: startAt > now */
+            entities = movieRepository.findAll().stream()
+                    .filter(m -> m.getStartAt() != null && m.getStartAt().isAfter(now))
+                    .collect(Collectors.toList());
         }
 
-        return result;
+        return entities.stream()
+                .map(MovieDTO::from)
+                .collect(Collectors.toList());
     }
 
     /**
-     * UC-02 상영작 상세.
+     * UC-03 좌석 상태 API — 더미 데이터 반환.
+     * ─────────────────────────────────────────────────────────────────────────
+     * seat.js 의 fetchSeats() → GET /api/seats?scheduleId= 호출에 응답.
+     * 5행(A~E) × 8열 = 40석 구성. E행은 예매 완료(TAKEN) 처리로 다양한 상태 시연.
+     *
+     * ▶ 실제 API 연동 시 이 메서드 삭제할 것.
+     *
+     * @param scheduleId 상영 스케줄 ID (현재 더미에서는 미사용)
+     * @return 좌석 상태 목록 (JSON)
+     */
+    @GetMapping("/api/seats")
+    @ResponseBody
+    public List<Map<String, Object>> apiSeatList(
+            @RequestParam(defaultValue = "0") Long scheduleId) {
+
+        List<Map<String, Object>> seats = new ArrayList<>();
+        String[] rows = {"A", "B", "C", "D", "E"};
+
+        for (String row : rows) {
+            for (int col = 1; col <= 8; col++) {
+                Map<String, Object> seat = new HashMap<>();
+                seat.put("seatId", row + col);
+                seat.put("row",    row);
+                seat.put("col",    col);
+
+                /* E행 전체 예매 완료, C3·C4 임시 점유, 나머지 선택 가능 */
+                String status;
+                if ("E".equals(row)) {
+                    status = "TAKEN";
+                } else if ("C".equals(row) && (col == 3 || col == 4)) {
+                    status = "SELECTING";
+                } else {
+                    status = "AVAILABLE";
+                }
+                seat.put("status", status);
+                seats.add(seat);
+            }
+        }
+        return seats;
+    }
+
+    /**
+     * UC-02 상영작 상세 — 실제 DB 조회.
      * templates/movie/detail.html
      *
-     * ▶ 주요 Model 속성
-     *   - movie     : MovieDTO (LocalDate 타입 startAt/endAt 포함)
-     *   - isSoldOut : Boolean  매진 여부
-     *   - posterUrl : String   포스터 URL (movie 내부가 아닌 별도 attribute)
+     * ▶ MovieRepository.findById(id) 로 조회.
+     *   없는 id 접근 시 더미 데이터로 fallback (개발 편의용).
      *
-     * ▶ posterUrl 을 별도 attribute 로 주입하는 이유:
-     *   detail.html → th:src="${posterUrl} ?: @{/images/placeholder-poster.jpg}"
-     *   즉 movie.posterUrl 이 아닌 model attribute "posterUrl" 을 직접 참조한다.
+     * ▶ isSoldOut : 매진 판단 로직 미구현 → 임시 false 고정.
+     *               실제 구현 시 Schedule 조회 후 잔여 좌석 여부로 판단.
+     * ▶ posterUrl : MovieEntity에 없는 필드 → placeholder 고정.
+     *               실제 구현 시 파일 서버 URL 또는 DB 컬럼 추가 필요.
      */
     @GetMapping("/movie/{id}")
     public String movieDetail(@PathVariable Long id, Model model) {
-        model.addAttribute("movie",     dummyMovie(id, "[미리보기] 더미 영화 #" + id, "15"));
+        MovieEntity entity = movieRepository.findById(id).orElse(null);
+
+        if (entity == null) {
+            /* id에 해당하는 영화 없음 → 더미 fallback */
+            model.addAttribute("movie",     dummyMovie(id, "[더미] 영화 #" + id, "15"));
+        } else {
+            model.addAttribute("movie",     MovieDTO.from(entity));
+        }
+
+        /* TODO: 매진 판단 로직 — Schedule/좌석 조회 후 교체 */
         model.addAttribute("isSoldOut", false);
-        /* 별도 posterUrl attribute — detail.html의 ${posterUrl} 참조에 대응 */
+        /* TODO: 포스터 URL — 파일 서버 연동 후 교체 */
         model.addAttribute("posterUrl", "/images/placeholder-poster.jpg");
+
         return "movie/detail";
     }
 
@@ -380,21 +402,40 @@ public class PreviewController {
      *   JS에서 new Date(startTime)으로 파싱하므로 ISO 문자열이 적합.
      */
     @GetMapping("/booking/seat")
-    public String bookingSeat(Model model) {
-        /* 선택된 상영 스케줄 더미 */
+    public String bookingSeat(
+            @RequestParam(required = false)                    Long    movieId,
+            @RequestParam(required = false, defaultValue = "0") Long    scheduleId,
+            @RequestParam(required = false, defaultValue = "1") Integer adultCount,
+            @RequestParam(required = false, defaultValue = "0") Integer teenCount,
+            Model model) {
+
+        /* ── 상영 스케줄 (scheduleId가 있으면 사용, 없으면 더미) ─────────── */
         Map<String, Object> schedule = new HashMap<>();
-        schedule.put("id",        3L);
+        schedule.put("id",        scheduleId);
         schedule.put("no",        1);
-        schedule.put("movieId",   1L);
+        schedule.put("movieId",   movieId != null ? movieId : 1L);
         /* ISO 문자열 — seat.html의 data-start / data-end attribute 및 JS 파싱에 사용 */
         schedule.put("startTime", LocalDate.now().atTime(14, 0).toString());
         schedule.put("endTime",   LocalDate.now().atTime(16, 10).toString());
 
-        model.addAttribute("schedule",    schedule);
-        model.addAttribute("theater",     dummyTheater(1));
-        model.addAttribute("movie",       dummyMovie(1L, "[미리보기] 더미 영화", "15"));
-        model.addAttribute("adultCount",  2);
-        model.addAttribute("teenCount",   0);
+        /* ── 영화 정보: movieId가 있으면 DB 조회, 없으면 더미 fallback ───── */
+        // Optional<MovieDTO> vs Map<String,Object> 타입 혼용으로 람다 체이닝 불가.
+        // 명시적 분기로 처리.
+        Object movieModel;
+        if (movieId != null) {
+            java.util.Optional<MovieEntity> found = movieRepository.findById(movieId);
+            movieModel = found.isPresent()
+                    ? MovieDTO.from(found.get())
+                    : dummyMovie(movieId, "[미리보기] 더미 영화", "15");
+        } else {
+            movieModel = dummyMovie(1L, "[미리보기] 더미 영화", "15");
+        }
+
+        model.addAttribute("schedule",   schedule);
+        model.addAttribute("theater",    dummyTheater(1));
+        model.addAttribute("movie",      movieModel);
+        model.addAttribute("adultCount", adultCount);
+        model.addAttribute("teenCount",  teenCount);
         return "booking/seat";
     }
 
@@ -757,8 +798,8 @@ public class PreviewController {
      * UC-21 상영관 정보 수정.
      * templates/admin/management/theater/edit.html
      *
-     * ▶ dummySeatPolicy() 의 4번째 파라미터(isRecliner): theater/edit.html 에서는
-     *   isRecliner 컬럼이 없으므로 무시되지만 seat/edit.html 에서는 체크박스에 사용됨.
+     * ▶ seat_policy.name 으로 리클라이너 여부 구분 ("리클라이너" 포함 여부).
+     *   policyId 는 CHAR(36) UUID 형식 (init.sql dummy_data.sql 기준).
      */
     @GetMapping("/admin/management/theater/edit")
     public String adminTheaterEdit(Model model) {
@@ -769,10 +810,11 @@ public class PreviewController {
         );
         model.addAttribute("theaters", theaters);
         model.addAttribute("theater",  theaters.get(0));
+        /* policyId: init.sql/dummy_data.sql의 UUID 형식에 맞춤 */
         model.addAttribute("seatPolicies", List.of(
-            dummySeatPolicy(1L, "일반석",     14000, false),
-            dummySeatPolicy(2L, "장애인석",    10000, false),
-            dummySeatPolicy(3L, "리클라이너",  20000, true)
+            dummySeatPolicy("sp001000-0000-0000-0000-000000000001", "일반석",    14000),
+            dummySeatPolicy("sp002000-0000-0000-0000-000000000002", "리클라이너", 25000),
+            dummySeatPolicy("sp003000-0000-0000-0000-000000000003", "특별관석",  18000)
         ));
         /* hasActiveReservation=true → edit.html에서 진행 중 예매 경고 배너 표시 */
         model.addAttribute("hasActiveReservation", true);
@@ -784,22 +826,22 @@ public class PreviewController {
      * templates/admin/management/seat/edit.html
      *
      * ▶ 주요 Model 속성
-     *   - theater      : TheaterDTO           상영관 번호·이름 (헤더 표시용)
-     *   - seatPolicies : List<SeatPolicyVO>   정책 목록 (isRecliner 체크박스 포함)
+     *   - theater      : TheaterVO            상영관 번호 (no, policyId, cleanupTime)
+     *   - seatPolicies : List<SeatPolicyVO>   정책 목록 (policyId, name, cost)
      *   - seats        : List<SeatStatusDTO>  좌석 배치 (행·열·현재 정책)
      *
-     * @param policyId 조회할 좌석 정책 ID (기본값 1, 현재 더미에서는 미사용)
+     * @param policyId 조회할 좌석 정책 ID (기본값, 현재 더미에서는 미사용)
      */
     @GetMapping("/admin/management/seat/edit")
     public String adminSeatEdit(
-            @RequestParam(defaultValue = "1") Long policyId,
+            @RequestParam(defaultValue = "sp001000-0000-0000-0000-000000000001") String policyId,
             Model model) {
 
         model.addAttribute("theater", dummyTheater(1));
         model.addAttribute("seatPolicies", List.of(
-            dummySeatPolicy(1L, "일반석",     14000, false),
-            dummySeatPolicy(2L, "장애인석",    10000, false),
-            dummySeatPolicy(3L, "리클라이너",  20000, true)
+            dummySeatPolicy("sp001000-0000-0000-0000-000000000001", "일반석",    14000),
+            dummySeatPolicy("sp002000-0000-0000-0000-000000000002", "리클라이너", 25000),
+            dummySeatPolicy("sp003000-0000-0000-0000-000000000003", "특별관석",  18000)
         ));
 
         /* 좌석 배치 더미 — 5행 × 8열 = 40석 */

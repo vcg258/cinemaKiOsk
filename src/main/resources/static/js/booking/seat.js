@@ -251,6 +251,10 @@ function createSeatButton(seat) {
 
 /**
  * 특정 좌석 버튼의 상태 클래스를 갱신 (WebSocket 메시지 수신 시 호출).
+ *
+ * DOM 업데이트와 함께 state.seats 배열의 status도 동기화해야
+ * findConsecutiveSeats() 탐색 시 정확한 좌석 상태를 판단할 수 있다.
+ *
  * @param {string|number} seatId
  * @param {string}        newStatus SEAT_STATUS 상수값
  */
@@ -261,6 +265,16 @@ function updateSeatButton(seatId, newStatus) {
   // 내가 선택한 좌석이면 WS 갱신 무시 (로컬 상태 우선)
   if (state.selectedSeats.includes(String(seatId))) return;
 
+  // ── state.seats 배열에서 해당 좌석의 status도 동기화 ──────────────────
+  // DOM만 바꾸면 findConsecutiveSeats()가 여전히 구 status를 참조하는 버그 발생.
+  const updatedSeats = state.seats.map(s =>
+    String(s.seatId ?? `${s.row}${s.col}`) === String(seatId)
+      ? { ...s, status: newStatus }
+      : s
+  );
+  setState({ seats: updatedSeats });
+
+  // ── DOM 상태 클래스 갱신 ──────────────────────────────────────────────
   // 기존 상태 클래스 제거
   btn.classList.remove('seat--available', 'seat--selecting', 'seat--taken');
   btn.disabled = false;
@@ -270,15 +284,17 @@ function updateSeatButton(seatId, newStatus) {
     btn.classList.add('seat--available');
     btn.setAttribute('aria-pressed', 'false');
     btn.addEventListener('click', () => {
-      // 대응 seat 객체를 seats 배열에서 찾아 전달
-      const seat = state.seats.find(s => String(s.seatId) === String(seatId));
+      // 업데이트된 seats 배열에서 좌석 객체 재탐색
+      const seat = state.seats.find(s => String(s.seatId ?? `${s.row}${s.col}`) === String(seatId));
       if (seat) onSeatClick(seat, btn);
     });
   } else if (newStatus === SEAT_STATUS.SELECTING) {
+    // 다른 고객이 임시 점유 중 — CSS: .seat--selecting
     btn.classList.add('seat--selecting');
     btn.disabled = true;
     btn.setAttribute('aria-disabled', 'true');
   } else {
+    // 예매 완료 — CSS: .seat--taken
     btn.classList.add('seat--taken');
     btn.disabled = true;
     btn.setAttribute('aria-disabled', 'true');
@@ -291,47 +307,165 @@ function updateSeatButton(seatId, newStatus) {
    ──────────────────────────────────────────────────────────────────────── */
 
 /**
+ * 현재 선택된 좌석 전체를 해제하고 UI·WebSocket 상태를 초기화.
+ * 2인 이상 연속 선택 모드에서 새로운 위치를 선택할 때 호출.
+ */
+function releaseAllSelectedSeats() {
+  state.selectedSeats.forEach(sid => {
+    // 해당 좌석 버튼의 클래스를 선택됨 → 선택 가능으로 복원
+    const seatBtn = $seatMap.querySelector(`[data-seat-id="${sid}"]`);
+    if (seatBtn) {
+      seatBtn.classList.remove('seat--selected');
+      seatBtn.classList.add('seat--available');
+      seatBtn.setAttribute('aria-pressed', 'false');
+    }
+    // WebSocket으로 점유 해제 발행
+    publishSeatRelease(sid);
+  });
+  // 상태 초기화
+  setState({ selectedSeats: [] });
+}
+
+/**
+ * 클릭한 좌석을 포함하는 REQUIRED_SEAT_COUNT개의 연속 AVAILABLE 좌석 탐색.
+ *
+ * 탐색 우선순위:
+ *   1. 클릭 좌석이 그룹의 가장 왼쪽(시작)인 경우부터 탐색
+ *   2. 오른쪽에 좌석이 부족하면 클릭 좌석을 오른쪽으로 밀면서 재탐색
+ *
+ * 조건:
+ *   - 같은 행(row) 내에서만 탐색
+ *   - col 번호가 연속(gap 없음)이어야 함
+ *   - 그룹 내 모든 좌석이 AVAILABLE이어야 함 (이미 내가 선택 중인 좌석도 AVAILABLE 취급)
+ *
+ * @param {Object} clickedSeat - 클릭된 좌석 SeatStatusDTO { seatId, row, col, status }
+ * @returns {Array<Object>|null} N개 연속 좌석 배열, 찾지 못하면 null
+ */
+function findConsecutiveSeats(clickedSeat) {
+  const row        = clickedSeat.row;
+  const clickedCol = Number(clickedSeat.col);
+  const N          = REQUIRED_SEAT_COUNT;
+
+  // 같은 행의 좌석을 col 오름차순으로 정렬
+  const rowSeats = state.seats
+    .filter(s => s.row === row)
+    .sort((a, b) => Number(a.col) - Number(b.col));
+
+  // 클릭한 좌석의 인덱스 확인
+  const clickedIdx = rowSeats.findIndex(s => Number(s.col) === clickedCol);
+  if (clickedIdx === -1) return null;
+
+  // 그룹 시작 인덱스(startIdx)의 유효 범위 계산
+  //   - maxStart: 클릭 좌석이 그룹의 맨 왼쪽(index 0)일 때
+  //   - minStart: 클릭 좌석이 그룹의 맨 오른쪽(index N-1)일 때
+  const maxStart = Math.min(rowSeats.length - N, clickedIdx);
+  const minStart = Math.max(0, clickedIdx - N + 1);
+
+  // 클릭 좌석이 최대한 왼쪽에 오도록 startIdx를 큰 값부터 탐색
+  for (let startIdx = maxStart; startIdx >= minStart; startIdx--) {
+    const candidate = rowSeats.slice(startIdx, startIdx + N);
+
+    if (candidate.length < N) continue;
+
+    // ① col 연속성 검사: 인접 좌석 col 차이가 정확히 1이어야 함
+    const isConsecutive = candidate.every((s, i) =>
+      i === 0 || Number(s.col) === Number(candidate[i - 1].col) + 1
+    );
+    if (!isConsecutive) continue;
+
+    // ② AVAILABLE 여부 검사 (이미 내가 선택한 좌석은 AVAILABLE로 취급)
+    const allAvailable = candidate.every(s => {
+      const sid = String(s.seatId ?? `${s.row}${s.col}`);
+      return s.status === SEAT_STATUS.AVAILABLE || state.selectedSeats.includes(sid);
+    });
+    if (!allAvailable) continue;
+
+    // 조건 모두 충족: 이 그룹을 반환
+    return candidate;
+  }
+
+  // 조건을 만족하는 그룹 없음
+  return null;
+}
+
+/**
  * 좌석 버튼 클릭 핸들러.
- * 이미 선택된 좌석이면 해제, 아니면 선택(최대 인원 수 초과 시 안내).
+ *
+ * ▷ 1인 (REQUIRED_SEAT_COUNT === 1): 기존 개별 선택/해제 방식 유지
+ * ▷ 2인 이상: 연속 좌석 자동 선택 방식으로 동작
+ *   - 클릭한 좌석이 이미 선택된 그룹에 포함되어 있으면 → 전체 해제
+ *   - 클릭한 좌석이 AVAILABLE이면 → 이전 선택 해제 후 연속 N개 자동 선택
+ *   - 연속 N개 좌석을 찾지 못하면 → 안내 메시지 표시
+ *
  * @param {Object}            seat  SeatStatusDTO
  * @param {HTMLButtonElement} btn   클릭된 버튼 요소
  */
 function onSeatClick(seat, btn) {
   const seatId = String(seat.seatId ?? `${seat.row}${seat.col}`);
 
-  if (state.selectedSeats.includes(seatId)) {
-    // ── 좌석 해제 ────────────────────────────────────────────────────
-    const newSelected = state.selectedSeats.filter(id => id !== seatId);
-    setState({ selectedSeats: newSelected });
+  /* ── 1인: 기존 개별 선택 로직 ──────────────────────────────────────── */
+  if (REQUIRED_SEAT_COUNT === 1) {
+    if (state.selectedSeats.includes(seatId)) {
+      // 좌석 해제
+      setState({ selectedSeats: [] });
+      btn.classList.remove('seat--selected');
+      btn.classList.add('seat--available');
+      btn.setAttribute('aria-pressed', 'false');
+      publishSeatRelease(seatId);
+    } else {
+      // 좌석 선택 (이미 1개 선택돼 있으면 먼저 해제)
+      releaseAllSelectedSeats();
 
-    btn.classList.remove('seat--selected');
-    btn.classList.add('seat--available');
-    btn.setAttribute('aria-pressed', 'false');
-
-    // WebSocket으로 점유 해제 발행
-    publishSeatRelease(seatId);
-
-  } else {
-    // ── 좌석 선택 ────────────────────────────────────────────────────
-    if (state.selectedSeats.length >= REQUIRED_SEAT_COUNT) {
-      // 최대 선택 수 초과 안내
-      CineOS.alert.show(
-        `최대 ${REQUIRED_SEAT_COUNT}개의 좌석만 선택할 수 있습니다.`,
-        'warning'
-      );
-      return;
+      setState({ selectedSeats: [seatId] });
+      btn.classList.remove('seat--available');
+      btn.classList.add('seat--selected');
+      btn.setAttribute('aria-pressed', 'true');
+      publishSeatSelect(seatId);
     }
 
-    const newSelected = [...state.selectedSeats, seatId];
-    setState({ selectedSeats: newSelected });
-
-    btn.classList.remove('seat--available');
-    btn.classList.add('seat--selected');
-    btn.setAttribute('aria-pressed', 'true');
-
-    // WebSocket으로 임시 점유 발행
-    publishSeatSelect(seatId);
+    updateSelectionDisplay();
+    return;
   }
+
+  /* ── 2인 이상: 연속 좌석 자동 선택 ─────────────────────────────────── */
+
+  // 클릭한 좌석이 현재 선택 그룹에 포함된 경우 → 전체 해제
+  if (state.selectedSeats.includes(seatId)) {
+    releaseAllSelectedSeats();
+    updateSelectionDisplay();
+    return;
+  }
+
+  // 이전에 선택된 좌석 그룹 전체 해제 (새 위치로 이동)
+  releaseAllSelectedSeats();
+
+  // 클릭 좌석을 포함한 N개 연속 AVAILABLE 좌석 탐색
+  const consecutive = findConsecutiveSeats(seat);
+
+  if (!consecutive) {
+    // 연속 좌석 없음 — 사용자에게 안내
+    CineOS.alert.show(
+      `이 위치에서 ${REQUIRED_SEAT_COUNT}개의 연속된 빈 좌석을 찾을 수 없습니다.\n다른 좌석을 선택해 주세요.`,
+      'warning'
+    );
+    updateSelectionDisplay();
+    return;
+  }
+
+  // 찾은 연속 좌석 전체 선택 처리
+  const newSeatIds = consecutive.map(s => String(s.seatId ?? `${s.row}${s.col}`));
+  setState({ selectedSeats: newSeatIds });
+
+  newSeatIds.forEach(sid => {
+    const seatBtn = $seatMap.querySelector(`[data-seat-id="${sid}"]`);
+    if (seatBtn) {
+      seatBtn.classList.remove('seat--available');
+      seatBtn.classList.add('seat--selected');
+      seatBtn.setAttribute('aria-pressed', 'true');
+    }
+    // WebSocket으로 임시 점유 발행
+    publishSeatSelect(sid);
+  });
 
   // 하단 선택 현황 및 다음 버튼 갱신
   updateSelectionDisplay();

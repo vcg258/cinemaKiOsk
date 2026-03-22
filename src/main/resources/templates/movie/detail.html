@@ -102,17 +102,29 @@
           ENUM: ALL(전체관람가) / 12 / 15 / 19(청소년관람불가)
           components.css의 .badge--* 클래스 사용.
         -->
+        <!--
+          th:classappend / th:text : 단일 ${...} 안에서 삼항 연산 체이닝.
+          ${...} 안에서는 변수를 ${} 없이 직접 참조해야 함 (중첩 ${} 불가).
+          MovieDTO.rating: 'ALL' | 'TWELVE' | 'FIFTEEN' | 'NINETEEN'
+          ※ MovieDTO.from() 에서 entity.getRating().name() 으로 변환되므로
+             현재 enum 이름(TWELVE 등)이 내려옴. 추후 백엔드에서 getValue()로 교체 필요.
+             지금은 getvalue() 기반인 경우도 커버하도록 양쪽 다 처리.
+        -->
         <span class="badge"
-              th:classappend="
-                ${movie.rating == 'ALL'} ? 'badge--all' :
-                ${movie.rating == '12'}  ? 'badge--12'  :
-                ${movie.rating == '15'}  ? 'badge--15'  :
-                ${movie.rating == '19'}  ? 'badge--18'  : ''"
-              th:text="
-                ${movie.rating == 'ALL'} ? '전체관람가'     :
-                ${movie.rating == '12'}  ? '12세'           :
-                ${movie.rating == '15'}  ? '15세'           :
-                ${movie.rating == '19'}  ? '청소년관람불가'  : ${movie.rating}">
+              th:classappend="${movie.rating == 'ALL'    ? 'badge--all' :
+                               movie.rating == '12'     ? 'badge--12'  :
+                               movie.rating == 'TWELVE' ? 'badge--12'  :
+                               movie.rating == '15'     ? 'badge--15'  :
+                               movie.rating == 'FIFTEEN'? 'badge--15'  :
+                               movie.rating == '19'     ? 'badge--18'  :
+                               movie.rating == 'NINETEEN'?'badge--18'  : ''}"
+              th:text="${movie.rating == 'ALL'     ? '전체관람가'    :
+                        movie.rating == '12'       ? '12세'          :
+                        movie.rating == 'TWELVE'   ? '12세'          :
+                        movie.rating == '15'       ? '15세'          :
+                        movie.rating == 'FIFTEEN'  ? '15세'          :
+                        movie.rating == '19'       ? '청소년관람불가' :
+                        movie.rating == 'NINETEEN' ? '청소년관람불가' : movie.rating}">
           등급
         </span>
 
@@ -164,8 +176,9 @@
         </div>
 
         <!-- 주연 배우 (값이 있을 때만 노출) -->
+        <!-- MovieDTO 필드명: actors (actor 아님) -->
         <div class="movie-detail__spec-row"
-             th:if="${not #strings.isEmpty(movie.actor)}">
+             th:if="${not #strings.isEmpty(movie.actors)}">
           <dt class="movie-detail__spec-label">
             <!-- 사람 그룹 아이콘 -->
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
@@ -178,7 +191,7 @@
             </svg>
             주연
           </dt>
-          <dd class="movie-detail__spec-value" th:text="${movie.actor}">배우명</dd>
+          <dd class="movie-detail__spec-value" th:text="${movie.actors}">배우명</dd>
         </div>
 
         <!-- 상영 기간 -->

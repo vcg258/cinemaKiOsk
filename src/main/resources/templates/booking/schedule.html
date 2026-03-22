@@ -28,10 +28,12 @@
   ─────────────────────────────────────────────────────────────────────────
 -->
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout/base :: layout(~{::title}, ~{::main}, ~{})}">
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main}, ~{::link})}">
 
 <head>
   <title>날짜 · 시간 선택 | CineOS</title>
+  <!-- 예매 흐름 전용 CSS (날짜/시간/인원 선택 스타일) -->
+  <link rel="stylesheet" th:href="@{/css/booking.css}">
 </head>
 
 <body>
@@ -79,16 +81,20 @@
       <!-- 등급 배지 + 런타임 -->
       <div class="schedule-movie-summary__meta">
         <span class="badge"
-              th:classappend="
-                ${movie.rating == 'ALL'} ? 'badge--all' :
-                ${movie.rating == '12'}  ? 'badge--12'  :
-                ${movie.rating == '15'}  ? 'badge--15'  :
-                ${movie.rating == '19'}  ? 'badge--18'  : ''"
-              th:text="
-                ${movie.rating == 'ALL'} ? '전체관람가'    :
-                ${movie.rating == '12'}  ? '12세'          :
-                ${movie.rating == '15'}  ? '15세'          :
-                ${movie.rating == '19'}  ? '청소년관람불가' : ${movie.rating}">
+              th:classappend="${movie.rating == 'ALL'     ? 'badge--all' :
+                               movie.rating == '12'      ? 'badge--12'  :
+                               movie.rating == 'TWELVE'  ? 'badge--12'  :
+                               movie.rating == '15'      ? 'badge--15'  :
+                               movie.rating == 'FIFTEEN' ? 'badge--15'  :
+                               movie.rating == '19'      ? 'badge--18'  :
+                               movie.rating == 'NINETEEN'? 'badge--18'  : ''}"
+              th:text="${movie.rating == 'ALL'      ? '전체관람가'    :
+                        movie.rating == '12'        ? '12세'          :
+                        movie.rating == 'TWELVE'    ? '12세'          :
+                        movie.rating == '15'        ? '15세'          :
+                        movie.rating == 'FIFTEEN'   ? '15세'          :
+                        movie.rating == '19'        ? '청소년관람불가' :
+                        movie.rating == 'NINETEEN'  ? '청소년관람불가' : movie.rating}">
           등급
         </span>
         <!-- 런타임: JS에서 "1시간 49분" 형식으로 변환 -->

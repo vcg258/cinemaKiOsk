@@ -2,10 +2,10 @@
 <!--
   templates/admin/management/theater/edit.html
   UC-21: 상영관 정보 수정
-  Model: theaters(List<TheaterDTO>), theater(TheaterDTO),
-         seatPolicies(List<SeatPolicyDTO>), hasActiveReservation(Boolean)
-  TheaterDTO: no, name, cost, cleanupTime
-  SeatPolicyDTO: policyId, name, cost
+  Model: theaters(List<TheaterVO>), theater(TheaterVO),
+         seatPolicies(List<SeatPolicyVO>), hasActiveReservation(Boolean)
+  TheaterVO   : no, policyId, cleanupTime   ← name 필드 없음 (DB theater 테이블에 컬럼 없음)
+  SeatPolicyVO: policyId, name, cost        ← isRecliner 없음
 -->
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
@@ -36,9 +36,13 @@
       <label for="theaterSelect" class="admin-form-label">상영관 선택</label>
       <select id="theaterSelect" class="input"
               onchange="loadTheaterInfo(this.value)">
+        <!--
+          theater.name 없음 (DB 컬럼 없음) → no + '관' 형식으로 표시
+          상영관 이름이 필요하면 seat_policy.name 으로 보완 가능
+        -->
         <option th:each="t : ${theaters}"
                 th:value="${t.no}"
-                th:text="${t.no + '관 — ' + t.name}"
+                th:text="${t.no + '관'}"
                 th:selected="${t.no == theater?.no}">
           상영관
         </option>

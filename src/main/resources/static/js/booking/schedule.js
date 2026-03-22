@@ -394,7 +394,8 @@ function initPeopleSpinner() {
 
 /**
  * '다음' 버튼 클릭 → 좌석 선택 페이지로 이동.
- * scheduleId, adultCount, teenCount 를 쿼리 파라미터로 전달.
+ * scheduleId, adultCount, teenCount, movieId 를 쿼리 파라미터로 전달.
+ * movieId 는 schedule.html의 th:inline="javascript" 로 전달된 MOVIE_DATA에서 가져옴.
  */
 function goToSeat() {
   if (!state.selectedSchedule) return;
@@ -403,6 +404,8 @@ function goToSeat() {
     scheduleId: state.selectedSchedule.id,
     adultCount: state.adultCount,
     teenCount:  state.teenCount,
+    // MOVIE_DATA는 schedule.html th:inline 스크립트에서 서버가 주입한 영화 정보
+    movieId:    MOVIE_DATA?.movieId ?? '',
   });
 
   // TODO: 엔드포인트 백엔드 확정 후 URL 수정
