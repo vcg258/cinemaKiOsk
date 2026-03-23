@@ -18,4 +18,8 @@ public class Coupon {
     private DiscountPolicy discountPolicy; // 할인 정책 인덱스 FK
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean status; // 사용여부 (사용가능 = true, 불가능 = false)
+
+    public void changeStatus(boolean status) {
+        this.status = status;
+    }
 }

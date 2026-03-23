@@ -16,4 +16,15 @@ class DiscountPolicyServiceImplTest {
     public void createCouponNumTest() {
         discountPolicyService.createCouponNum(1L);
     }
+
+    @Test
+    public void updateCouponStatusTest() {
+        discountPolicyService.updateStatus("55de90a7b78f");
+    }
+
+    @Test
+    public void authCouponTest() {
+        boolean result = discountPolicyService.authCoupon(1L, "55de90a7b78f");
+        log.info("result: {}", result);
+    }
 }

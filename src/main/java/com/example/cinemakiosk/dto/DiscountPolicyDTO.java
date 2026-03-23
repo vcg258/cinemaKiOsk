@@ -1,13 +1,17 @@
 package com.example.cinemakiosk.dto;
 
+import com.example.cinemakiosk.domain.Coupon;
 import com.example.cinemakiosk.domain.DiscountPolicy.ConditionType;
+import com.example.cinemakiosk.domain.DiscountPolicy.DiscountPolicy;
 import com.example.cinemakiosk.domain.DiscountPolicy.DiscountType;
+import com.example.cinemakiosk.vo.CouponVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -22,4 +26,5 @@ public class DiscountPolicyDTO {
     private LocalDateTime startAt; // 시작일
     private LocalDateTime endAt; // 만료일
     private boolean activation; // 활성화 여부
+    private List<CouponVO> coupons; // resultMap(collection)
 }
