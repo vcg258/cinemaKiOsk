@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -18,6 +19,9 @@ public interface AdminRepository extends JpaRepository<AdminEntity, Long> {
 
     // uuid로 조회 (자동 로그인)
     Optional<AdminEntity> findByUuid(String uuid);
+
+    // 권한 레벨로 조회
+    List<AdminEntity> findByLevel(boolean level);
 
     // 로그인 아이디 중복 체크
     boolean existsByLoginId(String loginId);
