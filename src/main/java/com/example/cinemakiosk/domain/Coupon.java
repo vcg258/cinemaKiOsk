@@ -19,6 +19,10 @@ public class Coupon {
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean status; // 사용여부 (사용가능 = true, 불가능 = false)
 
+    /**
+     * 쿠폰 사용여부 변환 메서드
+     * @param status 변경할 상태값
+     */
     public void changeStatus(boolean status) {
         this.status = status;
     }
