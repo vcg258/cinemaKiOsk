@@ -44,11 +44,11 @@ CREATE TABLE IF NOT EXISTS `seat_policy` # FK (X)
 CREATE TABLE IF NOT EXISTS `bonus_policy` # FK (X)
 (
     `id`          BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT COMMENT '적립 정책 인덱스',
-    `policy_name` VARCHAR(20)     NULL COMMENT '정책 이름',
-    `give_value`  BIGINT UNSIGNED NULL COMMENT '적립 비율',
-    `start_at`    DATETIME        NULL COMMENT '시작일',
-    `end_at`      DATETIME        NULL COMMENT '만료일',
-    `activation`  BOOLEAN         NULL COMMENT '활성화 여부'
+    `policy_name` VARCHAR(20)     NOT NULL COMMENT '정책 이름',
+    `give_value`  BIGINT UNSIGNED NOT NULL COMMENT '적립 비율',
+    `start_at`    DATETIME        NOT NULL COMMENT '시작일',
+    `end_at`      DATETIME        NOT NULL COMMENT '만료일',
+    `activation`  BOOLEAN         NOT NULL COMMENT '활성화 여부'
 ) COMMENT '적립 행사 정책(자체 이벤트)';
 
 CREATE TABLE IF NOT EXISTS `movie` # FK (X)
