@@ -23,11 +23,14 @@
  *   3. 포인트 사용 UI (인증 완료 후 페이지 인라인 입력)
  *   4. 쿠폰 적용 UI + 가격 반영 (API TODO)
  *   5. 결제 금액 실시간 계산 (기본 요금 - 쿠폰 - 포인트)
- *   6. 결제 수단 선택
+ *   6. 결제 수단 선택 → 클릭 즉시 submitPayment(method) 호출
+ *      (현금 제외, CARD / SIMPLE만 지원)
  *   7. 결제 요청 (UC-04): POST /api/payment → /payment/result 이동
  *
  *   ※ 할인 정책 선택은 UC-03 이전 단계에서 이미 처리되므로
  *      결제 단계에서는 관여하지 않음.
+ *   ※ '결제하기' 버튼 없음 — 카드/간편 클릭 시 즉시 결제.
+ *      0원이면 #btn-free-pay 버튼으로 트리거.
  *
  * ▶ 의존 전역 변수 (payment.html th:inline에서 주입)
  *   RESERVATION_ID, SCHEDULE_ID, SEAT_NUMBERS, SEAT_COST,
@@ -61,13 +64,31 @@ const TEEN_COST_RATIO = 0.8;
 
 /**
  * 결제 수단 코드 (POST /api/payment 의 paymentMethod 필드값)
+ * 현금(CASH)은 이번 키오스크 범위에서 제외.
  * @enum {string}
  */
 const PAY_METHOD = {
   CARD:   'CARD',
-  CASH:   'CASH',
   SIMPLE: 'SIMPLE',
 };
+
+/**
+ * 개발용 전화번호 인증 mock 활성화 플래그.
+ * true: 실제 API 호출 없이 임의의 번호를 인증 성공으로 처리.
+ *       백엔드 /api/auth/phone 구현 전 UI 흐름 테스트용.
+ * false: 실제 POST /api/auth/phone + GET /api/members/point 호출.
+ *
+ * TODO: 백엔드 연동 완료 후 false로 변경 후 이 상수 제거.
+ * @type {boolean}
+ */
+const DEV_MOCK_PHONE_AUTH = true;
+
+/**
+ * DEV_MOCK_PHONE_AUTH 가 true일 때 사용할 목 포인트 잔액.
+ * 실제 회원 데이터 없이 포인트 UI를 확인하기 위한 임시값.
+ * @type {number}
+ */
+const DEV_MOCK_POINT_BALANCE = 5000;
 
 
 /* ══════════════════════════════════════════════════════════════════
@@ -84,7 +105,6 @@ const PAY_METHOD = {
  *   memberPointBalance: number,
  *   couponCode: string|null,
  *   couponDiscount: number,
- *   selectedPayMethod: string|null,
  *   basePrice: number,
  * }}
  */
@@ -96,7 +116,6 @@ const state = {
   memberPointBalance:  MEMBER_POINT,       // 서버 세션에서 주입, 없으면 0
   couponCode:          null,               // 적용된 쿠폰 코드 (없으면 null)
   couponDiscount:      0,                  // 쿠폰 할인 금액 (원)
-  selectedPayMethod:   null,
   basePrice:           0,
 };
 
@@ -248,6 +267,13 @@ function calcBasePrice() {
  * 가격 요약 섹션 전체 업데이트.
  * 쿠폰 적용·포인트 입력 때마다 호출.
  * 최종 금액 = Math.max(0, basePrice - couponDiscount - usePoint)
+ *
+ * 총 결제 금액이 0원이면:
+ *   - #pay-method-wrap 숨김
+ *   - #free-pay-wrap 표시
+ * 0원이 아니면:
+ *   - #pay-method-wrap 표시
+ *   - #free-pay-wrap 숨김
  */
 function updatePriceUI() {
   const base   = state.basePrice;
@@ -288,17 +314,18 @@ function updatePriceUI() {
   /* ── 포인트 적립 예정 안내 ── */
   updateBonusNote(total);
 
-  /* ── 결제 수단 영역 표시/숨김 ── */
+  /* ── 결제 수단 / 0원 결제 버튼 전환 ── */
   const payMethodWrap = document.getElementById('pay-method-wrap');
-  if (total === 0) {
-    /* 전액 포인트/쿠폰으로 결제: 결제 수단 불필요 */
-    payMethodWrap.hidden = true;
-    state.selectedPayMethod = null;
-  } else {
-    payMethodWrap.hidden = false;
-  }
+  const freePayWrap   = document.getElementById('free-pay-wrap');
 
-  checkPayBtnEnabled();
+  if (total === 0) {
+    /* 포인트·쿠폰으로 전액 처리: 카드/간편 버튼 숨기고 무료결제 버튼 표시 */
+    if (payMethodWrap) payMethodWrap.hidden = true;
+    if (freePayWrap)   freePayWrap.hidden   = false;
+  } else {
+    if (payMethodWrap) payMethodWrap.hidden = false;
+    if (freePayWrap)   freePayWrap.hidden   = true;
+  }
 }
 
 /**
@@ -431,8 +458,15 @@ function openModalStep2Phone() {
 }
 
 /**
- * 휴대폰 인증 API 호출 (UC-05).
- * POST /api/auth/phone → 성공 시 GET /api/members/point
+ * 휴대폰 인증 처리 (UC-05).
+ *
+ * DEV_MOCK_PHONE_AUTH = true 일 때:
+ *   실제 API 호출 없이 mock 포인트로 인증 성공 처리.
+ *   백엔드 /api/auth/phone 미구현 상태에서 UI 흐름 테스트 가능.
+ *
+ * DEV_MOCK_PHONE_AUTH = false 일 때:
+ *   POST /api/auth/phone → 성공 시 GET /api/members/point 순차 호출.
+ *
  * @param {string} phone 입력된 휴대폰 번호
  */
 async function submitPhoneVerify(phone) {
@@ -454,6 +488,22 @@ async function submitPhoneVerify(phone) {
     errorEl.textContent = '';
   }
 
+  /* ── 개발용 mock ────────────────────────────────────────────────
+     TODO: 백엔드 연동 완료 후 DEV_MOCK_PHONE_AUTH = false 로 변경.
+     ────────────────────────────────────────────────────────────── */
+  if (DEV_MOCK_PHONE_AUTH) {
+    console.warn('[DEV] 전화번호 인증 mock 활성화 — 실제 API 미호출');
+
+    /* 상태 갱신 (mock 포인트 사용) */
+    state.memberPhone        = phone;
+    state.memberPointBalance = DEV_MOCK_POINT_BALANCE;
+
+    activatePointSection(DEV_MOCK_POINT_BALANCE);
+    openModalStep3Coupon();
+    return;
+  }
+
+  /* ── 실제 API 호출 ────────────────────────────────────────────── */
   try {
     /* POST /api/auth/phone — 회원 조회 및 인증 */
     // TODO: 백엔드 AuthController 구현 후 응답 형식 확인
@@ -724,58 +774,35 @@ function initPointInput() {
 
 
 /* ══════════════════════════════════════════════════════════════════
-   결제 수단 선택
+   결제 수단 버튼 — 클릭 즉시 결제
 ══════════════════════════════════════════════════════════════════ */
 
 /**
  * 결제 수단 버튼 클릭 이벤트 초기화.
- * 선택 시 .is-selected 클래스 토글 & aria-pressed 업데이트.
+ * 기존의 '선택 → 결제하기 버튼' 2단계 흐름을 제거하고
+ * 버튼 클릭 즉시 submitPayment(method) 를 호출한다.
+ *
+ * 현금(CASH)은 HTML에서 이미 제거됐으므로 CARD / SIMPLE 만 등록됨.
  */
 function initPayMethodButtons() {
   const buttons = document.querySelectorAll('.pay-method-btn');
 
   buttons.forEach(btn => {
     btn.addEventListener('click', () => {
-      /* 기존 선택 해제 */
+      const method = btn.dataset.method;
+
+      /* 선택 시각 피드백 (잠깐 is-selected 표시 — 바로 결제로 넘어가므로 사용자 경험용) */
       buttons.forEach(b => {
         b.classList.remove('is-selected');
         b.setAttribute('aria-pressed', 'false');
       });
-
-      /* 클릭한 버튼 선택 */
       btn.classList.add('is-selected');
       btn.setAttribute('aria-pressed', 'true');
-      state.selectedPayMethod = btn.dataset.method;
 
-      checkPayBtnEnabled();
+      /* 클릭 즉시 결제 진행 */
+      submitPayment(method);
     });
   });
-}
-
-
-/* ══════════════════════════════════════════════════════════════════
-   결제 버튼 활성화 조건 체크
-══════════════════════════════════════════════════════════════════ */
-
-/**
- * '결제하기' 버튼 활성화 여부 결정.
- * 활성화 조건:
- *   - 총 결제 금액 === 0원 (전액 포인트/쿠폰)
- *   - OR 결제 수단이 선택됨
- */
-function checkPayBtnEnabled() {
-  const btnPay = document.getElementById('btn-pay');
-  if (!btnPay) return;
-
-  const total = Math.max(
-    0,
-    state.basePrice - state.couponDiscount - state.usePoint
-  );
-
-  const isEnabled = total === 0 || state.selectedPayMethod !== null;
-
-  btnPay.disabled = !isEnabled;
-  btnPay.setAttribute('aria-disabled', String(!isEnabled));
 }
 
 
@@ -784,18 +811,28 @@ function checkPayBtnEnabled() {
 ══════════════════════════════════════════════════════════════════ */
 
 /**
- * '결제하기' 버튼 클릭 → POST /api/payment.
+ * 결제 요청.
+ * POST /api/payment
  * 성공: stopTimer() → /payment/result?reservationId= 이동
  * 실패: "결제에 실패하였습니다. 다시 시도해 주세요." → 버튼 복원
+ *
+ * @param {string|null} method 결제 수단 코드 (PAY_METHOD).
+ *   0원 결제(전액 포인트/쿠폰)인 경우 null 전달.
  */
-async function submitPayment() {
-  const btnPay = document.getElementById('btn-pay');
-  if (!btnPay || btnPay.disabled) return;
-
+async function submitPayment(method) {
   const base   = state.basePrice;
   const coupon = Math.min(state.couponDiscount, base);
   const point  = Math.min(state.usePoint, Math.max(0, base - coupon));
   const total  = Math.max(0, base - coupon - point);
+
+  /* 0원이 아닌데 수단이 없으면 리턴 (방어 코드) */
+  if (total > 0 && !method) return;
+
+  /* ── 결제 수단 버튼 전체 비활성화 (중복 클릭 방지) ── */
+  const allPayBtns = document.querySelectorAll('.pay-method-btn, #btn-free-pay');
+  allPayBtns.forEach(b => { b.disabled = true; });
+
+  if (typeof CineOS !== 'undefined' && CineOS.loading) CineOS.loading.show();
 
   /**
    * 결제 요청 DTO
@@ -811,16 +848,8 @@ async function submitPayment() {
     reservationId: RESERVATION_ID,
     usePoint:      point,
     couponCode:    state.couponCode ?? null,    // TODO: 쿠폰 API 연동 후 활성화
-    paymentMethod: total === 0 ? null : state.selectedPayMethod,
+    paymentMethod: total === 0 ? null : method,
   };
-
-  /* ── 버튼 로딩 상태 ── */
-  const originalText = btnPay.textContent;
-  btnPay.disabled = true;
-  btnPay.setAttribute('aria-disabled', 'true');
-  btnPay.textContent = '결제 처리 중...';
-
-  if (typeof CineOS !== 'undefined' && CineOS.loading) CineOS.loading.show();
 
   try {
     /* POST /api/payment */
@@ -837,6 +866,9 @@ async function submitPayment() {
   } catch (err) {
     if (typeof CineOS !== 'undefined' && CineOS.loading) CineOS.loading.hide();
 
+    /* 버튼 다시 활성화 (재시도 가능) */
+    allPayBtns.forEach(b => { b.disabled = false; });
+
     /* UC-04 명세 에러 메시지 (임의 변경 금지) */
     if (typeof CineOS !== 'undefined' && CineOS.modal) {
       CineOS.modal.alert({
@@ -847,9 +879,11 @@ async function submitPayment() {
       alert('결제에 실패하였습니다. 다시 시도해 주세요.');
     }
 
-    btnPay.disabled = false;
-    btnPay.setAttribute('aria-disabled', 'false');
-    btnPay.textContent = originalText;
+    /* 결제 수단 선택 상태 초기화 (다시 선택하도록) */
+    document.querySelectorAll('.pay-method-btn').forEach(b => {
+      b.classList.remove('is-selected');
+      b.setAttribute('aria-pressed', 'false');
+    });
   }
 }
 
@@ -895,7 +929,12 @@ function initSeatsDisplay() {
  *   1. 기본 요금 계산
  *   2. 예매 정보 날짜 포맷 변환
  *   3. 좌석 번호 표시
- *   4. 이벤트 리스너 등록 (결제 수단, 포인트 입력, 쿠폰 취소, 결제 버튼)
+ *   4. 이벤트 리스너 등록
+ *      - 결제 수단 버튼 (클릭 즉시 결제)
+ *      - 포인트 입력
+ *      - 쿠폰 취소
+ *      - 0원 결제 버튼
+ *      - 모달 재오픈 버튼
  *   5. 초기 가격 UI 렌더링
  *   6. 타이머 시작
  *   7. 자동 모달 흐름 시작 (회원 확인 → 인증 → 쿠폰)
@@ -912,7 +951,11 @@ function initPage() {
   initSeatsDisplay();
 
   /* 4. 이벤트 리스너 등록 */
+
+  /* 결제 수단 버튼: 클릭 즉시 결제 */
   initPayMethodButtons();
+
+  /* 포인트 입력 */
   initPointInput();
 
   /* 쿠폰 취소 버튼 */
@@ -921,10 +964,26 @@ function initPage() {
     btnCouponRemove.addEventListener('click', removeCoupon);
   }
 
-  /* 결제하기 버튼 */
-  const btnPay = document.getElementById('btn-pay');
-  if (btnPay) {
-    btnPay.addEventListener('click', submitPayment);
+  /* 0원 결제 버튼 (포인트·쿠폰 전액 적용 시 표시) */
+  const btnFreePay = document.getElementById('btn-free-pay');
+  if (btnFreePay) {
+    btnFreePay.addEventListener('click', () => {
+      submitPayment(null); // 0원: 결제 수단 불필요
+    });
+  }
+
+  /* 모달 재오픈 버튼: 회원 정보 / 쿠폰 정보 변경 시 사용 */
+  const btnReopenModal = document.getElementById('btn-reopen-modal');
+  if (btnReopenModal) {
+    btnReopenModal.addEventListener('click', () => {
+      /* 포인트 섹션이 이미 활성화된 경우(회원 인증 완료) → 쿠폰 Step만 재오픈
+         미인증 상태면 → Step 1부터 재시작 */
+      if (state.memberPhone !== null) {
+        openModalStep3Coupon();
+      } else {
+        openModalStep1Member();
+      }
+    });
   }
 
   /* 5. 초기 가격 UI 렌더링 */
@@ -945,11 +1004,3 @@ function initPage() {
 ══════════════════════════════════════════════════════════════════ */
 
 document.addEventListener('DOMContentLoaded', initPage);
-
-/**
- * 페이지 이탈 시 타이머 인터벌 정리.
- * 실제 좌석 임시 점유 해제는 서버(BackEnd) TTL 처리에 의존.
- */
-window.addEventListener('beforeunload', () => {
-  stopTimer();
-});

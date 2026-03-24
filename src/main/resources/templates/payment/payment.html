@@ -24,10 +24,18 @@
     - 포인트 사용 (인증 완료 후 페이지 인라인 입력, 전액 사용)
     - 쿠폰 적용 (UI만 구현, API 연동 TODO)
     - 최종 결제 금액 실시간 계산 (기본 요금 - 쿠폰 - 포인트)
-    - 결제 수단 선택 + 결제 요청 → POST /api/payment → UC-07 이동
+    - 결제 수단 선택 + 클릭 즉시 결제 요청 → POST /api/payment → UC-07 이동
 
     ※ 할인 정책 선택은 UC-03 이전(좌석 선택 전) 단계에서 처리되므로
        이 페이지에서 불필요
+    ※ 현금 결제는 이번 키오스크 범위에서 제외 (CARD / SIMPLE만 지원)
+    ※ '결제하기' 별도 버튼 없음 — 카드/간편결제 버튼 클릭 시 즉시 결제
+
+  ▶ 레이아웃
+    헤더 (.payment-header) : 단계 표시기 + 타이머 (전체 너비)
+    본문 (.payment-layout)  : 2단 그리드
+      └ 왼쪽 (.payment-panel--left)  : 예매정보 / 포인트 / 쿠폰 / 재오픈 버튼
+      └ 오른쪽 (.payment-panel--right): 결제금액 + 결제수단
 
   ▶ Controller → View 전달 Model 속성
     - movie            : MovieDTO
@@ -55,330 +63,337 @@
 <main class="payment-main">
 
   <!-- ══════════════════════════════════════════════════════════════════
-       예매 단계 표시기 (3단계: 결제 — 최종)
+       헤더: 예매 단계 표시기 + 타이머 (전체 너비)
   ══════════════════════════════════════════════════════════════════ -->
-  <ol class="steps" aria-label="예매 단계">
-    <li class="steps__item steps__item--done">
-      <span class="steps__num" aria-hidden="true">✓</span>
-      <span class="steps__label">날짜·시간</span>
-    </li>
-    <li class="steps__item steps__item--done">
-      <span class="steps__num" aria-hidden="true">✓</span>
-      <span class="steps__label">좌석</span>
-    </li>
-    <li class="steps__item steps__item--active" aria-current="step">
-      <span class="steps__num">3</span>
-      <span class="steps__label">결제</span>
-    </li>
-  </ol>
+  <div class="payment-header">
 
+    <!-- 예매 단계 표시기 (3단계: 결제 — 최종) -->
+    <ol class="steps" aria-label="예매 단계">
+      <li class="steps__item steps__item--done">
+        <span class="steps__num" aria-hidden="true">✓</span>
+        <span class="steps__label">날짜·시간</span>
+      </li>
+      <li class="steps__item steps__item--done">
+        <span class="steps__num" aria-hidden="true">✓</span>
+        <span class="steps__label">좌석</span>
+      </li>
+      <li class="steps__item steps__item--active" aria-current="step">
+        <span class="steps__num">3</span>
+        <span class="steps__label">결제</span>
+      </li>
+    </ol>
 
-  <!-- ══════════════════════════════════════════════════════════════════
-       임시 점유 타이머 (10분 카운트다운)
-  ══════════════════════════════════════════════════════════════════ -->
-  <div class="payment-timer" id="payment-timer"
-       role="timer" aria-live="polite" aria-label="좌석 임시 점유 잔여 시간">
+    <!-- 임시 점유 타이머 (10분 카운트다운) -->
+    <div class="payment-timer" id="payment-timer"
+         role="timer" aria-live="polite" aria-label="좌석 임시 점유 잔여 시간">
 
-    <div class="payment-timer__left">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-           width="18" height="18" aria-hidden="true" class="payment-timer__icon">
-        <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22
-                 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8
-                 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
-      </svg>
-      <span class="payment-timer__label">좌석 임시 점유 시간</span>
-    </div>
-
-    <span class="payment-timer__countdown" id="timer-countdown">10:00</span>
-
-    <div class="payment-timer__bar-wrap" aria-hidden="true">
-      <div class="payment-timer__bar" id="timer-bar" style="width: 100%;"></div>
-    </div>
-  </div>
-
-
-  <!-- ══════════════════════════════════════════════════════════════════
-       예매 정보 요약 (SSR)
-  ══════════════════════════════════════════════════════════════════ -->
-  <section class="payment-section" aria-labelledby="label-booking-info">
-    <h2 class="payment-section__title" id="label-booking-info">예매 정보</h2>
-
-    <div class="booking-info-card">
-
-      <!-- 영화 제목 + 관람등급 배지 -->
-      <div class="booking-info-card__row booking-info-card__row--title">
-        <span class="booking-info-card__movie-title"
-              th:text="${movie != null ? movie.title : '-'}">영화 제목</span>
-        <span class="badge badge--sm"
-              th:classappend="${movie.rating == 'ALL'      ? 'badge--all' :
-                               movie.rating == '12'       ? 'badge--12'  :
-                               movie.rating == 'TWELVE'   ? 'badge--12'  :
-                               movie.rating == '15'       ? 'badge--15'  :
-                               movie.rating == 'FIFTEEN'  ? 'badge--15'  :
-                               movie.rating == '19'       ? 'badge--18'  :
-                               movie.rating == 'NINETEEN' ? 'badge--18'  : ''}"
-              th:text="${movie.rating == 'ALL'      ? '전체관람가'     :
-                        movie.rating == '12'        ? '12세'           :
-                        movie.rating == 'TWELVE'    ? '12세'           :
-                        movie.rating == '15'        ? '15세'           :
-                        movie.rating == 'FIFTEEN'   ? '15세'           :
-                        movie.rating == '19'        ? '청소년관람불가'  :
-                        movie.rating == 'NINETEEN'  ? '청소년관람불가'  : movie.rating}">
-          등급
-        </span>
-      </div>
-
-      <!-- 상영 일시 (JS에서 ISO → "MM/DD (요일) HH:MM ~ HH:MM" 변환) -->
-      <div class="booking-info-card__row">
-        <span class="booking-info-card__label">상영 일시</span>
-        <span class="booking-info-card__value"
-              id="booking-datetime"
-              th:data-start="${schedule != null ? schedule.startTime : ''}"
-              th:data-end="${schedule != null ? schedule.endTime : ''}">
-          -
-        </span>
-      </div>
-
-      <!-- 상영관 번호 -->
-      <div class="booking-info-card__row">
-        <span class="booking-info-card__label">상영관</span>
-        <span class="booking-info-card__value"
-              th:text="${schedule != null ? schedule.no + '관' : '-'}">-</span>
-      </div>
-
-      <!-- 좌석 번호 목록 (SSR + JS 보완) -->
-      <div class="booking-info-card__row">
-        <span class="booking-info-card__label">좌석</span>
-        <span class="booking-info-card__value" id="booking-seats">
-          <th:block th:if="${reservation != null and not #lists.isEmpty(reservation.seatNumber)}">
-            <th:block th:each="seat, stat : ${reservation.seatNumber}">
-              <span th:text="${seat}">A1</span><th:block th:if="${!stat.last}">, </th:block>
-            </th:block>
-          </th:block>
-          <th:block th:unless="${reservation != null and not #lists.isEmpty(reservation.seatNumber)}">
-            -
-          </th:block>
-        </span>
-      </div>
-
-      <!-- 인원 (성인/청소년) -->
-      <div class="booking-info-card__row">
-        <span class="booking-info-card__label">인원</span>
-        <span class="booking-info-card__value">
-          성인 <strong th:text="${adultCount != null ? adultCount : 0}">0</strong>명
-          <th:block th:if="${teenCount != null and teenCount > 0}">
-            · 청소년 <strong th:text="${teenCount}">0</strong>명
-          </th:block>
-        </span>
-      </div>
-
-    </div>
-  </section>
-
-
-  <!-- ══════════════════════════════════════════════════════════════════
-       포인트 사용 섹션 (UC-06)
-       초기 hidden. 회원 인증 완료(Step 2) 후 JS에서 표시.
-       인증 완료 상태에서는 '재인증' 버튼으로 모달 재오픈 가능.
-  ══════════════════════════════════════════════════════════════════ -->
-  <section class="payment-section" id="point-section" hidden
-           aria-labelledby="label-point">
-    <h2 class="payment-section__title" id="label-point">포인트 사용</h2>
-
-    <!-- 보유 포인트 잔액 -->
-    <div class="point-balance">
-      <span class="point-balance__label">보유 포인트</span>
-      <span class="point-balance__value" id="point-balance-display">0P</span>
-    </div>
-
-    <!-- 포인트 입력 + 전액 사용 버튼 -->
-    <div class="point-input-group" style="margin-top: 12px;">
-      <div class="point-input-wrap">
-        <input type="number"
-               class="form-control"
-               id="point-input"
-               placeholder="사용할 포인트 입력"
-               min="0"
-               step="100"
-               inputmode="numeric"
-               aria-label="사용할 포인트">
-        <span class="point-input-unit" aria-hidden="true">P</span>
-      </div>
-      <button type="button"
-              class="btn btn--secondary btn--sm"
-              id="btn-point-all">
-        전액 사용
-      </button>
-    </div>
-
-    <!-- 한도 초과 에러 메시지 -->
-    <p class="point-error" id="point-error" aria-live="polite" hidden></p>
-
-  </section>
-
-
-  <!-- ══════════════════════════════════════════════════════════════════
-       쿠폰 적용 섹션
-       쿠폰 코드 입력 후 적용 완료 시 JS에서 표시.
-       API 미확정 → TODO: POST /api/couponEntity/validate
-  ══════════════════════════════════════════════════════════════════ -->
-  <section class="payment-section" id="couponEntity-section" hidden
-           aria-labelledby="label-couponEntity">
-    <h2 class="payment-section__title" id="label-couponEntity">쿠폰 적용</h2>
-
-    <!-- 적용된 쿠폰 정보 표시 (쿠폰 코드 + 할인 금액) -->
-    <div class="couponEntity-applied">
-      <div class="couponEntity-applied__info">
+      <div class="payment-timer__left">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-             width="18" height="18" aria-hidden="true" class="couponEntity-applied__icon">
-          <path d="M20 12c0-1.1.9-2 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2
-                   .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2zm-3.5
-                   3.5l-1.5-1.5-1.5 1.5L12 14l-1.5 1.5L9 14l-1.5 1.5L6 14l1.5-1.5L6 11l1.5-1.5L9
-                   11l1.5-1.5 1.5 1.5 1.5-1.5 1.5 1.5-1.5 1.5 1.5 1.5-1.5 1.5z"/>
+             width="18" height="18" aria-hidden="true" class="payment-timer__icon">
+          <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22
+                   12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8
+                   8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
         </svg>
-        <!-- JS에서 쿠폰 코드 + 할인 금액 표시 -->
-        <span class="couponEntity-applied__name" id="couponEntity-applied-name">쿠폰 코드</span>
+        <span class="payment-timer__label">좌석 임시 점유 시간</span>
       </div>
-      <div class="couponEntity-applied__right">
-        <span class="couponEntity-applied__discount" id="couponEntity-applied-discount">-0원</span>
-        <!-- 쿠폰 취소 버튼 -->
-        <button type="button"
-                class="btn btn--ghost btn--sm couponEntity-applied__remove"
-                id="btn-couponEntity-remove"
-                aria-label="쿠폰 취소">
-          ✕ 취소
-        </button>
+
+      <span class="payment-timer__countdown" id="timer-countdown">10:00</span>
+
+      <div class="payment-timer__bar-wrap" aria-hidden="true">
+        <div class="payment-timer__bar" id="timer-bar" style="width: 100%;"></div>
       </div>
     </div>
 
-  </section>
+  </div><!-- /.payment-header -->
 
 
   <!-- ══════════════════════════════════════════════════════════════════
-       결제 금액 + 결제 수단 통합 섹션 (UC-04)
-       기본 요금 - 쿠폰 할인 - 포인트 사용 = 최종 결제 금액
-       결제 금액 0원 시 결제 수단 영역 자동 숨김 (JS 제어)
+       본문: 2단 레이아웃
+       왼쪽 — 예매정보 / 포인트 / 쿠폰 / 재오픈 버튼
+       오른쪽 — 결제금액 + 결제수단
   ══════════════════════════════════════════════════════════════════ -->
-  <section class="payment-section payment-section--checkout"
-           aria-labelledby="label-checkout">
-    <h2 class="payment-section__title" id="label-checkout">결제 금액 및 수단</h2>
+  <div class="payment-layout">
 
-    <!-- ── 금액 요약 ────────────────────────────────── -->
-    <div class="price-breakdown">
+    <!-- ── 왼쪽 패널 ─────────────────────────────────────────── -->
+    <div class="payment-panel payment-panel--left">
 
-      <!-- 기본 요금: 성인·청소년 요금 합계 (JS 계산) -->
-      <div class="price-row">
-        <span class="price-row__label">기본 요금</span>
-        <span class="price-row__value" id="price-base">0원</span>
-      </div>
+      <!-- 예매 정보 요약 (SSR) -->
+      <section class="payment-section" aria-labelledby="label-booking-info">
+        <h2 class="payment-section__title" id="label-booking-info">예매 정보</h2>
 
-      <!-- 쿠폰 할인 행 (쿠폰 적용 시에만 표시) -->
-      <div class="price-row price-row--deduct" id="price-couponEntity-row" hidden>
-        <span class="price-row__label">쿠폰 할인</span>
-        <span class="price-row__value price-row__value--deduct" id="price-couponEntity">
-          -0원
-        </span>
-      </div>
+        <div class="booking-info-card">
 
-      <!-- 포인트 사용 행 (포인트 사용 시에만 표시) -->
-      <div class="price-row price-row--deduct" id="price-point-row" hidden>
-        <span class="price-row__label">포인트 사용</span>
-        <span class="price-row__value price-row__value--deduct" id="price-point">
-          -0P
-        </span>
-      </div>
+          <!-- 영화 제목 + 관람등급 배지 -->
+          <div class="booking-info-card__row booking-info-card__row--title">
+            <span class="booking-info-card__movie-title"
+                  th:text="${movie != null ? movie.title : '-'}">영화 제목</span>
+            <span class="badge badge--sm"
+                  th:classappend="${movie.rating == 'ALL'      ? 'badge--all' :
+                                   movie.rating == '12'       ? 'badge--12'  :
+                                   movie.rating == 'TWELVE'   ? 'badge--12'  :
+                                   movie.rating == '15'       ? 'badge--15'  :
+                                   movie.rating == 'FIFTEEN'  ? 'badge--15'  :
+                                   movie.rating == '19'       ? 'badge--18'  :
+                                   movie.rating == 'NINETEEN' ? 'badge--18'  : ''}"
+                  th:text="${movie.rating == 'ALL'      ? '전체관람가'     :
+                            movie.rating == '12'        ? '12세'           :
+                            movie.rating == 'TWELVE'    ? '12세'           :
+                            movie.rating == '15'        ? '15세'           :
+                            movie.rating == 'FIFTEEN'   ? '15세'           :
+                            movie.rating == '19'        ? '청소년관람불가'  :
+                            movie.rating == 'NINETEEN'  ? '청소년관람불가'  : movie.rating}">
+              등급
+            </span>
+          </div>
 
-      <!-- 구분선 -->
-      <div class="price-divider" aria-hidden="true"></div>
+          <!-- 상영 일시 (JS에서 ISO → "MM/DD (요일) HH:MM ~ HH:MM" 변환) -->
+          <div class="booking-info-card__row">
+            <span class="booking-info-card__label">상영 일시</span>
+            <span class="booking-info-card__value"
+                  id="booking-datetime"
+                  th:data-start="${schedule != null ? schedule.startTime : ''}"
+                  th:data-end="${schedule != null ? schedule.endTime : ''}">
+              -
+            </span>
+          </div>
 
-      <!-- 총 결제 금액 -->
-      <div class="price-row price-row--total">
-        <span class="price-row__label">총 결제 금액</span>
-        <strong class="price-row__value price-row__value--total" id="price-total">
-          0원
-        </strong>
-      </div>
+          <!-- 상영관 번호 -->
+          <div class="booking-info-card__row">
+            <span class="booking-info-card__label">상영관</span>
+            <span class="booking-info-card__value"
+                  th:text="${schedule != null ? schedule.no + '관' : '-'}">-</span>
+          </div>
 
-      <!-- 포인트 적립 예정 안내 -->
-      <p class="price-bonus-note" id="price-bonus-note" hidden>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-             fill="currentColor" width="14" height="14" aria-hidden="true">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12
-                   2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-        </svg>
-        결제 완료 시
-        <strong id="price-bonus-amount">0P</strong> 적립 예정
-      </p>
+          <!-- 좌석 번호 목록 (SSR + JS 보완) -->
+          <div class="booking-info-card__row">
+            <span class="booking-info-card__label">좌석</span>
+            <span class="booking-info-card__value" id="booking-seats">
+              <th:block th:if="${reservation != null and not #lists.isEmpty(reservation.seatNumber)}">
+                <th:block th:each="seat, stat : ${reservation.seatNumber}">
+                  <span th:text="${seat}">A1</span><th:block th:if="${!stat.last}">, </th:block>
+                </th:block>
+              </th:block>
+              <th:block th:unless="${reservation != null and not #lists.isEmpty(reservation.seatNumber)}">
+                -
+              </th:block>
+            </span>
+          </div>
 
-    </div>
+          <!-- 인원 (성인/청소년) -->
+          <div class="booking-info-card__row">
+            <span class="booking-info-card__label">인원</span>
+            <span class="booking-info-card__value">
+              성인 <strong th:text="${adultCount != null ? adultCount : 0}">0</strong>명
+              <th:block th:if="${teenCount != null and teenCount > 0}">
+                · 청소년 <strong th:text="${teenCount}">0</strong>명
+              </th:block>
+            </span>
+          </div>
 
-    <!-- ── 구분선: 금액 요약 ↔ 결제 수단 ────────────── -->
-    <div class="checkout-section-divider" aria-hidden="true"></div>
-
-    <!-- ── 결제 수단 선택 ─────────────────────────────
-         총 결제 금액이 0원이면 JS에서 hidden 처리 -->
-    <div class="pay-method-wrap" id="pay-method-wrap">
-      <h3 class="checkout-subtitle">결제 수단</h3>
-
-      <div class="pay-method-group" role="radiogroup" aria-label="결제 수단 선택">
-
-        <!-- 신용카드 -->
-        <button type="button" class="pay-method-btn"
-                data-method="CARD" aria-pressed="false">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-               width="28" height="28" aria-hidden="true" class="pay-method-btn__icon">
-            <path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0
-                     2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
-          </svg>
-          <span class="pay-method-btn__label">신용카드</span>
-        </button>
-
-        <!-- 현금 -->
-        <button type="button" class="pay-method-btn"
-                data-method="CASH" aria-pressed="false">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-               width="28" height="28" aria-hidden="true" class="pay-method-btn__icon">
-            <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85
-                     1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16
-                     c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3
-                     1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2
-                     c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5
-                     3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
-          </svg>
-          <span class="pay-method-btn__label">현금</span>
-        </button>
-
-        <!-- 간편결제 -->
-        <button type="button" class="pay-method-btn"
-                data-method="SIMPLE" aria-pressed="false">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-               width="28" height="28" aria-hidden="true" class="pay-method-btn__icon">
-            <path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0
-                     2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14zm-4.2-5.78v1.75
-                     l3.2-2.99L12.8 9v1.7c-3.11.43-4.35 2.56-4.8 4.7
-                     1.11-1.49 2.4-2.18 4.8-2.18z"/>
-          </svg>
-          <span class="pay-method-btn__label">간편결제</span>
-        </button>
-
-      </div>
-    </div>
-
-  </section>
+        </div>
+      </section>
 
 
-  <!-- ══════════════════════════════════════════════════════════════════
-       하단 고정 결제 버튼
-  ══════════════════════════════════════════════════════════════════ -->
-  <div class="payment-action-bar">
-    <button type="button"
-            class="btn btn--primary btn--lg"
-            id="btn-pay"
-            disabled
-            aria-disabled="true">
-      결제하기
-    </button>
-  </div>
+      <!-- 포인트 사용 섹션 (UC-06)
+           초기 hidden. 회원 인증 완료(Step 2) 후 JS에서 표시. -->
+      <section class="payment-section" id="point-section" hidden
+               aria-labelledby="label-point">
+        <h2 class="payment-section__title" id="label-point">포인트 사용</h2>
+
+        <!-- 보유 포인트 잔액 -->
+        <div class="point-balance">
+          <span class="point-balance__label">보유 포인트</span>
+          <span class="point-balance__value" id="point-balance-display">0P</span>
+        </div>
+
+        <!-- 포인트 입력 + 전액 사용 버튼 -->
+        <div class="point-input-group" style="margin-top: 12px;">
+          <div class="point-input-wrap">
+            <input type="number"
+                   class="form-control"
+                   id="point-input"
+                   placeholder="사용할 포인트 입력"
+                   min="0"
+                   step="100"
+                   inputmode="numeric"
+                   aria-label="사용할 포인트">
+            <span class="point-input-unit" aria-hidden="true">P</span>
+          </div>
+          <button type="button"
+                  class="btn btn--secondary btn--sm"
+                  id="btn-point-all">
+            전액 사용
+          </button>
+        </div>
+
+        <!-- 한도 초과 에러 메시지 -->
+        <p class="point-error" id="point-error" aria-live="polite" hidden></p>
+
+      </section>
+
+
+      <!-- 쿠폰 적용 섹션
+           쿠폰 코드 입력 후 적용 완료 시 JS에서 표시.
+           API 미확정 → TODO: POST /api/coupon/validate -->
+      <section class="payment-section" id="coupon-section" hidden
+               aria-labelledby="label-coupon">
+        <h2 class="payment-section__title" id="label-coupon">쿠폰 적용</h2>
+
+        <!-- 적용된 쿠폰 정보 표시 (쿠폰 코드 + 할인 금액) -->
+        <div class="coupon-applied">
+          <div class="coupon-applied__info">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                 width="18" height="18" aria-hidden="true" class="coupon-applied__icon">
+              <path d="M20 12c0-1.1.9-2 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2
+                       .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2zm-3.5
+                       3.5l-1.5-1.5-1.5 1.5L12 14l-1.5 1.5L9 14l-1.5 1.5L6 14l1.5-1.5L6 11l1.5-1.5L9
+                       11l1.5-1.5 1.5 1.5 1.5-1.5 1.5 1.5-1.5 1.5 1.5 1.5-1.5 1.5z"/>
+            </svg>
+            <!-- JS에서 쿠폰 코드 + 할인 금액 표시 -->
+            <span class="coupon-applied__name" id="coupon-applied-name">쿠폰 코드</span>
+          </div>
+          <div class="coupon-applied__right">
+            <span class="coupon-applied__discount" id="coupon-applied-discount">-0원</span>
+            <!-- 쿠폰 취소 버튼 -->
+            <button type="button"
+                    class="btn btn--ghost btn--sm coupon-applied__remove"
+                    id="btn-coupon-remove"
+                    aria-label="쿠폰 취소">
+              ✕ 취소
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- 모달 재오픈 버튼
+           모달(회원 확인 → 쿠폰) 흐름을 다시 열 수 있음.
+           포인트/쿠폰 정보를 변경하고 싶을 때 사용. -->
+      <button type="button"
+              class="btn btn--ghost btn--sm payment-reopen-btn"
+              id="btn-reopen-modal">
+        회원 정보 / 쿠폰 변경
+      </button>
+
+    </div><!-- /.payment-panel--left -->
+
+
+    <!-- ── 오른쪽 패널 ─────────────────────────────────────────── -->
+    <div class="payment-panel payment-panel--right">
+
+      <!-- 결제 금액 + 결제 수단 통합 섹션 (UC-04)
+           기본 요금 - 쿠폰 할인 - 포인트 사용 = 최종 결제 금액
+           결제 금액 0원 시 결제 수단 영역 자동 숨김 (JS 제어) -->
+      <section class="payment-section payment-section--checkout"
+               aria-labelledby="label-checkout">
+        <h2 class="payment-section__title" id="label-checkout">결제 금액 및 수단</h2>
+
+        <!-- ── 금액 요약 ────────────────────────────────── -->
+        <div class="price-breakdown">
+
+          <!-- 기본 요금: 성인·청소년 요금 합계 (JS 계산) -->
+          <div class="price-row">
+            <span class="price-row__label">기본 요금</span>
+            <span class="price-row__value" id="price-base">0원</span>
+          </div>
+
+          <!-- 쿠폰 할인 행 (쿠폰 적용 시에만 표시) -->
+          <div class="price-row price-row--deduct" id="price-coupon-row" hidden>
+            <span class="price-row__label">쿠폰 할인</span>
+            <span class="price-row__value price-row__value--deduct" id="price-coupon">
+              -0원
+            </span>
+          </div>
+
+          <!-- 포인트 사용 행 (포인트 사용 시에만 표시) -->
+          <div class="price-row price-row--deduct" id="price-point-row" hidden>
+            <span class="price-row__label">포인트 사용</span>
+            <span class="price-row__value price-row__value--deduct" id="price-point">
+              -0P
+            </span>
+          </div>
+
+          <!-- 구분선 -->
+          <div class="price-divider" aria-hidden="true"></div>
+
+          <!-- 총 결제 금액 -->
+          <div class="price-row price-row--total">
+            <span class="price-row__label">총 결제 금액</span>
+            <strong class="price-row__value price-row__value--total" id="price-total">
+              0원
+            </strong>
+          </div>
+
+          <!-- 포인트 적립 예정 안내 -->
+          <p class="price-bonus-note" id="price-bonus-note" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                 fill="currentColor" width="14" height="14" aria-hidden="true">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12
+                       2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
+            결제 완료 시
+            <strong id="price-bonus-amount">0P</strong> 적립 예정
+          </p>
+
+        </div>
+
+        <!-- ── 구분선: 금액 요약 ↔ 결제 수단 ────────────── -->
+        <div class="checkout-section-divider" aria-hidden="true"></div>
+
+        <!-- ── 결제 수단 선택 (CARD / SIMPLE 만 지원, 현금 제외) ────
+             총 결제 금액이 0원이면 JS에서 hidden 처리.
+             버튼 클릭 시 선택 표시 없이 즉시 submitPayment(method) 호출. -->
+        <div class="pay-method-wrap" id="pay-method-wrap">
+          <h3 class="checkout-subtitle">결제 수단</h3>
+          <p class="checkout-pay-hint">선택 시 즉시 결제됩니다</p>
+
+          <div class="pay-method-group" role="radiogroup" aria-label="결제 수단 선택">
+
+            <!-- 신용카드 -->
+            <button type="button" class="pay-method-btn"
+                    data-method="CARD" aria-pressed="false">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                   width="28" height="28" aria-hidden="true" class="pay-method-btn__icon">
+                <path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0
+                         2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+              </svg>
+              <span class="pay-method-btn__label">신용카드</span>
+            </button>
+
+            <!-- 간편결제 -->
+            <button type="button" class="pay-method-btn"
+                    data-method="SIMPLE" aria-pressed="false">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                   width="28" height="28" aria-hidden="true" class="pay-method-btn__icon">
+                <path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0
+                         2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14zm-4.2-5.78v1.75
+                         l3.2-2.99L12.8 9v1.7c-3.11.43-4.35 2.56-4.8 4.7
+                         1.11-1.49 2.4-2.18 4.8-2.18z"/>
+              </svg>
+              <span class="pay-method-btn__label">간편결제</span>
+            </button>
+
+          </div>
+        </div>
+
+        <!-- ── 0원 결제 (포인트/쿠폰 전액 적용 시)
+             총 결제 금액 = 0원 일 때 JS에서 hidden 해제.
+             '결제하기' 버튼 역할 대체. -->
+        <div id="free-pay-wrap" hidden>
+          <p class="free-pay-desc">포인트·쿠폰으로 전액 적용되었습니다.</p>
+          <button type="button"
+                  class="btn btn--primary btn--full"
+                  id="btn-free-pay">
+            결제 완료
+          </button>
+        </div>
+
+      </section>
+
+    </div><!-- /.payment-panel--right -->
+
+  </div><!-- /.payment-layout -->
 
 
   <!-- ══════════════════════════════════════════════════════════════════
@@ -437,30 +452,30 @@
   </template>
 
   <!-- Step 3: 쿠폰 코드 입력 (회원/비회원 공통) -->
-  <template id="modal-step3-couponEntity">
+  <template id="modal-step3-coupon">
     <div class="payment-modal-step">
       <p class="payment-modal-desc">
         쿠폰 코드가 있으시면 입력해 주세요.
       </p>
       <div class="payment-modal-input-wrap">
-        <div class="payment-modal-couponEntity-row">
+        <div class="payment-modal-coupon-row">
           <input type="text"
                  class="form-control"
-                 id="modal-couponEntity-input"
+                 id="modal-coupon-input"
                  placeholder="쿠폰 코드 입력"
                  maxlength="20"
                  aria-label="쿠폰 코드">
-          <!-- TODO: POST /api/couponEntity/validate API 연동 후 쿠폰 검증 -->
-          <button type="button" class="btn btn--secondary btn--sm" id="modal-btn-couponEntity-apply">
+          <!-- TODO: POST /api/coupon/validate API 연동 후 쿠폰 검증 -->
+          <button type="button" class="btn btn--secondary btn--sm" id="modal-btn-coupon-apply">
             적용
           </button>
         </div>
         <!-- 쿠폰 오류/성공 메시지 표시 영역 -->
-        <p class="payment-modal-error"    id="modal-couponEntity-error"   aria-live="polite" hidden></p>
-        <p class="payment-modal-success"  id="modal-couponEntity-success" aria-live="polite" hidden></p>
+        <p class="payment-modal-error"    id="modal-coupon-error"   aria-live="polite" hidden></p>
+        <p class="payment-modal-success"  id="modal-coupon-success" aria-live="polite" hidden></p>
       </div>
       <!-- 건너뛰기: 쿠폰 없이 진행 -->
-      <button type="button" class="btn btn--ghost btn--full" id="modal-btn-couponEntity-skip">
+      <button type="button" class="btn btn--ghost btn--full" id="modal-btn-coupon-skip">
         쿠폰 없이 계속
       </button>
     </div>

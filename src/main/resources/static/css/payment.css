@@ -8,34 +8,138 @@
  *   static/js/booking/payment.js
  *
  * ▶ 컴포넌트 목록
- *   1. 페이지 레이아웃 (.payment-main)
+ *   1. 페이지 레이아웃
+ *      └ .payment-main        : 전체 컨테이너 (max-width: 1100px)
+ *      └ .payment-header      : 단계 표시기 + 타이머 (한 줄)
+ *      └ .payment-layout      : 2단 그리드 본문
+ *      └ .payment-panel       : 각 패널 (left / right)
  *   2. 예매 단계 표시기 (.steps / .steps__item — templates과 일치)
  *   3. 임시 점유 타이머 (.payment-timer)
  *   4. 섹션 공통 (.payment-section)
  *   5. 예매 정보 카드 (.booking-info-card)
  *   6. 포인트 사용 (.point-*)
- *   7. 포인트 모달 (.point-modal-*)
- *   8. 결제 금액 + 결제 수단 통합 섹션 (.payment-section--checkout)
+ *   7. 결제 금액 + 결제 수단 통합 섹션 (.payment-section--checkout)
  *      └ 금액 요약 (.price-breakdown / .price-row)
- *      └ 결제 수단 선택 (.pay-method-group / .pay-method-btn)
- *   9. 하단 결제 버튼 바 (.payment-action-bar)
+ *      └ 결제 수단 선택 (.pay-method-group / .pay-method-btn) — 2열 (현금 제외)
+ *      └ 0원 결제 영역 (#free-pay-wrap / .free-pay-desc)
+ *   8. 모달 재오픈 버튼 (.payment-reopen-btn)
+ *   9. 하단 결제 버튼 바 (.payment-action-bar) — 제거됨
+ *      (카드/간편 클릭 즉시 결제로 변경)
  *
  *   ※ 할인 옵션 스타일(.discount-options 등)은 결제 단계에서 제거됨.
  *      (할인 정책 선택은 UC-03 이전 단계에서 처리)
+ *   ※ 현금(CASH) 관련 스타일 없음 — 이번 키오스크 범위에서 제외
  * ─────────────────────────────────────────────────────────────────────────
  */
 
 
 /* ──────────────────────────────────────────────────────────
-   1. 페이지 레이아웃
+   1. 페이지 레이아웃 (2단 그리드)
+   ──────────────────────────────────────────────────────────
+   ※ 이전: 1단 세로 스크롤 (.payment-main max-width: 680px)
+      현재: 헤더 전체 너비 + 2단 그리드 본문
+            - 왼쪽(.payment-panel--left):  예매정보 / 포인트 / 쿠폰
+            - 오른쪽(.payment-panel--right): 결제금액 + 결제수단
    ────────────────────────────────────────────────────────── */
 
-/* 전체 페이지 컨테이너: 중앙 정렬, 하단 액션바 여백 */
+/* 전체 페이지 컨테이너: 화면 너비에 맞게 최대 확장 */
 .payment-main {
-  max-width: 680px;
+  max-width: 1100px;
   margin: 0 auto;
-  /* 하단 고정 결제 버튼 바 높이 + 여백 */
-  padding-bottom: 110px;
+  padding: 0 20px 40px;
+}
+
+/* 헤더 영역: 단계 표시기 + 타이머 (전체 너비 한 줄) */
+.payment-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  /* 단계 표시기는 왼쪽, 타이머는 오른쪽으로 배치 */
+  flex-wrap: wrap;
+}
+
+/* 단계 표시기: flex 1로 남는 공간 차지 */
+.payment-header .steps {
+  flex: 1;
+  min-width: 200px;
+  padding: 16px 0;         /* 기존 24px → 헤더 줄에 맞게 축소 */
+}
+
+/* 타이머: 너비 고정, 헤더에 맞게 margin 제거 */
+.payment-header .payment-timer {
+  flex: 0 0 280px;
+  margin-bottom: 0;        /* 기존 20px 제거 (헤더 gap으로 대체) */
+}
+
+/* 2단 그리드 본문 */
+.payment-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;      /* 패널 높이 독립 (한쪽이 길어도 늘어나지 않음) */
+}
+
+/* 패널 공통 */
+.payment-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 왼쪽 패널: 예매정보 / 포인트 / 쿠폰 / 재오픈 버튼 */
+.payment-panel--left {
+  /* 왼쪽은 기본 스타일 그대로 */
+}
+
+/* 오른쪽 패널: 결제금액 + 결제수단 — 상단 고정 */
+.payment-panel--right {
+  position: sticky;
+  top: 20px;               /* 스크롤 시에도 오른쪽 패널이 화면에 유지됨 */
+}
+
+/* 모달 재오픈 버튼 */
+.payment-reopen-btn {
+  width: 100%;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  border-color: var(--border-subtle);
+  margin-top: 4px;
+}
+
+/* 결제 수단 안내 힌트 ("선택 시 즉시 결제됩니다") */
+.checkout-pay-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: -8px 0 12px;
+}
+
+/* 0원 결제 영역 */
+.free-pay-desc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+/* 반응형: 화면이 좁으면 1단으로 전환 */
+@media (max-width: 720px) {
+  .payment-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .payment-header .payment-timer {
+    flex: none;
+  }
+
+  .payment-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .payment-panel--right {
+    position: static;      /* 모바일에서는 sticky 해제 */
+  }
 }
 
 
@@ -644,10 +748,10 @@
    전액 포인트 사용(총 결제 금액 0원) 시 JS에서 #pay-method-wrap을 hidden.
    ────────────────────────────────────────────────────────── */
 
-/* 3열 그리드 */
+/* 2열 그리드 (현금 제외로 CARD / SIMPLE 만 있으므로 2열) */
 .pay-method-group {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
 
@@ -695,27 +799,13 @@
 
 
 /* ──────────────────────────────────────────────────────────
-   11. 하단 고정 결제 버튼 바 (.payment-action-bar)
+   11. 하단 고정 결제 버튼 바 (.payment-action-bar) — 제거됨
+   ──────────────────────────────────────────────────────────
+   ※ '결제하기' 별도 버튼 UX 제거.
+      카드/간편결제 버튼 클릭 즉시 결제가 진행되므로
+      하단 고정 바 불필요.
+      (스타일 제거, result.html의 .result-action-bar는 별도 유지)
    ────────────────────────────────────────────────────────── */
-
-.payment-action-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  padding: 12px 24px 16px;
-  background-color: var(--bg-surface);
-  border-top: 1px solid var(--border-subtle);
-  display: flex;
-  justify-content: center;
-}
-
-/* 결제 버튼: 최대 너비 컨테이너에 맞춤 */
-.payment-action-bar .btn {
-  max-width: 680px;
-  width: 100%;
-}
 
 
 /* ──────────────────────────────────────────────────────────
