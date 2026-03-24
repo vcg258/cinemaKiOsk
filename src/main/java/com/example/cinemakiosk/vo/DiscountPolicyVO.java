@@ -1,7 +1,7 @@
 package com.example.cinemakiosk.vo;
 
-import com.example.cinemakiosk.domain.DiscountPolicy.ConditionType;
-import com.example.cinemakiosk.domain.DiscountPolicy.DiscountType;
+import com.example.cinemakiosk.domain.DiscountPolicyEntity.ConditionType;
+import com.example.cinemakiosk.domain.DiscountPolicyEntity.DiscountType;
 import lombok.*;
 
 import java.time.LocalDateTime;

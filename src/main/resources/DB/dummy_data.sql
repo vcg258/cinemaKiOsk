@@ -19,7 +19,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 # TRUNCATE TABLE `admin`;                -- 최상위 (init.sql 기본 row 포함 전부 초기화)
 # TRUNCATE TABLE `bonus_policy`;
-# TRUNCATE TABLE `coupon`;               -- discount_policy 참조
+# TRUNCATE TABLE `couponEntity`;               -- discount_policy 참조
 # TRUNCATE TABLE `discount_policy`;
 # TRUNCATE TABLE `members`;
 # TRUNCATE TABLE `movie`;
@@ -118,12 +118,12 @@ VALUES
 
 
 -- ============================================================
--- 6. 쿠폰 (coupon)
+-- 6. 쿠폰 (couponEntity)
 --    discount_policy.id = 4 (쿠폰 할인 정책) 참조
 --    status : TRUE = 사용 가능, FALSE = 사용 불가 / 만료
---    coupon 테이블에 PK 미선언 → coupon_num 으로 식별 (UNIQUE 없으므로 중복 주의)
+--    couponEntity 테이블에 PK 미선언 → coupon_num 으로 식별 (UNIQUE 없으므로 중복 주의)
 -- ============================================================
-INSERT INTO `coupon` (`coupon_num`, `policy_id`, `status`)
+INSERT INTO `couponEntity` (`coupon_num`, `policy_id`, `status`)
 VALUES
     ('COUP20260001', 4, TRUE),  -- 미사용
     ('COUP20260002', 4, TRUE),  -- 미사용
@@ -585,7 +585,7 @@ VALUES
 -- seat_policy        :  3건 (일반석 / 리클라이너 / 특별관석)
 -- bonus_policy       :  3건 (기본 / 봄시즌 / 여름이벤트)
 -- discount_policy    :  5건 (조조 / 청소년 / 군경 / 쿠폰 / 봄맞이주중)
--- coupon             :  5건
+-- couponEntity             :  5건
 -- theater            :  4관
 -- movie              :  6편 (상영중 3 / 예정 2 / 종료 1)
 -- schedule           : 60건 (6일 × 8회 + 오늘 12회)

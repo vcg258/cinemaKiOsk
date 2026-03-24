@@ -1,8 +1,8 @@
 package com.example.cinemakiosk.dto;
 
-import com.example.cinemakiosk.domain.DiscountPolicy.ConditionType;
-import com.example.cinemakiosk.domain.DiscountPolicy.DiscountPolicy;
-import com.example.cinemakiosk.domain.DiscountPolicy.DiscountType;
+import com.example.cinemakiosk.domain.DiscountPolicyEntity.ConditionType;
+import com.example.cinemakiosk.domain.DiscountPolicyEntity.DiscountPolicyEntity;
+import com.example.cinemakiosk.domain.DiscountPolicyEntity.DiscountType;
 import com.example.cinemakiosk.vo.CouponVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,19 +30,19 @@ public class DiscountPolicyDTO {
 
     /**
      * Entity -> DTO 변환
-     * @param discountPolicy Entity
+     * @param discountPolicyEntity Entity
      * @return DTO
      */
-    public static DiscountPolicyDTO toDTO(DiscountPolicy discountPolicy) {
+    public static DiscountPolicyDTO toDTO(DiscountPolicyEntity discountPolicyEntity) {
         return DiscountPolicyDTO.builder()
-                .id(discountPolicy.getId())
-                .policyName(discountPolicy.getPolicyName())
-                .discountType(discountPolicy.getDiscountType())
-                .discountValue(discountPolicy.getDiscountValue())
-                .conditionType(discountPolicy.getConditionType())
-                .startAt(discountPolicy.getStartAt())
-                .endAt(discountPolicy.getEndAt())
-                .activation(discountPolicy.isActivation())
+                .id(discountPolicyEntity.getId())
+                .policyName(discountPolicyEntity.getPolicyName())
+                .discountType(discountPolicyEntity.getDiscountType())
+                .discountValue(discountPolicyEntity.getDiscountValue())
+                .conditionType(discountPolicyEntity.getConditionType())
+                .startAt(discountPolicyEntity.getStartAt())
+                .endAt(discountPolicyEntity.getEndAt())
+                .activation(discountPolicyEntity.isActivation())
                 .build();
     }
 
@@ -51,8 +51,8 @@ public class DiscountPolicyDTO {
      * @param discountPolicyDTO DTO
      * @return Entity
      */
-    public static DiscountPolicy ToEntity(DiscountPolicyDTO discountPolicyDTO) {
-        return DiscountPolicy.builder()
+    public static DiscountPolicyEntity ToEntity(DiscountPolicyDTO discountPolicyDTO) {
+        return DiscountPolicyEntity.builder()
                 .id(discountPolicyDTO.getId())
                 .policyName(discountPolicyDTO.getPolicyName())
                 .discountType(discountPolicyDTO.getDiscountType())

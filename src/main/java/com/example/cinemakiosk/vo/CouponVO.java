@@ -1,6 +1,5 @@
 package com.example.cinemakiosk.vo;
 
-import com.example.cinemakiosk.domain.DiscountPolicy.DiscountPolicy;
 import lombok.*;
 
 @Getter

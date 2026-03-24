@@ -1,7 +1,7 @@
 package com.example.cinemakiosk.service;
 
-import com.example.cinemakiosk.domain.DiscountPolicy.ConditionType;
-import com.example.cinemakiosk.domain.DiscountPolicy.DiscountType;
+import com.example.cinemakiosk.domain.DiscountPolicyEntity.ConditionType;
+import com.example.cinemakiosk.domain.DiscountPolicyEntity.DiscountType;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 
 @Log4j2
 @SpringBootTest
-class DiscountPolicyServiceImplTest {
+class DiscountPolicyEntityServiceImplTest {
     @Autowired private DiscountPolicyService discountPolicyService;
 
     @Test

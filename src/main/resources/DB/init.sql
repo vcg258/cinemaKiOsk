@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS `discount_policy` # FK (X)
 CREATE TABLE IF NOT EXISTS `coupon`
 (
     `coupon_num` VARCHAR(12) PRIMARY KEY NOT NULL COMMENT '쿠폰 번호',
-    `policy_id`  BIGINT UNSIGNED NOT NULL COMMENT '할인 정책 인덱스 FK',
+    `policy_id`  BIGINT UNSIGNED         NOT NULL COMMENT '할인 정책 인덱스 FK',
 #     `end_at`     DATETIME    NOT NULL COMMENT '유효기간',
     `status`     BOOLEAN                 NOT NULL DEFAULT FALSE COMMENT '사용여부 (사용가능 = true, 불가능 = false)',
     CONSTRAINT `fk_discount_policy_coupon_id` FOREIGN KEY (`policy_id`) REFERENCES discount_policy (`id`)
@@ -130,6 +130,7 @@ CREATE TABLE IF NOT EXISTS statistics
     `day`            ENUM ('SUN','MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT') NOT NULL COMMENT '요일',
     `revenue`        BIGINT UNSIGNED                                       NOT NULL COMMENT '수익',
     `customer_count` BIGINT UNSIGNED                                       NOT NULL COMMENT '관람객 수',
+    `date`           DATE                                                  NOT NULL COMMENT '통계 일자',
     CONSTRAINT `fk_statistics_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES schedule (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT '통계';
@@ -138,8 +139,8 @@ CREATE TABLE IF NOT EXISTS `reservation_details`
 (
     `id`          varchar(36) PRIMARY KEY COMMENT '예매 고유번호, uuid',
     `schedule_id` BIGINT UNSIGNED NOT NULL COMMENT '스케쥴 아이디 FK',
-    `phone`       VARCHAR(20)     NULL COMMENT '회원 번호 FK', # NOT NULL -> NULL 이유 : 비회원일 경우 NULL
-    `create_at`   DATETIME        NULL COMMENT '예매 기준시',
+    `phone`       VARCHAR(20)     NOT NULL COMMENT '회원 번호 FK', # NOT NULL -> NULL 이유 : 비회원일 경우 NULL
+    `create_at`   DATETIME        NOT NULL COMMENT '예매 기준시',
     CONSTRAINT `fk_reservation_details_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES schedule (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_reservation_details_members_phone` FOREIGN KEY (`phone`) REFERENCES members (`phone`)
@@ -151,7 +152,7 @@ CREATE TABLE IF NOT EXISTS `reservation_seat`
 (
     `id`             BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '고유번호',
     `reservation_id` varchar(36) NOT NULL COMMENT '예매 내역 FK',
-    `seat_number`    VARCHAR(10) NULL COMMENT '좌석 번호',
+    `seat_number`    VARCHAR(10) NOT NULL COMMENT '좌석 번호',
     CONSTRAINT `fk_reservation_seat_reservation_id` FOREIGN KEY (`reservation_id`) REFERENCES reservation_details (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE
 
@@ -173,7 +174,7 @@ CREATE TABLE IF NOT EXISTS `payment_details`
         ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_payment_details_bonus_policy_id` FOREIGN KEY (`bonus_policy_id`) REFERENCES bonus_policy (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_payment_details_coupon_num` FOREIGN KEY (`coupon_num`) REFERENCES coupon (coupon_num)
+    CONSTRAINT `fk_payment_details_coupon_num` FOREIGN KEY (`coupon_num`) REFERENCES couponEntity (coupon_num)
         ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT '결제 내역';
 

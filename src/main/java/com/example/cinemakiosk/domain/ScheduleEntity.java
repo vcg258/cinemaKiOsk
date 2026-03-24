@@ -11,13 +11,13 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Schedule {
+public class ScheduleEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT UNSIGNED")
     @Id private Long id; // 스케줄 인덱스
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "no", nullable = false, columnDefinition = "BIGINT UNSIGNED", foreignKey = @ForeignKey(name = "fk_schedule_theater_no"))
-    private Theater theater; // 상영관 번호 FK
+    private TheaterEntity theaterEntity; // 상영관 번호 FK
 
     // TODO (Long -> Movie)
 //    @ManyToOne(fetch = FetchType.LAZY)

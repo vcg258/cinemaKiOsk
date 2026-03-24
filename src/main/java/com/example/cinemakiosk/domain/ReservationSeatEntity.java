@@ -21,6 +21,6 @@ public class ReservationSeatEntity {
     @Column(length = 36, nullable = false)
     private String reservationId;  //예매 내역 아이디
 
-    @Column(length = 5, nullable = false)
+    @Column(length = 10, nullable = false)
     private String seatNumber;     //좌석 번호
 }

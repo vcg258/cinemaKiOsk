@@ -3,7 +3,7 @@
   templates/admin/management/policy/manage.html
   정책 수정 (UC 명세 외 팀 합의)
   URL 파라미터: ?type=bonus|discount &id={id}
-  Model: policyType(String), bonusPolicy(BonusPolicyDTO), discountPolicy(DiscountPolicyDTO)
+  Model: policyType(String), bonusPolicy(BonusPolicyDTO), discountPolicyEntity(DiscountPolicyDTO)
   BonusPolicyDTO: id, policyName, giveValue
   DiscountPolicyDTO: id, policyName, discountType, discountValue, conditionType
 -->
@@ -38,7 +38,7 @@
     <div class="admin-form-group">
       <label for="policyName" class="admin-form-label admin-form-label--required">정책명</label>
       <input type="text" id="policyName" class="input"
-             th:value="${policyType == 'bonus'} ? ${bonusPolicy?.policyName} : ${discountPolicy?.policyName}"
+             th:value="${policyType == 'bonus'} ? ${bonusPolicy?.policyName} : ${discountPolicyEntity?.policyName}"
              required>
     </div>
 
@@ -63,8 +63,8 @@
           할인 유형
         </label>
         <select id="discountType" class="input">
-          <option value="RATIO" th:selected="${discountPolicy?.discountType == 'RATIO'}">비율 (%)</option>
-          <option value="WON"   th:selected="${discountPolicy?.discountType == 'WON'}">금액 (원)</option>
+          <option value="RATIO" th:selected="${discountPolicyEntity?.discountType == 'RATIO'}">비율 (%)</option>
+          <option value="WON"   th:selected="${discountPolicyEntity?.discountType == 'WON'}">금액 (원)</option>
         </select>
       </div>
       <div class="admin-form-group">
@@ -72,7 +72,7 @@
           할인값
         </label>
         <input type="number" id="discountValue" class="input"
-               th:value="${discountPolicy?.discountValue}"
+               th:value="${discountPolicyEntity?.discountValue}"
                min="0">
       </div>
       <div class="admin-form-group">
@@ -80,13 +80,13 @@
           적용 조건
         </label>
         <select id="conditionType" class="input">
-          <option value="TIME" th:selected="${discountPolicy?.conditionType == 'TIME'}">시간</option>
-          <option value="AGE"  th:selected="${discountPolicy?.conditionType == 'AGE'}">나이</option>
-          <option value="JOB"  th:selected="${discountPolicy?.conditionType == 'JOB'}">직업</option>
+          <option value="TIME" th:selected="${discountPolicyEntity?.conditionType == 'TIME'}">시간</option>
+          <option value="AGE"  th:selected="${discountPolicyEntity?.conditionType == 'AGE'}">나이</option>
+          <option value="JOB"  th:selected="${discountPolicyEntity?.conditionType == 'JOB'}">직업</option>
         </select>
       </div>
       <!-- 히든: 할인 정책 ID -->
-      <input type="hidden" id="policyId" th:value="${discountPolicy?.id}">
+      <input type="hidden" id="policyId" th:value="${discountPolicyEntity?.id}">
     </div>
 
     <!-- 폼 액션 -->

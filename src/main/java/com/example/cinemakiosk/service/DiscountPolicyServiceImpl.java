@@ -1,7 +1,7 @@
 package com.example.cinemakiosk.service;
 
-import com.example.cinemakiosk.domain.Coupon;
-import com.example.cinemakiosk.domain.DiscountPolicy.DiscountPolicy;
+import com.example.cinemakiosk.domain.CouponEntity;
+import com.example.cinemakiosk.domain.DiscountPolicyEntity.DiscountPolicyEntity;
 import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
 import com.example.cinemakiosk.mapper.DiscountPolicyMapper;
@@ -50,7 +50,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
                 .activation(discountPolicyDTO.isActivation())
                 .build();
 
-        DiscountPolicy dto1 = DiscountPolicyDTO.ToEntity(dto);
+        DiscountPolicyEntity dto1 = DiscountPolicyDTO.ToEntity(dto);
         log.info(dto1);
         discountPolicyRepository.save(dto1);
     }
@@ -61,10 +61,10 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public List<DiscountPolicyDTO> getDiscountPolicies() {
-        List<DiscountPolicy> discountPolicies = discountPolicyRepository.findAll();
+        List<DiscountPolicyEntity> discountPolicies = discountPolicyRepository.findAll();
         List<DiscountPolicyDTO> discountPolicyDTO = new ArrayList<>();
-        for (DiscountPolicy discountPolicy : discountPolicies) {
-            DiscountPolicyDTO dto = DiscountPolicyDTO.toDTO(discountPolicy);
+        for (DiscountPolicyEntity discountPolicyEntity : discountPolicies) {
+            DiscountPolicyDTO dto = DiscountPolicyDTO.toDTO(discountPolicyEntity);
             discountPolicyDTO.add(dto);
         }
         return discountPolicyDTO;
@@ -77,8 +77,8 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public DiscountPolicyDTO getDiscountPolicy(Long id) {
-        DiscountPolicy discountPolicy = discountPolicyRepository.findById(id).orElseThrow();
-        return DiscountPolicyDTO.toDTO(discountPolicy);
+        DiscountPolicyEntity discountPolicyEntity = discountPolicyRepository.findById(id).orElseThrow();
+        return DiscountPolicyDTO.toDTO(discountPolicyEntity);
     }
 
     /**
@@ -87,10 +87,10 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public void finishActivation(Long id) {
-        DiscountPolicy discountPolicy = discountPolicyRepository.findById(id).orElseThrow();
-        discountPolicy.finalDiscountPolicy(LocalDateTime.now().withHour(23).withMinute(59).withSecond(59));
-        log.info("Finish discountPolicy: {}", discountPolicy);
-        discountPolicyRepository.save(discountPolicy);
+        DiscountPolicyEntity discountPolicyEntity = discountPolicyRepository.findById(id).orElseThrow();
+        discountPolicyEntity.finalDiscountPolicy(LocalDateTime.now().withHour(23).withMinute(59).withSecond(59));
+        log.info("Finish discountPolicy: {}", discountPolicyEntity);
+        discountPolicyRepository.save(discountPolicyEntity);
     }
 
     /**
@@ -100,9 +100,9 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public void changeActivation(Long id, boolean activation) {
-        DiscountPolicy discountPolicy = discountPolicyRepository.findById(id).orElseThrow();
-        discountPolicy.changeActivation(activation);
-        log.info("changeActivation discountPolicy: {}", discountPolicy);
+        DiscountPolicyEntity discountPolicyEntity = discountPolicyRepository.findById(id).orElseThrow();
+        discountPolicyEntity.changeActivation(activation);
+        log.info("changeActivation discountPolicy: {}", discountPolicyEntity);
     }
 
     /**
@@ -119,9 +119,9 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
                 .build();
 
         log.info("couponDTO: {}", couponDTO);
-        DiscountPolicy discountPolicy = discountPolicyRepository.getReferenceById(policyId);
-        Coupon coupon = CouponDTO.ToEntity(couponDTO, discountPolicy);
-        couponRepository.save(coupon);
+        DiscountPolicyEntity discountPolicyEntity = discountPolicyRepository.getReferenceById(policyId);
+        CouponEntity couponEntity = CouponDTO.ToEntity(couponDTO, discountPolicyEntity);
+        couponRepository.save(couponEntity);
     }
 
     /**
@@ -156,10 +156,10 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public void updateStatus(String couponNum, boolean status) {
-        Coupon coupon = couponRepository.findById(couponNum).orElseThrow();
-        coupon.changeStatus(status); // 사용후 변경
-        couponRepository.save(coupon);
-        log.info("coupon: {}", coupon);
+        CouponEntity couponEntity = couponRepository.findById(couponNum).orElseThrow();
+        couponEntity.changeStatus(status); // 사용후 변경
+        couponRepository.save(couponEntity);
+        log.info("coupon: {}", couponEntity);
     }
 
     /**
@@ -170,7 +170,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     @Override
     public Page<DiscountPolicyDTO> getDiscountPolicyPage(int page) {
         Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("id").descending());
-        Page<DiscountPolicy> policy = discountPolicyRepository.findAll(pageable);
+        Page<DiscountPolicyEntity> policy = discountPolicyRepository.findAll(pageable);
         return policy.map(discountPolicy -> DiscountPolicyDTO.toDTO(discountPolicy));
     }
 }

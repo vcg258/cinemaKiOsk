@@ -1,7 +1,5 @@
 package com.example.cinemakiosk.vo;
 
-import com.example.cinemakiosk.domain.Theater;
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;

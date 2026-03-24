@@ -61,7 +61,7 @@ No,패키지,클래스,역할,담당자
 60,,ReservationSeatVO,reservation_seat 테이블 대응 VO,
 61,,PaymentDetailsVO,payment_details 테이블 대응 VO,
 62,,PointHistoryVO,point_history 테이블 대응 VO,
-63,,CouponVO,coupon 테이블 + 할인 정책 테이블 대응 VO,
+63,,CouponVO,couponEntity 테이블 + 할인 정책 테이블 대응 VO,
 64,,,,
 65,,,,
 66,,,,

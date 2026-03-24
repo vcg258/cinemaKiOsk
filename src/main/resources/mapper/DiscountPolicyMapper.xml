@@ -21,7 +21,7 @@
 
     <select id="checkCoupon" resultMap="discountPolicyResultMap">
         SELECT * FROM discount_policy DP
-        JOIN coupon C ON DP.id = C.policy_id WHERE C.policy_id = #{policy_id}
+        JOIN couponEntity C ON DP.id = C.policy_id WHERE C.policy_id = #{policy_id}
     </select>
 
 </mapper>

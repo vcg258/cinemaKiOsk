@@ -17,32 +17,32 @@ public class MovieEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "movie_id")
+    @Column(name = "movie_id", columnDefinition = "BIGINT UNSIGNED")
     private Long movieId;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", nullable = false, length = 100)
     private String title;
 
-    @Column(name = "genre")
+    @Column(name = "genre", length = 50)
     private String genre;
 
-    @Convert(converter = MovieEntity.RatingConverter.class)
-    @Column(name = "rating")
+    @Convert(converter = MovieEntity.RatingConverter.class) // TODO EnumConverter
+    @Column(name = "rating", nullable = false)
     private Rating rating;
 
-    @Column(name = "runtime")
+    @Column(name = "runtime", columnDefinition = "BIGINT UNSIGNED", nullable = false)
     private Long runtime;
 
-    @Column(name = "director")
+    @Column(name = "director", length = 50, nullable = false)
     private String director;
 
-    @Column(name = "actors")
+    @Column(name = "actors", length = 255)
     private String actors;
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "start_at")
+    @Column(name = "start_at", nullable = false)
     private LocalDateTime startAt;
 
     @Column(name = "end_at")

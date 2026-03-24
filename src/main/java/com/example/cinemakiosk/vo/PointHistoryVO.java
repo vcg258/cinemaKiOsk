@@ -1,8 +1,6 @@
 package com.example.cinemakiosk.vo;
 
-import com.example.cinemakiosk.domain.Member;
-import com.example.cinemakiosk.domain.PointHistory.Type;
-import jakarta.persistence.*;
+import com.example.cinemakiosk.domain.PointHistoryEntity.Type;
 import lombok.*;
 
 import java.time.LocalDateTime;

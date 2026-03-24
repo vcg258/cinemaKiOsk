@@ -1,6 +1,6 @@
-package com.example.cinemakiosk.domain.DiscountPolicy;
+package com.example.cinemakiosk.domain.DiscountPolicyEntity;
 
-import com.example.cinemakiosk.domain.Coupon;
+import com.example.cinemakiosk.domain.CouponEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,7 +13,7 @@ import java.util.List;
 @ToString(exclude = "coupon")
 @NoArgsConstructor
 @AllArgsConstructor
-public class DiscountPolicy {
+public class DiscountPolicyEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT UNSIGNED")
     @Id private Long id; // 할인 정책 인덱스
@@ -31,8 +31,8 @@ public class DiscountPolicy {
     @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean activation; // 활성화 여부
 
-    @OneToMany(mappedBy = "discountPolicy", cascade = {CascadeType.ALL}, orphanRemoval = true)
-    private List<Coupon> coupon;
+    @OneToMany(mappedBy = "discountPolicyEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private List<CouponEntity> coupon;
 
     /**
      * 할인 정책 만료일 변경 메서드

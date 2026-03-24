@@ -1,7 +1,7 @@
 package com.example.cinemakiosk.dto;
 
-import com.example.cinemakiosk.domain.Coupon;
-import com.example.cinemakiosk.domain.DiscountPolicy.DiscountPolicy;
+import com.example.cinemakiosk.domain.CouponEntity;
+import com.example.cinemakiosk.domain.DiscountPolicyEntity.DiscountPolicyEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,28 +18,28 @@ public class CouponDTO {
 
     /**
      * Entity -> DTO 변환
-     * @param coupon Entity
+     * @param couponEntity Entity
      * @return 변환을 위한 Builder
      */
-    public static CouponDTO ToDTO(Coupon coupon) {
+    public static CouponDTO ToDTO(CouponEntity couponEntity) {
         return CouponDTO.builder()
-                .couponNum(coupon.getCouponNum())
-                .status(coupon.isStatus())
-                .policyId(coupon.getDiscountPolicy().getId())
+                .couponNum(couponEntity.getCouponNum())
+                .status(couponEntity.isStatus())
+                .policyId(couponEntity.getDiscountPolicyEntity().getId())
                 .build();
     }
 
     /**
      * DTO -> Entity 변환
      * @param couponDTO DTO
-     * @param discountPolicy FK를 위한 Entity (JPA는 인식을 못하기때문에 잡아줌)
+     * @param discountPolicyEntity FK를 위한 Entity (JPA는 인식을 못하기때문에 잡아줌)
      * @return 변환을 위한 Builder
      */
-    public static Coupon ToEntity(CouponDTO couponDTO, DiscountPolicy discountPolicy) {
-        return Coupon.builder()
+    public static CouponEntity ToEntity(CouponDTO couponDTO, DiscountPolicyEntity discountPolicyEntity) {
+        return CouponEntity.builder()
                 .couponNum(couponDTO.getCouponNum())
                 .status(couponDTO.isStatus())
-                .discountPolicy(discountPolicy)
+                .discountPolicyEntity(discountPolicyEntity)
                 .build();
     }
 }
