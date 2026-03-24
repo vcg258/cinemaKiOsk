@@ -1,13 +1,16 @@
 package com.example.cinemakiosk.dto;
 
 import com.example.cinemakiosk.domain.DiscountPolicy.ConditionType;
+import com.example.cinemakiosk.domain.DiscountPolicy.DiscountPolicy;
 import com.example.cinemakiosk.domain.DiscountPolicy.DiscountType;
+import com.example.cinemakiosk.vo.CouponVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -22,4 +25,42 @@ public class DiscountPolicyDTO {
     private LocalDateTime startAt; // 시작일
     private LocalDateTime endAt; // 만료일
     private boolean activation; // 활성화 여부
+    private List<CouponVO> coupons; // resultMap(collection)
+
+
+    /**
+     * Entity -> DTO 변환
+     * @param discountPolicy Entity
+     * @return DTO
+     */
+    public static DiscountPolicyDTO toDTO(DiscountPolicy discountPolicy) {
+        return DiscountPolicyDTO.builder()
+                .id(discountPolicy.getId())
+                .policyName(discountPolicy.getPolicyName())
+                .discountType(discountPolicy.getDiscountType())
+                .discountValue(discountPolicy.getDiscountValue())
+                .conditionType(discountPolicy.getConditionType())
+                .startAt(discountPolicy.getStartAt())
+                .endAt(discountPolicy.getEndAt())
+                .activation(discountPolicy.isActivation())
+                .build();
+    }
+
+    /**
+     * DTO -> Entity
+     * @param discountPolicyDTO DTO
+     * @return Entity
+     */
+    public static DiscountPolicy ToEntity(DiscountPolicyDTO discountPolicyDTO) {
+        return DiscountPolicy.builder()
+                .id(discountPolicyDTO.getId())
+                .policyName(discountPolicyDTO.getPolicyName())
+                .discountType(discountPolicyDTO.getDiscountType())
+                .discountValue(discountPolicyDTO.getDiscountValue())
+                .conditionType(discountPolicyDTO.getConditionType())
+                .startAt(discountPolicyDTO.getStartAt())
+                .endAt(discountPolicyDTO.getEndAt())
+                .activation(discountPolicyDTO.isActivation())
+                .build();
+    }
 }

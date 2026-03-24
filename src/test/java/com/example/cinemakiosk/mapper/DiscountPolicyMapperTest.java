@@ -13,10 +13,4 @@ import static org.junit.jupiter.api.Assertions.*;
 class DiscountPolicyMapperTest {
     @Autowired private DiscountPolicyMapper discountPolicyMapper;
 
-    @Test
-    void selectById() {
-        DiscountPolicyVO discountPolicyVO = discountPolicyMapper.selectById(1L);
-        log.info(discountPolicyVO);
-    }
-
 }

@@ -33,4 +33,19 @@ public class DiscountPolicy {
 
     @OneToMany(mappedBy = "discountPolicy", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<Coupon> coupon;
+
+    /**
+     * 할인 정책 만료일 변경 메서드
+     * @param endAt 변경할 만료일
+     */
+    public void finalDiscountPolicy(LocalDateTime endAt) {
+        this.endAt = endAt;
+    }
+
+    /**
+     * 할인 정책 활성화 ON / OFF (만든김에 버튼하나 딸깍 누르면 변경될거 생각해서 만들어봄)
+     */
+    public void changeActivation(boolean activation) {
+        this.activation = activation;
+    }
 }
