@@ -27,7 +27,8 @@ public class MovieEntity {
     private String genre;
 
     @Column(name = "rating")
-    private String rating;
+    @Enumerated(EnumType.STRING)
+    private Rating rating;
 
     @Column(name = "runtime")
     private Long runtime;

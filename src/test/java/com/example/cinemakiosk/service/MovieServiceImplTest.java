@@ -1,5 +1,9 @@
 package com.example.cinemakiosk.service;
 
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.example.cinemakiosk.domain.Rating;
 import com.example.cinemakiosk.dto.MovieDTO;
 import lombok.extern.log4j.Log4j2;
@@ -12,21 +16,19 @@ import java.util.List;
 
 @Log4j2
 @SpringBootTest
-class serviceTest {
+class MovieServiceImplTest {
 
     @Autowired
     private MovieServiceImpl moviceService;
 
-    @Test
-    void findAll() {
-        moviceService.getMovie("테스트");
-    }
 
+    // 추가
     @Test
-    void insert() {
+    void insertMovie() {
+        LocalDateTime now = LocalDateTime.now();
         MovieDTO movieDTO = MovieDTO.builder()
                 .genre("wpwp")
-                .rating(Rating.FIFTEEN.getConversion())
+                .rating(Rating.ALL)
                 .actors("일반인1")
                 .createAt(LocalDateTime.now())
                 .startAt(LocalDateTime.now())
@@ -40,12 +42,37 @@ class serviceTest {
         moviceService.insertMovie(movieDTO);
     }
 
+    // 상세조회
     @Test
-    void search() {
+    void getMovieById() {
+        MovieDTO movieDTO = moviceService.getMovieById(1L);
+        log.info(movieDTO);
+    }
+
+    // 전체 조회
+    @Test
+    void getAllMovies() {
+        List<MovieDTO> movieDTOList = moviceService.getAllMovies();
+        for (MovieDTO movieDTO : movieDTOList) {
+            log.info(movieDTO);
+        }
+    }
+
+    // 키워드로 조회
+    @Test
+    void getMovie() {
         List<MovieDTO> movieDTOList = moviceService.getMovie("특별");
         for (MovieDTO movieDTO : movieDTOList) {
             log.info(movieDTO);
+        }
+    }
 
+    // 장르로 조회
+    @Test
+    void findByGenre() {
+        List<MovieDTO> movieDTOList = moviceService.findByGenre("wpwp");
+        for (MovieDTO movieDTO : movieDTOList) {
+            log.info(movieDTO);
         }
     }
 }

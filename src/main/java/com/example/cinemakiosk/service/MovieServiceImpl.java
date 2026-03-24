@@ -1,32 +1,88 @@
-//package com.example.cinemakiosk.service;
-//
-//import com.example.cinemakiosk.domain.MovieEntity;
-//import com.example.cinemakiosk.dto.MovieDTO;
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.stereotype.Service;
-//
-//import java.util.ArrayList;
-//import java.util.List;
-//
-//@Service
-//@RequiredArgsConstructor
-//public class MovieServiceImpl implements MovieService {
-//
-//
-//
-//    @Override
-//    public List<MovieDTO> getMovie(String keyWord) {
-//        List<MovieEntity> movieEntityList = movieMapper.findByTitleContaining(keyWord);
-//
-//        List<MovieDTO> movieDTOList = new ArrayList<>();
-//        for (MovieEntity movieEntity : movieEntityList) {
-//            movieDTOList.add(MovieDTO.from(movieEntity));
-//        }
-//        return movieDTOList;
-//    }
-//
-//    @Override
-//    public void insertMovie(MovieDTO movieDTO) {
-//        movieMapper.insert(movieDTO.toEntity());  // toEntity() 사용
-//    }
-//}
+package com.example.cinemakiosk.service;
+
+import com.example.cinemakiosk.domain.MovieEntity;
+import com.example.cinemakiosk.domain.Rating;
+import com.example.cinemakiosk.dto.MovieDTO;
+import com.example.cinemakiosk.repository.MovieRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
+public class MovieServiceImpl implements MovieService {
+
+    private final MovieRepository movieRepository;
+
+
+    // 추가
+    @Override
+    public void insertMovie(MovieDTO movieDTO) {
+        movieRepository.save(movieDTO.toEntity());  // toEntity() 사용
+    }
+
+    // 상세 조회
+    @Override
+    public MovieDTO getMovieById(long movieId) {
+        Optional<MovieEntity> optionalMovieEntity = movieRepository.findById(movieId);
+        MovieEntity movieEntity = optionalMovieEntity.orElseThrow();
+        MovieDTO movieDTO = MovieDTO.from(movieEntity);
+        return movieDTO;
+    }
+
+    //전체 조회
+    @Override
+    public List<MovieDTO> getAllMovies() {
+        List<MovieEntity> movieEntityList = movieRepository.findAll();
+
+        List<MovieDTO> movieDTOList = new ArrayList<>();
+        for (MovieEntity movieEntity : movieEntityList) {
+            movieDTOList.add(MovieDTO.from(movieEntity));
+        }
+        return movieDTOList;
+    }
+
+    // 제목 키워드로 조회
+    @Override
+    public List<MovieDTO> getMovie(String keyWord) {
+        List<MovieEntity> movieEntityList = movieRepository.findByTitleContaining(keyWord);
+
+        List<MovieDTO> movieDTOList = new ArrayList<>();
+        for (MovieEntity movieEntity : movieEntityList) {
+            movieDTOList.add(MovieDTO.from(movieEntity));
+        }
+        return movieDTOList;
+    }
+
+
+
+    // 장르로 조회
+    @Override
+    public List<MovieDTO> findByGenre(String genre) {
+        List<MovieEntity> movieEntityList = movieRepository.findByGenre(genre);
+
+        List<MovieDTO> movieDTOList = new ArrayList<>();
+        for (MovieEntity movieEntity : movieEntityList) {
+            movieDTOList.add(MovieDTO.from(movieEntity));
+        }
+        return movieDTOList;
+    }
+
+
+    // 관람등급으로 조회
+    @Override
+    public List<MovieDTO> findByRating(Rating rating) {
+        List<MovieEntity> movieEntityList = movieRepository.findByRating(rating);
+
+        List<MovieDTO> movieDTOList = new ArrayList<>();
+
+        for (MovieEntity movieEntity : movieEntityList) {
+            movieDTOList.add(MovieDTO.from(movieEntity));
+        }
+
+        return movieDTOList;
+    }
+}

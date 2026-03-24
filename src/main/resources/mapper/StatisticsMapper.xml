@@ -4,22 +4,7 @@
 
 <mapper namespace="com.example.cinemakiosk.mapper.StatisticsMapper">
 
-    <!-- resultMap -->
-    <resultMap id="statisticsResultMap" type="com.example.cinemakiosk.domain.StatisticsEntity">
-        <id property="id" column="id"/>
-        <result property="scheduleId" column="schedule_id"/>
-        <result property="day" column="day"/>
-        <result property="revenue" column="revenue"/>
-        <result property="customerCount" column="customer_count"/>
-        <result property="date" column="date"/>
-    </resultMap>
 
-
-    <resultMap id="dailySummaryResultMap" type="com.example.cinemakiosk.dto.StatisticsDTO$DailySummary">
-        <result property="day" column="day"/>
-        <result property="totalRevenue" column="total_revenue"/>
-        <result property="totalCustomerCount" column="total_customer_count"/>
-    </resultMap>
 
     <!-- 월별 조회 -->
     <select id="findByMonth" resultMap="statisticsResultMap">

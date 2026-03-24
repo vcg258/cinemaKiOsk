@@ -14,5 +14,4 @@ public interface StatisticsMapper {
 
     List<StatisticsEntity> findByHour(int hour);
 
-    List<StatisticsDTO.DailySummary> getDailySummary();
 }

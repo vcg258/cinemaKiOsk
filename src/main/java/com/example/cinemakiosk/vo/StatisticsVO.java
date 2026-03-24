@@ -15,8 +15,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode
 public class StatisticsVO {
 
-    private final Long id;
-    private final Long scheduleId;
+    private final Long statisticsId;
     private final String day;          // 요일
     private final Long revenue;        // 수익
     private final Long customerCount;  // 관람객 수
@@ -25,8 +24,7 @@ public class StatisticsVO {
     // Entity → VO 변환
     public static StatisticsVO from(StatisticsEntity entity) {
         return StatisticsVO.builder()
-                .id(entity.getId())
-                .scheduleId(entity.getScheduleId())
+                .statisticsId(entity.getStatisticsId())
                 .day(entity.getDay() != null ? entity.getDay().name() : null)
                 .revenue(entity.getRevenue())
                 .customerCount(entity.getCustomerCount())

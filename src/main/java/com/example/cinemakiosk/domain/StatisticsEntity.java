@@ -17,7 +17,7 @@ public class StatisticsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;             // 통계 고유번호 (PK)
+    private Long statisticsId;             // 통계 고유번호 (PK)
 
     @Column(name = "schedule_id", nullable = false)
     private Long scheduleId;     // 스케쥴 아이디
