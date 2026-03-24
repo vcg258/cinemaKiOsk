@@ -1,12 +1,11 @@
 package com.example.cinemakiosk.mapper;
 
-import com.example.cinemakiosk.dto.StatisticsDTO;
 import com.example.cinemakiosk.domain.StatisticsEntity;
+import com.example.cinemakiosk.dto.StatisticsDTO;
 import org.apache.ibatis.annotations.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
 
 @Mapper
 public interface StatisticsMapper {
@@ -19,7 +18,7 @@ public interface StatisticsMapper {
     @Select("SELECT * FROM statistics WHERE id = #{id}")
     StatisticsEntity findById(@Param("id") Long id);
 
-    // 스케쥴 ID로 조회 (영화별 통계)
+    // 스케줄 ID로 조회
     @Select("SELECT * FROM statistics WHERE schedule_id = #{scheduleId}")
     List<StatisticsEntity> findByScheduleId(@Param("scheduleId") Long scheduleId);
 
@@ -39,28 +38,27 @@ public interface StatisticsMapper {
     @Select("SELECT * FROM statistics WHERE HOUR(date) = #{hour}")
     List<StatisticsEntity> findByHour(@Param("hour") int hour);
 
-    // 요일별 수익 합계 집계
+    // 요일별 수익/관람객 집계 (FIELD로 요일 순서 정렬)
     @Select("""
             SELECT day,
-                   SUM(revenue) AS totalRevenue,
+                   SUM(revenue)        AS totalRevenue,
                    SUM(customer_count) AS totalCustomerCount
             FROM statistics
             GROUP BY day
             ORDER BY FIELD(day, 'MON','TUE','WED','THU','FRI','SAT','SUN')
             """)
     @Results({
-            @Result(property = "day", column = "day"),
-            @Result(property = "totalRevenue", column = "totalRevenue"),
+            @Result(property = "day",                column = "day"),
+            @Result(property = "totalRevenue",       column = "totalRevenue"),
             @Result(property = "totalCustomerCount", column = "totalCustomerCount")
     })
     List<StatisticsDTO.DailySummary> getDailySummary();
 
-    // 통계 등록
+    // 통계 등록 (통계는 수정/삭제 없음)
     @Insert("""
             INSERT INTO statistics (schedule_id, day, revenue, customer_count, date)
             VALUES (#{scheduleId}, #{day}, #{revenue}, #{customerCount}, #{date})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(StatisticsEntity statistics);
-    // 통계는 한번 기록되면 수정/삭제 하지 않음
 }

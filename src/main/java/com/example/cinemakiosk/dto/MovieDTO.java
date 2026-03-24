@@ -1,5 +1,6 @@
 package com.example.cinemakiosk.dto;
 
+import com.example.cinemakiosk.domain.MovieEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -42,7 +43,7 @@ public class MovieDTO {
     }
 
     // DTO → Entity 변환
-    public com.example.cinemakiosk.domain.MovieEntity toEntity() {
+    public MovieEntity toEntity() {
         return com.example.cinemakiosk.domain.MovieEntity.builder()
                 .title(this.title)
                 .genre(this.genre)
