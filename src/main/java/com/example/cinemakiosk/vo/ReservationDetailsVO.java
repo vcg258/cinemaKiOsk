@@ -1,5 +1,7 @@
 package com.example.cinemakiosk.vo;
 
+import com.example.cinemakiosk.dto.ReservationDetailsDTO;
+import com.example.cinemakiosk.dto.ReservationSeatDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +10,7 @@ import com.example.cinemakiosk.vo.ScheduleVO;
 import com.example.cinemakiosk.vo.ReservationSeatVO;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -20,4 +23,23 @@ public class ReservationDetailsVO {
     private String phone;                  //  회원 번호
     private LocalDateTime reservationTime; //  예약 시간
     private List<ReservationSeatVO> seats; //  예매한 좌석들의 정보
+
+
+    public static ReservationDetailsDTO toDTO(ReservationDetailsVO reservationDetailsVO) {
+
+        List<ReservationSeatDTO> seats = new ArrayList<>();
+
+        for (var seat : reservationDetailsVO.getSeats()) {
+            seats.add(ReservationSeatVO.toDTO(seat));
+        }
+
+
+        return ReservationDetailsVO.builder()
+                .id(reservationDetailsVO.getId())
+                .schedule(ScheduleVO.toVO(reservationDetailsVO.getSchedule()))
+                .phone(reservationDetailsVO.getPhone())
+                .reservationTime(reservationDetailsVO.getReservationTime())
+                .seats(seats)
+                .build();
+    }
 }

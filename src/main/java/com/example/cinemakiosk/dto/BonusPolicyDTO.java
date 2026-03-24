@@ -1,5 +1,6 @@
 package com.example.cinemakiosk.dto;
 
+import com.example.cinemakiosk.vo.BonusPolicyVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,4 +19,15 @@ public class BonusPolicyDTO {
     private LocalDateTime createAt;  //	시작일
     private LocalDateTime finishedAt;//	만료일
     private Boolean activation;      // 활성화 여부(중요할까?)
+
+    public static BonusPolicyVO toVO(BonusPolicyDTO bonusPolicyDTO){
+        return BonusPolicyVO.builder()
+                .id(bonusPolicyDTO.getId())
+                .policyName(bonusPolicyDTO.getPolicyName())
+                .giveValue(bonusPolicyDTO.getGiveValue())
+                .createAt(bonusPolicyDTO.getCreateAt())
+                .finishedAt(bonusPolicyDTO.getFinishedAt())
+                .activation(bonusPolicyDTO.getActivation())
+                .build();
+    }
 }

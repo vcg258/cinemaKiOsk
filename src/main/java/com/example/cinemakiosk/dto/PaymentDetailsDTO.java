@@ -1,6 +1,7 @@
 package com.example.cinemakiosk.dto;
 
 import com.example.cinemakiosk.vo.CuponeDTO;
+import com.example.cinemakiosk.vo.PaymentDetailsVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,4 +21,19 @@ public class PaymentDetailsDTO {
     private LocalDateTime time;              // 결제 시간
     private Long usePoint;                   // 사용 포인트 기본값 0
     private String status;                   // ENUM ('PAY','RETURN','FAIL'), 결제 완료, 환불, 실패
+
+
+    public static PaymentDetailsVO toVO(PaymentDetailsDTO paymentDetailsDTO){
+        return PaymentDetailsVO.builder()
+                .id(paymentDetailsDTO.getId())
+                .reservation(ReservationDetailsDTO.toVO(paymentDetailsDTO.getReservation()))
+                .bonusPolicy(BonusPolicyDTO.toVO(paymentDetailsDTO.getBonusPolicy()))
+                .couponNum(CuponeDTO.toVO(paymentDetailsDTO.getCouponNum()))
+                .cost(paymentDetailsDTO.getCost())
+                .time(paymentDetailsDTO.getTime())
+                .usePoint(paymentDetailsDTO.getUsePoint())
+                .status(paymentDetailsDTO.getStatus())
+                .build();
+    }
+
 }
