@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 
@@ -67,5 +68,13 @@ class DiscountPolicyServiceImplTest {
     @Test
     public void getDiscountPolicyTest() {
         log.info("discountPolicyDTO: {}", discountPolicyService.getDiscountPolicy(1L));
+    }
+
+    @Test
+    public void getDiscountPolicyPageTest() {
+        Page<DiscountPolicyDTO> page = discountPolicyService.getDiscountPolicyPage(1);
+        log.info("전체 개수: {}", page.getTotalElements());
+        log.info("전체 페이지: {}", page.getTotalPages());
+        log.info("전체 페이지 내용: {}", page.getContent());
     }
 }

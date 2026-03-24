@@ -2,8 +2,6 @@ package com.example.cinemakiosk.dto;
 
 import com.example.cinemakiosk.domain.Coupon;
 import com.example.cinemakiosk.domain.DiscountPolicy.DiscountPolicy;
-import com.example.cinemakiosk.vo.CouponVO;
-import com.example.cinemakiosk.vo.DiscountPolicyVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -37,7 +35,7 @@ public class CouponDTO {
      * @param discountPolicy FK를 위한 Entity (JPA는 인식을 못하기때문에 잡아줌)
      * @return 변환을 위한 Builder
      */
-    public static Coupon fromDTO(CouponDTO couponDTO, DiscountPolicy discountPolicy) {
+    public static Coupon ToEntity(CouponDTO couponDTO, DiscountPolicy discountPolicy) {
         return Coupon.builder()
                 .couponNum(couponDTO.getCouponNum())
                 .status(couponDTO.isStatus())

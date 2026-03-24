@@ -4,20 +4,21 @@ import com.example.cinemakiosk.domain.Coupon;
 import com.example.cinemakiosk.domain.DiscountPolicy.DiscountPolicy;
 import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
-import com.example.cinemakiosk.mapper.CouponMapper;
 import com.example.cinemakiosk.mapper.DiscountPolicyMapper;
 import com.example.cinemakiosk.repository.CouponRepository;
 import com.example.cinemakiosk.repository.DiscountPolicyRepository;
 import com.example.cinemakiosk.vo.CouponVO;
-import com.example.cinemakiosk.vo.DiscountPolicyVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Log4j2
@@ -49,7 +50,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
                 .activation(discountPolicyDTO.isActivation())
                 .build();
 
-        DiscountPolicy dto1 = DiscountPolicyDTO.fromDTO(dto);
+        DiscountPolicy dto1 = DiscountPolicyDTO.ToEntity(dto);
         log.info(dto1);
         discountPolicyRepository.save(dto1);
     }
@@ -119,7 +120,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
 
         log.info("couponDTO: {}", couponDTO);
         DiscountPolicy discountPolicy = discountPolicyRepository.getReferenceById(policyId);
-        Coupon coupon = CouponDTO.fromDTO(couponDTO, discountPolicy);
+        Coupon coupon = CouponDTO.ToEntity(couponDTO, discountPolicy);
         couponRepository.save(coupon);
     }
 
@@ -159,5 +160,17 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
         coupon.changeStatus(status); // 사용후 변경
         couponRepository.save(coupon);
         log.info("coupon: {}", coupon);
+    }
+
+    /**
+     * 10페이지씩 페이징 처리 (로그 포함 전체 조회)
+     * @param page 몇번째 페이지 부터 가져올건지 정하는 변수
+     * @return 페이징 결과 1페이지 일경우 1 ~ 10번 까지
+     */
+    @Override
+    public Page<DiscountPolicyDTO> getDiscountPolicyPage(int page) {
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("id").descending());
+        Page<DiscountPolicy> policy = discountPolicyRepository.findAll(pageable);
+        return policy.map(discountPolicy -> DiscountPolicyDTO.toDTO(discountPolicy));
     }
 }

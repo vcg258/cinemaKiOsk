@@ -1,11 +1,9 @@
 package com.example.cinemakiosk.dto;
 
-import com.example.cinemakiosk.domain.Coupon;
 import com.example.cinemakiosk.domain.DiscountPolicy.ConditionType;
 import com.example.cinemakiosk.domain.DiscountPolicy.DiscountPolicy;
 import com.example.cinemakiosk.domain.DiscountPolicy.DiscountType;
 import com.example.cinemakiosk.vo.CouponVO;
-import com.example.cinemakiosk.vo.DiscountPolicyVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -53,7 +51,7 @@ public class DiscountPolicyDTO {
      * @param discountPolicyDTO DTO
      * @return Entity
      */
-    public static DiscountPolicy fromDTO(DiscountPolicyDTO discountPolicyDTO) {
+    public static DiscountPolicy ToEntity(DiscountPolicyDTO discountPolicyDTO) {
         return DiscountPolicy.builder()
                 .id(discountPolicyDTO.getId())
                 .policyName(discountPolicyDTO.getPolicyName())
