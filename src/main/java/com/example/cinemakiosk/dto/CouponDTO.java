@@ -2,6 +2,7 @@ package com.example.cinemakiosk.dto;
 
 import com.example.cinemakiosk.domain.CouponEntity;
 import com.example.cinemakiosk.domain.DiscountPolicyEntity.DiscountPolicyEntity;
+import com.example.cinemakiosk.vo.CouponVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,6 +27,19 @@ public class CouponDTO {
                 .couponNum(couponEntity.getCouponNum())
                 .status(couponEntity.isStatus())
                 .policyId(couponEntity.getDiscountPolicyEntity().getId())
+                .build();
+    }
+
+    /**
+     * DTO -> VO
+     * @param couponDTO DTO
+     * @return 변환을 위한 Builder
+     */
+    public static CouponVO ToVO(CouponDTO couponDTO) {
+        return CouponVO.builder()
+                .couponNum(couponDTO.getCouponNum())
+                .status(couponDTO.isStatus())
+                .policyId(couponDTO.getPolicyId())
                 .build();
     }
 

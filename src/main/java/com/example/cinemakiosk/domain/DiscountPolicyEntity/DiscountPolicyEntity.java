@@ -13,6 +13,7 @@ import java.util.List;
 @ToString(exclude = "coupon")
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "discount_policy")
 public class DiscountPolicyEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT UNSIGNED")

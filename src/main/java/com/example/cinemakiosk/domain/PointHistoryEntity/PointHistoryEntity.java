@@ -1,31 +1,35 @@
 package com.example.cinemakiosk.domain.PointHistoryEntity;
 
 import com.example.cinemakiosk.domain.MemberEntity;
+import com.example.cinemakiosk.domain.PaymentDetailsEntity.PaymentDetailsEntity;
 import com.example.cinemakiosk.domain.TimeBaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Getter
-@ToString(exclude = {"member"})
+@ToString(exclude = {"memberEntity", "paymentDetailsEntity"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "point_history")
 public class PointHistoryEntity extends TimeBaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT UNSIGNED")
     @Id private Long pointId; // 포인트 인덱스
-    // TODO PaymentDetails FK
-//     @ManyToOne(fetch = FetchType.LAZY)
-//     @JoinColumn(name = "payment_id", nullable = false, foreignKey = @ForeignKey(name = "fk_point_history_payment_id"))
-    @Column(nullable = false, columnDefinition = "CHAR(36)")
-    private String paymentId; // 결제 고유번호 FK
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_id", nullable = false, foreignKey = @ForeignKey(name = "fk_point_history_payment_id"))
+    private PaymentDetailsEntity paymentDetailsEntity; // 결제 고유번호 FK
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "phone", nullable = false, foreignKey = @ForeignKey(name = "fk_point_history_phone"))
     private MemberEntity memberEntity; // 회원번호 FK
+
     @Enumerated(EnumType.STRING) // Enum
     @Column(nullable = false)
     private Type type; // 적립 / 사용 ('EARN', 'USE')
+
     @Column(nullable = false, columnDefinition = "BIGINT UNSIGNED")
     private Long amountPoint; // 사용할 포인트
 //    @Column(nullable = false, columnDefinition = "DATETIME DEFAULT NOW()")

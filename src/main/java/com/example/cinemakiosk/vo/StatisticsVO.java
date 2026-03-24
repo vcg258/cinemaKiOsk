@@ -23,13 +23,13 @@ public class StatisticsVO {
     private final LocalDateTime date;  // 날짜
 
     // Entity → VO 변환
-    public static StatisticsVO from(StatisticsEntity entity) {
-        return StatisticsVO.builder()
-                .id(entity.getId())
-                .scheduleId(entity.getScheduleId())
-                .day(entity.getDay() != null ? entity.getDay().name() : null)
-                .revenue(entity.getRevenue())
-                .customerCount(entity.getCustomerCount())
-                .build();
-    }
+//    public static StatisticsVO from(StatisticsEntity entity) {
+//        return StatisticsVO.builder()
+//                .id(entity.getId())
+//                .scheduleId(entity.getScheduleId())
+//                .day(entity.getDay() != null ? entity.getDay().name() : null)
+//                .revenue(entity.getRevenue())
+//                .customerCount(entity.getCustomerCount())
+//                .build();
+//    }
 }

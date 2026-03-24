@@ -1,10 +1,5 @@
-package com.example.cinemakiosk.domain;
+package com.example.cinemakiosk.domain.MovieEntity;
 
-
-import jakarta.persistence.AttributeConverter;
-import jakarta.persistence.Converter;
-
-import java.util.Arrays;
 
 public enum Rating {
     ALL,

@@ -1,6 +1,6 @@
 //package com.example.cinemakiosk.controller;
 //
-//import com.example.cinemakiosk.domain.MovieEntity;
+//import com.example.cinemakiosk.domain.MovieEntity.MovieEntity;
 //import com.example.cinemakiosk.dto.MovieDTO;
 //import com.example.cinemakiosk.repository.MovieRepository;
 //import org.springframework.beans.factory.annotation.Autowired;

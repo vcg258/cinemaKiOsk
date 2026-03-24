@@ -1,19 +1,21 @@
-package com.example.cinemakiosk.domain;
+package com.example.cinemakiosk.domain.MovieEntity;
 
+import com.example.cinemakiosk.domain.ScheduleEntity;
+import com.example.cinemakiosk.domain.TimeBaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.List;
 
 @Entity
 @Getter
-@ToString
+@ToString(exclude = {"scheduleEntity"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "movie")
-public class MovieEntity {
+public class MovieEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,8 +28,8 @@ public class MovieEntity {
     @Column(name = "genre", length = 50)
     private String genre;
 
-    @Column(name = "rating")
-    private String rating;
+    @Enumerated(EnumType.STRING)
+    private Rating rating;
 
     @Column(name = "runtime", columnDefinition = "BIGINT UNSIGNED", nullable = false)
     private Long runtime;
@@ -50,4 +52,6 @@ public class MovieEntity {
     @Column(name = "create_at", updatable = false)
     private LocalDateTime createAt;
 
+    @OneToMany(mappedBy = "movieEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private List<ScheduleEntity> scheduleEntity;
 }

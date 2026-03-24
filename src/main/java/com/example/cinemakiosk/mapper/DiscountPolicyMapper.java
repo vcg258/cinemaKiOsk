@@ -1,7 +1,6 @@
 package com.example.cinemakiosk.mapper;
 
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
-import com.example.cinemakiosk.vo.DiscountPolicyVO;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

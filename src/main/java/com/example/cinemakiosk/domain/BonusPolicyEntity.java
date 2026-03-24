@@ -1,20 +1,19 @@
 package com.example.cinemakiosk.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.example.cinemakiosk.domain.PaymentDetailsEntity.PaymentDetailsEntity;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+@Entity
 @Getter
 @Builder
+@ToString(exclude = {"paymentDetailsEntity"})
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "bonus_policy")
 public class BonusPolicyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,11 +27,14 @@ public class BonusPolicyEntity {
     private Long giveValue;          // 적립 비율
 
     @Column(nullable = false)
-    private LocalDateTime createAt;  //	시작일
+    private LocalDateTime startAt;  //	시작일
 
     @Column(nullable = false)
     private LocalDateTime endAt;//	만료일
 
     @Column(nullable = false, columnDefinition = "TINYINT DEFAULT 0")
     private Boolean activation;      // 활성화 여부(중요할까?)
+
+    @OneToMany(mappedBy = "bonusPolicyEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private List<PaymentDetailsEntity> paymentDetailsEntity;
 }

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface StatisticsRepository extends JpaRepository<StatisticsEntity, Long> {
 
-    List<StatisticsEntity> findByScheduleId(Long scheduleId);
+    List<StatisticsEntity> findByScheduleEntity_Id(Long id);
 
     List<StatisticsEntity> findByDay(String day);
 

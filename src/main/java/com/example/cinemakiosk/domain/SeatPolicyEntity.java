@@ -8,9 +8,10 @@ import java.util.List;
 @Entity
 @Getter
 @Builder
-@ToString(exclude = "theater")
+@ToString(exclude = "theaterEntity")
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "seat_policy")
 public class SeatPolicyEntity {
     @Column(columnDefinition = "CHAR(36)")
     @Id private String policyId; // 좌석 아이디

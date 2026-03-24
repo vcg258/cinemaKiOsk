@@ -7,10 +7,11 @@ import java.util.List;
 
 @Entity
 @Getter
-@ToString(exclude = {"schedule", "seatPolicy"})
+@ToString(exclude = {"scheduleEntity", "seatPolicyEntity"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "theater")
 public class TheaterEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT UNSIGNED")

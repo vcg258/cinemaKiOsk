@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@ToString
+@ToString(exclude = {"ScheduleEntity"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,8 +20,9 @@ public class StatisticsEntity {
     @Column(name = "id")
     private Long id;             // 통계 고유번호 (PK)
 
-    @Column(name = "schedule_id", nullable = false)
-    private Long scheduleId;     // TODO 스케쥴 아이디 (FK)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "schedule_id", nullable = false, foreignKey = @ForeignKey(name = "fk_statistics_schedule_id"))
+    private ScheduleEntity scheduleEntity;     // 스케쥴 아이디 (FK)
 
     @Column(name = "day", nullable = false)
     @Enumerated(EnumType.STRING)

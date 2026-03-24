@@ -1,7 +1,7 @@
 package com.example.cinemakiosk.repository;
 
 
-import com.example.cinemakiosk.domain.MovieEntity;
+import com.example.cinemakiosk.domain.MovieEntity.MovieEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
