@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.cinemakiosk.mapper.StatisticsMapper">
+
+    <!-- resultMap -->
+    <resultMap id="statisticsResultMap" type="com.example.cinemakiosk.domain.StatisticsEntity">
+        <id property="id" column="id"/>
+        <result property="scheduleId" column="schedule_id"/>
+        <result property="day" column="day"/>
+        <result property="revenue" column="revenue"/>
+        <result property="customerCount" column="customer_count"/>
+        <result property="date" column="date"/>
+    </resultMap>
+
+
+    <resultMap id="dailySummaryResultMap" type="com.example.cinemakiosk.dto.StatisticsDTO$DailySummary">
+        <result property="day" column="day"/>
+        <result property="totalRevenue" column="total_revenue"/>
+        <result property="totalCustomerCount" column="total_customer_count"/>
+    </resultMap>
+
+    <!-- 월별 조회 -->
+    <select id="findByMonth" resultMap="statisticsResultMap">
+        SELECT *
+        FROM statistics
+        WHERE YEAR(date) = #{year}
+          AND MONTH(date) = #{month}
+    </select>
+
+    <!-- 시간별 조회 -->
+    <select id="findByHour" resultMap="statisticsResultMap">
+        SELECT *
+        FROM statistics
+        WHERE HOUR(date) = #{hour}
+    </select>
+
+    <!-- 일별 요약 -->
+    <select id="getDailySummary" resultMap="dailySummaryResultMap">
+        SELECT
+            day,
+            SUM(revenue)        AS total_revenue,
+            SUM(customer_count) AS total_customer_count
+        FROM statistics
+        GROUP BY day
+        ORDER BY day
+    </select>
+
+</mapper>

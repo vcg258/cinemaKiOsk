@@ -20,7 +20,7 @@ public class StatisticsVO {
     private final String day;          // 요일
     private final Long revenue;        // 수익
     private final Long customerCount;  // 관람객 수
-    private final LocalDateTime date;
+    private final LocalDateTime date;  // 날짜
 
     // Entity → VO 변환
     public static StatisticsVO from(StatisticsEntity entity) {

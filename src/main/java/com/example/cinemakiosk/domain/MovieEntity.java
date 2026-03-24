@@ -26,9 +26,8 @@ public class MovieEntity {
     @Column(name = "genre")
     private String genre;
 
-    @Convert(converter = MovieEntity.RatingConverter.class)
     @Column(name = "rating")
-    private Rating rating;
+    private String rating;
 
     @Column(name = "runtime")
     private Long runtime;
@@ -51,39 +50,4 @@ public class MovieEntity {
     @Column(name = "create_at", updatable = false)
     private LocalDateTime createAt;
 
-
-    // Rating ENUM
-    @Getter
-    @RequiredArgsConstructor
-    public enum Rating {
-        ALL("ALL"),
-        TWELVE("12"),
-        FIFTEEN("15"),
-        NINETEEN("19");
-
-        private final String value;  // DB에 저장될 실제 값
-    }
-
-
-    // RatingConverter
-    @Converter
-    public static class RatingConverter implements AttributeConverter<Rating, String> {
-
-        // Java → DB (저장 시)
-        @Override
-        public String convertToDatabaseColumn(Rating rating) {
-            if (rating == null) return null;
-            return rating.getValue();   // TWELVE → "12"
-        }
-
-        // DB → Java (조회 시)
-        @Override
-        public Rating convertToEntityAttribute(String dbData) {
-            if (dbData == null) return null;
-            return Arrays.stream(Rating.values())
-                    .filter(r -> r.getValue().equals(dbData))  // "12"인 ENUM 탐색
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("알 수 없는 등급 값: " + dbData));
-        }
-    }
 }
