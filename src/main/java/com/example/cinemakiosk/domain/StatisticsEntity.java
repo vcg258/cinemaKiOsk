@@ -40,3 +40,4 @@ public class StatisticsEntity {
         SUN, MON, TUE, WED, THU, FRI, SAT
     }
 }
+

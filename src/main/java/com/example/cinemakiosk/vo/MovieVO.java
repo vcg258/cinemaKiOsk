@@ -1,6 +1,7 @@
 package com.example.cinemakiosk.vo;
 
 import com.example.cinemakiosk.domain.MovieEntity;
+import com.example.cinemakiosk.domain.Rating;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -32,7 +33,7 @@ public class MovieVO {
                 .movieId(entity.getMovieId())
                 .title(entity.getTitle())
                 .genre(entity.getGenre())
-                .rating(entity.getRating() != null ? entity.getRating().name() : null)
+                .rating(entity.getRating())
                 .runtime(entity.getRuntime())
                 .director(entity.getDirector())
                 .actors(entity.getActors())

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.cinemakiosk.mapper.AdminMapper">
+
+    <!-- uuid 갱신 (자동 로그인 토큰) -->
+    <update id="updateUuid" parameterType="map">
+        UPDATE admin
+        SET uuid = #{uuid}
+        WHERE admin_id = #{adminId}
+    </update>
+
+    <!-- uuid 삭제 (로그아웃) -->
+    <update id="clearUuid" parameterType="long">
+        UPDATE admin
+        SET uuid = NULL
+        WHERE admin_id = #{adminId}
+    </update>
+
+</mapper>

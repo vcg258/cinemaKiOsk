@@ -10,55 +10,9 @@ import java.util.List;
 @Mapper
 public interface StatisticsMapper {
 
-    // 전체 통계 조회
-    @Select("SELECT * FROM statistics")
-    List<StatisticsEntity> findAll();
-
-    // ID로 조회
-    @Select("SELECT * FROM statistics WHERE id = #{id}")
-    StatisticsEntity findById(@Param("id") Long id);
-
-    // 스케줄 ID로 조회
-    @Select("SELECT * FROM statistics WHERE schedule_id = #{scheduleId}")
-    List<StatisticsEntity> findByScheduleId(@Param("scheduleId") Long scheduleId);
-
-    // 요일별 조회
-    @Select("SELECT * FROM statistics WHERE day = #{day}")
-    List<StatisticsEntity> findByDay(@Param("day") String day);
-
-    // 일일 통계 (특정 날짜)
-    @Select("SELECT * FROM statistics WHERE DATE(date) = DATE(#{date})")
-    List<StatisticsEntity> findByDate(@Param("date") LocalDateTime date);
-
-    // 월간 통계 (특정 연월)
-    @Select("SELECT * FROM statistics WHERE YEAR(date) = #{year} AND MONTH(date) = #{month}")
     List<StatisticsEntity> findByMonth(@Param("year") int year, @Param("month") int month);
 
-    // 시간대별 통계
-    @Select("SELECT * FROM statistics WHERE HOUR(date) = #{hour}")
-    List<StatisticsEntity> findByHour(@Param("hour") int hour);
+    List<StatisticsEntity> findByHour(int hour);
 
-    // 요일별 수익/관람객 집계 (FIELD로 요일 순서 정렬)
-    @Select("""
-            SELECT day,
-                   SUM(revenue)        AS totalRevenue,
-                   SUM(customer_count) AS totalCustomerCount
-            FROM statistics
-            GROUP BY day
-            ORDER BY FIELD(day, 'MON','TUE','WED','THU','FRI','SAT','SUN')
-            """)
-    @Results({
-            @Result(property = "day",                column = "day"),
-            @Result(property = "totalRevenue",       column = "totalRevenue"),
-            @Result(property = "totalCustomerCount", column = "totalCustomerCount")
-    })
     List<StatisticsDTO.DailySummary> getDailySummary();
-
-    // 통계 등록 (통계는 수정/삭제 없음)
-    @Insert("""
-            INSERT INTO statistics (schedule_id, day, revenue, customer_count, date)
-            VALUES (#{scheduleId}, #{day}, #{revenue}, #{customerCount}, #{date})
-            """)
-    @Options(useGeneratedKeys = true, keyProperty = "id")
-    int insert(StatisticsEntity statistics);
 }
