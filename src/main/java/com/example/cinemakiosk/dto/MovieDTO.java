@@ -18,7 +18,7 @@ public class MovieDTO {
     private Long movieId;
     private String title;
     private String genre;
-    private String rating;      // ALL / 12 / 15 / 19
+    private Rating rating;      // ALL / 12 / 15 / 19
     private Long runtime;
     private String director;
     private String actors;
@@ -69,3 +69,4 @@ public class MovieDTO {
                 .build();
     }
 }
+

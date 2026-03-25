@@ -18,7 +18,7 @@ public class StatisticsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;             // 통계 고유번호 (PK)
+    private Long statisticsId;             // 통계 고유번호 (PK)
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id", nullable = false, foreignKey = @ForeignKey(name = "fk_statistics_schedule_id"))
