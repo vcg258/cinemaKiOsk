@@ -33,7 +33,7 @@ public class MovieDTO {
                 .movieId(entity.getMovieId())
                 .title(entity.getTitle())
                 .genre(entity.getGenre())
-                .rating(entity.getRating().toString())
+                .rating(entity.getRating())
                 .runtime(entity.getRuntime())
                 .director(entity.getDirector())
                 .actors(entity.getActors())
@@ -47,18 +47,10 @@ public class MovieDTO {
     // DTO → Entity 변환
     public static MovieEntity toEntity(MovieDTO movieDTO) {
 
-        Rating ratingInput = null;
-        for (Rating rating : Rating.values()) {
-            if (rating.getConversion().equals(movieDTO.getRating())){
-                ratingInput = rating;
-            }
-
-        }
-
         return MovieEntity.builder()
                 .title(movieDTO.getTitle())
                 .genre(movieDTO.getGenre())
-                .rating(ratingInput)
+                .rating(movieDTO.getRating())
                 .runtime(movieDTO.getRuntime())
                 .director(movieDTO.getDirector())
                 .actors(movieDTO.getActors())

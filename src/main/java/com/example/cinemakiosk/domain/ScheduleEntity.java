@@ -1,7 +1,6 @@
 package com.example.cinemakiosk.domain;
 
 import com.example.cinemakiosk.domain.MovieEntity.MovieEntity;
-import com.example.cinemakiosk.domain.PaymentDetailsEntity.PaymentDetailsEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

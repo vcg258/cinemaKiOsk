@@ -1,7 +1,7 @@
 package com.example.cinemakiosk.service;
 
-import com.example.cinemakiosk.domain.MovieEntity;
-import com.example.cinemakiosk.domain.Rating;
+import com.example.cinemakiosk.domain.MovieEntity.MovieEntity;
+import com.example.cinemakiosk.domain.MovieEntity.Rating;
 import com.example.cinemakiosk.dto.MovieDTO;
 import com.example.cinemakiosk.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class MovieServiceImpl implements MovieService {
     // 추가
     @Override
     public void insertMovie(MovieDTO movieDTO) {
-        movieRepository.save(movieDTO.toEntity());  // toEntity() 사용
+        movieRepository.save(MovieDTO.toEntity(movieDTO));  // toEntity() 사용
     }
 
     // 상세 조회
@@ -29,7 +29,7 @@ public class MovieServiceImpl implements MovieService {
     public MovieDTO getMovieById(long movieId) {
         Optional<MovieEntity> optionalMovieEntity = movieRepository.findById(movieId);
         MovieEntity movieEntity = optionalMovieEntity.orElseThrow();
-        MovieDTO movieDTO = MovieDTO.from(movieEntity);
+        MovieDTO movieDTO = MovieDTO.toDTO(movieEntity);
         return movieDTO;
     }
 
@@ -40,7 +40,7 @@ public class MovieServiceImpl implements MovieService {
 
         List<MovieDTO> movieDTOList = new ArrayList<>();
         for (MovieEntity movieEntity : movieEntityList) {
-            movieDTOList.add(MovieDTO.from(movieEntity));
+            movieDTOList.add(MovieDTO.toDTO(movieEntity));
         }
         return movieDTOList;
     }
@@ -52,7 +52,7 @@ public class MovieServiceImpl implements MovieService {
 
         List<MovieDTO> movieDTOList = new ArrayList<>();
         for (MovieEntity movieEntity : movieEntityList) {
-            movieDTOList.add(MovieDTO.from(movieEntity));
+            movieDTOList.add(MovieDTO.toDTO(movieEntity));
         }
         return movieDTOList;
     }
@@ -66,7 +66,7 @@ public class MovieServiceImpl implements MovieService {
 
         List<MovieDTO> movieDTOList = new ArrayList<>();
         for (MovieEntity movieEntity : movieEntityList) {
-            movieDTOList.add(MovieDTO.from(movieEntity));
+            movieDTOList.add(MovieDTO.toDTO(movieEntity));
         }
         return movieDTOList;
     }
@@ -80,7 +80,7 @@ public class MovieServiceImpl implements MovieService {
         List<MovieDTO> movieDTOList = new ArrayList<>();
 
         for (MovieEntity movieEntity : movieEntityList) {
-            movieDTOList.add(MovieDTO.from(movieEntity));
+            movieDTOList.add(MovieDTO.toDTO(movieEntity));
         }
 
         return movieDTOList;

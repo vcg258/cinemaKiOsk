@@ -26,21 +26,4 @@ public class MovieVO {
     private final LocalDateTime startAt; // 상영 시작일
     private final LocalDateTime endAt;   // 상영 종료일
     private final LocalDateTime createAt; // 등록일
-
-    // Entity → VO 변환
-    public static MovieVO from(MovieEntity entity) {
-        return MovieVO.builder()
-                .movieId(entity.getMovieId())
-                .title(entity.getTitle())
-                .genre(entity.getGenre())
-                .rating(entity.getRating())
-                .runtime(entity.getRuntime())
-                .director(entity.getDirector())
-                .actors(entity.getActors())
-                .description(entity.getDescription())
-                .startAt(entity.getStartAt())
-                .endAt(entity.getEndAt())
-                .createAt(entity.getCreateAt())
-                .build();
-    }
 }

@@ -1,7 +1,6 @@
 package com.example.cinemakiosk.service;
 
-import com.example.cinemakiosk.domain.MovieEntity;
-import com.example.cinemakiosk.domain.Rating;
+import com.example.cinemakiosk.domain.MovieEntity.Rating;
 import com.example.cinemakiosk.dto.MovieDTO;
 
 import java.util.List;
@@ -27,8 +26,5 @@ public interface MovieService {
 
     // 관람등급으로 조회
     List<MovieDTO> findByRating(Rating rating); // String으로 수정해야 하나?
-
-
-
 }
 
