@@ -143,7 +143,7 @@ CREATE TABLE IF NOT EXISTS `reservation_details`
     `create_at`   DATETIME        NOT NULL COMMENT '예매 기준시',
     CONSTRAINT `fk_reservation_details_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES schedule (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_reservation_details_members_phone` FOREIGN KEY (`phone`) REFERENCES members (`phone`)
+    CONSTRAINT `fk_reservation_details_members_phone` FOREIGN KEY (`phone`) REFERENCES member (`phone`)
         ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT '예매 내역';
 
@@ -184,10 +184,10 @@ CREATE TABLE IF NOT EXISTS `point_history`
     `payment_id`   char(36)             NOT NULL COMMENT '결제 고유번호 FK',
     `phone`        VARCHAR(20)          NOT NULL COMMENT '회원 번호 FK',
     `type`         ENUM ('EARN', 'USE') NOT NULL COMMENT '적립 / 사용',
-    `amount_point` BIGINT UNSIGNED      NOT NULL COMMENT '적립/사용 포인트',
+    `amount_point` INT UNSIGNED      NOT NULL COMMENT '적립/사용 포인트',
     `create_at`    DATETIME             NOT NULL COMMENT '포인트 변경일', # TODO BaseTime안쓸시 change_at
     CONSTRAINT `fk_point_history_payment_id` FOREIGN KEY (`payment_id`) REFERENCES payment_details (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_point_history_phone` FOREIGN KEY (`phone`) REFERENCES members (`phone`)
+    CONSTRAINT `fk_point_history_phone` FOREIGN KEY (`phone`) REFERENCES member (`phone`)
         ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT '포인트 내역';

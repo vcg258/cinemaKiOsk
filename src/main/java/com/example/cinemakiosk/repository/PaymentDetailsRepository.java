@@ -3,7 +3,7 @@ package com.example.cinemakiosk.repository;
 import com.example.cinemakiosk.domain.PaymentDetailsEntity.PaymentDetailsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PaymentDetailsRepository extends JpaRepository<PaymentDetailsEntity, Long>{
+public interface PaymentDetailsRepository extends JpaRepository<PaymentDetailsEntity, String>{
 
 //    @Query("select b from Board b where b.title like concat('%',:keyword,'%')")
 //    Page<Board> findKeyword(String keyword, Pageable pageable);

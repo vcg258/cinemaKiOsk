@@ -23,7 +23,7 @@ public class PaymentDetailsEntity {
     private String id;             // 인덱스
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reservation_id", foreignKey = @ForeignKey(name = "fk_payment_details_reservation_id"))
+    @JoinColumn(name = "reservation_id", nullable = false, foreignKey = @ForeignKey(name = "fk_payment_details_reservation_id"))
     private ReservationDetailsEntity reservationDetailsEntity;  // 예매 정보
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,7 +31,7 @@ public class PaymentDetailsEntity {
     private BonusPolicyEntity bonusPolicyEntity;    // 사용한 적립 정책
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "coupon_num", nullable = false, foreignKey = @ForeignKey(name = "fk_payment_details_coupon_id"))
+    @JoinColumn(name = "coupon_num", foreignKey = @ForeignKey(name = "fk_payment_details_coupon_id"))
     private CouponEntity couponEntity;      // 사용한 할인 쿠폰, 없는 경우 null
 
     @Column(nullable = false)

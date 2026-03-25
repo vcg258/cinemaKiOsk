@@ -30,8 +30,9 @@ public class PointHistoryEntity extends TimeBaseEntity {
     @Column(nullable = false)
     private Type type; // 적립 / 사용 ('EARN', 'USE')
 
-    @Column(nullable = false, columnDefinition = "BIGINT UNSIGNED")
-    private Long amountPoint; // 사용할 포인트
+    @Column(nullable = false, columnDefinition = "INT UNSIGNED")
+    private Integer amountPoint; // 사용할 포인트
+
 //    @Column(nullable = false, columnDefinition = "DATETIME DEFAULT NOW()")
 //    private LocalDateTime createAt; // 포인트 변경일
 }

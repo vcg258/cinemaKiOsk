@@ -15,6 +15,6 @@ public class PointHistoryVO {
     private String paymentId; // 결제 고유번호 FK
     private String phone; // 회원번호 FK
     private Type type; // 적립 / 사용 ('EARN', 'USE')
-    private Long amountPoint; // 사용할 포인트
+    private Integer amountPoint; // 사용할 포인트
     private LocalDateTime createAt; // 포인트 변경일
 }

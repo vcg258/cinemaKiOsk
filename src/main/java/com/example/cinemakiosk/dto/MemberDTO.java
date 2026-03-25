@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 public class MemberDTO {
     private String phone; // 회원 번호
     private Integer point; // 포인트
-    private LocalDateTime createAt; // 생성일
 
     /**
      * DTO -> Entity
@@ -26,7 +25,6 @@ public class MemberDTO {
         return MemberEntity.builder()
                 .phone(memberDTO.getPhone())
                 .point(memberDTO.getPoint())
-                .createAt(memberDTO.getCreateAt())
                 .build();
     }
 }

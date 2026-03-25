@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@ToString(exclude = {"ScheduleEntity"})
+@ToString(exclude = {"scheduleEntity"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
