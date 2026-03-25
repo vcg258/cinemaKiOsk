@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `admin` # FK (X)
 insert into admin (login_id, password, name, admin_phone, level, UUID, create_at)
 values (1, 1, '관리자', '010-1234-5678', '0', null, now());
 
-CREATE TABLE IF NOT EXISTS `members` # FK (X)
+CREATE TABLE IF NOT EXISTS `member` # FK (X)
 (
     `phone`      VARCHAR(20) PRIMARY KEY COMMENT '회원 번호',
     `point`      INT UNSIGNED NULL DEFAULT 0 COMMENT '포인트',
@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS `reservation_details`
 (
     `id`          varchar(36) PRIMARY KEY COMMENT '예매 고유번호, uuid',
     `schedule_id` BIGINT UNSIGNED NOT NULL COMMENT '스케쥴 아이디 FK',
-    `phone`       VARCHAR(20)     NOT NULL COMMENT '회원 번호 FK', # NOT NULL -> NULL 이유 : 비회원일 경우 NULL
+    `phone`       VARCHAR(20)     NULL COMMENT '회원 번호 FK', # NOT NULL -> NULL 이유 : 비회원일 경우 NULL
     `create_at`   DATETIME        NOT NULL COMMENT '예매 기준시',
     CONSTRAINT `fk_reservation_details_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES schedule (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,
@@ -159,7 +159,6 @@ CREATE TABLE IF NOT EXISTS `reservation_seat`
 ) COMMENT '예매 좌석';
 
 
-
 CREATE TABLE IF NOT EXISTS `payment_details`
 (
     `id`              CHAR(36) PRIMARY KEY COMMENT '결제 고유번호',
@@ -174,7 +173,7 @@ CREATE TABLE IF NOT EXISTS `payment_details`
         ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_payment_details_bonus_policy_id` FOREIGN KEY (`bonus_policy_id`) REFERENCES bonus_policy (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_payment_details_coupon_num` FOREIGN KEY (`coupon_num`) REFERENCES couponEntity (coupon_num)
+    CONSTRAINT `fk_payment_details_coupon_num` FOREIGN KEY (`coupon_num`) REFERENCES coupon (coupon_num)
         ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT '결제 내역';
 
@@ -185,7 +184,7 @@ CREATE TABLE IF NOT EXISTS `point_history`
     `payment_id`   char(36)             NOT NULL COMMENT '결제 고유번호 FK',
     `phone`        VARCHAR(20)          NOT NULL COMMENT '회원 번호 FK',
     `type`         ENUM ('EARN', 'USE') NOT NULL COMMENT '적립 / 사용',
-    `amount_point` BIGINT UNSIGNED      NOT NULL COMMENT '사용할 포인트',
+    `amount_point` BIGINT UNSIGNED      NOT NULL COMMENT '적립/사용 포인트',
     `create_at`    DATETIME             NOT NULL COMMENT '포인트 변경일', # TODO BaseTime안쓸시 change_at
     CONSTRAINT `fk_point_history_payment_id` FOREIGN KEY (`payment_id`) REFERENCES payment_details (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,

@@ -20,7 +20,7 @@ import java.util.List;
 public class ReservationDetailsDTO {
     private String id;                     // 예매 고유번호(uuid)
     private ScheduleDTO schedule;           //  스케쥴 정보
-    private String phone;                  //  회원 번호
+    private MemberDTO phone;                  //  회원 번호
     private LocalDateTime reservationTime; //  예약 시간
     private List<ReservationSeatDTO> seats; //  예매한 좌석들의 정보
 
@@ -36,7 +36,7 @@ public class ReservationDetailsDTO {
         return ReservationDetailsVO.builder()
                 .id(reservationDetailsDTO.getId())
                 .schedule(ScheduleDTO.toVO(reservationDetailsDTO.getSchedule()))
-                .phone(reservationDetailsDTO.getPhone())
+                .phone(String.valueOf(reservationDetailsDTO.getPhone())) // TODO
                 .reservationTime(reservationDetailsDTO.getReservationTime())
                 .seats(seats)
                 .build();

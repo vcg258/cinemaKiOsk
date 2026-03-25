@@ -24,7 +24,7 @@ public class ReservationDetailsEntity {
     private ScheduleEntity scheduleEntity;               //  스케쥴 정보 FK
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "phone", nullable = false, foreignKey = @ForeignKey(name = "fk_reservation_details_schedule_id"))
+    @JoinColumn(name = "phone", foreignKey = @ForeignKey(name = "fk_reservation_details_schedule_id"))
     private MemberEntity memberEntity;                  //  회원 번호 FK
 
     @Column(nullable = false)

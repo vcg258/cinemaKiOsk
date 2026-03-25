@@ -37,7 +37,7 @@ public class ReservationDetailsVO {
         return ReservationDetailsDTO.builder()
                 .id(reservationDetailsVO.getId())
                 .schedule(ScheduleVO.toDTO(reservationDetailsVO.getSchedule()))
-                .phone(reservationDetailsVO.getPhone())
+//                .phone(reservationDetailsVO.getPhone())
                 .reservationTime(reservationDetailsVO.getReservationTime())
                 .seats(seats)
                 .build();
