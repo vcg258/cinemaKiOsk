@@ -6,10 +6,12 @@
   할인 정책: POST /api/admin/policy/discount { policyName, discountType, discountValue, conditionType }
   Model: 없음 (신규 등록 전용)
 -->
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
 
 <head>
+  <meta charset="UTF-8">
   <title>정책 등록 | CineOS 관리자</title>
 </head>
 

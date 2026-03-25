@@ -27,10 +27,12 @@
     templates/booking/schedule.html
   ─────────────────────────────────────────────────────────────────────────
 -->
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/base :: layout(~{::title}, ~{::main}, ~{::link})}">
 
 <head>
+  <meta charset="UTF-8">
   <title>날짜 · 시간 선택 | CineOS</title>
   <!-- 예매 흐름 전용 CSS (날짜/시간/인원 선택 스타일) -->
   <link rel="stylesheet" th:href="@{/css/booking.css}">

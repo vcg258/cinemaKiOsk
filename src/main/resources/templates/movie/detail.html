@@ -25,10 +25,12 @@
     templates/movie/detail.html
   ─────────────────────────────────────────────────────────────────────────
 -->
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/base :: layout(~{::title}, ~{::main}, ~{::link})}">
 
 <head>
+  <meta charset="UTF-8">
   <!-- 동적 타이틀: 영화 제목 + " | CineOS" -->
   <title th:text="${movie.title} + ' | CineOS'">영화 상세 | CineOS</title>
 

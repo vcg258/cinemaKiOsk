@@ -5,10 +5,12 @@
   layout/admin-base.html 을 실제로 상속받아 Thymeleaf 렌더링 확인.
   접근: localhost:8080/preview/admin
 -->
-<html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main}, ~{::link})}">
 
 <head>
+  <meta charset="UTF-8">
   <title>관리자 레이아웃 미리보기 — CineOS</title>
 </head>
 

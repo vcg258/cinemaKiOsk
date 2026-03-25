@@ -9,10 +9,12 @@
   SeatStatusDTO: seatId, row, col, policyId
   리클라이너 여부: seat_policy.name 에 "리클라이너" 포함 여부로 판단
 -->
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
 
 <head>
+  <meta charset="UTF-8">
   <title>좌석 정보 수정 | CineOS 관리자</title>
 </head>
 

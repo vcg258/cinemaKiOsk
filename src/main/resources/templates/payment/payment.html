@@ -51,10 +51,12 @@
     templates/payment/payment.html
   ─────────────────────────────────────────────────────────────────────────
 -->
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/base :: layout(~{::title}, ~{::main}, ~{::link})}">
 
 <head>
+  <meta charset="UTF-8">
   <title>결제 | CineOS</title>
   <link rel="stylesheet" th:href="@{/css/payment.css}">
 </head>

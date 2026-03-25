@@ -5,10 +5,12 @@
   Model: movies(List<MovieDTO>), statistics(List<StatisticsDTO>),
          selectedMovie(MovieDTO) — 기본: 최신 등록 영화
 -->
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
 
 <head>
+  <meta charset="UTF-8">
   <title>영화별 통계 | CineOS 관리자</title>
 </head>
 

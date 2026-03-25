@@ -8,10 +8,12 @@
   DiscountPolicyDTO: id, policyName, discountType(RATIO/WON),
                      discountValue, conditionType(TIME/AGE/JOB)
 -->
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
 
 <head>
+  <meta charset="UTF-8">
   <title>정책 목록 | CineOS 관리자</title>
 </head>
 

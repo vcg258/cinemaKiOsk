@@ -7,10 +7,12 @@
   TheaterVO   : no, policyId, cleanupTime   ← name 필드 없음 (DB theater 테이블에 컬럼 없음)
   SeatPolicyVO: policyId, name, cost        ← isRecliner 없음
 -->
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
 
 <head>
+  <meta charset="UTF-8">
   <title>상영관 관리 | CineOS 관리자</title>
 </head>
 

@@ -35,10 +35,12 @@
     templates/booking/seat.html
   ─────────────────────────────────────────────────────────────────────────
 -->
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/base :: layout(~{::title}, ~{::main}, ~{::link})}">
 
 <head>
+  <meta charset="UTF-8">
   <title>좌석 선택 | CineOS</title>
   <!-- 좌석 맵 전용 CSS -->
   <link rel="stylesheet" th:href="@{/css/seat.css}">

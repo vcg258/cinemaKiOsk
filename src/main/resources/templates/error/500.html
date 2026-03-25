@@ -9,10 +9,12 @@
     templates/error/500.html
   ─────────────────────────────────────────────────────────────────────────
 -->
-<html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout/base :: layout(~{::title}, ~{::main}, ~{})}">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main}, ~{::link})}">
 
 <head>
+  <meta charset="UTF-8">
   <title>서버 오류 | CineOS</title>
 </head>
 
