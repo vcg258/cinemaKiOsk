@@ -50,7 +50,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
                 .activation(discountPolicyDTO.isActivation())
                 .build();
 
-        DiscountPolicyEntity dto1 = DiscountPolicyDTO.ToEntity(dto);
+        DiscountPolicyEntity dto1 = DiscountPolicyDTO.toEntity(dto);
         log.info(dto1);
         discountPolicyRepository.save(dto1);
     }
@@ -120,7 +120,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
 
         log.info("couponDTO: {}", couponDTO);
         DiscountPolicyEntity discountPolicyEntity = discountPolicyRepository.getReferenceById(policyId);
-        CouponEntity couponEntity = CouponDTO.ToEntity(couponDTO, discountPolicyEntity);
+        CouponEntity couponEntity = CouponDTO.toEntity(couponDTO, discountPolicyEntity);
         couponRepository.save(couponEntity);
     }
 

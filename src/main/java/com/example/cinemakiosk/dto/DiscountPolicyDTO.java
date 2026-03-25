@@ -51,7 +51,7 @@ public class DiscountPolicyDTO {
      * @param discountPolicyDTO DTO
      * @return Entity
      */
-    public static DiscountPolicyEntity ToEntity(DiscountPolicyDTO discountPolicyDTO) {
+    public static DiscountPolicyEntity toEntity(DiscountPolicyDTO discountPolicyDTO) {
         return DiscountPolicyEntity.builder()
                 .id(discountPolicyDTO.getId())
                 .policyName(discountPolicyDTO.getPolicyName())

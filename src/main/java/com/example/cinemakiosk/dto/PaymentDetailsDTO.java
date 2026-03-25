@@ -1,6 +1,5 @@
 package com.example.cinemakiosk.dto;
 
-import com.example.cinemakiosk.vo.CouponVO;
 import com.example.cinemakiosk.vo.PaymentDetailsVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +27,7 @@ public class PaymentDetailsDTO {
                 .id(paymentDetailsDTO.getId())
                 .reservation(ReservationDetailsDTO.toVO(paymentDetailsDTO.getReservation()))
                 .bonusPolicy(BonusPolicyDTO.toVO(paymentDetailsDTO.getBonusPolicy()))
-                .couponNum(CouponDTO.ToVO(paymentDetailsDTO.getCouponNum()))
+                .couponNum(CouponDTO.toVO(paymentDetailsDTO.getCouponNum()))
                 .cost(paymentDetailsDTO.getCost())
                 .time(paymentDetailsDTO.getTime())
                 .usePoint(paymentDetailsDTO.getUsePoint())

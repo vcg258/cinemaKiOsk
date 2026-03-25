@@ -22,7 +22,7 @@ public class MovieServiceImpl implements MovieService {
 
         List<MovieDTO> movieDTOList = new ArrayList<>();
         for (MovieEntity movieEntity : movieEntityList) {
-            movieDTOList.add(MovieDTO.ToDTO(movieEntity));
+            movieDTOList.add(MovieDTO.toDTO(movieEntity));
         }
         return movieDTOList;
     }

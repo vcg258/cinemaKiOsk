@@ -28,7 +28,7 @@ public class MovieDTO {
     private LocalDateTime createAt;
 
     // Entity → DTO 변환
-    public static MovieDTO ToDTO(MovieEntity entity) {
+    public static MovieDTO toDTO(MovieEntity entity) {
         return MovieDTO.builder()
                 .movieId(entity.getMovieId())
                 .title(entity.getTitle())

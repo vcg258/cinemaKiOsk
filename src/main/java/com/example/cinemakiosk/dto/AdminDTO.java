@@ -1,5 +1,6 @@
 package com.example.cinemakiosk.dto;
 
+import com.example.cinemakiosk.domain.AdminEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -33,8 +34,8 @@ public class AdminDTO {
     }
 
     // DTO → Entity 변환
-    public com.example.cinemakiosk.domain.AdminEntity toEntity(String encodedPassword) {
-        return com.example.cinemakiosk.domain.AdminEntity.builder()
+    public AdminEntity toEntity(String encodedPassword) {
+        return AdminEntity.builder()
                 .loginId(this.loginId)
                 .password(encodedPassword)  // 암호화된 비밀번호 저장
                 .name(this.name)
@@ -43,6 +44,4 @@ public class AdminDTO {
                 .createAt(LocalDateTime.now())
                 .build();
     }
-
-
 }

@@ -35,7 +35,7 @@ public class CouponDTO {
      * @param couponDTO DTO
      * @return 변환을 위한 Builder
      */
-    public static CouponVO ToVO(CouponDTO couponDTO) {
+    public static CouponVO toVO(CouponDTO couponDTO) {
         return CouponVO.builder()
                 .couponNum(couponDTO.getCouponNum())
                 .status(couponDTO.isStatus())
@@ -49,7 +49,7 @@ public class CouponDTO {
      * @param discountPolicyEntity FK를 위한 Entity (JPA는 인식을 못하기때문에 잡아줌)
      * @return 변환을 위한 Builder
      */
-    public static CouponEntity ToEntity(CouponDTO couponDTO, DiscountPolicyEntity discountPolicyEntity) {
+    public static CouponEntity toEntity(CouponDTO couponDTO, DiscountPolicyEntity discountPolicyEntity) {
         return CouponEntity.builder()
                 .couponNum(couponDTO.getCouponNum())
                 .status(couponDTO.isStatus())
