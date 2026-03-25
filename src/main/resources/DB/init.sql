@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `admin` # FK (X)
 insert into admin (login_id, password, name, admin_phone, level, UUID, create_at)
 values (1, 1, '관리자', '010-1234-5678', '0', null, now());
 
-CREATE TABLE IF NOT EXISTS `members` # FK (X)
+CREATE TABLE IF NOT EXISTS `member` # FK (X)
 (
     `phone`      VARCHAR(20) PRIMARY KEY COMMENT '회원 번호',
     `point`      INT UNSIGNED NULL DEFAULT 0 COMMENT '포인트',
@@ -143,7 +143,7 @@ CREATE TABLE IF NOT EXISTS `reservation_details`
     `create_at`   DATETIME        NOT NULL COMMENT '예매 기준시',
     CONSTRAINT `fk_reservation_details_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES schedule (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_reservation_details_members_phone` FOREIGN KEY (`phone`) REFERENCES members (`phone`)
+    CONSTRAINT `fk_reservation_details_member_phone` FOREIGN KEY (`phone`) REFERENCES member (`phone`)
         ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT '예매 내역';
 
@@ -189,6 +189,6 @@ CREATE TABLE IF NOT EXISTS `point_history`
     `create_at`    DATETIME             NOT NULL COMMENT '포인트 변경일', # TODO BaseTime안쓸시 change_at
     CONSTRAINT `fk_point_history_payment_id` FOREIGN KEY (`payment_id`) REFERENCES payment_details (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_point_history_phone` FOREIGN KEY (`phone`) REFERENCES members (`phone`)
+    CONSTRAINT `fk_point_history_phone` FOREIGN KEY (`phone`) REFERENCES member (`phone`)
         ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT '포인트 내역';

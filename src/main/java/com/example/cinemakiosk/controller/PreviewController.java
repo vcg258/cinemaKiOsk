@@ -452,7 +452,7 @@
 //     *   - bonusPolicies    : List<BonusPolicyDTO>   적립 정책 목록
 //     *   - adultCount       : Integer
 //     *   - teenCount        : Integer
-//     *   - member           : MembersDTO or null     포인트 인증 완료 회원 (미인증 시 null)
+//     *   - member           : memberDTO or null     포인트 인증 완료 회원 (미인증 시 null)
 //     */
 //    @GetMapping("/payment/payment")
 //    public String paymentPayment(Model model) {

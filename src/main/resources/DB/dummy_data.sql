@@ -21,11 +21,11 @@ SET FOREIGN_KEY_CHECKS = 0;
 # TRUNCATE TABLE `bonus_policy`;
 # TRUNCATE TABLE `coupon`;               -- discount_policy 참조
 # TRUNCATE TABLE `discount_policy`;
-# TRUNCATE TABLE `members`;
+# TRUNCATE TABLE `member`;
 # TRUNCATE TABLE `movie`;
 # TRUNCATE TABLE `payment_details`;      -- reservation_details, bonus_policy, discount_policy 참조
-# TRUNCATE TABLE `point_history`;        -- 최하위 (payment_details, members 참조)
-# TRUNCATE TABLE `reservation_details`; -- schedule, members 참조
+# TRUNCATE TABLE `point_history`;        -- 최하위 (payment_details, member 참조)
+# TRUNCATE TABLE `reservation_details`; -- schedule, member 참조
 # TRUNCATE TABLE `reservation_seat`;     -- reservation_details 참조
 # TRUNCATE TABLE `schedule`;             -- theater, movie 참조
 # TRUNCATE TABLE `seat_policy`;
@@ -53,10 +53,10 @@ VALUES
 
 
 -- ============================================================
--- 2. 회원 (members)
+-- 2. 회원 (member)
 --    기본키: phone (휴대폰 번호 문자열)
 -- ============================================================
-INSERT INTO `members` (`phone`, `point`, `created_at`)
+INSERT INTO `member` (`phone`, `point`, `created_at`)
 VALUES
     ('01011112222', 12500, '2025-09-15 10:23:00'), -- 포인트 넉넉한 장기 회원
     ('01033334444',  5000, '2025-11-02 14:10:00'),
@@ -581,7 +581,7 @@ VALUES
 -- [삽입 데이터 요약]
 -- ─────────────────────────────────────────────────────────────
 -- admin              :  3건 (마스터 1 + 직원 2)
--- members            :  5건
+-- member            :  5건
 -- seat_policy        :  3건 (일반석 / 리클라이너 / 특별관석)
 -- bonus_policy       :  3건 (기본 / 봄시즌 / 여름이벤트)
 -- discount_policy    :  5건 (조조 / 청소년 / 군경 / 쿠폰 / 봄맞이주중)
