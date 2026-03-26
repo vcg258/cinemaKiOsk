@@ -21,7 +21,9 @@ public class PointHistoryDTO {
     private Type type; // 적립 / 사용 ('EARN', 'USE')
     private Integer amountPoint; // 사용할 포인트
 
-    public static PointHistoryEntity toEntity(PointHistoryDTO pointHistoryDTO, PaymentDetailsEntity paymentDetailsEntity, MemberEntity memberEntity) {
+    public static PointHistoryEntity toEntity(PointHistoryDTO pointHistoryDTO,
+                                              PaymentDetailsEntity paymentDetailsEntity,
+                                              MemberEntity memberEntity) {
         return PointHistoryEntity.builder()
                 .pointId(pointHistoryDTO.getPointId())
                 .paymentDetailsEntity(paymentDetailsEntity)

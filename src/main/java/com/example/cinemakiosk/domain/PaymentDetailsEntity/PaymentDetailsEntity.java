@@ -23,7 +23,7 @@ public class PaymentDetailsEntity {
     private String id;             // 인덱스
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reservation_id", nullable = false, foreignKey = @ForeignKey(name = "fk_payment_details_reservation_id"))
+    @JoinColumn(name = "reservation_id",  foreignKey = @ForeignKey(name = "fk_payment_details_reservation_id"))
     private ReservationDetailsEntity reservationDetailsEntity;  // 예매 정보
 
     @ManyToOne(fetch = FetchType.LAZY)

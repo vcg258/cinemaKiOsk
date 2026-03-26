@@ -16,6 +16,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Log4j2
 @Service
@@ -69,38 +70,86 @@ public class MemberServiceImpl implements MemberService{
      * @param paymentId 결제내역 PK
      */
     @Override
-    public void pointHistoryCreate(String phone, Integer point, Type type, String paymentId) {
-        if (!memberRepository.existsByPhone(phone)) { // 회원 내역없으면 return
+    public void pointHistoryCreate(PointHistoryDTO pointHistoryDTO) {
+        if (!memberRepository.existsByPhone(pointHistoryDTO.getPhone())) { // 회원 내역없으면 return
             log.warn("pointHistoryCreate... 등록된 회원 정보가 존재하지 않습니다");
             return;
         }
-        MemberEntity member = memberRepository.findById(phone).orElseThrow();
-        PaymentDetailsEntity payment = paymentDetailsRepository.getReferenceById(paymentId);
+        MemberEntity member = memberRepository.findById(pointHistoryDTO.getPhone()).orElseThrow();
+        PaymentDetailsEntity payment = paymentDetailsRepository.getReferenceById(pointHistoryDTO.getPaymentId());
 
         // 타입별 적립 / 사용
+        Type type = pointHistoryDTO.getType();
         Integer amount = member.getPoint();
         if (type == Type.EARN) {
-            amount += point;
+            amount += pointHistoryDTO.getAmountPoint();
         } else {
-            amount -= point;
+            amount -= pointHistoryDTO.getAmountPoint();
         }
-        PointHistoryDTO pointHistoryDTO = PointHistoryDTO.builder()
-                .paymentId(paymentId)
-                .phone(phone)
+        PointHistoryDTO dto = PointHistoryDTO.builder()
+                .paymentId(pointHistoryDTO.getPaymentId())
+                .phone(pointHistoryDTO.getPhone())
                 .type(type)
-                .amountPoint(point)
+                .amountPoint(pointHistoryDTO.getAmountPoint())
                 .build();
 
-        log.info("pointHistoryCreate... pointHistoryDTO: {}", pointHistoryDTO);
-        pointHistoryRepository.save(PointHistoryDTO.toEntity(pointHistoryDTO, payment, member)); // 포인트 내역 추가
+        log.info("pointHistoryCreate... pointHistoryDTO: {}", dto);
+        pointHistoryRepository.save(PointHistoryDTO.toEntity(dto, payment, member)); // 포인트 내역 추가
 
         member.changePoint(amount);
         memberRepository.save(member); // 회원 잔여포인트 업데이트
 
     }
 
+    /**
+     * 환불처리시 포인트 복구처리
+     * @param pointHistoryDTO 포인트 내역의 DTO
+     */
     @Override
-    public void pointHistoryCancel(Long no) {
+    public void pointHistoryCancel(PointHistoryDTO pointHistoryDTO) {
+        MemberEntity member = memberRepository.findById(pointHistoryDTO.getPhone()).orElseThrow(); // 해당 회원
+        log.info("pointHistoryCancel... 해당 회원 : {}", member);
+        log.info("pointHistoryCancel... 현재 포인트: {}", member.getPoint());
 
+        // pointId로 단건 조회
+        PointHistoryEntity pointHistory = pointHistoryRepository.findById(pointHistoryDTO.getPointId()).orElseThrow();
+
+        // 해당 내역이 이 결제의 것인지 검증 (결제내역의 PK를 가져와 포인트내역의 PK와 비교함)
+        if (!pointHistory.getPaymentDetailsEntity().getId().equals(pointHistoryDTO.getPaymentId())) {
+            log.error("pointHistoryCancel... 결제 내역 불일치");
+            return;
+        }
+
+        // 이미 환불된 내역 체크 (해당 포인트 내역에서 PK를 조회 했는데 환불 타입이 있다면 이미 환불처리)
+        if (pointHistory.getType() == Type.REFUND_EARN || pointHistory.getType() == Type.REFUND_USE) {
+            log.warn("pointHistoryCancel... 이미 환불처리된 내역");
+            return;
+        }
+
+        // 타입이 EARN일 경우 REFUND_EARN 아니면 REFUND_USE
+        Type type = pointHistory.getType() == Type.EARN ? Type.REFUND_EARN : Type.REFUND_USE;
+
+        // 타입이 EARN일 경우 현재 포인트에서 빼고 아니면 더함
+        Integer amountPoint = pointHistory.getType() == Type.EARN ?
+                member.getPoint() - pointHistory.getAmountPoint() : member.getPoint() + pointHistory.getAmountPoint(); // 현재 포인트
+
+
+        log.info("pointHistoryCancel... amountPoint: {}", amountPoint);
+        log.info("pointHistoryCancel... type: {}", type);
+
+        Integer changePoint = Math.abs(amountPoint - member.getPoint()); // 절댓값으로 변동 포인트 지정
+        PointHistoryDTO dto = PointHistoryDTO.builder()
+                .paymentId(pointHistoryDTO.getPaymentId())
+                .phone(pointHistoryDTO.getPhone())
+                .type(type)
+                .amountPoint(changePoint)
+                .build();
+        log.info("pointHistoryCancel... pointHistoryDTO: {}", dto);
+
+        // DTO -> Entity 변환을 위해 지정
+        PaymentDetailsEntity payment = paymentDetailsRepository.getReferenceById(pointHistoryDTO.getPaymentId());
+        pointHistoryRepository.save(PointHistoryDTO.toEntity(dto, payment, member)); // 포인트 내역 추가
+        member.changePoint(amountPoint);
+        memberRepository.save(member); // 회원 포인트 업데이트
     }
 }

@@ -28,7 +28,7 @@ public class PointHistoryEntity extends TimeBaseEntity {
 
     @Enumerated(EnumType.STRING) // Enum
     @Column(nullable = false)
-    private Type type; // 적립 / 사용 ('EARN', 'USE')
+    private Type type; // 적립 / 사용 / 환불 ('EARN', 'USE', 'REFUND')
 
     @Column(nullable = false, columnDefinition = "INT UNSIGNED")
     private Integer amountPoint; // 사용할 포인트

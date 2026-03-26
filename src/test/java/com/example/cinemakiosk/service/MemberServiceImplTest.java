@@ -1,9 +1,14 @@
 package com.example.cinemakiosk.service;
 
+import com.example.cinemakiosk.domain.MemberEntity;
 import com.example.cinemakiosk.domain.PaymentDetailsEntity.PaymentDetailsEntity;
 import com.example.cinemakiosk.domain.PaymentDetailsEntity.Status;
+import com.example.cinemakiosk.domain.PointHistoryEntity.PointHistoryEntity;
 import com.example.cinemakiosk.domain.PointHistoryEntity.Type;
+import com.example.cinemakiosk.dto.PointHistoryDTO;
+import com.example.cinemakiosk.repository.MemberRepository;
 import com.example.cinemakiosk.repository.PaymentDetailsRepository;
+import com.example.cinemakiosk.repository.PointHistoryRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
@@ -20,34 +25,84 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class MemberServiceImplTest {
     @Autowired private MemberService memberService;
-    @Autowired
-    private PaymentDetailsRepository paymentDetailsRepository;
+
 
     @Test
     void createMember() {
-        memberService.createMember("01012345234", 5200, "PAY_002");
+        for (int i = 1; i <= 5; i++) {
+            memberService.createMember("0101234523" + i, 20000, "PAY_00" + i);
+        }
     }
 
 
     @Test
     @Rollback(false)
     void pointHistoryCreate() {
-        memberService.pointHistoryCreate("01012341234", 1000, Type.EARN, "PAY_001");
+        PointHistoryDTO pointHistoryDTO = PointHistoryDTO.builder()
+                .paymentId("TEST-PAYMENT-UUID-001")
+                .phone("01012345678")
+                .type(Type.USE)
+                .amountPoint(1000)
+                .build();
+        memberService.pointHistoryCreate(pointHistoryDTO);
     }
 
     @Test
     void pointHistoryCancel() {
+        PointHistoryDTO pointHistoryDTO = PointHistoryDTO.builder()
+                .build();
+        memberService.pointHistoryCancel(pointHistoryDTO);
     }
 
+
+
+
+
+    // TODO 클로드 테스트 코드 부탁한 것 기능 해보다가 다 된다면 지우면 될듯
+    @Autowired private PaymentDetailsRepository paymentDetailsRepository;
+    @Autowired private MemberRepository memberRepository;
+    @Autowired private PointHistoryRepository pointHistoryRepository;
     @Test
-    void dummyPayment() {
+    public void pointHistoryCancelTest() {
+        // 1. 회원 더미 데이터
+        memberRepository.save(MemberEntity.builder()
+                .phone("01012345678")
+                .point(5000)
+                .build());
+
+        // 2. 결제 더미 데이터
         PaymentDetailsEntity payment = PaymentDetailsEntity.builder()
-                .id("PAY_001")
-                .cost(20000L)
-                .status(Status.PAY)
+                .id("TEST-PAYMENT-UUID-001")
+                .cost(10000L)
                 .time(LocalDateTime.now())
-                .usePoint(0L)
+                .status(Status.PAY)
                 .build();
         paymentDetailsRepository.save(payment);
+
+        // 3. 포인트 내역 더미 데이터
+        MemberEntity member = memberRepository.findById("01012345678").orElseThrow();
+        pointHistoryRepository.save(PointHistoryEntity.builder()
+                .paymentDetailsEntity(payment)
+                .memberEntity(member)
+                .type(Type.EARN)
+                .amountPoint(5000)
+                .build());
+
+        // 4. 테스트
+        Long pointId = pointHistoryRepository
+                .findByPaymentDetailsEntity_Id("TEST-PAYMENT-UUID-001")
+                .get(0).getPointId();
+
+        PointHistoryDTO pointHistoryDTO = PointHistoryDTO.builder()
+                .pointId(pointId)
+                .paymentId("TEST-PAYMENT-UUID-001")
+                .phone("01012345678")
+                .build();
+
+        memberService.pointHistoryCancel(pointHistoryDTO);
+
+        // 5. 검증
+        MemberEntity result = memberRepository.findById("01012345678").orElseThrow();
+        log.info("pointHistoryCancelTest... 환불 후 잔여 포인트: {}", result.getPoint());
     }
 }
