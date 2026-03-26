@@ -3,6 +3,8 @@ package com.example.cinemakiosk.dto;
 import com.example.cinemakiosk.domain.MovieEntity.MovieEntity;
 import com.example.cinemakiosk.domain.MovieEntity.Rating;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -18,14 +20,25 @@ public class MovieDTO {
     private Long movieId;
     private String title;
     private String genre;
-    private Rating rating;      // ALL / 12 / 15 / 19
+    private String rating;      // ALL / 12 / 15 / 19
     private Long runtime;
     private String director;
     private String actors;
     private String description;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime startAt;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime endAt;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime createAt;
+
+    private MultipartFile image;
+
+
+
 
     // Entity → DTO 변환
     public static MovieDTO toDTO(MovieEntity entity) {

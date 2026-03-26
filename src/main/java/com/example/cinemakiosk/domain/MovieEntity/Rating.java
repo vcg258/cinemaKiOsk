@@ -17,6 +17,17 @@ public enum Rating {
         };
     }
 
+    // String → enum 역변환
+    public static Rating fromConversion(String value) {
+        return switch (value) {
+            case "ALL" -> ALL;
+            case "12" -> TWELVE;
+            case "15" -> FIFTEEN;
+            case "19" -> NINETEEN;
+            default -> throw new IllegalArgumentException("Unknown rating: " + value);
+        };
+    }
+
 }
 
 

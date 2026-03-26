@@ -44,6 +44,16 @@ dependencies {
 
     // Source: https://mvnrepository.com/artifact/org.modelmapper/modelmapper
     implementation 'org.modelmapper:modelmapper:3.2.5'
+
+    // sms
+    implementation 'com.solapi:sdk:1.0.3'
+
+    // image
+    // Source: https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+    implementation 'net.coobird:thumbnailator:0.4.19'
+
+
 }
 
 tasks.named('test') {
