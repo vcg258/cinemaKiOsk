@@ -2,10 +2,13 @@ package com.example.cinemakiosk.domain.MovieEntity;
 
 import com.example.cinemakiosk.domain.ScheduleEntity;
 import com.example.cinemakiosk.domain.TimeBaseEntity;
+import com.example.cinemakiosk.dto.MovieDTO;
+import com.example.cinemakiosk.dto.ScheduleDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -54,4 +57,40 @@ public class MovieEntity{
 
     @OneToMany(mappedBy = "movieEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<ScheduleEntity> scheduleEntity;
+
+    /**
+     * Entity -> DTO
+     * @param movieEntity
+     * @return DTO
+     */
+    public static MovieDTO toDTO(MovieEntity movieEntity) {
+        //OneToMany 변수는 본인 객체를 제외한 값만 받기. 순환참조 방지.
+        List<ScheduleEntity> scheduleEntities = movieEntity.getScheduleEntity();
+        List<ScheduleDTO> scheduleDTOs = new ArrayList<>();
+
+
+        for (ScheduleEntity schedule : scheduleEntities){
+            //pk 만 받아오기.
+            ScheduleDTO scheduleDTO = ScheduleDTO.builder()
+                    .id(schedule.getId())
+                    .build();
+
+            scheduleDTOs.add(scheduleDTO);
+        }
+
+        return MovieDTO.builder()
+                .movieId(movieEntity.getMovieId())
+                .title(movieEntity.getTitle())
+                .genre(movieEntity.getGenre())
+                .rating(movieEntity.getRating())
+                .runtime(movieEntity.getRuntime())
+                .director(movieEntity.getDirector())
+                .actors(movieEntity.getActors())
+                .description(movieEntity.getDescription())
+                .startAt(movieEntity.getStartAt())
+                .endAt(movieEntity.getEndAt())
+                .createAt(movieEntity.getCreateAt())
+                .schedules(scheduleDTOs)
+                .build();
+    }
 }

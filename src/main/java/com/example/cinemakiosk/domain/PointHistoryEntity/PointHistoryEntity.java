@@ -3,8 +3,14 @@ package com.example.cinemakiosk.domain.PointHistoryEntity;
 import com.example.cinemakiosk.domain.MemberEntity;
 import com.example.cinemakiosk.domain.PaymentDetailsEntity.PaymentDetailsEntity;
 import com.example.cinemakiosk.domain.TimeBaseEntity;
+import com.example.cinemakiosk.dto.MemberDTO;
+import com.example.cinemakiosk.dto.PaymentDetailsDTO;
+import com.example.cinemakiosk.dto.PointHistoryDTO;
+import com.example.cinemakiosk.vo.PointHistoryVO;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -32,6 +38,25 @@ public class PointHistoryEntity extends TimeBaseEntity {
 
     @Column(nullable = false, columnDefinition = "BIGINT UNSIGNED")
     private Long amountPoint; // 사용할 포인트
-//    @Column(nullable = false, columnDefinition = "DATETIME DEFAULT NOW()")
-//    private LocalDateTime createAt; // 포인트 변경일
+    
+    @Column(nullable = false, columnDefinition = "DATETIME DEFAULT NOW()")
+    private LocalDateTime createAt; // 포인트 변경일
+
+
+    /**
+     * Entity -> DTO
+     * @param pointHistoryEntity
+     * @return DTO
+     */
+    public static PointHistoryDTO toDTO(PointHistoryEntity pointHistoryEntity){
+        return PointHistoryDTO.builder()
+                .pointId(pointHistoryEntity.getPointId())
+                .paymentId(PaymentDetailsEntity.toDTO(pointHistoryEntity.getPaymentDetailsEntity()))
+                .phone(MemberEntity.toDTO(pointHistoryEntity.getMemberEntity()))
+                .type(pointHistoryEntity.getType())
+                .amountPoint(pointHistoryEntity.getAmountPoint())
+                .createAt(pointHistoryEntity.getCreateAt())
+                .build();
+    }
+    
 }

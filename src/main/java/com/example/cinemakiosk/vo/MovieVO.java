@@ -2,12 +2,14 @@ package com.example.cinemakiosk.vo;
 
 import com.example.cinemakiosk.domain.MovieEntity.MovieEntity;
 import com.example.cinemakiosk.domain.MovieEntity.Rating;
+import com.example.cinemakiosk.domain.ScheduleEntity;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -26,4 +28,6 @@ public class MovieVO {
     private final LocalDateTime startAt; // 상영 시작일
     private final LocalDateTime endAt;   // 상영 종료일
     private final LocalDateTime createAt; // 등록일
+    private List<ScheduleVO> schedules;
+
 }

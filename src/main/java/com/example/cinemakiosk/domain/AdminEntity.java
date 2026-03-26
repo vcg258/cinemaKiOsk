@@ -1,5 +1,7 @@
 package com.example.cinemakiosk.domain;
 
+import com.example.cinemakiosk.dto.AdminDTO;
+import com.example.cinemakiosk.vo.AdminVO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,4 +41,23 @@ public class AdminEntity {
 
     @Column(name = "create_at", updatable = false)
     private LocalDateTime createAt; // 계정 생성 일자
+
+
+    /**
+     * Entity -> DTO
+     * @param adminEntity
+     * @return DTO
+     */
+    public static AdminDTO toDTO(AdminEntity adminEntity) {
+        return AdminDTO.builder()
+                .adminId(adminEntity.getAdminId())
+                .loginId(adminEntity.getLoginId())
+                .password(adminEntity.getPassword())  // 암호화된 비밀번호 저장
+                .name(adminEntity.getName())
+                .phoneAdmin(adminEntity.getPhoneAdmin())
+                .level(adminEntity.isLevel())
+                .uuid(adminEntity.getUuid())
+                .createAt(adminEntity.getCreateAt())
+                .build();
+    }
 }
