@@ -28,8 +28,8 @@ public class AdminEntity {
     @Column(name = "name", nullable = false)
     private String name;          // 관리자 이름
 
-    @Column(name = "phone_admin")
-    private String phoneAdmin;    // 전화번호
+    @Column(name = "admin_phone")
+    private String adminPhone;    // 전화번호
 
     @Column(name = "level", nullable = false)
     private boolean level;        // 권한 레벨 (false: 마스터 0, true: 알바 1)

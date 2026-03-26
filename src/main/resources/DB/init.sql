@@ -183,7 +183,7 @@ CREATE TABLE IF NOT EXISTS `point_history`
     `point_id`     BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '포인트 인덱스',
     `payment_id`   char(36)             NOT NULL COMMENT '결제 고유번호 FK',
     `phone`        VARCHAR(20)          NOT NULL COMMENT '회원 번호 FK',
-    `type`         ENUM ('EARN', 'USE') NOT NULL COMMENT '적립 / 사용',
+    `type`         ENUM ('EARN', 'USE', 'REFUND_EARN', 'REFUND_USE') NOT NULL COMMENT '적립 / 사용 / 환불-적립 / 환불-사용',
     `amount_point` INT UNSIGNED      NOT NULL COMMENT '적립/사용 포인트',
     `create_at`    DATETIME             NOT NULL COMMENT '포인트 변경일', # TODO BaseTime안쓸시 change_at
     CONSTRAINT `fk_point_history_payment_id` FOREIGN KEY (`payment_id`) REFERENCES payment_details (`id`)

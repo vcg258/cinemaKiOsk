@@ -17,7 +17,7 @@ public class AdminVO {
     private final Long adminId;
     private final String loginId;
     private final String name;
-    private final String phoneAdmin;
+    private final String adminPhone;
     private final boolean level;           // false: 마스터, true: 알바
     private final LocalDateTime createAt;
 
@@ -27,7 +27,7 @@ public class AdminVO {
                 .adminId(entity.getAdminId())
                 .loginId(entity.getLoginId())
                 .name(entity.getName())
-                .phoneAdmin(entity.getPhoneAdmin())
+                .adminPhone(entity.getAdminPhone())
                 .level(entity.isLevel())
                 .createAt(entity.getCreateAt())
                 .build();

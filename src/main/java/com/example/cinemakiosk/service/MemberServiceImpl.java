@@ -23,9 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
-    private final MemberMapper memberMapper;
     private final PointHistoryRepository pointHistoryRepository;
-    private final PointHistoryMapper pointHistoryMapper;
     private final PaymentDetailsRepository paymentDetailsRepository;
 
     /**
@@ -48,8 +46,7 @@ public class MemberServiceImpl implements MemberService{
         log.info("createMember... memberDTO: {}", memberDTO);
         memberRepository.save(MemberDTO.toEntity(memberDTO));
 
-        MemberEntity member = memberRepository.findById(phone).orElseThrow();
-        PaymentDetailsEntity payment = paymentDetailsRepository.getReferenceById(paymentId);
+
         PointHistoryDTO pointHistoryDTO = PointHistoryDTO.builder()
                 .paymentId(paymentId)
                 .phone(phone)
@@ -57,6 +54,9 @@ public class MemberServiceImpl implements MemberService{
                 .amountPoint(point)
                 .build();
 
+        // DTO -> Entity 변환을 위해 지정
+        MemberEntity member = memberRepository.findById(phone).orElseThrow();
+        PaymentDetailsEntity payment = paymentDetailsRepository.getReferenceById(paymentId);
         log.info("createMember... pointHistoryDTO: {}", pointHistoryDTO);
         pointHistoryRepository.save(PointHistoryDTO.toEntity(pointHistoryDTO, payment, member)); // 포인트 내역 추가
 
@@ -64,10 +64,7 @@ public class MemberServiceImpl implements MemberService{
 
     /**
      * 포인트 업데이트 및 포인트 내역 추가
-     * @param phone 회원 PK
-     * @param point 포인트
-     * @param type 적립 / 사용 여부
-     * @param paymentId 결제내역 PK
+     * @param pointHistoryDTO 포인트 내역의 DTO
      */
     @Override
     public void pointHistoryCreate(PointHistoryDTO pointHistoryDTO) {
@@ -75,17 +72,21 @@ public class MemberServiceImpl implements MemberService{
             log.warn("pointHistoryCreate... 등록된 회원 정보가 존재하지 않습니다");
             return;
         }
+
         MemberEntity member = memberRepository.findById(pointHistoryDTO.getPhone()).orElseThrow();
         PaymentDetailsEntity payment = paymentDetailsRepository.getReferenceById(pointHistoryDTO.getPaymentId());
 
+        // 음수 예외처리
+        if (pointHistoryDTO.getType() == Type.USE && member.getPoint() == 0) {
+            log.warn("pointHistoryCreate... 잔여 포인트 없음");
+            return;
+        }
+
         // 타입별 적립 / 사용
         Type type = pointHistoryDTO.getType();
-        Integer amount = member.getPoint();
-        if (type == Type.EARN) {
-            amount += pointHistoryDTO.getAmountPoint();
-        } else {
-            amount -= pointHistoryDTO.getAmountPoint();
-        }
+        Integer amount = type == Type.EARN ?
+                member.getPoint() + pointHistoryDTO.getAmountPoint() : member.getPoint() - pointHistoryDTO.getAmountPoint();
+
         PointHistoryDTO dto = PointHistoryDTO.builder()
                 .paymentId(pointHistoryDTO.getPaymentId())
                 .phone(pointHistoryDTO.getPhone())
@@ -94,7 +95,9 @@ public class MemberServiceImpl implements MemberService{
                 .build();
 
         log.info("pointHistoryCreate... pointHistoryDTO: {}", dto);
-        pointHistoryRepository.save(PointHistoryDTO.toEntity(dto, payment, member)); // 포인트 내역 추가
+
+        PointHistoryEntity pointHistory = pointHistoryRepository.save(PointHistoryDTO.toEntity(dto, payment, member)); // 포인트 내역 추가
+        log.info("pointHistoryCreate... 포인트 추가 내역 : {}", pointHistory);
 
         member.changePoint(amount);
         memberRepository.save(member); // 회원 잔여포인트 업데이트
@@ -111,7 +114,7 @@ public class MemberServiceImpl implements MemberService{
         log.info("pointHistoryCancel... 해당 회원 : {}", member);
         log.info("pointHistoryCancel... 현재 포인트: {}", member.getPoint());
 
-        // pointId로 단건 조회
+        // pointId로 한개 조회
         PointHistoryEntity pointHistory = pointHistoryRepository.findById(pointHistoryDTO.getPointId()).orElseThrow();
 
         // 해당 내역이 이 결제의 것인지 검증 (결제내역의 PK를 가져와 포인트내역의 PK와 비교함)
@@ -126,6 +129,12 @@ public class MemberServiceImpl implements MemberService{
             return;
         }
 
+        // 음수 예외처리
+        if (pointHistoryDTO.getType() == Type.USE && member.getPoint() == 0) {
+            log.warn("pointHistoryCancel... 잔여 포인트 없음");
+            return;
+        }
+
         // 타입이 EARN일 경우 REFUND_EARN 아니면 REFUND_USE
         Type type = pointHistory.getType() == Type.EARN ? Type.REFUND_EARN : Type.REFUND_USE;
 
@@ -134,8 +143,8 @@ public class MemberServiceImpl implements MemberService{
                 member.getPoint() - pointHistory.getAmountPoint() : member.getPoint() + pointHistory.getAmountPoint(); // 현재 포인트
 
 
-        log.info("pointHistoryCancel... amountPoint: {}", amountPoint);
         log.info("pointHistoryCancel... type: {}", type);
+        log.info("pointHistoryCancel... amountPoint: {}", amountPoint);
 
         Integer changePoint = Math.abs(amountPoint - member.getPoint()); // 절댓값으로 변동 포인트 지정
         PointHistoryDTO dto = PointHistoryDTO.builder()
@@ -148,7 +157,9 @@ public class MemberServiceImpl implements MemberService{
 
         // DTO -> Entity 변환을 위해 지정
         PaymentDetailsEntity payment = paymentDetailsRepository.getReferenceById(pointHistoryDTO.getPaymentId());
-        pointHistoryRepository.save(PointHistoryDTO.toEntity(dto, payment, member)); // 포인트 내역 추가
+        PointHistoryEntity pointHistoryEntity = pointHistoryRepository.save(PointHistoryDTO.toEntity(dto, payment, member)); // 포인트 내역 추가
+        log.info("pointHistoryCancel... 포인트 추가내용 : {}", pointHistoryEntity);
+
         member.changePoint(amountPoint);
         memberRepository.save(member); // 회원 포인트 업데이트
     }

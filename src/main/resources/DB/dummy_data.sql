@@ -123,7 +123,7 @@ VALUES
 --    status : TRUE = 사용 가능, FALSE = 사용 불가 / 만료
 --    couponEntity 테이블에 PK 미선언 → coupon_num 으로 식별 (UNIQUE 없으므로 중복 주의)
 -- ============================================================
-INSERT INTO `couponEntity` (`coupon_num`, `policy_id`, `status`)
+INSERT INTO `coupon` (`coupon_num`, `policy_id`, `status`)
 VALUES
     ('COUP20260001', 4, TRUE),  -- 미사용
     ('COUP20260002', 4, TRUE),  -- 미사용

@@ -63,14 +63,10 @@ class MemberServiceImplTest {
     @Autowired private MemberRepository memberRepository;
     @Autowired private PointHistoryRepository pointHistoryRepository;
     @Test
+    @Transactional
+    @Rollback
     public void pointHistoryCancelTest() {
-        // 1. 회원 더미 데이터
-        memberRepository.save(MemberEntity.builder()
-                .phone("01012345678")
-                .point(5000)
-                .build());
-
-        // 2. 결제 더미 데이터
+        // 1. 결제 더미 데이터
         PaymentDetailsEntity payment = PaymentDetailsEntity.builder()
                 .id("TEST-PAYMENT-UUID-001")
                 .cost(10000L)
@@ -79,19 +75,23 @@ class MemberServiceImplTest {
                 .build();
         paymentDetailsRepository.save(payment);
 
+        // 2. 회원 더미 데이터
+        memberService.createMember("01012345678", 5000, "TEST-PAYMENT-UUID-001");
+
         // 3. 포인트 내역 더미 데이터
-        MemberEntity member = memberRepository.findById("01012345678").orElseThrow();
-        pointHistoryRepository.save(PointHistoryEntity.builder()
-                .paymentDetailsEntity(payment)
-                .memberEntity(member)
+        PointHistoryDTO dto = PointHistoryDTO.builder()
+                .paymentId("TEST-PAYMENT-UUID-001")
+                .phone("01012345678")
                 .type(Type.EARN)
                 .amountPoint(5000)
-                .build());
+                .build();
+
+        memberService.pointHistoryCreate(dto);
 
         // 4. 테스트
         Long pointId = pointHistoryRepository
                 .findByPaymentDetailsEntity_Id("TEST-PAYMENT-UUID-001")
-                .get(0).getPointId();
+                .getFirst().getPointId();
 
         PointHistoryDTO pointHistoryDTO = PointHistoryDTO.builder()
                 .pointId(pointId)
