@@ -1,8 +1,13 @@
 package com.example.cinemakiosk.domain;
 
+import com.example.cinemakiosk.dto.SeatPolicyDTO;
+import com.example.cinemakiosk.dto.TheaterDTO;
+import com.example.cinemakiosk.vo.SeatPolicyVO;
+import com.example.cinemakiosk.vo.TheaterVO;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,5 +26,30 @@ public class SeatPolicyEntity {
     private Long cost; // 좌석 비용
 
     @OneToMany(mappedBy = "seatPolicyEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
-    private List<TheaterEntity> theaterEntity;
+    private List<TheaterEntity> theaterEntity; //1:다
+
+    /**
+     * Entity -> DTO
+     * @param seatPolicyEntity
+     * @return DTO
+     */
+    public static SeatPolicyDTO toDTO(SeatPolicyEntity seatPolicyEntity){
+        List<TheaterEntity> theaterEntitys = seatPolicyEntity.getTheaterEntity();
+        List<TheaterDTO> theaterDTOs = new ArrayList<>();
+
+        for (TheaterEntity theaterEntity : theaterEntitys){
+            TheaterDTO theaterDTO = TheaterDTO.builder()
+                    .no(theaterEntity.getNo())
+                    .build();
+
+            theaterDTOs.add(theaterDTO);
+        }
+
+        return SeatPolicyDTO.builder()
+                .policyId(seatPolicyEntity.getPolicyId())
+                .name(seatPolicyEntity.getName())
+                .cost(seatPolicyEntity.getCost())
+                .theater(theaterDTOs)
+                .build();
+    }
 }

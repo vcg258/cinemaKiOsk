@@ -1,10 +1,15 @@
 package com.example.cinemakiosk.domain;
 
 import com.example.cinemakiosk.domain.PaymentDetailsEntity.PaymentDetailsEntity;
+import com.example.cinemakiosk.dto.BonusPolicyDTO;
+import com.example.cinemakiosk.dto.PaymentDetailsDTO;
+import com.example.cinemakiosk.vo.BonusPolicyVO;
+import com.example.cinemakiosk.vo.PaymentDetailsVO;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -37,4 +42,35 @@ public class BonusPolicyEntity{
 
     @OneToMany(mappedBy = "bonusPolicyEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<PaymentDetailsEntity> paymentDetailsEntity;
+
+    /**
+     * Entity -> DTO
+     * @param bonusPolicyEntity
+     * @return DTO
+     */
+    public static BonusPolicyDTO toDTO(BonusPolicyEntity bonusPolicyEntity){
+        //OneToMany 변수는 본인 객체를 제외한 값만 받기. 순환참조 방지.
+        List<PaymentDetailsEntity> paymentDetailsEntities = bonusPolicyEntity.getPaymentDetailsEntity();
+        List<PaymentDetailsDTO> paymentDetailsDTOs = new ArrayList<>();
+
+
+        for (PaymentDetailsEntity paymentDetailsEntity : paymentDetailsEntities){
+            //pk 만 받아오기.
+            PaymentDetailsDTO paymentDetailsDTO = PaymentDetailsDTO.builder()
+                    .id(paymentDetailsEntity.getId())
+                    .build();
+
+            paymentDetailsDTOs.add(paymentDetailsDTO);
+        }
+
+        return BonusPolicyDTO.builder()
+                .id(bonusPolicyEntity.getId())
+                .policyName(bonusPolicyEntity.getPolicyName())
+                .giveValue(bonusPolicyEntity.getGiveValue())
+                .createAt(bonusPolicyEntity.getStartAt())
+                .finishedAt(bonusPolicyEntity.getEndAt())
+                .activation(bonusPolicyEntity.getActivation())
+                .paymentDetails(paymentDetailsDTOs)
+                .build();
+    }
 }

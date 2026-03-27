@@ -1,12 +1,19 @@
 package com.example.cinemakiosk.dto;
 
+import com.example.cinemakiosk.domain.PaymentDetailsEntity.PaymentDetailsEntity;
+import com.example.cinemakiosk.domain.PaymentDetailsEntity.Status;
+import com.example.cinemakiosk.domain.PointHistoryEntity.PointHistoryEntity;
 import com.example.cinemakiosk.vo.PaymentDetailsVO;
+import com.example.cinemakiosk.vo.PointHistoryVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -19,10 +26,62 @@ public class PaymentDetailsDTO {
     private Long cost;                       // 결제 금액
     private LocalDateTime time;              // 결제 시간
     private Long usePoint;                   // 사용 포인트 기본값 0
-    private String status;                   // ENUM ('PAY','RETURN','FAIL'), 결제 완료, 환불, 실패
+    private Status status;                   // ENUM ('PAY','RETURN','FAIL'), 결제 완료, 환불, 실패
+    private List<PointHistoryDTO> pointHistories;
+
+    /**
+     * DTO -> Entity
+     * @param paymentDetailsDTO
+     * @return Entity
+     */
+    public static PaymentDetailsEntity toEntity(PaymentDetailsDTO paymentDetailsDTO){
+        //OneToMany 변수는 본인 객체를 제외한 값만 받기. 순환참조 방지.
+        List<PointHistoryDTO> pointHistoryDTOS = paymentDetailsDTO.getPointHistories();
+        List<PointHistoryEntity> pointHistoryEntities = new ArrayList<>();
 
 
+        for (PointHistoryDTO pointHistoryDTO : pointHistoryDTOS){
+            //pk 만 받아오기.
+            PointHistoryEntity pointHistoryEntity = PointHistoryEntity.builder()
+                    .pointId(pointHistoryDTO.getPointId())
+                    .build();
+
+            pointHistoryEntities.add(pointHistoryEntity);
+        }
+
+        return PaymentDetailsEntity.builder()
+                .id(paymentDetailsDTO.getId())
+                .reservationDetailsEntity(ReservationDetailsDTO.toEntity(paymentDetailsDTO.getReservation()))
+                .bonusPolicyEntity(BonusPolicyDTO.toEntity(paymentDetailsDTO.getBonusPolicy()))
+                .couponEntity(CouponDTO.toEntity(paymentDetailsDTO.getCouponNum()))
+                .cost(paymentDetailsDTO.getCost())
+                .time(paymentDetailsDTO.getTime())
+                .usePoint(paymentDetailsDTO.getUsePoint())
+                .status(paymentDetailsDTO.getStatus())
+                .pointHistoryEntity(pointHistoryEntities)
+                .build();
+    }
+
+    /**
+     * DTO -> VO
+     * @param paymentDetailsDTO
+     * @return VO
+     */
     public static PaymentDetailsVO toVO(PaymentDetailsDTO paymentDetailsDTO){
+        //OneToMany 변수는 본인 객체를 제외한 값만 받기. 순환참조 방지.
+        List<PointHistoryDTO> pointHistoryDTOS = paymentDetailsDTO.getPointHistories();
+        List<PointHistoryVO> pointHistoryVOs = new ArrayList<>();
+
+
+        for (PointHistoryDTO pointHistoryDTO : pointHistoryDTOS){
+            //pk 만 받아오기.
+            PointHistoryVO pointHistoryVO = PointHistoryVO.builder()
+                    .pointId(pointHistoryDTO.getPointId())
+                    .build();
+
+            pointHistoryVOs.add(pointHistoryVO);
+        }
+
         return PaymentDetailsVO.builder()
                 .id(paymentDetailsDTO.getId())
                 .reservation(ReservationDetailsDTO.toVO(paymentDetailsDTO.getReservation()))
@@ -32,6 +91,7 @@ public class PaymentDetailsDTO {
                 .time(paymentDetailsDTO.getTime())
                 .usePoint(paymentDetailsDTO.getUsePoint())
                 .status(paymentDetailsDTO.getStatus())
+                .pointHistories(pointHistoryVOs)
                 .build();
     }
 

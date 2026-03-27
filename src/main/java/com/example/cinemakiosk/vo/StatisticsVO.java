@@ -1,11 +1,13 @@
 package com.example.cinemakiosk.vo;
 
+import com.example.cinemakiosk.domain.enums.Days;
+import com.example.cinemakiosk.dto.StatisticsDTO;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 
 @Getter
@@ -15,20 +17,25 @@ import java.time.LocalDateTime;
 public class StatisticsVO {
 
     private final Long id;
-    private final Long scheduleId;
-    private final String day;          // 요일
+    private final ScheduleVO schedule;
+    private final Days day;          // 요일
     private final Long revenue;        // 수익
     private final Long customerCount;  // 관람객 수
-    private final LocalDateTime date;  // 날짜
+    private final LocalDate date;  // 날짜
 
-    // Entity → VO 변환
-//    public static StatisticsVO from(StatisticsEntity entity) {
-//        return StatisticsVO.builder()
-//                .id(entity.getId())
-//                .scheduleId(entity.getScheduleId())
-//                .day(entity.getDay() != null ? entity.getDay().name() : null)
-//                .revenue(entity.getRevenue())
-//                .customerCount(entity.getCustomerCount())
-//                .build();
-//    }
+    /**
+     * VO -> DTO
+     * @param statisticsVO
+     * @return
+     */
+    public static StatisticsDTO toDTO(StatisticsVO statisticsVO){
+        return StatisticsDTO.builder()
+                .id(statisticsVO.getId())
+                .schedule(ScheduleVO.toDTO(statisticsVO.getSchedule()))
+                .day(statisticsVO.getDay())
+                .revenue(statisticsVO.getRevenue())
+                .customerCount(statisticsVO.getCustomerCount())
+                .date(statisticsVO.getDate())
+                .build();
+    }
 }

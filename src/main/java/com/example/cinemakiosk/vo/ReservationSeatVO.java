@@ -1,5 +1,6 @@
 package com.example.cinemakiosk.vo;
 
+import com.example.cinemakiosk.dto.ReservationDetailsDTO;
 import com.example.cinemakiosk.dto.ReservationSeatDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,13 +15,18 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ReservationSeatVO {
     private Long id;               //인덱스
-    private String reservationId;  //예매 내역 아이디
+    private ReservationDetailsVO reservationDetails;  //예매 내역 아이디
     private String seatNumber;     //좌석 번호
 
+    /**
+     * VO -> DTO
+     * @param reservationSeatVO
+     * @return DTO
+     */
     public static ReservationSeatDTO toDTO(ReservationSeatVO reservationSeatVO){
         return ReservationSeatDTO.builder()
                 .id(reservationSeatVO.getId())
-                .reservationId(reservationSeatVO.getReservationId())
+                .reservationDetails(ReservationDetailsVO.toDTO(reservationSeatVO.getReservationDetails()))
                 .seatNumber(reservationSeatVO.getSeatNumber())
                 .build();
     }

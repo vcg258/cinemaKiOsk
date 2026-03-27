@@ -1,15 +1,18 @@
-package com.example.cinemakiosk.domain.StatisticsEntity;
+package com.example.cinemakiosk.domain;
 
-import com.example.cinemakiosk.domain.ScheduleEntity;
+import com.example.cinemakiosk.domain.enums.Days;
+import com.example.cinemakiosk.dto.ScheduleDTO;
+import com.example.cinemakiosk.dto.StatisticsDTO;
+import com.example.cinemakiosk.vo.StatisticsVO;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@ToString(exclude = {"scheduleEntity"})
+@ToString(exclude = {"ScheduleEntity"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,7 +30,7 @@ public class StatisticsEntity {
 
     @Column(name = "day", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Day day;             // 요일 ENUM
+    private Days day;             // 요일 ENUM
 
     @Column(name = "revenue", nullable = false)
     private Long revenue;        // 수익
@@ -35,8 +38,23 @@ public class StatisticsEntity {
     @Column(name = "customer_count", nullable = false)
     private Long customerCount;  // 관람객 수
 
-    @CreatedDate
-    @Column(nullable = false, updatable = false) // TODO (, columnDefinition = "DATETIME DEFAULT NOW()") 유무 체크
+    @Column(name = "date", nullable = false)
     private LocalDate date;          // 통계 기준 일시 (일일/월간 통계용)
+
+    /**
+     * Entity -> DTO
+     * @param statisticsEntity
+     * @return
+     */
+    public static StatisticsDTO toDTO(StatisticsEntity statisticsEntity){
+        return StatisticsDTO.builder()
+                .id(statisticsEntity.getStatisticsId())
+                .schedule(ScheduleEntity.toDTO(statisticsEntity.getScheduleEntity()))
+                .day(statisticsEntity.getDay())
+                .revenue(statisticsEntity.getRevenue())
+                .customerCount(statisticsEntity.getCustomerCount())
+                .date(statisticsEntity.getDate())
+                .build();
+    }
 }
 

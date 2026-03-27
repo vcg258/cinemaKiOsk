@@ -1,6 +1,7 @@
 package com.example.cinemakiosk.vo;
 
 import com.example.cinemakiosk.domain.AdminEntity;
+import com.example.cinemakiosk.dto.AdminDTO;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,22 +15,30 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode
 public class AdminVO {
 
-    private final Long adminId;
-    private final String loginId;
-    private final String name;
-    private final String adminPhone;
-    private final boolean level;           // false: 마스터, true: 알바
-    private final LocalDateTime createAt;
+    private Long adminId;
+    private String loginId;
+    private String password;    // 로그인 요청 시 사용, 응답 시엔 null로 두면 됨
+    private String name;
+    private String phoneAdmin;
+    private boolean level;      // false: 마스터, true: 알바
+    private String uuid;          // 자동 로그인 토큰
+    private LocalDateTime createAt;
 
-    // Entity → VO 변환 (민감 정보 제외)
-    public static AdminVO from(AdminEntity entity) {
-        return AdminVO.builder()
-                .adminId(entity.getAdminId())
-                .loginId(entity.getLoginId())
-                .name(entity.getName())
-                .adminPhone(entity.getAdminPhone())
-                .level(entity.isLevel())
-                .createAt(entity.getCreateAt())
+    /**
+     * VO -> DTO
+     * @param adminVO
+     * @return DTO
+     */
+    public static AdminDTO toDTO(AdminVO adminVO) {
+        return AdminDTO.builder()
+                .adminId(adminVO.getAdminId())
+                .loginId(adminVO.getLoginId())
+                .password(adminVO.getPassword())  // 암호화된 비밀번호 저장
+                .name(adminVO.getName())
+                .phoneAdmin(adminVO.getPhoneAdmin())
+                .level(adminVO.isLevel())
+                .uuid(adminVO.getUuid())
+                .createAt(adminVO.getCreateAt())
                 .build();
     }
 }

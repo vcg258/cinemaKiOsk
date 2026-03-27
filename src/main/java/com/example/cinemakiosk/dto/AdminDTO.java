@@ -1,6 +1,7 @@
 package com.example.cinemakiosk.dto;
 
 import com.example.cinemakiosk.domain.AdminEntity;
+import com.example.cinemakiosk.vo.AdminVO;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,31 +18,45 @@ public class AdminDTO {
     private String loginId;
     private String password;    // 로그인 요청 시 사용, 응답 시엔 null로 두면 됨
     private String name;
-    private String adminPhone;
+    private String phoneAdmin;
     private boolean level;      // false: 마스터, true: 알바
+    private String uuid;          // 자동 로그인 토큰
     private LocalDateTime createAt;
 
-    // Entity → DTO 변환 (password 제외)
-    public static AdminDTO from(AdminEntity entity) {
-        return AdminDTO.builder()
-                .adminId(entity.getAdminId())
-                .loginId(entity.getLoginId())
-                .name(entity.getName())
-                .adminPhone(entity.getAdminPhone())
-                .level(entity.isLevel())
-                .createAt(entity.getCreateAt())
+
+    /**
+     * DTO -> Entity
+     * @param adminDTO
+     * @return Entity
+     */
+    public static AdminEntity toEntity(AdminDTO adminDTO) {
+        return AdminEntity.builder()
+                .adminId(adminDTO.getAdminId())
+                .loginId(adminDTO.getLoginId())
+                .password(adminDTO.getPassword())  // 암호화된 비밀번호 저장
+                .name(adminDTO.getName())
+                .phoneAdmin(adminDTO.getPhoneAdmin())
+                .level(adminDTO.isLevel())
+                .uuid(adminDTO.getUuid())
+                .createAt(adminDTO.getCreateAt())
                 .build();
     }
 
-    // DTO → Entity 변환
-    public AdminEntity toEntity(String encodedPassword) {
-        return AdminEntity.builder()
-                .loginId(this.loginId)
-                .password(encodedPassword)  // 암호화된 비밀번호 저장
-                .name(this.name)
-                .adminPhone(this.adminPhone)
-                .level(this.level)
-                .createAt(this.createAt)
+    /**
+     * DTO -> VO
+     * @param adminDTO
+     * @return VO
+     */
+    public static AdminVO toVO(AdminDTO adminDTO) {
+        return AdminVO.builder()
+                .adminId(adminDTO.getAdminId())
+                .loginId(adminDTO.getLoginId())
+                .password(adminDTO.getPassword())  // 암호화된 비밀번호 저장
+                .name(adminDTO.getName())
+                .phoneAdmin(adminDTO.getPhoneAdmin())
+                .level(adminDTO.isLevel())
+                .uuid(adminDTO.getUuid())
+                .createAt(adminDTO.getCreateAt())
                 .build();
     }
 }

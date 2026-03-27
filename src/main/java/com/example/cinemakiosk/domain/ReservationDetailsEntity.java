@@ -1,11 +1,17 @@
 package com.example.cinemakiosk.domain;
 
 import com.example.cinemakiosk.domain.PaymentDetailsEntity.PaymentDetailsEntity;
+import com.example.cinemakiosk.dto.ReservationDetailsDTO;
+import com.example.cinemakiosk.dto.ReservationSeatDTO;
+import com.example.cinemakiosk.dto.ScheduleDTO;
+import com.example.cinemakiosk.vo.ReservationDetailsVO;
+import com.example.cinemakiosk.vo.ReservationSeatVO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -37,4 +43,45 @@ public class ReservationDetailsEntity{
 
     @OneToMany(mappedBy = "reservationDetailsEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<PaymentDetailsEntity> paymentDetailsEntity;
+
+    /**
+     * Entity -> DTO
+     * @param reservationDetailsEntity
+     * @return DTO
+     */
+    public static ReservationDetailsDTO toDTO(ReservationDetailsEntity reservationDetailsEntity) {
+
+        List<ReservationSeatEntity> reservationSeatEntitys = reservationDetailsEntity.getReservationSeatEntity();
+        List<ReservationSeatDTO> reservationSeatDTOs = new ArrayList<>();
+
+        for (ReservationSeatEntity reservationSeatEntity : reservationSeatEntitys) {
+            ReservationSeatDTO reservationSeatDTO = ReservationSeatDTO.builder()
+                    .id(reservationSeatEntity.getId())
+                    .seatNumber(reservationSeatEntity.getSeatNumber())
+                    .build();
+
+            reservationSeatDTOs.add(reservationSeatDTO);
+        }
+
+        return ReservationDetailsDTO.builder()
+                .id(reservationDetailsEntity.getId())
+                .schedule(ScheduleEntity.toDTO(reservationDetailsEntity.getScheduleEntity()))
+                .phone(MemberEntity.toDTO(reservationDetailsEntity.getMemberEntity()))
+                .reservationTime(reservationDetailsEntity.getCreateAt())
+                .seats(reservationSeatDTOs)
+                .build();
+    }
+
+    /**
+     * 해당 객체가 가진 seat의 Name을 반환받기 위해서 사용함.
+     * @return reservationSeatEntity 변수 속의 seatName 
+     */
+    public List<String> getSeatName(){
+        List<String> seatName = new ArrayList<>();
+        for (ReservationSeatEntity reservationSeatEntity : this.reservationSeatEntity){
+            seatName.add(reservationSeatEntity.getSeatNumber());
+        }
+
+        return seatName;
+    }
 }

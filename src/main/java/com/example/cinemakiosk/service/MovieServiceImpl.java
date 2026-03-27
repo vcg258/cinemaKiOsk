@@ -10,12 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.log4j.Log4j2;
 import net.coobird.thumbnailator.Thumbnailator;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,12 +18,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -98,31 +90,12 @@ public class MovieServiceImpl implements MovieService {
 
     }
 
-
-
-
-
-
-
-
-
     // 상세 조회
     @Override
     public MovieDTO getMovieById(long movieId) {
         Optional<MovieEntity> optionalMovieEntity = movieRepository.findById(movieId);
         MovieEntity movieEntity = optionalMovieEntity.orElseThrow();
-        MovieDTO movieDTO = MovieDTO.toDTO(movieEntity);
-
-        return movieDTO;
-    }
-
-    // 제목으로 상세 조회
-    @Override
-    public MovieDTO getMovieByTitle(String title) {
-        Optional<MovieEntity> optionalMovieEntity = movieRepository.findByTitle(title);
-        MovieEntity movieEntity = optionalMovieEntity.orElseThrow();
-        MovieDTO movieDTO = MovieDTO.toDTO(movieEntity);
-
+        MovieDTO movieDTO = MovieEntity.toDTO(movieEntity);
         return movieDTO;
     }
 
@@ -133,7 +106,7 @@ public class MovieServiceImpl implements MovieService {
 
         List<MovieDTO> movieDTOList = new ArrayList<>();
         for (MovieEntity movieEntity : movieEntityList) {
-            movieDTOList.add(MovieDTO.toDTO(movieEntity));
+            movieDTOList.add(MovieEntity.toDTO(movieEntity));
         }
         return movieDTOList;
     }
@@ -145,7 +118,7 @@ public class MovieServiceImpl implements MovieService {
 
         List<MovieDTO> movieDTOList = new ArrayList<>();
         for (MovieEntity movieEntity : movieEntityList) {
-            movieDTOList.add(MovieDTO.toDTO(movieEntity));
+            movieDTOList.add(MovieEntity.toDTO(movieEntity));
         }
         return movieDTOList;
     }
@@ -159,7 +132,7 @@ public class MovieServiceImpl implements MovieService {
 
         List<MovieDTO> movieDTOList = new ArrayList<>();
         for (MovieEntity movieEntity : movieEntityList) {
-            movieDTOList.add(MovieDTO.toDTO(movieEntity));
+            movieDTOList.add(MovieEntity.toDTO(movieEntity));
         }
         return movieDTOList;
     }
@@ -173,7 +146,7 @@ public class MovieServiceImpl implements MovieService {
         List<MovieDTO> movieDTOList = new ArrayList<>();
 
         for (MovieEntity movieEntity : movieEntityList) {
-            movieDTOList.add(MovieDTO.toDTO(movieEntity));
+            movieDTOList.add(MovieEntity.toDTO(movieEntity));
         }
 
         return movieDTOList;
@@ -188,24 +161,4 @@ public class MovieServiceImpl implements MovieService {
 
         return null;
     }
-
-//    @Override
-//    public PageResponseDTO<BoardDTO> getList(MovieDTO movieDTO) {
-//        // 1. searchAll() 실행
-//        String[] types = movieDTO.getTypes();
-//        String keyword = movieDTO.getKeyword();
-//        Pageable pageable = movieDTO.getPageAble("bno");
-//        Page<Board> result = boardRepository.searchAll(types, keyword, pageable);
-//
-//        // 2. PageResponseDTO 생성 후 반환
-//        List<BoardDTO> dtoList = new ArrayList<>();
-//        for (Board board : result.getContent()) {
-//            dtoList.add(modelMapper.map(board, BoardDTO.class));
-//        }
-//        return PageResponseDTO.<BoardDTO>withAll()
-//                .pageRequestDTO(pageRequestDTO)
-//                .total((int) result.getTotalElements())
-//                .dtoList(dtoList)
-//                .build();
-//    }
 }

@@ -2,9 +2,13 @@ package com.example.cinemakiosk.vo;
 
 import com.example.cinemakiosk.domain.DiscountPolicyEntity.ConditionType;
 import com.example.cinemakiosk.domain.DiscountPolicyEntity.DiscountType;
+import com.example.cinemakiosk.dto.CouponDTO;
+import com.example.cinemakiosk.dto.DiscountPolicyDTO;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Builder
@@ -20,4 +24,39 @@ public class DiscountPolicyVO {
     private LocalDateTime startAt; // 시작일
     private LocalDateTime endAt; // 만료일
     private boolean activation; // 활성화 여부
+    private List<CouponVO> coupons; // resultMap(collection)
+
+    /**
+     * VO -> DTO
+     * @param discountPolicyVO VO
+     * @return DTO
+     */
+    public static DiscountPolicyDTO toDTO(DiscountPolicyVO discountPolicyVO) {
+        //OneToMany 변수는 본인 객체를 제외한 값만 받기. 순환참조 방지.
+        List<CouponVO> couponVOs = discountPolicyVO.getCoupons();
+        List<CouponDTO> couponEntities = new ArrayList<>();
+
+
+        for (CouponVO coupon : couponVOs){
+            //pk 만 받아오기.
+            CouponDTO couponDTOs = CouponDTO.builder()
+                    .couponNum(coupon.getCouponNum())
+                    .build();
+
+            couponEntities.add(couponDTOs);
+        }
+
+
+        return DiscountPolicyDTO.builder()
+                .id(discountPolicyVO.getId())
+                .policyName(discountPolicyVO.getPolicyName())
+                .discountType(discountPolicyVO.getDiscountType())
+                .discountValue(discountPolicyVO.getDiscountValue())
+                .conditionType(discountPolicyVO.getConditionType())
+                .startAt(discountPolicyVO.getStartAt())
+                .endAt(discountPolicyVO.getEndAt())
+                .activation(discountPolicyVO.isActivation())
+                .coupons(couponEntities)
+                .build();
+    }
 }

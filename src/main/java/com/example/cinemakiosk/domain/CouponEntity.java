@@ -2,10 +2,10 @@ package com.example.cinemakiosk.domain;
 
 import com.example.cinemakiosk.domain.DiscountPolicyEntity.DiscountPolicyEntity;
 import com.example.cinemakiosk.domain.PaymentDetailsEntity.PaymentDetailsEntity;
+import com.example.cinemakiosk.dto.CouponDTO;
+import com.example.cinemakiosk.dto.PaymentDetailsDTO;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.List;
 
 @Entity
 @Getter
@@ -16,10 +16,13 @@ import java.util.List;
 @Table(name = "coupon")
 public class CouponEntity {
     @Column(length = 12)
-    @Id private String couponNum; // 쿠폰 번호
+    @Id
+    private String couponNum; // 쿠폰 번호
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "policy_id", nullable = false, columnDefinition = "BIGINT UNSIGNED", foreignKey = @ForeignKey(name = "fk_discount_policy_coupon_id"))
     private DiscountPolicyEntity discountPolicyEntity; // 할인 정책 인덱스 FK
+
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean status; // 사용여부 (사용가능 = true, 불가능 = false)
 
@@ -33,4 +36,24 @@ public class CouponEntity {
     public void changeStatus(boolean status) {
         this.status = status;
     }
+
+    /**
+     * Entity -> DTO
+     * @param couponEntity
+     * @return DTO
+     */
+    public static CouponDTO toDTO(CouponEntity couponEntity) {
+        //쿠폰쪽에서 결제의 id만 받는 걸로 진행.
+        PaymentDetailsDTO paymentDetailsDTO = PaymentDetailsDTO.builder()
+                .id(couponEntity.getPaymentDetailsEntity().getId())
+                .build();
+
+        return CouponDTO.builder()
+                .couponNum(couponEntity.getCouponNum())
+                .discountPolicy(DiscountPolicyEntity.toDTO(couponEntity.getDiscountPolicyEntity()))
+                .status(couponEntity.isStatus())
+                .paymentDetails(paymentDetailsDTO)
+                .build();
+    }
+
 }
