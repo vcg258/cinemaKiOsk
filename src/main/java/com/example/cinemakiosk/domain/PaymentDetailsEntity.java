@@ -37,7 +37,7 @@ public class PaymentDetailsEntity {
     private Long cost;             // 결제 금액
 
     @Column(nullable = false)
-    private LocalDateTime time;    // 결제 시간
+    private LocalDateTime createAt;    // 결제 시간
 
     @Column(columnDefinition = "BIGINT UNSIGNED DEFAULT 0")
     private Long usePoint;         // 사용 포인트 기본값 0
@@ -54,19 +54,6 @@ public class PaymentDetailsEntity {
      * @return DTO
      */
     public static PaymentDetailsDTO toDTO(PaymentDetailsEntity paymentDetailsEntity){
-        //OneToMany 변수는 본인 객체를 제외한 값만 받기. 순환참조 방지.
-        List<PointHistoryEntity> pointHistoryEntitys = paymentDetailsEntity.getPointHistoryEntity();
-        List<PointHistoryDTO> pointHistoryDTOs = new ArrayList<>();
-
-
-        for (PointHistoryEntity pointHistoryEntity : pointHistoryEntitys){
-            //pk 만 받아오기.
-            PointHistoryDTO pointHistoryDTO = PointHistoryDTO.builder()
-                    .pointId(pointHistoryEntity.getPointId())
-                    .build();
-
-            pointHistoryDTOs.add(pointHistoryDTO);
-        }
 
         return PaymentDetailsDTO.builder()
                 .id(paymentDetailsEntity.getId())
@@ -74,10 +61,9 @@ public class PaymentDetailsEntity {
                 .bonusPolicy(BonusPolicyEntity.toDTO(paymentDetailsEntity.getBonusPolicyEntity()))
                 .couponNum(CouponEntity.toDTO(paymentDetailsEntity.getCouponEntity()))
                 .cost(paymentDetailsEntity.getCost())
-                .time(paymentDetailsEntity.getTime())
+                .createAt(paymentDetailsEntity.getCreateAt())
                 .usePoint(paymentDetailsEntity.getUsePoint())
                 .status(paymentDetailsEntity.getStatus())
-                .pointHistories(pointHistoryDTOs)
                 .build();
     }
     

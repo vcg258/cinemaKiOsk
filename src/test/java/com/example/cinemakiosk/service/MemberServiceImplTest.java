@@ -4,6 +4,8 @@ import com.example.cinemakiosk.domain.MemberEntity;
 import com.example.cinemakiosk.domain.PaymentDetailsEntity;
 import com.example.cinemakiosk.domain.enums.Status;
 import com.example.cinemakiosk.domain.enums.Type;
+import com.example.cinemakiosk.dto.MemberDTO;
+import com.example.cinemakiosk.dto.PaymentDetailsDTO;
 import com.example.cinemakiosk.dto.PointHistoryDTO;
 import com.example.cinemakiosk.repository.MemberRepository;
 import com.example.cinemakiosk.repository.PaymentDetailsRepository;
@@ -35,8 +37,8 @@ class MemberServiceImplTest {
     @Rollback(false)
     void pointHistoryCreate() {
         PointHistoryDTO pointHistoryDTO = PointHistoryDTO.builder()
-                .paymentId("TEST-PAYMENT-UUID-001")
-                .phone("01012345678")
+                .paymentId(PaymentDetailsDTO.builder().id("TEST-PAYMENT-UUID-001").build())
+                .phone(MemberDTO.builder().phone("01012345678").build())
                 .type(Type.USE)
                 .amountPoint(1000)
                 .build();
@@ -76,8 +78,8 @@ class MemberServiceImplTest {
 
         // 3. 포인트 내역 더미 데이터
         PointHistoryDTO dto = PointHistoryDTO.builder()
-                .paymentId("TEST-PAYMENT-UUID-001")
-                .phone("01012345678")
+                .paymentId(PaymentDetailsDTO.builder().id("TEST-PAYMENT-UUID-001").build())
+                .phone(MemberDTO.builder().phone("01012345678").build())
                 .type(Type.EARN)
                 .amountPoint(5000)
                 .build();
@@ -91,8 +93,8 @@ class MemberServiceImplTest {
 
         PointHistoryDTO pointHistoryDTO = PointHistoryDTO.builder()
                 .pointId(pointId)
-                .paymentId("TEST-PAYMENT-UUID-001")
-                .phone("01012345678")
+                .paymentId(PaymentDetailsDTO.builder().id("TEST-PAYMENT-UUID-001").build())
+                .phone(MemberDTO.builder().phone("01012345678").build())
                 .build();
 
         memberService.pointHistoryCancel(pointHistoryDTO);

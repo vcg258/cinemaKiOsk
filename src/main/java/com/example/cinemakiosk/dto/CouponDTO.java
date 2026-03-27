@@ -1,6 +1,7 @@
 package com.example.cinemakiosk.dto;
 
 import com.example.cinemakiosk.domain.CouponEntity;
+import com.example.cinemakiosk.domain.DiscountPolicyEntity;
 import com.example.cinemakiosk.domain.PaymentDetailsEntity;
 import com.example.cinemakiosk.vo.CouponVO;
 import com.example.cinemakiosk.vo.PaymentDetailsVO;
@@ -15,9 +16,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CouponDTO {
     private String couponNum; // 쿠폰 번호
-    private DiscountPolicyDTO discountPolicy; // 할인 정책 인덱스 FK
+    private DiscountPolicyDTO discountPolicy; // 할인 정책 인덱스 FK (JPA용도)
     private boolean status; // 사용여부 (사용가능 = true, 불가능 = false)
-    private PaymentDetailsDTO paymentDetails; // 1:1
+    private Long policyId; // 할인 정책 인덱스 FK (Mapper)
 
     /**
      * DTO -> Entity
@@ -25,16 +26,21 @@ public class CouponDTO {
      * @return 변환을 위한 Builder
      */
     public static CouponEntity toEntity(CouponDTO couponDTO) {
-        //쿠폰쪽에서 결제의 id만 받는 걸로 진행.
-        PaymentDetailsEntity paymentDetailsEntity = PaymentDetailsEntity.builder()
-                .id(couponDTO.getPaymentDetails().getId())
-                .build();
+
+        // discountPolicy 객체가 있으면 그걸 사용, 없으면 policyId로 Entity 생성
+        DiscountPolicyEntity discountPolicyEntity = null;
+        if (couponDTO.getDiscountPolicy() != null) {
+            discountPolicyEntity = DiscountPolicyDTO.toEntity(couponDTO.getDiscountPolicy());
+        } else if (couponDTO.getPolicyId() != null) {
+            discountPolicyEntity = DiscountPolicyEntity.builder()
+                    .id(couponDTO.getPolicyId())
+                    .build();
+        }
 
         return CouponEntity.builder()
                 .couponNum(couponDTO.getCouponNum())
                 .discountPolicyEntity(DiscountPolicyDTO.toEntity(couponDTO.getDiscountPolicy()))
                 .status(couponDTO.isStatus())
-                .paymentDetailsEntity(paymentDetailsEntity)
                 .build();
     }
 
@@ -44,16 +50,11 @@ public class CouponDTO {
      * @return 변환을 위한 Builder
      */
     public static CouponVO toVO(CouponDTO couponDTO) {
-        //쿠폰쪽에서 결제의 id만 받는 걸로 진행.
-        PaymentDetailsVO paymentDetailsVO = PaymentDetailsVO.builder()
-                .id(couponDTO.getPaymentDetails().getId())
-                .build();
 
         return CouponVO.builder()
                 .couponNum(couponDTO.getCouponNum())
-                .discountPolicy(DiscountPolicyDTO.toVO(couponDTO.getDiscountPolicy()))
+                .policyId(couponDTO.getPolicyId())
                 .status(couponDTO.isStatus())
-                .paymentDetails(paymentDetailsVO)
                 .build();
     }
 }

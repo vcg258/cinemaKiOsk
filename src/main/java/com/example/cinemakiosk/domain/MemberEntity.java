@@ -40,38 +40,11 @@ public class MemberEntity{
      * @return DTO
      */
     public static MemberDTO toDTO(MemberEntity memberEntity){
-        //OneToMany 변수는 본인 객체를 제외한 값만 받기. 순환참조 방지.
-        List<PointHistoryEntity> pointHistoryEntitys = memberEntity.getPointHistoryEntity();
-        List<PointHistoryDTO> pointHistoryDTOs = new ArrayList<>();
-
-
-        for (PointHistoryEntity pointHistoryEntity : pointHistoryEntitys){
-            //pk 만 받아오기.
-            PointHistoryDTO pointHistoryDTO = PointHistoryDTO.builder()
-                    .pointId(pointHistoryEntity.getPointId())
-                    .build();
-
-            pointHistoryDTOs.add(pointHistoryDTO);
-        }
-
-
-        List<ReservationDetailsEntity> reservationDetailsEntitys = memberEntity.getReservationDetailsEntity();
-        List<ReservationDetailsDTO> reservationDetailsDTOs = new ArrayList<>();
-
-        for (ReservationDetailsEntity reservationDetailsEntity : reservationDetailsEntitys){
-            ReservationDetailsDTO reservationDetailsDTO = ReservationDetailsDTO.builder()
-                    .id(reservationDetailsEntity.getId())
-                    .build();
-
-            reservationDetailsDTOs.add(reservationDetailsDTO);
-        }
 
         return MemberDTO.builder()
                 .phone(memberEntity.getPhone())
                 .point(memberEntity.getPoint())
                 .createAt(memberEntity.getCreateAt())
-                .pointHistories(pointHistoryDTOs)
-                .reservationDetails(reservationDetailsDTOs)
                 .build();
     }
 }

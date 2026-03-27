@@ -17,15 +17,13 @@ class TheaterServiceImplTest {
 
     @Test
     void createSeat() {
-        TheaterDTO theaterDTO = TheaterDTO.builder()
-                .seatPolicyDTO(SeatPolicyDTO.builder()
+        SeatPolicyDTO seatPolicyDTO = SeatPolicyDTO.builder()
                         .name("일반석")
                         .cost(7000L)
-                        .build())
-                    .build();
+                        .build();
 
-        log.info("theaterDTO: {}", theaterDTO);
-        theaterService.createSeat(theaterDTO);
+        log.info("theaterDTO: {}", seatPolicyDTO);
+        theaterService.createSeat(seatPolicyDTO);
     }
 
     @Test

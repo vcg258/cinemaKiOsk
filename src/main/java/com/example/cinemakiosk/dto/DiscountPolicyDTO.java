@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -36,19 +37,6 @@ public class DiscountPolicyDTO {
      * @return Entity
      */
     public static DiscountPolicyEntity toEntity(DiscountPolicyDTO discountPolicyDTO) {
-        //OneToMany 변수는 본인 객체를 제외한 값만 받기. 순환참조 방지.
-        List<CouponDTO> couponDTOs = discountPolicyDTO.getCoupons();
-        List<CouponEntity> couponEntities = new ArrayList<>();
-
-
-        for (CouponDTO coupon : couponDTOs){
-            //pk 만 받아오기.
-            CouponEntity couponEntity = CouponEntity.builder()
-                    .couponNum(coupon.getCouponNum())
-                    .build();
-
-            couponEntities.add(couponEntity);
-        }
 
 
         return DiscountPolicyEntity.builder()
@@ -60,7 +48,6 @@ public class DiscountPolicyDTO {
                 .startAt(discountPolicyDTO.getStartAt())
                 .endAt(discountPolicyDTO.getEndAt())
                 .activation(discountPolicyDTO.isActivation())
-                .coupons(couponEntities)
                 .build();
     }
 
@@ -70,19 +57,6 @@ public class DiscountPolicyDTO {
      * @return VO
      */
     public static DiscountPolicyVO toVO(DiscountPolicyDTO discountPolicyDTO) {
-        //OneToMany 변수는 본인 객체를 제외한 값만 받기. 순환참조 방지.
-        List<CouponDTO> couponDTOs = discountPolicyDTO.getCoupons();
-        List<CouponVO> couponVOs = new ArrayList<>();
-
-
-        for (CouponDTO coupon : couponDTOs){
-            //pk 만 받아오기.
-            CouponVO couponVO = CouponVO.builder()
-                    .couponNum(coupon.getCouponNum())
-                    .build();
-
-            couponVOs.add(couponVO);
-        }
 
         return DiscountPolicyVO.builder()
                 .id(discountPolicyDTO.getId())
@@ -93,7 +67,6 @@ public class DiscountPolicyDTO {
                 .startAt(discountPolicyDTO.getStartAt())
                 .endAt(discountPolicyDTO.getEndAt())
                 .activation(discountPolicyDTO.isActivation())
-                .coupons(couponVOs)
                 .build();
     }
 }

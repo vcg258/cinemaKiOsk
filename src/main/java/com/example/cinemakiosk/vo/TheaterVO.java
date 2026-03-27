@@ -27,22 +27,11 @@ public class TheaterVO {
      * @return DTO
      */
     public static TheaterDTO toDTO(TheaterVO theaterVO){
-        List<ScheduleVO> scheduleVOs = theaterVO.getSchedule();
-        List<ScheduleDTO> scheduleDTOs = new ArrayList<>();
-
-        for (ScheduleVO scheduleVO : scheduleVOs){
-            ScheduleDTO scheduleDTO = ScheduleDTO.builder()
-                    .id(scheduleVO.getId())
-                    .build();
-
-            scheduleDTOs.add(scheduleDTO);
-        }
 
         return TheaterDTO.builder()
                 .no(theaterVO.getNo())
                 .seatPolicy(SeatPolicyVO.toDTO(theaterVO.getSeatPolicy()))
                 .cleanupTime(theaterVO.getCleanupTime())
-                .schedule(scheduleDTOs)
                 .build();
     }
 }

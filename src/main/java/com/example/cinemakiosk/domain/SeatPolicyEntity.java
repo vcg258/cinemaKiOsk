@@ -35,22 +35,10 @@ public class SeatPolicyEntity {
      * @return DTO
      */
     public static SeatPolicyDTO toDTO(SeatPolicyEntity seatPolicyEntity){
-        List<TheaterEntity> theaterEntitys = seatPolicyEntity.getTheaterEntity();
-        List<TheaterDTO> theaterDTOs = new ArrayList<>();
-
-        for (TheaterEntity theaterEntity : theaterEntitys){
-            TheaterDTO theaterDTO = TheaterDTO.builder()
-                    .no(theaterEntity.getNo())
-                    .build();
-
-            theaterDTOs.add(theaterDTO);
-        }
-
         return SeatPolicyDTO.builder()
                 .policyId(seatPolicyEntity.getPolicyId())
                 .name(seatPolicyEntity.getName())
                 .cost(seatPolicyEntity.getCost())
-                .theater(theaterDTOs)
                 .build();
     }
 }

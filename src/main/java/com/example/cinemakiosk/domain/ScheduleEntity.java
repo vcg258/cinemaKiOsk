@@ -45,20 +45,6 @@ public class ScheduleEntity {
      * @return DTO
      */
     public static ScheduleDTO toDTO(ScheduleEntity scheduleEntity) {
-        List<ReservationDetailsEntity> reservationDetailsEntitys = scheduleEntity.getReservationDetailsEntity();
-        List<ReservationDetailsDTO> reservationDetailsDTOs = new ArrayList<>();
-
-        for (ReservationDetailsEntity reservationDetailsEntity : reservationDetailsEntitys) {
-            ReservationDetailsDTO reservationDetailsDTO = ReservationDetailsDTO.builder()
-                    .id(reservationDetailsEntity.getId())
-                    .build();
-
-            reservationDetailsDTOs.add(reservationDetailsDTO);
-        }
-
-        StatisticsDTO statisticsDTO = StatisticsDTO.builder()
-                .id(scheduleEntity.getStatisticsEntity().getStatisticsId())
-                .build();
 
         return ScheduleDTO.builder()
                 .id(scheduleEntity.getId())
@@ -66,8 +52,6 @@ public class ScheduleEntity {
                 .movie(MovieEntity.toDTO(scheduleEntity.getMovieEntity()))
                 .startAt(scheduleEntity.getStartAt())
                 .endAt(scheduleEntity.getEndAt())
-                .reservationDetails(reservationDetailsDTOs)
-                .statistics(statisticsDTO)
                 .build();
     }
 }

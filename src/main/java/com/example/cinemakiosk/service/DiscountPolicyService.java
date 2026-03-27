@@ -1,5 +1,6 @@
 package com.example.cinemakiosk.service;
 
+import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
 import org.springframework.data.domain.Page;
 
@@ -32,5 +33,7 @@ public interface DiscountPolicyService {
 
     // 페이징 처리 (로그까지 전체 조회)
     Page<DiscountPolicyDTO> getDiscountPolicyPage(int page);
+
+    CouponDTO getCoupon(String couponNum);
 
 }

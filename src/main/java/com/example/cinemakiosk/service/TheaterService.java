@@ -1,12 +1,13 @@
 package com.example.cinemakiosk.service;
 
+import com.example.cinemakiosk.dto.SeatPolicyDTO;
 import com.example.cinemakiosk.dto.TheaterDTO;
 
 import java.util.List;
 
 public interface TheaterService {
     // 좌석 정책 생성
-    void createSeat(TheaterDTO theaterDTO);
+    void createSeat(SeatPolicyDTO seatPolicyDTO);
 
     // 좌석 정책 1개를 확인
     TheaterDTO readSeat(Long no);
@@ -15,7 +16,7 @@ public interface TheaterService {
     List<TheaterDTO> readAllSeat();
 
     // 좌석 정책 1개를 수정
-    void updateSeat(TheaterDTO theaterDTO);
+    void updateSeat(SeatPolicyDTO seatPolicyDTO);
 
     // 좌석 정책 1개를 삭제
     void deleteSeat(Long no);

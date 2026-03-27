@@ -1,6 +1,7 @@
 package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.domain.SeatPolicyEntity;
+import com.example.cinemakiosk.dto.SeatPolicyDTO;
 import com.example.cinemakiosk.dto.TheaterDTO;
 import com.example.cinemakiosk.mapper.SeatPolicyMapper;
 import com.example.cinemakiosk.mapper.TheaterMapper;
@@ -24,13 +25,13 @@ public class TheaterServiceImpl implements TheaterService {
 
     /**
      * 좌석 정책 생성 / 추가 (일반: 5000, 리클라이너: 10000, 커플석: 15000, VIP: 7000)
-     * @param theaterDTO 상영관 DTO
+     * @param seatPolicyDTO 좌석 정책 DTO
      */
     @Override
-    public void createSeat(TheaterDTO theaterDTO) {
+    public void createSeat(SeatPolicyDTO seatPolicyDTO) {
         SeatPolicyEntity dto = SeatPolicyEntity.builder()
-                .name(theaterDTO.getSeatPolicy().getName())
-                .cost(theaterDTO.getSeatPolicy().getCost())
+                .name(seatPolicyDTO.getName())
+                .cost(seatPolicyDTO.getCost())
                 .build();
         SeatPolicyEntity seatPolicyEntity = seatPolicyRepository.save(dto);
         log.info("createSeat... 좌석 정책 생성 / 추가 내역: {}", seatPolicyEntity);
@@ -56,10 +57,10 @@ public class TheaterServiceImpl implements TheaterService {
     }
 
     /**
-     * @param theaterDTO
+     * @param seatPolicyDTO
      */
     @Override
-    public void updateSeat(TheaterDTO theaterDTO) {
+    public void updateSeat(SeatPolicyDTO seatPolicyDTO) {
 
     }
 

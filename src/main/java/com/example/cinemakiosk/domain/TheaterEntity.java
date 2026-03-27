@@ -40,22 +40,11 @@ public class TheaterEntity {
      * @return DTO
      */
     public static TheaterDTO toDTO(TheaterEntity theaterEntity){
-        List<ScheduleEntity> scheduleEntitys = theaterEntity.getScheduleEntity();
-        List<ScheduleDTO> scheduleDTOs = new ArrayList<>();
-
-        for (ScheduleEntity scheduleEntity : scheduleEntitys){
-            ScheduleDTO scheduleDTO = ScheduleDTO.builder()
-                    .id(scheduleEntity.getId())
-                    .build();
-
-            scheduleDTOs.add(scheduleDTO);
-        }
 
         return TheaterDTO.builder()
                 .no(theaterEntity.getNo())
                 .seatPolicy(SeatPolicyEntity.toDTO(theaterEntity.getSeatPolicyEntity()))
                 .cleanupTime(theaterEntity.getCleanupTime())
-                .schedule(scheduleDTOs)
                 .build();
     }
 }

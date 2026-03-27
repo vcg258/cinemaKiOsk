@@ -113,7 +113,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
         String couponNum = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
         CouponDTO couponDTO = CouponDTO.builder()
                 .couponNum(couponNum)
-                .discountPolicy(DiscountPolicyDTO.builder().id(policyId).build())
+                .policyId(policyId)
                 .status(true) // 사용 가능
                 .build();
 
@@ -170,5 +170,15 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
         Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("id").descending());
         Page<DiscountPolicyEntity> policy = discountPolicyRepository.findAll(pageable);
         return policy.map(discountPolicy -> DiscountPolicyEntity.toDTO(discountPolicy));
+    }
+
+    /**
+     * 쿠폰 단일 조회
+     * @param couponNum 쿠폰 번호
+     * @return 쿠폰 하나 조회
+     */
+    @Override
+    public CouponDTO getCoupon(String couponNum) {
+        return CouponEntity.toDTO(couponRepository.findById(couponNum).orElseThrow());
     }
 }
