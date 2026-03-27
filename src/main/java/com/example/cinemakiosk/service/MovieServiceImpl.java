@@ -3,6 +3,8 @@ package com.example.cinemakiosk.service;
 import com.example.cinemakiosk.domain.MovieEntity.MovieEntity;
 import com.example.cinemakiosk.domain.MovieEntity.Rating;
 import com.example.cinemakiosk.dto.MovieDTO;
+import com.example.cinemakiosk.dto.MovieRequestDTO;
+import com.example.cinemakiosk.dto.MovieResponseDTO;
 import com.example.cinemakiosk.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +12,8 @@ import lombok.extern.log4j.Log4j2;
 import net.coobird.thumbnailator.Thumbnailator;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -174,19 +178,34 @@ public class MovieServiceImpl implements MovieService {
 
         return movieDTOList;
     }
-//
+
+    @Override
+    public MovieResponseDTO<MovieDTO> getList(MovieRequestDTO movieRequestDTO) {
+        String[] types = movieRequestDTO.getTypes();
+        String keyword = movieRequestDTO.getKeyword();
+//        movieRepository
+
+
+        return null;
+    }
+
 //    @Override
-//    public List<MovieDTO> findBySeveral(String keyWord, String genre, Rating rating) {
+//    public PageResponseDTO<BoardDTO> getList(MovieDTO movieDTO) {
+//        // 1. searchAll() 실행
+//        String[] types = movieDTO.getTypes();
+//        String keyword = movieDTO.getKeyword();
+//        Pageable pageable = movieDTO.getPageAble("bno");
+//        Page<Board> result = boardRepository.searchAll(types, keyword, pageable);
 //
-//        List<MovieEntity> movieEntityList = movieRepository.
-//
-//        List<MovieDTO> movieDTOList = new ArrayList<>();
-//
-//
-//        return movieDTOList.stream()
-//                .filter(m -> keyWord == null || m.getTitle().contains(keyWord))
-//                .filter(m -> genre == null || m.getGenre().equals(genre))
-//                .filter(m -> rating == null || m.getRating() == rating)
-//                .collect(Collectors.toList());
+//        // 2. PageResponseDTO 생성 후 반환
+//        List<BoardDTO> dtoList = new ArrayList<>();
+//        for (Board board : result.getContent()) {
+//            dtoList.add(modelMapper.map(board, BoardDTO.class));
+//        }
+//        return PageResponseDTO.<BoardDTO>withAll()
+//                .pageRequestDTO(pageRequestDTO)
+//                .total((int) result.getTotalElements())
+//                .dtoList(dtoList)
+//                .build();
 //    }
 }

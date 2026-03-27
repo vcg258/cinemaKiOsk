@@ -2,6 +2,8 @@ package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.domain.MovieEntity.Rating;
 import com.example.cinemakiosk.dto.MovieDTO;
+import com.example.cinemakiosk.dto.MovieRequestDTO;
+import com.example.cinemakiosk.dto.MovieResponseDTO;
 
 import java.util.List;
 
@@ -29,9 +31,8 @@ public interface MovieService {
 
     // 관람등급으로 조회
     List<MovieDTO> findByRating(Rating rating); //
-//
-//    // 여러 조건 조회, 이걸로 위 3조건 조회는 통합후 삭제 고려
-//    List<MovieDTO> findBySeveral(String keyWord, String genre, Rating rating);
 
+    // 여러 조건 조회
+    MovieResponseDTO<MovieDTO> getList(MovieRequestDTO movieRequestDTO);
 }
 

@@ -50,10 +50,9 @@ public class MovieController {
 
     // 전체 영화 조회
     @GetMapping("/all")
-    public void readAll(Long movieId, Model model) {
-        log.info("movieId: {}", movieId);
+    public void readAll(Model model) {
 
-        model.addAttribute("movie", movieService.getMovieById(movieId));
+        model.addAttribute("movie", movieService.getAllMovies());
     }
 
     // 키워드로 조회
@@ -80,7 +79,6 @@ public class MovieController {
             throw new RuntimeException(e);
         }
 
-        log.info("로그" + ResponseEntity.ok().headers(headers).body(resource));
 
         // 타입과 경로 반환
         return ResponseEntity.ok().headers(headers).body(resource);

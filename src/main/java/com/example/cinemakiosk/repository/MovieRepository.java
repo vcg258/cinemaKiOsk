@@ -18,5 +18,5 @@ import java.util.Optional;
 
         List<MovieEntity> findByGenre(String genre);
 
-    Optional<MovieEntity> findByTitle(String title);
+        Optional<MovieEntity> findByTitle(String title);
 }
