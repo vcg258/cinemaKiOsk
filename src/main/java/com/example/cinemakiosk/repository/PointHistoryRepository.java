@@ -1,6 +1,6 @@
 package com.example.cinemakiosk.repository;
 
-import com.example.cinemakiosk.domain.PointHistoryEntity.PointHistoryEntity;
+import com.example.cinemakiosk.domain.PointHistoryEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

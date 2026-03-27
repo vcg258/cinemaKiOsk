@@ -1,13 +1,12 @@
 package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.domain.CouponEntity;
-import com.example.cinemakiosk.domain.DiscountPolicyEntity.DiscountPolicyEntity;
+import com.example.cinemakiosk.domain.DiscountPolicyEntity;
 import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
 import com.example.cinemakiosk.mapper.DiscountPolicyMapper;
 import com.example.cinemakiosk.repository.CouponRepository;
 import com.example.cinemakiosk.repository.DiscountPolicyRepository;
-import com.example.cinemakiosk.vo.CouponVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;

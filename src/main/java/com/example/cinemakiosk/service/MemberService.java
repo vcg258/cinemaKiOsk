@@ -1,6 +1,5 @@
 package com.example.cinemakiosk.service;
 
-import com.example.cinemakiosk.domain.PointHistoryEntity.Type;
 import com.example.cinemakiosk.dto.PointHistoryDTO;
 
 public interface MemberService {

@@ -1,12 +1,8 @@
 package com.example.cinemakiosk.domain;
 
-import com.example.cinemakiosk.domain.PointHistoryEntity.PointHistoryEntity;
 import com.example.cinemakiosk.dto.MemberDTO;
 import com.example.cinemakiosk.dto.PointHistoryDTO;
 import com.example.cinemakiosk.dto.ReservationDetailsDTO;
-import com.example.cinemakiosk.vo.MemberVO;
-import com.example.cinemakiosk.vo.PointHistoryVO;
-import com.example.cinemakiosk.vo.ReservationDetailsVO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,6 +29,10 @@ public class MemberEntity{
     private List<PointHistoryEntity> pointHistoryEntity;
     @OneToMany(mappedBy = "memberEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<ReservationDetailsEntity> reservationDetailsEntity;
+
+    public void setPoint(int point){
+        this.point = point;
+    }
 
     /**
      * Entity -> DTO

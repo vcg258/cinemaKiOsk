@@ -18,7 +18,7 @@ public class AdminDTO {
     private String loginId;
     private String password;    // 로그인 요청 시 사용, 응답 시엔 null로 두면 됨
     private String name;
-    private String phoneAdmin;
+    private String adminPhone;
     private boolean level;      // false: 마스터, true: 알바
     private String uuid;          // 자동 로그인 토큰
     private LocalDateTime createAt;
@@ -35,7 +35,7 @@ public class AdminDTO {
                 .loginId(adminDTO.getLoginId())
                 .password(adminDTO.getPassword())  // 암호화된 비밀번호 저장
                 .name(adminDTO.getName())
-                .phoneAdmin(adminDTO.getPhoneAdmin())
+                .adminPhone(adminDTO.getAdminPhone())
                 .level(adminDTO.isLevel())
                 .uuid(adminDTO.getUuid())
                 .createAt(adminDTO.getCreateAt())
@@ -53,7 +53,7 @@ public class AdminDTO {
                 .loginId(adminDTO.getLoginId())
                 .password(adminDTO.getPassword())  // 암호화된 비밀번호 저장
                 .name(adminDTO.getName())
-                .phoneAdmin(adminDTO.getPhoneAdmin())
+                .adminPhone(adminDTO.getAdminPhone())
                 .level(adminDTO.isLevel())
                 .uuid(adminDTO.getUuid())
                 .createAt(adminDTO.getCreateAt())

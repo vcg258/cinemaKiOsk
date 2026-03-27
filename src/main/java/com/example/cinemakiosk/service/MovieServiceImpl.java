@@ -1,7 +1,7 @@
 package com.example.cinemakiosk.service;
 
-import com.example.cinemakiosk.domain.MovieEntity.MovieEntity;
-import com.example.cinemakiosk.domain.MovieEntity.Rating;
+import com.example.cinemakiosk.domain.MovieEntity;
+import com.example.cinemakiosk.domain.enums.Rating;
 import com.example.cinemakiosk.dto.MovieDTO;
 import com.example.cinemakiosk.dto.MovieRequestDTO;
 import com.example.cinemakiosk.dto.MovieResponseDTO;
@@ -97,6 +97,15 @@ public class MovieServiceImpl implements MovieService {
         MovieEntity movieEntity = optionalMovieEntity.orElseThrow();
         MovieDTO movieDTO = MovieEntity.toDTO(movieEntity);
         return movieDTO;
+    }
+
+    /**
+     * @param title
+     * @return
+     */
+    @Override
+    public MovieDTO getMovieByTitle(String title) {
+        return null;
     }
 
     //전체 조회

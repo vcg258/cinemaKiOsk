@@ -1,7 +1,6 @@
 package com.example.cinemakiosk.mapper;
 
-import com.example.cinemakiosk.domain.MovieEntity.MovieEntity;
-import com.example.cinemakiosk.dto.MovieDTO;
+import com.example.cinemakiosk.domain.MovieEntity;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

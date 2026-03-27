@@ -1,8 +1,6 @@
 package com.example.cinemakiosk.controller;
 
 import com.example.cinemakiosk.dto.MovieDTO;
-import com.example.cinemakiosk.dto.upload.UploadFileDTO;
-import com.example.cinemakiosk.dto.upload.UploadResultDTO;
 import com.example.cinemakiosk.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

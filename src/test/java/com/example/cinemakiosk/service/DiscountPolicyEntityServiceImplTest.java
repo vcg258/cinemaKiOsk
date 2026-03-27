@@ -1,7 +1,7 @@
 package com.example.cinemakiosk.service;
 
-import com.example.cinemakiosk.domain.DiscountPolicyEntity.ConditionType;
-import com.example.cinemakiosk.domain.DiscountPolicyEntity.DiscountType;
+import com.example.cinemakiosk.domain.enums.ConditionType;
+import com.example.cinemakiosk.domain.enums.DiscountType;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;

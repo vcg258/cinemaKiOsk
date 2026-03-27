@@ -1,7 +1,5 @@
 package com.example.cinemakiosk.vo;
 
-import com.example.cinemakiosk.domain.BonusPolicyEntity;
-import com.example.cinemakiosk.domain.PaymentDetailsEntity.PaymentDetailsEntity;
 import com.example.cinemakiosk.dto.BonusPolicyDTO;
 import com.example.cinemakiosk.dto.PaymentDetailsDTO;
 import lombok.AllArgsConstructor;

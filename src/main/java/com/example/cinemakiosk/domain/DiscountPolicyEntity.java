@@ -1,6 +1,7 @@
-package com.example.cinemakiosk.domain.DiscountPolicyEntity;
+package com.example.cinemakiosk.domain;
 
-import com.example.cinemakiosk.domain.CouponEntity;
+import com.example.cinemakiosk.domain.enums.ConditionType;
+import com.example.cinemakiosk.domain.enums.DiscountType;
 import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
 import jakarta.persistence.*;

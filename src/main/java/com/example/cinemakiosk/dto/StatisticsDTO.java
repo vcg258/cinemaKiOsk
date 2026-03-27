@@ -1,14 +1,11 @@
 package com.example.cinemakiosk.dto;
 
-import com.example.cinemakiosk.domain.ScheduleEntity;
 import com.example.cinemakiosk.domain.StatisticsEntity;
 import com.example.cinemakiosk.domain.enums.Days;
-import com.example.cinemakiosk.vo.ScheduleVO;
 import com.example.cinemakiosk.vo.StatisticsVO;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter

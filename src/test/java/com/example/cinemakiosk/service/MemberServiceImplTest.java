@@ -1,10 +1,9 @@
 package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.domain.MemberEntity;
-import com.example.cinemakiosk.domain.PaymentDetailsEntity.PaymentDetailsEntity;
-import com.example.cinemakiosk.domain.PaymentDetailsEntity.Status;
-import com.example.cinemakiosk.domain.PointHistoryEntity.PointHistoryEntity;
-import com.example.cinemakiosk.domain.PointHistoryEntity.Type;
+import com.example.cinemakiosk.domain.PaymentDetailsEntity;
+import com.example.cinemakiosk.domain.enums.Status;
+import com.example.cinemakiosk.domain.enums.Type;
 import com.example.cinemakiosk.dto.PointHistoryDTO;
 import com.example.cinemakiosk.repository.MemberRepository;
 import com.example.cinemakiosk.repository.PaymentDetailsRepository;
@@ -14,12 +13,9 @@ import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.Rollback;
 
 import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Log4j2
 @SpringBootTest

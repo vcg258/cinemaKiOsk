@@ -1,8 +1,8 @@
 package com.example.cinemakiosk.dto;
 
-import com.example.cinemakiosk.domain.PaymentDetailsEntity.PaymentDetailsEntity;
-import com.example.cinemakiosk.domain.PaymentDetailsEntity.Status;
-import com.example.cinemakiosk.domain.PointHistoryEntity.PointHistoryEntity;
+import com.example.cinemakiosk.domain.PaymentDetailsEntity;
+import com.example.cinemakiosk.domain.enums.Status;
+import com.example.cinemakiosk.domain.PointHistoryEntity;
 import com.example.cinemakiosk.vo.PaymentDetailsVO;
 import com.example.cinemakiosk.vo.PointHistoryVO;
 import lombok.AllArgsConstructor;

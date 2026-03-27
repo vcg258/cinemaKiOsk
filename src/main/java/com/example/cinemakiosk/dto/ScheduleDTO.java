@@ -1,13 +1,9 @@
 package com.example.cinemakiosk.dto;
 
-import com.example.cinemakiosk.domain.MovieEntity.MovieEntity;
 import com.example.cinemakiosk.domain.ReservationDetailsEntity;
 import com.example.cinemakiosk.domain.ScheduleEntity;
 import com.example.cinemakiosk.domain.StatisticsEntity;
 import com.example.cinemakiosk.vo.*;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import lombok.*;
 
 import java.time.LocalDateTime;

@@ -1,7 +1,7 @@
 package com.example.cinemakiosk.vo;
 
-import com.example.cinemakiosk.domain.DiscountPolicyEntity.ConditionType;
-import com.example.cinemakiosk.domain.DiscountPolicyEntity.DiscountType;
+import com.example.cinemakiosk.domain.enums.ConditionType;
+import com.example.cinemakiosk.domain.enums.DiscountType;
 import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
 import lombok.*;

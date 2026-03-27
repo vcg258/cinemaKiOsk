@@ -1,7 +1,7 @@
 package com.example.cinemakiosk.dto;
 
 import com.example.cinemakiosk.domain.MemberEntity;
-import com.example.cinemakiosk.domain.PointHistoryEntity.PointHistoryEntity;
+import com.example.cinemakiosk.domain.PointHistoryEntity;
 import com.example.cinemakiosk.domain.ReservationDetailsEntity;
 import com.example.cinemakiosk.vo.MemberVO;
 import com.example.cinemakiosk.vo.PointHistoryVO;

@@ -1,8 +1,6 @@
 package com.example.cinemakiosk.vo;
 
-import com.example.cinemakiosk.domain.MovieEntity.MovieEntity;
-import com.example.cinemakiosk.domain.MovieEntity.Rating;
-import com.example.cinemakiosk.domain.ScheduleEntity;
+import com.example.cinemakiosk.domain.enums.Rating;
 import com.example.cinemakiosk.dto.MovieDTO;
 import com.example.cinemakiosk.dto.ScheduleDTO;
 import lombok.Builder;

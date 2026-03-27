@@ -1,6 +1,5 @@
 package com.example.cinemakiosk.vo;
 
-import com.example.cinemakiosk.domain.AdminEntity;
 import com.example.cinemakiosk.dto.AdminDTO;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -19,7 +18,7 @@ public class AdminVO {
     private String loginId;
     private String password;    // 로그인 요청 시 사용, 응답 시엔 null로 두면 됨
     private String name;
-    private String phoneAdmin;
+    private String adminPhone;
     private boolean level;      // false: 마스터, true: 알바
     private String uuid;          // 자동 로그인 토큰
     private LocalDateTime createAt;
@@ -35,7 +34,7 @@ public class AdminVO {
                 .loginId(adminVO.getLoginId())
                 .password(adminVO.getPassword())  // 암호화된 비밀번호 저장
                 .name(adminVO.getName())
-                .phoneAdmin(adminVO.getPhoneAdmin())
+                .adminPhone(adminVO.getAdminPhone())
                 .level(adminVO.isLevel())
                 .uuid(adminVO.getUuid())
                 .createAt(adminVO.getCreateAt())

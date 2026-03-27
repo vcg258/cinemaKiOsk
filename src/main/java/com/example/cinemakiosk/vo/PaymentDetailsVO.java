@@ -1,7 +1,6 @@
 package com.example.cinemakiosk.vo;
 
-import com.example.cinemakiosk.domain.PaymentDetailsEntity.Status;
-import com.example.cinemakiosk.domain.PointHistoryEntity.PointHistoryEntity;
+import com.example.cinemakiosk.domain.enums.Status;
 import com.example.cinemakiosk.dto.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

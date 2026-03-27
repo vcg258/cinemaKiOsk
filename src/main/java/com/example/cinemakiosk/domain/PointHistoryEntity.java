@@ -1,12 +1,7 @@
-package com.example.cinemakiosk.domain.PointHistoryEntity;
+package com.example.cinemakiosk.domain;
 
-import com.example.cinemakiosk.domain.MemberEntity;
-import com.example.cinemakiosk.domain.PaymentDetailsEntity.PaymentDetailsEntity;
-import com.example.cinemakiosk.domain.TimeBaseEntity;
-import com.example.cinemakiosk.dto.MemberDTO;
-import com.example.cinemakiosk.dto.PaymentDetailsDTO;
+import com.example.cinemakiosk.domain.enums.Type;
 import com.example.cinemakiosk.dto.PointHistoryDTO;
-import com.example.cinemakiosk.vo.PointHistoryVO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,7 +32,7 @@ public class PointHistoryEntity{
     private Type type; // 적립 / 사용 ('EARN', 'USE')
 
     @Column(nullable = false, columnDefinition = "BIGINT UNSIGNED")
-    private Long amountPoint; // 사용할 포인트
+    private Integer amountPoint; // 사용할 포인트
     
     @Column(nullable = false, columnDefinition = "DATETIME DEFAULT NOW()")
     private LocalDateTime createAt; // 포인트 변경일

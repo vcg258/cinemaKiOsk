@@ -1,13 +1,8 @@
 package com.example.cinemakiosk.vo;
 
-import com.example.cinemakiosk.domain.MemberEntity;
-import com.example.cinemakiosk.domain.PointHistoryEntity.PointHistoryEntity;
-import com.example.cinemakiosk.domain.ReservationDetailsEntity;
 import com.example.cinemakiosk.dto.MemberDTO;
 import com.example.cinemakiosk.dto.PointHistoryDTO;
 import com.example.cinemakiosk.dto.ReservationDetailsDTO;
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
 import lombok.*;
 
 import java.time.LocalDateTime;

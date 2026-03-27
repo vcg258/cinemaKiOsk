@@ -1,7 +1,6 @@
-package com.example.cinemakiosk.domain.MovieEntity;
+package com.example.cinemakiosk.domain;
 
-import com.example.cinemakiosk.domain.ScheduleEntity;
-import com.example.cinemakiosk.domain.TimeBaseEntity;
+import com.example.cinemakiosk.domain.enums.Rating;
 import com.example.cinemakiosk.dto.MovieDTO;
 import com.example.cinemakiosk.dto.ScheduleDTO;
 import jakarta.persistence.*;

@@ -1,9 +1,9 @@
 package com.example.cinemakiosk.dto;
 
 import com.example.cinemakiosk.domain.CouponEntity;
-import com.example.cinemakiosk.domain.DiscountPolicyEntity.ConditionType;
-import com.example.cinemakiosk.domain.DiscountPolicyEntity.DiscountPolicyEntity;
-import com.example.cinemakiosk.domain.DiscountPolicyEntity.DiscountType;
+import com.example.cinemakiosk.domain.enums.ConditionType;
+import com.example.cinemakiosk.domain.DiscountPolicyEntity;
+import com.example.cinemakiosk.domain.enums.DiscountType;
 import com.example.cinemakiosk.vo.CouponVO;
 import com.example.cinemakiosk.vo.DiscountPolicyVO;
 import lombok.AllArgsConstructor;

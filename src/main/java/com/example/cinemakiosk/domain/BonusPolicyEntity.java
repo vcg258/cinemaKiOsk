@@ -1,10 +1,7 @@
 package com.example.cinemakiosk.domain;
 
-import com.example.cinemakiosk.domain.PaymentDetailsEntity.PaymentDetailsEntity;
 import com.example.cinemakiosk.dto.BonusPolicyDTO;
 import com.example.cinemakiosk.dto.PaymentDetailsDTO;
-import com.example.cinemakiosk.vo.BonusPolicyVO;
-import com.example.cinemakiosk.vo.PaymentDetailsVO;
 import jakarta.persistence.*;
 import lombok.*;
 

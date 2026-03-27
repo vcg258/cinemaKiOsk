@@ -1,4 +1,4 @@
-package com.example.cinemakiosk.domain.MovieEntity;
+package com.example.cinemakiosk.domain.enums;
 
 
 public enum Rating {

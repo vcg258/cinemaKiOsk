@@ -1,8 +1,8 @@
 package com.example.cinemakiosk.repository;
 
-import com.example.cinemakiosk.domain.DiscountPolicyEntity.ConditionType;
-import com.example.cinemakiosk.domain.DiscountPolicyEntity.DiscountPolicyEntity;
-import com.example.cinemakiosk.domain.DiscountPolicyEntity.DiscountType;
+import com.example.cinemakiosk.domain.enums.ConditionType;
+import com.example.cinemakiosk.domain.DiscountPolicyEntity;
+import com.example.cinemakiosk.domain.enums.DiscountType;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

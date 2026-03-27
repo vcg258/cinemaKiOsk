@@ -1,10 +1,6 @@
 package com.example.cinemakiosk.domain;
 
-import com.example.cinemakiosk.domain.MovieEntity.MovieEntity;
 import com.example.cinemakiosk.dto.*;
-import com.example.cinemakiosk.vo.ReservationDetailsVO;
-import com.example.cinemakiosk.vo.ScheduleVO;
-import com.example.cinemakiosk.vo.StatisticsVO;
 import jakarta.persistence.*;
 import lombok.*;
 

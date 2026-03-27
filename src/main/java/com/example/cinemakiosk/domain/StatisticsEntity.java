@@ -1,14 +1,11 @@
 package com.example.cinemakiosk.domain;
 
 import com.example.cinemakiosk.domain.enums.Days;
-import com.example.cinemakiosk.dto.ScheduleDTO;
 import com.example.cinemakiosk.dto.StatisticsDTO;
-import com.example.cinemakiosk.vo.StatisticsVO;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter

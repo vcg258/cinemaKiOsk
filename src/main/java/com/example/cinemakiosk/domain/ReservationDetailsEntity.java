@@ -1,11 +1,7 @@
 package com.example.cinemakiosk.domain;
 
-import com.example.cinemakiosk.domain.PaymentDetailsEntity.PaymentDetailsEntity;
 import com.example.cinemakiosk.dto.ReservationDetailsDTO;
 import com.example.cinemakiosk.dto.ReservationSeatDTO;
-import com.example.cinemakiosk.dto.ScheduleDTO;
-import com.example.cinemakiosk.vo.ReservationDetailsVO;
-import com.example.cinemakiosk.vo.ReservationSeatVO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;

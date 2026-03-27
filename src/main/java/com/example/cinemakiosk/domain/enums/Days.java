@@ -1,5 +1,5 @@
 package com.example.cinemakiosk.domain.enums;
 
 public enum Days {
-    SUN, MON, TUE, WED, THU, FRI, SAT
+    SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY
 }

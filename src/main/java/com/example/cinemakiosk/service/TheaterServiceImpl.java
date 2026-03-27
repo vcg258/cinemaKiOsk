@@ -30,8 +30,8 @@ public class TheaterServiceImpl implements TheaterService {
     public void createSeat(TheaterDTO theaterDTO) {
         SeatPolicyEntity dto = SeatPolicyEntity.builder()
                 .policyId(UUID.randomUUID().toString())
-                .name(theaterDTO.getSeatPolicyDTO().getName())
-                .cost(theaterDTO.getSeatPolicyDTO().getCost())
+                .name(theaterDTO.getSeatPolicy().getName())
+                .cost(theaterDTO.getSeatPolicy().getCost())
                 .build();
         SeatPolicyEntity seatPolicyEntity = seatPolicyRepository.save(dto);
         log.info("createSeat... 좌석 정책 생성 / 추가 내역: {}", seatPolicyEntity);

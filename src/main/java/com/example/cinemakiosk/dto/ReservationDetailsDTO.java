@@ -1,12 +1,9 @@
 package com.example.cinemakiosk.dto;
 
-import com.example.cinemakiosk.domain.PaymentDetailsEntity.PaymentDetailsEntity;
 import com.example.cinemakiosk.domain.ReservationDetailsEntity;
 import com.example.cinemakiosk.domain.ReservationSeatEntity;
 import com.example.cinemakiosk.vo.ReservationDetailsVO;
 import com.example.cinemakiosk.vo.ReservationSeatVO;
-import com.example.cinemakiosk.vo.ScheduleVO;
-import com.example.cinemakiosk.dto.ScheduleDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

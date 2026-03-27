@@ -1,7 +1,6 @@
 package com.example.cinemakiosk.domain;
 
 import com.example.cinemakiosk.dto.AdminDTO;
-import com.example.cinemakiosk.vo.AdminVO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -56,7 +55,7 @@ public class AdminEntity{
                 .loginId(adminEntity.getLoginId())
                 .password(adminEntity.getPassword())  // 암호화된 비밀번호 저장
                 .name(adminEntity.getName())
-                .phoneAdmin(adminEntity.getPhoneAdmin())
+                .adminPhone(adminEntity.getAdminPhone())
                 .level(adminEntity.isLevel())
                 .uuid(adminEntity.getUuid())
                 .createAt(adminEntity.getCreateAt())

@@ -1,7 +1,7 @@
 package com.example.cinemakiosk.dto;
 
-import com.example.cinemakiosk.domain.PointHistoryEntity.PointHistoryEntity;
-import com.example.cinemakiosk.domain.PointHistoryEntity.Type;
+import com.example.cinemakiosk.domain.PointHistoryEntity;
+import com.example.cinemakiosk.domain.enums.Type;
 import com.example.cinemakiosk.vo.PointHistoryVO;
 import lombok.*;
 
@@ -17,7 +17,7 @@ public class PointHistoryDTO {
     private PaymentDetailsDTO paymentId; // 결제 고유번호 FK
     private MemberDTO phone; // 회원번호 FK
     private Type type; // 적립 / 사용 ('EARN', 'USE')
-    private Long amountPoint; // 사용할 포인트
+    private Integer amountPoint; // 사용할 포인트
     private LocalDateTime createAt; // 포인트 변경일
 
     /**

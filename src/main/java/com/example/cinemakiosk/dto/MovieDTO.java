@@ -1,11 +1,12 @@
 package com.example.cinemakiosk.dto;
 
-import com.example.cinemakiosk.domain.MovieEntity.MovieEntity;
-import com.example.cinemakiosk.domain.MovieEntity.Rating;
+import com.example.cinemakiosk.domain.MovieEntity;
+import com.example.cinemakiosk.domain.enums.Rating;
 import com.example.cinemakiosk.domain.ScheduleEntity;
 import com.example.cinemakiosk.vo.MovieVO;
 import com.example.cinemakiosk.vo.ScheduleVO;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class MovieDTO {
     private LocalDateTime endAt;
     private LocalDateTime createAt;
     private List<ScheduleDTO> schedules;
+    private MultipartFile image;
 
     /**
      * DTO -> Entity

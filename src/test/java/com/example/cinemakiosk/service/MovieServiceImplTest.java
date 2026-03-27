@@ -1,6 +1,6 @@
 package com.example.cinemakiosk.service;
 
-import com.example.cinemakiosk.domain.MovieEntity.Rating;
+import com.example.cinemakiosk.domain.enums.Rating;
 import com.example.cinemakiosk.dto.MovieDTO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
