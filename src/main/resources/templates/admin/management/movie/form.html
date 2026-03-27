@@ -7,10 +7,12 @@
             actor, description, startAt, endAt
   TheaterDTO: no, name, cost, cleanupTime
 -->
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
 
 <head>
+  <meta charset="UTF-8">
   <title th:text="${movie != null} ? '영화 수정 | CineOS 관리자' : '영화 등록 | CineOS 관리자'">
     영화 등록/수정 | CineOS 관리자
   </title>

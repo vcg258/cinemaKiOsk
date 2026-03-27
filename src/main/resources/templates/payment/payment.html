@@ -19,7 +19,7 @@
       Step 1~2 생략 → Step 3 (쿠폰) 부터 자동 오픈
 
   ▶ 기능 요약
-    - 임시 점유 타이머 10분 카운트다운 (만료 시 UC-03 재시작)
+    - 임시 점유 타이머: idle-timer.js 위임 (footer 자동이동 뱃지 + 경고 오버레이)
     - 예매 정보 요약 (영화·날짜·시간·상영관·좌석·인원)
     - 포인트 사용 (인증 완료 후 페이지 인라인 입력, 전액 사용)
     - 쿠폰 적용 (UI만 구현, API 연동 TODO)
@@ -32,7 +32,7 @@
     ※ '결제하기' 별도 버튼 없음 — 카드/간편결제 버튼 클릭 시 즉시 결제
 
   ▶ 레이아웃
-    헤더 (.payment-header) : 단계 표시기 + 타이머 (전체 너비)
+    헤더 (.payment-header) : 단계 표시기 (전체 너비)
     본문 (.payment-layout)  : 2단 그리드
       └ 왼쪽 (.payment-panel--left)  : 예매정보 / 포인트 / 쿠폰 / 재오픈 버튼
       └ 오른쪽 (.payment-panel--right): 결제금액 + 결제수단
@@ -51,10 +51,12 @@
     templates/payment/payment.html
   ─────────────────────────────────────────────────────────────────────────
 -->
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/base :: layout(~{::title}, ~{::main}, ~{::link})}">
 
 <head>
+  <meta charset="UTF-8">
   <title>결제 | CineOS</title>
   <link rel="stylesheet" th:href="@{/css/payment.css}">
 </head>
@@ -63,7 +65,8 @@
 <main class="payment-main">
 
   <!-- ══════════════════════════════════════════════════════════════════
-       헤더: 예매 단계 표시기 + 타이머 (전체 너비)
+       헤더: 예매 단계 표시기 (전체 너비)
+       ※ 임시 점유 타이머는 idle-timer.js 위임 (base.html 공통 로드)
   ══════════════════════════════════════════════════════════════════ -->
   <div class="payment-header">
 
@@ -83,26 +86,8 @@
       </li>
     </ol>
 
-    <!-- 임시 점유 타이머 (10분 카운트다운) -->
-    <div class="payment-timer" id="payment-timer"
-         role="timer" aria-live="polite" aria-label="좌석 임시 점유 잔여 시간">
-
-      <div class="payment-timer__left">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-             width="18" height="18" aria-hidden="true" class="payment-timer__icon">
-          <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22
-                   12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8
-                   8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
-        </svg>
-        <span class="payment-timer__label">좌석 임시 점유 시간</span>
-      </div>
-
-      <span class="payment-timer__countdown" id="timer-countdown">10:00</span>
-
-      <div class="payment-timer__bar-wrap" aria-hidden="true">
-        <div class="payment-timer__bar" id="timer-bar" style="width: 100%;"></div>
-      </div>
-    </div>
+    <!-- 임시 점유 타이머: idle-timer.js (base.html 공통) 로 위임
+         footer 의 자동이동 뱃지 + 15초 경고 오버레이로 표시됨 -->
 
   </div><!-- /.payment-header -->
 
@@ -518,6 +503,7 @@
     /*]]>*/
   </script>
 
+  <!-- 결제 처리 JS (UC-04~06: 금액 계산·모달·결제 요청) -->
   <script th:src="@{/js/booking/payment.js}"></script>
 
 </main>

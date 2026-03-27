@@ -18,7 +18,7 @@
  *      Step 1~2 생략 → 포인트 섹션 즉시 활성화 → Step 3 자동 오픈
  *
  * ▶ 담당 기능
- *   1. 임시 점유 타이머 10분 카운트다운 (만료 → /movie/list)
+ *   1. 임시 점유 타이머 1분 카운트다운 (조작 시 리셋, 만료 → /)
  *   2. 자동 모달 흐름 (회원 확인 → 인증 → 쿠폰)
  *   3. 포인트 사용 UI (인증 완료 후 페이지 인라인 입력)
  *   4. 쿠폰 적용 UI + 가격 반영 (API TODO)
@@ -53,11 +53,6 @@
    상수
 ══════════════════════════════════════════════════════════════════ */
 
-/** 임시 좌석 점유 제한: 10분 (600초) */
-const TIMER_TOTAL_SEC = 600;
-
-/** 긴급 임박 기준: 3분(180초) 이하 시 빨간 경고 표시 */
-const TIMER_URGENT_SEC = 180;
 
 /** 청소년 요금 비율: 성인 SEAT_COST 의 80% */
 const TEEN_COST_RATIO = 0.8;
@@ -98,8 +93,6 @@ const DEV_MOCK_POINT_BALANCE = 5000;
 /**
  * 결제 화면 상태 객체
  * @type {{
- *   timerSec: number,
- *   timerInterval: number|null,
  *   usePoint: number,
  *   memberPhone: string|null,
  *   memberPointBalance: number,
@@ -109,8 +102,6 @@ const DEV_MOCK_POINT_BALANCE = 5000;
  * }}
  */
 const state = {
-  timerSec:            TIMER_TOTAL_SEC,
-  timerInterval:       null,
   usePoint:            0,
   memberPhone:         MEMBER_PHONE,       // 서버 세션에서 주입, 없으면 null
   memberPointBalance:  MEMBER_POINT,       // 서버 세션에서 주입, 없으면 0
@@ -173,73 +164,12 @@ function formatDatetime(startIso, endIso) {
 
 
 /* ══════════════════════════════════════════════════════════════════
-   타이머 (UC-04 임시 좌석 점유 10분)
+   타이머
+   ─────────────────────────────────────────────────────────────────
+   임시 점유 타이머는 idle-timer.js (base.html 공통 로드) 로 위임.
+   결제 페이지도 idleTimer=true 로 footer 뱃지 + 경고 오버레이 공통 사용.
+   별도 타이머 UI(진행 바 등)는 제거함.
 ══════════════════════════════════════════════════════════════════ */
-
-/**
- * 10분 카운트다운 타이머 시작.
- * 1초마다 DOM 업데이트 & 진행 바 축소.
- * 만료 시 onTimerExpired() 호출.
- */
-function startTimer() {
-  const countdownEl = document.getElementById('timer-countdown');
-  const barEl       = document.getElementById('timer-bar');
-  const timerEl     = document.getElementById('payment-timer');
-
-  state.timerInterval = setInterval(() => {
-    state.timerSec--;
-
-    /* ── 남은 시간 텍스트 업데이트 (MM:SS) ── */
-    const min = Math.floor(state.timerSec / 60);
-    const sec = state.timerSec % 60;
-    countdownEl.textContent =
-      `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
-
-    /* ── 진행 바 너비 갱신 ── */
-    const ratio = (state.timerSec / TIMER_TOTAL_SEC) * 100;
-    barEl.style.width = `${ratio}%`;
-
-    /* ── 긴급 상태 진입 (3분 이하) ── */
-    if (state.timerSec <= TIMER_URGENT_SEC) {
-      countdownEl.classList.add('is-urgent');
-      timerEl.classList.add('is-urgent');
-    }
-
-    /* ── 만료 처리 ── */
-    if (state.timerSec <= 0) {
-      clearInterval(state.timerInterval);
-      state.timerInterval = null;
-      onTimerExpired();
-    }
-  }, 1000);
-}
-
-/**
- * 타이머 정지 (결제 성공 후 호출).
- */
-function stopTimer() {
-  if (state.timerInterval !== null) {
-    clearInterval(state.timerInterval);
-    state.timerInterval = null;
-  }
-}
-
-/**
- * 타이머 만료 처리.
- * UC-04 명세: "시간 초과로 예매가 취소되었습니다." → /movie/list 이동.
- */
-function onTimerExpired() {
-  if (typeof CineOS !== 'undefined' && CineOS.modal) {
-    CineOS.modal.alert({
-      title:   '시간 초과',
-      message: '시간 초과로 예매가 취소되었습니다.',
-      onClose: () => { window.location.href = '/movie/list'; },
-    });
-  } else {
-    alert('시간 초과로 예매가 취소되었습니다.');
-    window.location.href = '/movie/list';
-  }
-}
 
 
 /* ══════════════════════════════════════════════════════════════════
@@ -813,7 +743,7 @@ function initPayMethodButtons() {
 /**
  * 결제 요청.
  * POST /api/payment
- * 성공: stopTimer() → /payment/result?reservationId= 이동
+ * 성공: /payment/result?reservationId= 이동
  * 실패: "결제에 실패하였습니다. 다시 시도해 주세요." → 버튼 복원
  *
  * @param {string|null} method 결제 수단 코드 (PAY_METHOD).
@@ -856,7 +786,7 @@ async function submitPayment(method) {
     // TODO: 백엔드 PaymentController 구현 후 엔드포인트·응답 형식 확인
     await CineOS.api.post('/api/payment', payload);
 
-    stopTimer();
+    /* stopTimer() 제거 — idle-timer.js 로 위임, 페이지 이동 시 자동 소멸 */
     if (typeof CineOS !== 'undefined' && CineOS.loading) CineOS.loading.hide();
 
     /* UC-07 결제 완료 화면으로 이동 */
@@ -926,81 +856,60 @@ function initSeatsDisplay() {
 /**
  * DOMContentLoaded 이후 전체 결제 페이지 초기화.
  * 실행 순서:
- *   1. 기본 요금 계산
- *   2. 예매 정보 날짜 포맷 변환
- *   3. 좌석 번호 표시
- *   4. 이벤트 리스너 등록
- *      - 결제 수단 버튼 (클릭 즉시 결제)
- *      - 포인트 입력
- *      - 쿠폰 취소
- *      - 0원 결제 버튼
- *      - 모달 재오픈 버튼
- *   5. 초기 가격 UI 렌더링
- *   6. 타이머 시작
- *   7. 자동 모달 흐름 시작 (회원 확인 → 인증 → 쿠폰)
+ *   1. 기본 요금 계산 → state.basePrice 설정
+ *   2. 가격 UI 초기 렌더링
+ *   3. 포인트 입력 이벤트 등록
+ *   4. 결제 수단 버튼 이벤트 등록
+ *   5. 예매 정보 날짜 포맷 변환
+ *   6. 좌석 번호 보완 (SSR 값 없을 때 JS 상수로 대체)
+ *   7. 자동 모달 흐름 시작 (300ms 지연 — 화면 렌더 완료 후 오픈)
+ *   8. 재오픈 버튼 + 0원 결제 버튼 이벤트 등록
  */
-function initPage() {
+document.addEventListener('DOMContentLoaded', () => {
 
-  /* 1. 기본 요금 계산 */
+  /* ── 1. 기본 요금 계산 ────────────────────────────────────────── */
   state.basePrice = calcBasePrice();
 
-  /* 2. 예매 날짜·시간 포맷 변환 */
-  initBookingDatetime();
+  /* ── 2. 가격 UI 초기 렌더링 ──────────────────────────────────── */
+  updatePriceUI();
 
-  /* 3. 좌석 번호 표시 */
-  initSeatsDisplay();
-
-  /* 4. 이벤트 리스너 등록 */
-
-  /* 결제 수단 버튼: 클릭 즉시 결제 */
-  initPayMethodButtons();
-
-  /* 포인트 입력 */
+  /* ── 3. 포인트 입력 이벤트 등록 ──────────────────────────────── */
   initPointInput();
 
-  /* 쿠폰 취소 버튼 */
-  const btnCouponRemove = document.getElementById('btn-coupon-remove');
-  if (btnCouponRemove) {
-    btnCouponRemove.addEventListener('click', removeCoupon);
-  }
+  /* ── 4. 결제 수단 버튼 이벤트 등록 ──────────────────────────── */
+  initPayMethodButtons();
 
-  /* 0원 결제 버튼 (포인트·쿠폰 전액 적용 시 표시) */
-  const btnFreePay = document.getElementById('btn-free-pay');
-  if (btnFreePay) {
-    btnFreePay.addEventListener('click', () => {
-      submitPayment(null); // 0원: 결제 수단 불필요
-    });
-  }
+  /* ── 5. 예매 정보 날짜 포맷 변환 (SSR 보완) ───────────────────── */
+  initBookingDatetime();
 
-  /* 모달 재오픈 버튼: 회원 정보 / 쿠폰 정보 변경 시 사용 */
-  const btnReopenModal = document.getElementById('btn-reopen-modal');
-  if (btnReopenModal) {
-    btnReopenModal.addEventListener('click', () => {
-      /* 포인트 섹션이 이미 활성화된 경우(회원 인증 완료) → 쿠폰 Step만 재오픈
-         미인증 상태면 → Step 1부터 재시작 */
+  /* ── 6. 좌석 번호 보완 (SSR '-' 인 경우 JS 상수로 대체) ─────── */
+  initSeatsDisplay();
+
+  /* ── 7. 자동 모달 흐름 시작 ──────────────────────────────────── */
+  /* 300ms 지연: DOM 렌더링 + idle-timer.js 초기화 완료 후 모달 오픈 */
+  setTimeout(startInitialModal, 300);
+
+  /* ── 8-a. 재오픈 버튼: 회원 정보 / 쿠폰 변경 ───────────────── */
+  const btnReopen = document.getElementById('btn-reopen-modal');
+  if (btnReopen) {
+    btnReopen.addEventListener('click', () => {
+      /* 인증 완료 여부에 따라 진입 단계 결정 */
       if (state.memberPhone !== null) {
+        /* 이미 인증됨 → 쿠폰 단계만 재오픈 */
         openModalStep3Coupon();
       } else {
+        /* 미인증 → Step 1 부터 다시 */
         openModalStep1Member();
       }
     });
   }
 
-  /* 5. 초기 가격 UI 렌더링 */
-  updatePriceUI();
-
-  /* 6. 타이머 시작 */
-  startTimer();
-
-  /* 7. 자동 모달 흐름 시작
-     setTimeout 0: 현재 콜 스택이 완전히 비워진 후 실행하여
-     모달 fragment DOM이 layout에 의해 확실히 렌더링된 뒤 모달을 오픈 */
-  setTimeout(startInitialModal, 0);
-}
-
-
-/* ══════════════════════════════════════════════════════════════════
-   DOM 준비 후 실행
-══════════════════════════════════════════════════════════════════ */
-
-document.addEventListener('DOMContentLoaded', initPage);
+  /* ── 8-b. 0원 결제 버튼 (포인트·쿠폰 전액 적용 시) ─────────── */
+  const btnFreePay = document.getElementById('btn-free-pay');
+  if (btnFreePay) {
+    btnFreePay.addEventListener('click', () => {
+      /* method=null → submitPayment 내부에서 0원 결제로 처리 */
+      submitPayment(null);
+    });
+  }
+});

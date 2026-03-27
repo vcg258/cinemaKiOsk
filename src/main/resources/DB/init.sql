@@ -143,7 +143,7 @@ CREATE TABLE IF NOT EXISTS `reservation_details`
     `create_at`   DATETIME        NOT NULL COMMENT '예매 기준시',
     CONSTRAINT `fk_reservation_details_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES schedule (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_reservation_details_members_phone` FOREIGN KEY (`phone`) REFERENCES member (`phone`)
+    CONSTRAINT `fk_reservation_details_member_phone` FOREIGN KEY (`phone`) REFERENCES member (`phone`)
         ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT '예매 내역';
 
@@ -157,6 +157,7 @@ CREATE TABLE IF NOT EXISTS `reservation_seat`
         ON DELETE CASCADE ON UPDATE CASCADE
 
 ) COMMENT '예매 좌석';
+
 
 
 CREATE TABLE IF NOT EXISTS `payment_details`

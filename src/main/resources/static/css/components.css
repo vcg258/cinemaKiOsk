@@ -1132,3 +1132,129 @@ select.form-control {
   color: var(--text-secondary);
   margin: 0 0 8px;
 }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   12. 미조작 타이머 (idle-timer)
+   ─────────────────────────────────────────────────────────────────────────
+   base.html 에서 th:if="${idleTimer}" 조건으로 예매 페이지에서만 표시.
+   idle-timer.js 와 연동.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 푸터 카운트다운 뱃지 ──────────────────────────────────────────────── */
+
+/* 뱃지 컨테이너: 푸터 중앙 영역에 배치 */
+.idle-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 999px;                        /* 알약 형태 */
+  background: var(--color-neutral-700);
+  border: 1px solid var(--color-neutral-400);
+  font-size: 0.78rem;
+  color: var(--color-neutral-200);
+  transition: background 0.3s, color 0.3s, border-color 0.3s;
+  user-select: none;
+}
+
+/* 15초 이하 긴급 상태 — 빨간 계열로 전환 */
+.idle-badge--urgent {
+  background: var(--color-error-bg-dark);
+  border-color: var(--color-error-main);
+  color: var(--color-error-light);
+  animation: idle-badge-pulse 0.8s ease-in-out infinite alternate;
+}
+
+/* 긴급 상태 맥박 효과 */
+@keyframes idle-badge-pulse {
+  from { opacity: 1; }
+  to   { opacity: 0.65; }
+}
+
+/* 뱃지 내부 초 숫자 */
+.idle-badge__count {
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;          /* 숫자 고정폭 (레이아웃 흔들림 방지) */
+  min-width: 2ch;
+  text-align: right;
+}
+
+/* ── 전체화면 경고 오버레이 ────────────────────────────────────────────── */
+
+/* 오버레이 배경: 반투명 어두운 전체화면 */
+.idle-warning {
+  position: fixed;
+  inset: 0;                                    /* top/right/bottom/left: 0 */
+  z-index: 9000;                               /* 모달(9999) 아래, 일반 UI 위 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(14, 11, 8, 0.85);          /* --color-neutral-900 + 불투명도 */
+  backdrop-filter: blur(6px);
+  animation: idle-fade-in 0.25s ease both;
+}
+
+/* 숨김 상태 */
+.idle-warning--hidden {
+  display: none;
+}
+
+/* 오버레이 등장 페이드인 */
+@keyframes idle-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* 오버레이 내부 박스 */
+.idle-warning__box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 48px 64px;
+  background: var(--color-neutral-800);
+  border: 1px solid var(--color-neutral-400);
+  border-radius: 24px;
+  text-align: center;
+  max-width: 480px;
+  width: 90vw;
+}
+
+/* 안내 메시지 */
+.idle-warning__msg {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--color-neutral-warm-white);
+  line-height: 1.5;
+}
+
+/* 카운트다운 숫자 + 단위 묶음 */
+.idle-warning__count-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+/* 큰 카운트다운 숫자 */
+.idle-warning__count {
+  font-size: 6rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-error-light);
+  line-height: 1;
+}
+
+/* 숫자 옆 "초" 단위 텍스트 */
+.idle-warning__unit {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--color-error-light);
+}
+
+/* 하단 힌트 텍스트 */
+.idle-warning__hint {
+  font-size: 0.95rem;
+  color: var(--color-neutral-200);
+}

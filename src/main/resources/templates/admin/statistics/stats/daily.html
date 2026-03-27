@@ -5,10 +5,12 @@
   Model: statistics(List<StatisticsDTO>), startDate(String), endDate(String)
   StatisticsDTO: id, scheduleId, day, revenue, customerCount
 -->
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-base :: layout(~{::title}, ~{::main})}">
 
 <head>
+  <meta charset="UTF-8">
   <title>일일 통계 | CineOS 관리자</title>
 </head>
 

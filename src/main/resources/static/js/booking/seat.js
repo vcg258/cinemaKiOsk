@@ -489,7 +489,7 @@ function updateSelectionDisplay() {
   // 버튼 텍스트에 선택 현황 반영
   $btnNext.textContent = ready
     ? `다음 — 결제 (${count}석)`
-    : `좌석을 ${REQUIRED_SEAT_COUNT - count}개 더 선택해주세요`;
+    : `좌석을 선택해주세요`;
 }
 
 

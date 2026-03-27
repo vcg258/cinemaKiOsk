@@ -94,6 +94,14 @@
       <span>처음으로</span>
     </a>
 
+    <!-- 미조작 카운트다운 뱃지 (idleTimer=true 페이지에서만 표시) -->
+    <!-- idle-timer.js 가 #idle-countdown 숫자를 1초마다 갱신함 -->
+    <div th:if="${idleTimer}" id="idle-badge" class="idle-badge" aria-live="polite" aria-label="자동 이동까지 남은 시간">
+      <span class="idle-badge__label">자동이동</span>
+      <span id="idle-countdown" class="idle-badge__count">60</span>
+      <span class="idle-badge__unit">초</span>
+    </div>
+
     <!-- 현재 시각 (JS로 실시간 업데이트) -->
     <div class="footer-clock">
       <time id="footer-time">00:00</time>
@@ -114,6 +122,27 @@
   ══════════════════════════════════════════════ -->
   <div th:replace="~{fragments/alert :: alert-container}">
     <!-- alert placeholder -->
+  </div>
+
+  <!-- 미조작 경고 오버레이 (idleTimer=true 페이지에서만 삽입) -->
+  <!--
+    idle-timer.js 가 남은 시간이 15초 이하가 되면 idle-warning--hidden 클래스를 제거해 표시.
+    사용자가 화면을 터치/클릭하면 다시 hidden 처리되고 타이머가 리셋됨.
+  -->
+  <div th:if="${idleTimer}"
+       id="idle-warning"
+       class="idle-warning idle-warning--hidden"
+       role="alertdialog"
+       aria-modal="true"
+       aria-label="자동 이동 경고">
+    <div class="idle-warning__box">
+      <p class="idle-warning__msg">잠시 후 처음 화면으로 이동합니다</p>
+      <div class="idle-warning__count-wrap" aria-live="assertive">
+        <span id="idle-warning-count" class="idle-warning__count">15</span>
+        <span class="idle-warning__unit">초</span>
+      </div>
+      <p class="idle-warning__hint">화면을 터치하면 계속 이용할 수 있습니다</p>
+    </div>
   </div>
 
   <!-- ── 공통 JS ──────────────────────────── -->
@@ -140,6 +169,13 @@
       setInterval(updateClock, 60_000);
     })();
   </script>
+
+  <!-- 미조작 방지 타이머 스크립트 (idleTimer=true 페이지에서만 로드) -->
+  <!--
+    common.js 이후에 로드해야 DOM이 준비된 상태에서 실행됨.
+    예매 흐름 외 페이지(홈, 관리자 등)에서는 로드되지 않음.
+  -->
+  <script th:if="${idleTimer}" th:src="@{/js/idle-timer.js}"></script>
 
 </body>
 </html>

@@ -128,3 +128,46 @@
   --border-default: #dfe0df;             /* 기본 구분선 */
   --border-subtle:  rgba(79, 69, 55, 0.12); /* 미세 구분선 */
 }
+
+
+/* =====================================================
+   View Transitions API — 페이지 전환 애니메이션
+   ─────────────────────────────────────────────────────
+   Chrome 126+ 에서 동일 출처(same-origin) 이동 시
+   자동으로 전환 애니메이션을 적용한다.
+   미지원 브라우저(크롬 125 이하, Firefox 등)에서는
+   이 블록 전체가 무시되어 기존처럼 즉시 이동한다.
+   ===================================================== */
+
+/* 자동 View Transition 활성화 — window.location.href 포함 모든 동일 출처 이동에 적용 */
+@view-transition {
+  navigation: auto;
+}
+
+/* ── 나가는 페이지: 살짝 위로 올라가며 페이드아웃 ── */
+::view-transition-old(root) {
+  animation: vt-page-out 0.22s ease-out both;
+}
+
+/* ── 들어오는 페이지: 아래에서 올라오며 페이드인 ── */
+::view-transition-new(root) {
+  animation: vt-page-in 0.28s ease-out both;
+}
+
+@keyframes vt-page-out {
+  from { opacity: 1; transform: translateY(0)    scale(1);    }
+  to   { opacity: 0; transform: translateY(-10px) scale(0.98); }
+}
+
+@keyframes vt-page-in {
+  from { opacity: 0; transform: translateY(12px)  scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+/* ── 접근성: 애니메이션 줄이기 설정 시 즉시 전환 ── */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
