@@ -29,7 +29,6 @@ public class TheaterServiceImpl implements TheaterService {
     @Override
     public void createSeat(TheaterDTO theaterDTO) {
         SeatPolicyEntity dto = SeatPolicyEntity.builder()
-                .policyId(UUID.randomUUID().toString())
                 .name(theaterDTO.getSeatPolicy().getName())
                 .cost(theaterDTO.getSeatPolicy().getCost())
                 .build();

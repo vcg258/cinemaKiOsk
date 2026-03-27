@@ -18,8 +18,9 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "seat_policy")
 public class SeatPolicyEntity {
-    @Column(columnDefinition = "CHAR(36)")
-    @Id private String policyId; // 좌석 아이디
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "BIGINT UNSIGNED")
+    @Id private Long policyId; // 좌석 아이디
     @Column(length = 20)
     private String name; // 좌석 이름
     @Column(columnDefinition = "BIGINT UNSIGNED DEFAULT 0")

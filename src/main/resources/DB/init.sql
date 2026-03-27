@@ -23,8 +23,6 @@ CREATE TABLE IF NOT EXISTS `admin` # FK (X)
     `create_at`   DATETIME           NOT NULL COMMENT '계정 생성 일자'
 ) COMMENT '관리자';
 
-insert into admin (login_id, password, name, admin_phone, level, UUID, create_at)
-values (1, 1, '관리자', '010-1234-5678', '0', null, now());
 
 CREATE TABLE IF NOT EXISTS `member` # FK (X)
 (
@@ -36,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `member` # FK (X)
 
 CREATE TABLE IF NOT EXISTS `seat_policy` # FK (X)
 (
-    `policy_id` CHAR(36) PRIMARY KEY COMMENT '좌석 아이디',
+    `policy_id` BIGINT UNSIGNED PRIMARY KEY COMMENT '좌석 아이디',
     `name`      VARCHAR(20)     NULL COMMENT '좌석 이름',
     `cost`      BIGINT UNSIGNED NULL DEFAULT 0 COMMENT '좌석 비용'
 ) COMMENT '좌석 정책';
@@ -102,7 +100,7 @@ CREATE TABLE IF NOT EXISTS `coupon`
 CREATE TABLE IF NOT EXISTS `theater`
 (
     `no`           BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '상영관 번호',
-    `policy_id`    char(36)        NOT NULL COMMENT '좌석 정책 FK',
+    `policy_id`    BIGINT UNSIGNED        NOT NULL COMMENT '좌석 정책 FK',
     `cleanup_time` BIGINT UNSIGNED NULL DEFAULT 0 COMMENT '정리시간',
     CONSTRAINT `fk_theater_policy_id` FOREIGN KEY (`policy_id`) REFERENCES seat_policy (`policy_id`)
         ON DELETE CASCADE ON UPDATE CASCADE
@@ -167,7 +165,7 @@ CREATE TABLE IF NOT EXISTS `payment_details`
     `bonus_policy_id` BIGINT UNSIGNED              NULL COMMENT '적립 정책 FK', # NOT NULL -> NULL 이유 : 비회원일 경우 NULL
     `coupon_num`      VARCHAR(12)                  NULL COMMENT '할인 쿠폰 FK',
     `cost`            BIGINT UNSIGNED              NOT NULL COMMENT '결제 금액',
-    `create_at`            DATETIME                     NOT NULL COMMENT '결제 시간',
+    `create_at`       DATETIME                     NOT NULL COMMENT '결제 시간',
     `use_point`       BIGINT UNSIGNED              NULL DEFAULT 0 COMMENT '사용 포인트',
     `status`          ENUM ('PAY','RETURN','FAIL') NOT NULL COMMENT '결제 내용',
     CONSTRAINT `fk_payment_details_reservation_id` FOREIGN KEY (`reservation_id`) REFERENCES reservation_details (`id`)
@@ -182,11 +180,11 @@ CREATE TABLE IF NOT EXISTS `payment_details`
 CREATE TABLE IF NOT EXISTS `point_history`
 (
     `point_id`     BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '포인트 인덱스',
-    `payment_id`   char(36)             NOT NULL COMMENT '결제 고유번호 FK',
-    `phone`        VARCHAR(20)          NOT NULL COMMENT '회원 번호 FK',
+    `payment_id`   char(36)                                          NOT NULL COMMENT '결제 고유번호 FK',
+    `phone`        VARCHAR(20)                                       NOT NULL COMMENT '회원 번호 FK',
     `type`         ENUM ('EARN', 'USE', 'REFUND_EARN', 'REFUND_USE') NOT NULL COMMENT '적립 / 사용 / 환불-적립 / 환불-사용',
-    `amount_point` INT UNSIGNED      NOT NULL COMMENT '적립/사용 포인트',
-    `create_at`    DATETIME             NOT NULL COMMENT '포인트 변경일', # TODO BaseTime안쓸시 change_at
+    `amount_point` INT UNSIGNED                                      NOT NULL COMMENT '적립/사용 포인트',
+    `create_at`    DATETIME                                          NOT NULL COMMENT '포인트 변경일', # TODO BaseTime안쓸시 change_at
     CONSTRAINT `fk_point_history_payment_id` FOREIGN KEY (`payment_id`) REFERENCES payment_details (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_point_history_phone` FOREIGN KEY (`phone`) REFERENCES member (`phone`)

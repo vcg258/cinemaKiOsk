@@ -20,6 +20,7 @@ public class TheaterDTO {
     private SeatPolicyDTO seatPolicy; // 좌석 정책 FK
     private Long cleanupTime; // 정리시간(분)
     private List<ScheduleDTO> schedule; // 1:다
+    private SeatPolicyDTO seatPolicyDTO;
 
     /**
      * DTO -> Entity
