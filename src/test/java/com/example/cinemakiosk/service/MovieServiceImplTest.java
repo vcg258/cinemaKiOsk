@@ -24,13 +24,13 @@ class MovieServiceImplTest {
         LocalDateTime now = LocalDateTime.now();
         MovieDTO movieDTO = MovieDTO.builder()
                 .genre("wpwp")
-                .rating(Rating.ALL)
+                .rating(Rating.FIFTEEN.getConversion())
                 .actors("일반인1")
                 .createAt(LocalDateTime.now())
                 .startAt(LocalDateTime.now())
                 .endAt(LocalDateTime.now())
                 .description("일반인의 일반적인 일상")
-                .title("하드")
+                .title("아이언맨3")
                 .director("일반적인 감독")
                 .runtime(120L)
                 .build();
@@ -41,7 +41,14 @@ class MovieServiceImplTest {
     // 상세조회
     @Test
     void getMovieById() {
-        MovieDTO movieDTO = moviceService.getMovieById(1L);
+        MovieDTO movieDTO = moviceService.getMovieById(26L);
+        log.info(movieDTO);
+    }
+
+    // 제목으로 상세조회
+    @Test
+    void getMovieByTitle() {
+        MovieDTO movieDTO = moviceService.getMovieByTitle("아이언맨3");
         log.info(movieDTO);
     }
 

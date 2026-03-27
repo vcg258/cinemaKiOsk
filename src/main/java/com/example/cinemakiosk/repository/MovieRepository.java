@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
     public interface MovieRepository extends JpaRepository<MovieEntity, Long> {
@@ -17,4 +18,5 @@ import java.util.List;
 
         List<MovieEntity> findByGenre(String genre);
 
-    }
+        Optional<MovieEntity> findByTitle(String title);
+}
