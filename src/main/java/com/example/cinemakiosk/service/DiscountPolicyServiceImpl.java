@@ -86,7 +86,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      * @param id 정책 번호 FK
      */
     @Override
-    public void finishActivation(Long id) {
+    public void finishActivation(Long id) { // TODO batch 사용으로 만료시간이 되면 자동 비활성화로 변경 해야함
         DiscountPolicyEntity discountPolicyEntity = discountPolicyRepository.findById(id).orElseThrow();
         discountPolicyEntity.finalDiscountPolicy(LocalDateTime.now().withHour(23).withMinute(59).withSecond(59));
         log.info("Finish discountPolicy: {}", discountPolicyEntity);

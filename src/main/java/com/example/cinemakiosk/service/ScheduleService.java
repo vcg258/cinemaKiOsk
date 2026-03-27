@@ -22,7 +22,4 @@ public interface ScheduleService {
 
     // 스케줄 하나 조회 (좌석 선택 화면에서 사용)
     ScheduleDTO getSchedule(Long scheduleId);
-
-    // 필요없는 스케줄 제거
-    void delete(Long no);
 }
