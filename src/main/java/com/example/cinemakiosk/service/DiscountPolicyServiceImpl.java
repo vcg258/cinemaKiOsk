@@ -7,6 +7,7 @@ import com.example.cinemakiosk.dto.DiscountPolicyDTO;
 import com.example.cinemakiosk.mapper.DiscountPolicyMapper;
 import com.example.cinemakiosk.repository.CouponRepository;
 import com.example.cinemakiosk.repository.DiscountPolicyRepository;
+import com.example.cinemakiosk.vo.CouponVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -87,9 +88,15 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     @Override
     public void finishActivation(Long id) { // TODO batch 사용으로 만료시간이 되면 자동 비활성화로 변경 해야함
         DiscountPolicyEntity discountPolicyEntity = discountPolicyRepository.findById(id).orElseThrow();
+
+        if (!discountPolicyEntity.isActivation()) {
+            log.info("finishActivation... 이미 비활성화 된 정책입니다. {}", discountPolicyEntity);
+            return;
+        }
+
         discountPolicyEntity.finalDiscountPolicy(LocalDateTime.now().withHour(23).withMinute(59).withSecond(59));
-        log.info("Finish discountPolicy: {}", discountPolicyEntity);
-        discountPolicyRepository.save(discountPolicyEntity);
+        DiscountPolicyEntity policy = discountPolicyRepository.save(discountPolicyEntity);
+        log.info("finishActivation... 할인정책 종료시간 지정 : {}", policy);
     }
 
     /**
@@ -139,9 +146,9 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
         LocalDateTime now = LocalDateTime.now();
         if (!(now.isBefore(discountPolicyDTO.getEndAt()) && now.isAfter(discountPolicyDTO.getStartAt()))) return false;
         // 쿠폰 번호가 일치하고 사용여부가 true일경우
-        for (CouponDTO couponDTO : discountPolicyDTO.getCoupons()) {
-            if (couponDTO.getCouponNum().equals(couponNum)) {
-                return couponDTO.isStatus(); // true 사용가능
+        for (CouponVO couponVO : discountPolicyDTO.getCoupons()) {
+            if (couponVO.getCouponNum().equals(couponNum)) {
+                return couponVO.isStatus(); // true 사용가능
             }
         }
 

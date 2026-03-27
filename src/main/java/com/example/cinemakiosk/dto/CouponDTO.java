@@ -27,11 +27,14 @@ public class CouponDTO {
      */
     public static CouponEntity toEntity(CouponDTO couponDTO) {
 
-        // discountPolicy 객체가 있으면 그걸 사용, 없으면 policyId로 Entity 생성
         DiscountPolicyEntity discountPolicyEntity = null;
+
+        // DiscountPolicy객체가 존재하면 PK 반환
         if (couponDTO.getDiscountPolicy() != null) {
-            discountPolicyEntity = DiscountPolicyDTO.toEntity(couponDTO.getDiscountPolicy());
-        } else if (couponDTO.getPolicyId() != null) {
+            discountPolicyEntity = DiscountPolicyEntity.builder()
+                    .id(couponDTO.getDiscountPolicy().getId())
+                    .build();
+        } else if (couponDTO.getPolicyId() != null){ // 존재 하지 않는다면 policyId만 반환
             discountPolicyEntity = DiscountPolicyEntity.builder()
                     .id(couponDTO.getPolicyId())
                     .build();
@@ -39,7 +42,7 @@ public class CouponDTO {
 
         return CouponEntity.builder()
                 .couponNum(couponDTO.getCouponNum())
-                .discountPolicyEntity(DiscountPolicyDTO.toEntity(couponDTO.getDiscountPolicy()))
+                .discountPolicyEntity(discountPolicyEntity)
                 .status(couponDTO.isStatus())
                 .build();
     }

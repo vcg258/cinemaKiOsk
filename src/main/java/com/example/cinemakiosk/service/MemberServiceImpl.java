@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Log4j2
 @Service
 @RequiredArgsConstructor
@@ -38,14 +40,15 @@ public class MemberServiceImpl implements MemberService{
         MemberDTO memberDTO = MemberDTO.builder()
                 .phone(phone)
                 .point(point)
+                .createAt(LocalDateTime.now())
                 .build();
         log.info("createMember... 신규 회원 정보 : {}", memberDTO);
         memberRepository.save(MemberDTO.toEntity(memberDTO));
 
 
         PointHistoryDTO pointHistoryDTO = PointHistoryDTO.builder()
-                .paymentId(PaymentDetailsDTO.builder().id(paymentId).build())
-                .phone(MemberDTO.builder().phone(phone).build())
+                .paymentId(paymentId) // TODO 26-03-28 수정 해야함
+                .phone(phone)
                 .type(Type.EARN)
                 .amountPoint(point)
                 .build();

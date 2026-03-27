@@ -53,7 +53,7 @@ class DiscountPolicyEntityServiceImplTest {
 
     @Test
     public void changeActivationTest() {
-        discountPolicyService.changeActivation(1L, false);
+        discountPolicyService.changeActivation(1L, true);
     }
 
     @Test
@@ -63,13 +63,13 @@ class DiscountPolicyEntityServiceImplTest {
 
     @Test
     public void authCouponTest() {
-        boolean result = discountPolicyService.authCoupon(1L, "cc37ef42cdaa");
+        boolean result = discountPolicyService.authCoupon(1L, "8930bc2b36dd");
         log.info("result: {}", result);
     }
 
     @Test
     public void updateCouponStatusTest() {
-        discountPolicyService.updateStatus("cc37ef42cdaa", true);
+        discountPolicyService.updateStatus("8930bc2b36dd", false);
     }
 
     @Test
@@ -82,6 +82,6 @@ class DiscountPolicyEntityServiceImplTest {
 
     @Test
     public void test() {
-        discountPolicyService.getCoupon("123");
+        log.info(discountPolicyService.getCoupon("8930bc2b36dd"));
     }
 }

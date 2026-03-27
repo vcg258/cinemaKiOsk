@@ -29,7 +29,7 @@ public class DiscountPolicyDTO {
     private LocalDateTime startAt; // 시작일
     private LocalDateTime endAt; // 만료일
     private boolean activation; // 활성화 여부
-    private List<CouponDTO> coupons; // resultMap(collection)
+    private List<CouponVO> coupons; // resultMap(collection)
 
     /**
      * DTO -> Entity
@@ -37,7 +37,6 @@ public class DiscountPolicyDTO {
      * @return Entity
      */
     public static DiscountPolicyEntity toEntity(DiscountPolicyDTO discountPolicyDTO) {
-
 
         return DiscountPolicyEntity.builder()
                 .id(discountPolicyDTO.getId())
