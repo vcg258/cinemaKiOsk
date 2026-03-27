@@ -1,10 +1,11 @@
-package com.example.cinemakiosk.domain;
+package com.example.cinemakiosk.domain.StatisticsEntity;
 
+import com.example.cinemakiosk.domain.ScheduleEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -34,11 +35,8 @@ public class StatisticsEntity {
     @Column(name = "customer_count", nullable = false)
     private Long customerCount;  // 관람객 수
 
-    @Column(name = "date", nullable = false)
+    @CreatedDate
+    @Column(nullable = false, updatable = false) // TODO (, columnDefinition = "DATETIME DEFAULT NOW()") 유무 체크
     private LocalDate date;          // 통계 기준 일시 (일일/월간 통계용)
-
-    public enum Day {
-        SUN, MON, TUE, WED, THU, FRI, SAT
-    }
 }
 

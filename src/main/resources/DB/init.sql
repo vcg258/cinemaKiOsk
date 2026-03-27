@@ -166,7 +166,7 @@ CREATE TABLE IF NOT EXISTS `payment_details`
     `bonus_policy_id` BIGINT UNSIGNED              NULL COMMENT '적립 정책 FK', # NOT NULL -> NULL 이유 : 비회원일 경우 NULL
     `coupon_num`      VARCHAR(12)                  NULL COMMENT '할인 쿠폰 FK',
     `cost`            BIGINT UNSIGNED              NOT NULL COMMENT '결제 금액',
-    `time`            DATETIME                     NOT NULL COMMENT '결제 시간',
+    `create_at`            DATETIME                     NOT NULL COMMENT '결제 시간',
     `use_point`       BIGINT UNSIGNED              NULL DEFAULT 0 COMMENT '사용 포인트',
     `status`          ENUM ('PAY','RETURN','FAIL') NOT NULL COMMENT '결제 내용',
     CONSTRAINT `fk_payment_details_reservation_id` FOREIGN KEY (`reservation_id`) REFERENCES reservation_details (`id`)

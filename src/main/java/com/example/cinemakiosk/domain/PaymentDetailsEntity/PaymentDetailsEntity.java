@@ -6,6 +6,7 @@ import com.example.cinemakiosk.domain.PointHistoryEntity.PointHistoryEntity;
 import com.example.cinemakiosk.domain.ReservationDetailsEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,8 +37,9 @@ public class PaymentDetailsEntity {
 
     @Column(nullable = false)
     private Long cost;             // 결제 금액
-    @Column(nullable = false)
-    private LocalDateTime time;    // 결제 시간
+    @CreatedDate
+    @Column(nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
+    private LocalDateTime createAt;    // 결제 시간
     @Column(columnDefinition = "BIGINT UNSIGNED DEFAULT 0")
     private Long usePoint;         // 사용 포인트 기본값 0
     @Enumerated(EnumType.STRING)

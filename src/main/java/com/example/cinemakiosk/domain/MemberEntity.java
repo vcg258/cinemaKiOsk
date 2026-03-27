@@ -3,6 +3,7 @@ package com.example.cinemakiosk.domain;
 import com.example.cinemakiosk.domain.PointHistoryEntity.PointHistoryEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,13 +15,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "member")
-public class MemberEntity extends TimeBaseEntity{
+public class MemberEntity{
     @Column(length = 20)
     @Id private String phone; // 회원 번호
     @Column(columnDefinition = "INT UNSIGNED DEFAULT 0")
     private Integer point; // 포인트
-//    @Column(nullable = false, columnDefinition = "DATETIME DEFAULT NOW()")
-//    private LocalDateTime createAt; // 생성일
+    @CreatedDate
+    @Column(nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
+    private LocalDateTime createAt; // 생성일
 
     @OneToMany(mappedBy = "memberEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<PointHistoryEntity> pointHistoryEntity;

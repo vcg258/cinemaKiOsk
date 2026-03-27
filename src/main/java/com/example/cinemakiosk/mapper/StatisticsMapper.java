@@ -1,10 +1,8 @@
 package com.example.cinemakiosk.mapper;
 
-import com.example.cinemakiosk.domain.StatisticsEntity;
-import com.example.cinemakiosk.dto.StatisticsDTO;
+import com.example.cinemakiosk.domain.StatisticsEntity.StatisticsEntity;
 import org.apache.ibatis.annotations.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper

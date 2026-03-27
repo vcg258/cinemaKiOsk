@@ -1,6 +1,7 @@
 package com.example.cinemakiosk.domain;
 
 import com.example.cinemakiosk.domain.MovieEntity.MovieEntity;
+import com.example.cinemakiosk.domain.StatisticsEntity.StatisticsEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "schedule")
-public class ScheduleEntity {
+public class ScheduleEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT UNSIGNED")
     @Id private Long id; // 스케줄 인덱스

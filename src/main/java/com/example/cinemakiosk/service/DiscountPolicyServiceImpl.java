@@ -111,7 +111,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public void createCouponNum(Long policyId) {
-        String couponNum = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 12);
+        String couponNum = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
         CouponDTO couponDTO = CouponDTO.builder()
                 .couponNum(couponNum)
                 .policyId(policyId)

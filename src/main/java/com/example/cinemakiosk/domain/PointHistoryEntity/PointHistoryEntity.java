@@ -2,9 +2,11 @@ package com.example.cinemakiosk.domain.PointHistoryEntity;
 
 import com.example.cinemakiosk.domain.MemberEntity;
 import com.example.cinemakiosk.domain.PaymentDetailsEntity.PaymentDetailsEntity;
-import com.example.cinemakiosk.domain.TimeBaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -13,7 +15,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "point_history")
-public class PointHistoryEntity extends TimeBaseEntity {
+public class PointHistoryEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT UNSIGNED")
     @Id private Long pointId; // 포인트 인덱스
@@ -33,6 +35,7 @@ public class PointHistoryEntity extends TimeBaseEntity {
     @Column(nullable = false, columnDefinition = "INT UNSIGNED")
     private Integer amountPoint; // 사용할 포인트
 
-//    @Column(nullable = false, columnDefinition = "DATETIME DEFAULT NOW()")
-//    private LocalDateTime createAt; // 포인트 변경일
+    @CreatedDate
+    @Column(nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
+    private LocalDateTime createAt; // 포인트 변경일
 }

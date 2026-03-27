@@ -1,6 +1,6 @@
 package com.example.cinemakiosk.repository;
 
-import com.example.cinemakiosk.domain.StatisticsEntity;
+import com.example.cinemakiosk.domain.StatisticsEntity.StatisticsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;

@@ -43,7 +43,7 @@ public class MemberServiceImpl implements MemberService{
                 .phone(phone)
                 .point(point)
                 .build();
-        log.info("createMember... memberDTO: {}", memberDTO);
+        log.info("createMember... 신규 회원 정보 : {}", memberDTO);
         memberRepository.save(MemberDTO.toEntity(memberDTO));
 
 
@@ -57,7 +57,7 @@ public class MemberServiceImpl implements MemberService{
         // DTO -> Entity 변환을 위해 지정
         MemberEntity member = memberRepository.findById(phone).orElseThrow();
         PaymentDetailsEntity payment = paymentDetailsRepository.getReferenceById(paymentId);
-        log.info("createMember... pointHistoryDTO: {}", pointHistoryDTO);
+        log.info("createMember... 신규 회원 포인트 내역 추가 : {}", pointHistoryDTO);
         pointHistoryRepository.save(PointHistoryDTO.toEntity(pointHistoryDTO, payment, member)); // 포인트 내역 추가
 
     }
@@ -94,10 +94,10 @@ public class MemberServiceImpl implements MemberService{
                 .amountPoint(pointHistoryDTO.getAmountPoint())
                 .build();
 
-        log.info("pointHistoryCreate... pointHistoryDTO: {}", dto);
+        log.info("pointHistoryCreate... 포인트 업데이트 내역 추가 : {}", dto);
 
         PointHistoryEntity pointHistory = pointHistoryRepository.save(PointHistoryDTO.toEntity(dto, payment, member)); // 포인트 내역 추가
-        log.info("pointHistoryCreate... 포인트 추가 내역 : {}", pointHistory);
+        log.info("pointHistoryCreate... 포인트 업데이트 내역 : {}", pointHistory);
 
         member.changePoint(amount);
         memberRepository.save(member); // 회원 잔여포인트 업데이트
@@ -143,8 +143,8 @@ public class MemberServiceImpl implements MemberService{
                 member.getPoint() - pointHistory.getAmountPoint() : member.getPoint() + pointHistory.getAmountPoint(); // 현재 포인트
 
 
-        log.info("pointHistoryCancel... type: {}", type);
-        log.info("pointHistoryCancel... amountPoint: {}", amountPoint);
+        log.info("pointHistoryCancel... 환불 타입 : {}", type);
+        log.info("pointHistoryCancel... 변경후 포인트 : {}", amountPoint);
 
         Integer changePoint = Math.abs(amountPoint - member.getPoint()); // 절댓값으로 변동 포인트 지정
         PointHistoryDTO dto = PointHistoryDTO.builder()
@@ -153,7 +153,7 @@ public class MemberServiceImpl implements MemberService{
                 .type(type)
                 .amountPoint(changePoint)
                 .build();
-        log.info("pointHistoryCancel... pointHistoryDTO: {}", dto);
+        log.info("pointHistoryCancel... 환불후 추가할 포인트 내역 : {}", dto);
 
         // DTO -> Entity 변환을 위해 지정
         PaymentDetailsEntity payment = paymentDetailsRepository.getReferenceById(pointHistoryDTO.getPaymentId());

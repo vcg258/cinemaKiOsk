@@ -2,6 +2,7 @@ package com.example.cinemakiosk.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "admin")
-public class AdminEntity {
+public class AdminEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +38,7 @@ public class AdminEntity {
     @Column(name = "uuid")
     private String uuid;          // 자동 로그인 토큰
 
-    @Column(name = "create_at", updatable = false)
+    @CreatedDate
+    @Column(nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
     private LocalDateTime createAt; // 계정 생성 일자
 }

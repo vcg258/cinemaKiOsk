@@ -1,9 +1,9 @@
 package com.example.cinemakiosk.domain.MovieEntity;
 
 import com.example.cinemakiosk.domain.ScheduleEntity;
-import com.example.cinemakiosk.domain.TimeBaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,7 +49,8 @@ public class MovieEntity{
     @Column(name = "end_at")
     private LocalDateTime endAt;
 
-    @Column(name = "create_at", updatable = false)
+    @CreatedDate
+    @Column(nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
     private LocalDateTime createAt;
 
     @OneToMany(mappedBy = "movieEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)

@@ -1,6 +1,5 @@
 package com.example.cinemakiosk.vo;
 
-import com.example.cinemakiosk.domain.StatisticsEntity;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

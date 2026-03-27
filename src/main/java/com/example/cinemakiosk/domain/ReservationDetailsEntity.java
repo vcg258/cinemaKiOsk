@@ -3,6 +3,7 @@ package com.example.cinemakiosk.domain;
 import com.example.cinemakiosk.domain.PaymentDetailsEntity.PaymentDetailsEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "reservation_details")
-public class ReservationDetailsEntity {
+public class ReservationDetailsEntity{
     @Id
     @Column(length = 36)
     private String id;                     // 예매 고유번호(uuid)
@@ -27,7 +28,8 @@ public class ReservationDetailsEntity {
     @JoinColumn(name = "phone", foreignKey = @ForeignKey(name = "fk_reservation_details_schedule_id"))
     private MemberEntity memberEntity;                  //  회원 번호 FK
 
-    @Column(nullable = false)
+    @CreatedDate
+    @Column(nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
     private LocalDateTime createAt; //  예약 시간
 
     @OneToMany(mappedBy = "reservationDetailsEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
