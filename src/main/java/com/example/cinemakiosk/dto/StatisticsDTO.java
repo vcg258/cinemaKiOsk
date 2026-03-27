@@ -1,5 +1,10 @@
 package com.example.cinemakiosk.dto;
 
+import com.example.cinemakiosk.domain.ScheduleEntity;
+import com.example.cinemakiosk.domain.StatisticsEntity;
+import com.example.cinemakiosk.domain.enums.Days;
+import com.example.cinemakiosk.vo.ScheduleVO;
+import com.example.cinemakiosk.vo.StatisticsVO;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -13,11 +18,42 @@ import java.time.LocalDateTime;
 @ToString
 public class StatisticsDTO {
 
-
-    private Long scheduleId;
-    private String day;
+    private Long id;
+    private ScheduleDTO schedule;
+    private Days day;
     private Long revenue;
     private Long customerCount;
     private LocalDate date;     // 통계 기준 일시
 
+    /**
+     * DTO -> Entity
+     * @param statisticsDTO
+     * @return Entity
+     */
+    public static StatisticsEntity toEntity(StatisticsDTO statisticsDTO){
+        return StatisticsEntity.builder()
+                .statisticsId(statisticsDTO.getId())
+                .scheduleEntity(ScheduleDTO.toEntity(statisticsDTO.getSchedule()))
+                .day(statisticsDTO.getDay())
+                .revenue(statisticsDTO.getRevenue())
+                .customerCount(statisticsDTO.getCustomerCount())
+                .date(statisticsDTO.getDate())
+                .build();
+    }
+
+    /**
+     * DTO -> VO
+     * @param statisticsDTO
+     * @return VO
+     */
+    public static StatisticsVO toVO(StatisticsDTO statisticsDTO){
+        return StatisticsVO.builder()
+                .id(statisticsDTO.getId())
+                .schedule(ScheduleDTO.toVO(statisticsDTO.getSchedule()))
+                .day(statisticsDTO.getDay())
+                .revenue(statisticsDTO.getRevenue())
+                .customerCount(statisticsDTO.getCustomerCount())
+                .date(statisticsDTO.getDate())
+                .build();
+    }
 }

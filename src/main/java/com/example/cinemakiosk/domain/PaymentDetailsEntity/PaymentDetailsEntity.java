@@ -56,7 +56,7 @@ public class PaymentDetailsEntity {
     /**
      * Entity -> DTO
      * @param paymentDetailsEntity
-     * @return
+     * @return DTO
      */
     public static PaymentDetailsDTO toDTO(PaymentDetailsEntity paymentDetailsEntity){
         //OneToMany 변수는 본인 객체를 제외한 값만 받기. 순환참조 방지.

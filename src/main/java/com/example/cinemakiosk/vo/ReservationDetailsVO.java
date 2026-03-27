@@ -1,7 +1,11 @@
 package com.example.cinemakiosk.vo;
 
+import com.example.cinemakiosk.domain.ReservationDetailsEntity;
+import com.example.cinemakiosk.domain.ReservationSeatEntity;
+import com.example.cinemakiosk.dto.PaymentDetailsDTO;
 import com.example.cinemakiosk.dto.ReservationDetailsDTO;
 import com.example.cinemakiosk.dto.ReservationSeatDTO;
+import com.example.cinemakiosk.dto.ScheduleDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,26 +24,50 @@ import java.util.List;
 public class ReservationDetailsVO {
     private String id;                     // 예매 고유번호(uuid)
     private ScheduleVO schedule;           //  스케쥴 정보
-    private String phone;                  //  회원 번호
+    private MemberVO phone;                  //  회원 번호
     private LocalDateTime reservationTime; //  예약 시간
     private List<ReservationSeatVO> seats; //  예매한 좌석들의 정보
+    private List<PaymentDetailsVO> paymentDetails; // 1:다
 
 
+    /**
+     * VO -> DTO
+     * @param reservationDetailsVO
+     * @return DTO
+     */
     public static ReservationDetailsDTO toDTO(ReservationDetailsVO reservationDetailsVO) {
 
-        List<ReservationSeatDTO> seats = new ArrayList<>();
+        List<ReservationSeatVO> reservationSeatVOs = reservationDetailsVO.getSeats();
+        List<ReservationSeatDTO> reservationSeatDTOs = new ArrayList<>();
 
-        for (var seat : reservationDetailsVO.getSeats()) {
-            seats.add(ReservationSeatVO.toDTO(seat));
+        for (ReservationSeatVO reservationSeatVO : reservationSeatVOs) {
+            ReservationSeatDTO reservationSeatDTO = ReservationSeatDTO.builder()
+                    .id(reservationSeatVO.getId())
+                    .seatNumber(reservationSeatVO.getSeatNumber())
+                    .build();
+
+            reservationSeatDTOs.add(reservationSeatDTO);
         }
-
 
         return ReservationDetailsDTO.builder()
                 .id(reservationDetailsVO.getId())
                 .schedule(ScheduleVO.toDTO(reservationDetailsVO.getSchedule()))
-                .phone(reservationDetailsVO.getPhone())
+                .phone(MemberVO.toDTO(reservationDetailsVO.getPhone()))
                 .reservationTime(reservationDetailsVO.getReservationTime())
-                .seats(seats)
+                .seats(reservationSeatDTOs)
                 .build();
+    }
+
+    /**
+     * 해당 객체가 가진 seat의 Name을 반환받기 위해서 사용함.
+     * @return seats변수 속의 seatName 
+     */
+    public List<String> getSeatName(){
+        List<String> seatName = new ArrayList<>();
+        for (ReservationSeatVO reservationSeatVO : this.seats){
+            seatName.add(reservationSeatVO.getSeatNumber());
+        }
+
+        return seatName;
     }
 }

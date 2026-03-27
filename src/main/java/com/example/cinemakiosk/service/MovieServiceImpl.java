@@ -29,7 +29,7 @@ public class MovieServiceImpl implements MovieService {
     public MovieDTO getMovieById(long movieId) {
         Optional<MovieEntity> optionalMovieEntity = movieRepository.findById(movieId);
         MovieEntity movieEntity = optionalMovieEntity.orElseThrow();
-        MovieDTO movieDTO = MovieDTO.toDTO(movieEntity);
+        MovieDTO movieDTO = MovieEntity.toDTO(movieEntity);
         return movieDTO;
     }
 
@@ -40,7 +40,7 @@ public class MovieServiceImpl implements MovieService {
 
         List<MovieDTO> movieDTOList = new ArrayList<>();
         for (MovieEntity movieEntity : movieEntityList) {
-            movieDTOList.add(MovieDTO.toDTO(movieEntity));
+            movieDTOList.add(MovieEntity.toDTO(movieEntity));
         }
         return movieDTOList;
     }
@@ -52,7 +52,7 @@ public class MovieServiceImpl implements MovieService {
 
         List<MovieDTO> movieDTOList = new ArrayList<>();
         for (MovieEntity movieEntity : movieEntityList) {
-            movieDTOList.add(MovieDTO.toDTO(movieEntity));
+            movieDTOList.add(MovieEntity.toDTO(movieEntity));
         }
         return movieDTOList;
     }
@@ -66,7 +66,7 @@ public class MovieServiceImpl implements MovieService {
 
         List<MovieDTO> movieDTOList = new ArrayList<>();
         for (MovieEntity movieEntity : movieEntityList) {
-            movieDTOList.add(MovieDTO.toDTO(movieEntity));
+            movieDTOList.add(MovieEntity.toDTO(movieEntity));
         }
         return movieDTOList;
     }
@@ -80,7 +80,7 @@ public class MovieServiceImpl implements MovieService {
         List<MovieDTO> movieDTOList = new ArrayList<>();
 
         for (MovieEntity movieEntity : movieEntityList) {
-            movieDTOList.add(MovieDTO.toDTO(movieEntity));
+            movieDTOList.add(MovieEntity.toDTO(movieEntity));
         }
 
         return movieDTOList;

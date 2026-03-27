@@ -30,7 +30,6 @@ public class DiscountPolicyDTO {
     private boolean activation; // 활성화 여부
     private List<CouponDTO> coupons; // resultMap(collection)
 
-
     /**
      * DTO -> Entity
      * @param discountPolicyDTO DTO
@@ -84,7 +83,6 @@ public class DiscountPolicyDTO {
 
             couponVOs.add(couponVO);
         }
-
 
         return DiscountPolicyVO.builder()
                 .id(discountPolicyDTO.getId())

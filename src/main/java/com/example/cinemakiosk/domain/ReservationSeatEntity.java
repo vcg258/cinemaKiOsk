@@ -1,5 +1,8 @@
 package com.example.cinemakiosk.domain;
 
+import com.example.cinemakiosk.dto.ReservationDetailsDTO;
+import com.example.cinemakiosk.dto.ReservationSeatDTO;
+import com.example.cinemakiosk.vo.ReservationSeatVO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,4 +26,17 @@ public class ReservationSeatEntity {
 
     @Column(length = 10, nullable = false)
     private String seatNumber;     //좌석 번호
+
+    /**
+     * Entity -> DTO
+     * @param reservationSeatEntity
+     * @return DTO
+     */
+    public static ReservationSeatDTO toDTO(ReservationSeatEntity reservationSeatEntity){
+        return ReservationSeatDTO.builder()
+                .id(reservationSeatEntity.getId())
+                .reservationDetails(ReservationDetailsEntity.toDTO(reservationSeatEntity.getReservationDetailsEntity()))
+                .seatNumber(reservationSeatEntity.getSeatNumber())
+                .build();
+    }
 }

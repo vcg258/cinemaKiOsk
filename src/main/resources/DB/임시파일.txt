@@ -26,6 +26,14 @@ PaymentDetails
 pointHistory
 admin
 bonusPolicy
+coupon
+Member
+ReservationSeat
+ReservationDetails
+seatPolicy
+Schedule
+statistics
+theater
 
 
 작업중

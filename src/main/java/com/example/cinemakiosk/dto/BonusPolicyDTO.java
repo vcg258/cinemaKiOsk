@@ -27,37 +27,6 @@ public class BonusPolicyDTO {
     private List<PaymentDetailsDTO> paymentDetails;
 
     /**
-     * DTO -> VO
-     * @param bonusPolicyDTO
-     * @return VO
-     */
-    public static BonusPolicyVO toVO(BonusPolicyDTO bonusPolicyDTO){
-        //OneToMany 변수는 본인 객체를 제외한 값만 받기. 순환참조 방지.
-        List<PaymentDetailsDTO> paymentDetailsDTOs = bonusPolicyDTO.getPaymentDetails();
-        List<PaymentDetailsVO> paymentDetailsVOs = new ArrayList<>();
-
-
-        for (PaymentDetailsDTO paymentDetailsDTO : paymentDetailsDTOs){
-            //pk 만 받아오기.
-            PaymentDetailsVO paymentDetailsVO = PaymentDetailsVO.builder()
-                    .id(paymentDetailsDTO.getId())
-                    .build();
-
-            paymentDetailsVOs.add(paymentDetailsVO);
-        }
-        
-        return BonusPolicyVO.builder()
-                .id(bonusPolicyDTO.getId())
-                .policyName(bonusPolicyDTO.getPolicyName())
-                .giveValue(bonusPolicyDTO.getGiveValue())
-                .createAt(bonusPolicyDTO.getCreateAt())
-                .finishedAt(bonusPolicyDTO.getFinishedAt())
-                .activation(bonusPolicyDTO.getActivation())
-                .paymentDetails(paymentDetailsVOs)
-                .build();
-    }
-
-    /**
      * DTO -> Entity
      * @param bonusPolicyDTO
      * @return Entity
@@ -85,6 +54,37 @@ public class BonusPolicyDTO {
                 .endAt(bonusPolicyDTO.getFinishedAt())
                 .activation(bonusPolicyDTO.getActivation())
                 .paymentDetailsEntity(paymentDetailsEntitys)
+                .build();
+    }
+
+    /**
+     * DTO -> VO
+     * @param bonusPolicyDTO
+     * @return VO
+     */
+    public static BonusPolicyVO toVO(BonusPolicyDTO bonusPolicyDTO){
+        //OneToMany 변수는 본인 객체를 제외한 값만 받기. 순환참조 방지.
+        List<PaymentDetailsDTO> paymentDetailsDTOs = bonusPolicyDTO.getPaymentDetails();
+        List<PaymentDetailsVO> paymentDetailsVOs = new ArrayList<>();
+
+
+        for (PaymentDetailsDTO paymentDetailsDTO : paymentDetailsDTOs){
+            //pk 만 받아오기.
+            PaymentDetailsVO paymentDetailsVO = PaymentDetailsVO.builder()
+                    .id(paymentDetailsDTO.getId())
+                    .build();
+
+            paymentDetailsVOs.add(paymentDetailsVO);
+        }
+
+        return BonusPolicyVO.builder()
+                .id(bonusPolicyDTO.getId())
+                .policyName(bonusPolicyDTO.getPolicyName())
+                .giveValue(bonusPolicyDTO.getGiveValue())
+                .createAt(bonusPolicyDTO.getCreateAt())
+                .finishedAt(bonusPolicyDTO.getFinishedAt())
+                .activation(bonusPolicyDTO.getActivation())
+                .paymentDetails(paymentDetailsVOs)
                 .build();
     }
 }

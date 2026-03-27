@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "point_history")
-public class PointHistoryEntity extends TimeBaseEntity {
+public class PointHistoryEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT UNSIGNED")
     @Id private Long pointId; // 포인트 인덱스

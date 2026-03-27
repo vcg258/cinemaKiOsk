@@ -1,5 +1,6 @@
 package com.example.cinemakiosk.vo;
 
+import com.example.cinemakiosk.domain.PaymentDetailsEntity.Status;
 import com.example.cinemakiosk.domain.PointHistoryEntity.PointHistoryEntity;
 import com.example.cinemakiosk.dto.*;
 import lombok.AllArgsConstructor;
@@ -23,9 +24,8 @@ public class PaymentDetailsVO {
     private Long cost;                       // 결제 금액
     private LocalDateTime time;              // 결제 시간
     private Long usePoint;                   // 사용 포인트 기본값 0
-    private String status;                   // ENUM ('PAY','RETURN','FAIL'), 결제 완료, 환불, 실패
+    private Status status;                   // ENUM ('PAY','RETURN','FAIL'), 결제 완료, 환불, 실패
     private List<PointHistoryVO> pointHistories;
-
 
     /**
      * VO -> DTO

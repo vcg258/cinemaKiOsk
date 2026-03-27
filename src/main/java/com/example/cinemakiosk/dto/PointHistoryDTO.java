@@ -21,22 +21,6 @@ public class PointHistoryDTO {
     private LocalDateTime createAt; // 포인트 변경일
 
     /**
-     * DTO -> VO
-     * @param pointHistoryDTO
-     * @return VO
-     */
-    public static PointHistoryVO toVO(PointHistoryDTO pointHistoryDTO){
-        return PointHistoryVO.builder()
-                .pointId(pointHistoryDTO.getPointId())
-                .paymentId(PaymentDetailsDTO.toVO(pointHistoryDTO.getPaymentId()))
-                .phone(MemberDTO.toVO(pointHistoryDTO.getPhone()))
-                .type(pointHistoryDTO.getType())
-                .amountPoint(pointHistoryDTO.getAmountPoint())
-                .createAt(pointHistoryDTO.getCreateAt())
-                .build();
-    }
-
-    /**
      * DTO -> Entity
      * @param pointHistoryDTO
      * @return Entity
@@ -46,6 +30,22 @@ public class PointHistoryDTO {
                 .pointId(pointHistoryDTO.getPointId())
                 .paymentDetailsEntity(PaymentDetailsDTO.toEntity(pointHistoryDTO.getPaymentId()))
                 .memberEntity(MemberDTO.toEntity(pointHistoryDTO.getPhone()))
+                .type(pointHistoryDTO.getType())
+                .amountPoint(pointHistoryDTO.getAmountPoint())
+                .createAt(pointHistoryDTO.getCreateAt())
+                .build();
+    }
+
+    /**
+     * DTO -> VO
+     * @param pointHistoryDTO
+     * @return VO
+     */
+    public static PointHistoryVO toVO(PointHistoryDTO pointHistoryDTO){
+        return PointHistoryVO.builder()
+                .pointId(pointHistoryDTO.getPointId())
+                .paymentId(PaymentDetailsDTO.toVO(pointHistoryDTO.getPaymentId()))
+                .phone(MemberDTO.toVO(pointHistoryDTO.getPhone()))
                 .type(pointHistoryDTO.getType())
                 .amountPoint(pointHistoryDTO.getAmountPoint())
                 .createAt(pointHistoryDTO.getCreateAt())

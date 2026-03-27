@@ -64,7 +64,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
         List<DiscountPolicyEntity> discountPolicies = discountPolicyRepository.findAll();
         List<DiscountPolicyDTO> discountPolicyDTO = new ArrayList<>();
         for (DiscountPolicyEntity discountPolicyEntity : discountPolicies) {
-            DiscountPolicyDTO dto = DiscountPolicyDTO.toDTO(discountPolicyEntity);
+            DiscountPolicyDTO dto = DiscountPolicyEntity.toDTO(discountPolicyEntity);
             discountPolicyDTO.add(dto);
         }
         return discountPolicyDTO;
@@ -78,7 +78,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     @Override
     public DiscountPolicyDTO getDiscountPolicy(Long id) {
         DiscountPolicyEntity discountPolicyEntity = discountPolicyRepository.findById(id).orElseThrow();
-        return DiscountPolicyDTO.toDTO(discountPolicyEntity);
+        return DiscountPolicyEntity.toDTO(discountPolicyEntity);
     }
 
     /**
@@ -114,13 +114,12 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
         String couponNum = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 12);
         CouponDTO couponDTO = CouponDTO.builder()
                 .couponNum(couponNum)
-                .policyId(policyId)
+                .discountPolicy(DiscountPolicyDTO.builder().id(policyId).build())
                 .status(true) // 사용 가능
                 .build();
 
         log.info("couponDTO: {}", couponDTO);
-        DiscountPolicyEntity discountPolicyEntity = discountPolicyRepository.getReferenceById(policyId);
-        CouponEntity couponEntity = CouponDTO.toEntity(couponDTO, discountPolicyEntity);
+        CouponEntity couponEntity = CouponDTO.toEntity(couponDTO);
         couponRepository.save(couponEntity);
     }
 
@@ -141,9 +140,9 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
         LocalDateTime now = LocalDateTime.now();
         if (!(now.isBefore(discountPolicyDTO.getEndAt()) && now.isAfter(discountPolicyDTO.getStartAt()))) return false;
         // 쿠폰 번호가 일치하고 사용여부가 true일경우
-        for (CouponVO couponVO : discountPolicyDTO.getCoupons()) {
-            if (couponVO.getCouponNum().equals(couponNum)) {
-                return couponVO.isStatus(); // true 사용가능
+        for (CouponDTO couponDTO : discountPolicyDTO.getCoupons()) {
+            if (couponDTO.getCouponNum().equals(couponNum)) {
+                return couponDTO.isStatus(); // true 사용가능
             }
         }
 
@@ -171,6 +170,6 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     public Page<DiscountPolicyDTO> getDiscountPolicyPage(int page) {
         Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("id").descending());
         Page<DiscountPolicyEntity> policy = discountPolicyRepository.findAll(pageable);
-        return policy.map(discountPolicy -> DiscountPolicyDTO.toDTO(discountPolicy));
+        return policy.map(discountPolicy -> DiscountPolicyEntity.toDTO(discountPolicy));
     }
 }

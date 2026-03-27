@@ -1,6 +1,14 @@
 package com.example.cinemakiosk.vo;
 
+import com.example.cinemakiosk.domain.ScheduleEntity;
+import com.example.cinemakiosk.domain.TheaterEntity;
+import com.example.cinemakiosk.dto.ScheduleDTO;
+import com.example.cinemakiosk.dto.SeatPolicyDTO;
+import com.example.cinemakiosk.dto.TheaterDTO;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Builder
@@ -9,6 +17,32 @@ import lombok.*;
 @AllArgsConstructor
 public class TheaterVO {
     private Long no; // 상영관 번호
-    private String policyId; // 좌석 정책 FK
+    private SeatPolicyVO seatPolicy; // 좌석 정책 FK
     private Long cleanupTime; // 정리시간(분)
+    private List<ScheduleVO> schedule; // 1:다
+
+    /**
+     * VO -> DTO
+     * @param theaterVO
+     * @return DTO
+     */
+    public static TheaterDTO toDTO(TheaterVO theaterVO){
+        List<ScheduleVO> scheduleVOs = theaterVO.getSchedule();
+        List<ScheduleDTO> scheduleDTOs = new ArrayList<>();
+
+        for (ScheduleVO scheduleVO : scheduleVOs){
+            ScheduleDTO scheduleDTO = ScheduleDTO.builder()
+                    .id(scheduleVO.getId())
+                    .build();
+
+            scheduleDTOs.add(scheduleDTO);
+        }
+
+        return TheaterDTO.builder()
+                .no(theaterVO.getNo())
+                .seatPolicy(SeatPolicyVO.toDTO(theaterVO.getSeatPolicy()))
+                .cleanupTime(theaterVO.getCleanupTime())
+                .schedule(scheduleDTOs)
+                .build();
+    }
 }

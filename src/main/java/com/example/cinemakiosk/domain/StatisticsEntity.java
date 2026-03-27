@@ -1,5 +1,9 @@
 package com.example.cinemakiosk.domain;
 
+import com.example.cinemakiosk.domain.enums.Days;
+import com.example.cinemakiosk.dto.ScheduleDTO;
+import com.example.cinemakiosk.dto.StatisticsDTO;
+import com.example.cinemakiosk.vo.StatisticsVO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,7 +30,7 @@ public class StatisticsEntity {
 
     @Column(name = "day", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Day day;             // 요일 ENUM
+    private Days day;             // 요일 ENUM
 
     @Column(name = "revenue", nullable = false)
     private Long revenue;        // 수익
@@ -37,8 +41,20 @@ public class StatisticsEntity {
     @Column(name = "date", nullable = false)
     private LocalDate date;          // 통계 기준 일시 (일일/월간 통계용)
 
-    public enum Day {
-        SUN, MON, TUE, WED, THU, FRI, SAT
+    /**
+     * Entity -> DTO
+     * @param statisticsEntity
+     * @return
+     */
+    public static StatisticsDTO toDTO(StatisticsEntity statisticsEntity){
+        return StatisticsDTO.builder()
+                .id(statisticsEntity.getStatisticsId())
+                .schedule(ScheduleEntity.toDTO(statisticsEntity.getScheduleEntity()))
+                .day(statisticsEntity.getDay())
+                .revenue(statisticsEntity.getRevenue())
+                .customerCount(statisticsEntity.getCustomerCount())
+                .date(statisticsEntity.getDate())
+                .build();
     }
 }
 

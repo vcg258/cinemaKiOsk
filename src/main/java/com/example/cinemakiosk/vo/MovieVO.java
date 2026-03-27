@@ -3,12 +3,15 @@ package com.example.cinemakiosk.vo;
 import com.example.cinemakiosk.domain.MovieEntity.MovieEntity;
 import com.example.cinemakiosk.domain.MovieEntity.Rating;
 import com.example.cinemakiosk.domain.ScheduleEntity;
+import com.example.cinemakiosk.dto.MovieDTO;
+import com.example.cinemakiosk.dto.ScheduleDTO;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -30,4 +33,39 @@ public class MovieVO {
     private final LocalDateTime createAt; // 등록일
     private List<ScheduleVO> schedules;
 
+    /**
+     * VO -> DTO
+     * @param movieVO VO
+     * @return DTO
+     */
+    public static MovieDTO toDTO(MovieVO movieVO) {
+        //OneToMany 변수는 본인 객체를 제외한 값만 받기. 순환참조 방지.
+        List<ScheduleVO> scheduleVOs = movieVO.getSchedules();
+        List<ScheduleDTO> scheduleDTOs = new ArrayList<>();
+
+
+        for (ScheduleVO schedule : scheduleVOs){
+            //pk 만 받아오기.
+            ScheduleDTO scheduleDTO = ScheduleDTO.builder()
+                    .id(schedule.getId())
+                    .build();
+
+            scheduleDTOs.add(scheduleDTO);
+        }
+
+        return MovieDTO.builder()
+                .movieId(movieVO.getMovieId())
+                .title(movieVO.getTitle())
+                .genre(movieVO.getGenre())
+                .rating(movieVO.getRating())
+                .runtime(movieVO.getRuntime())
+                .director(movieVO.getDirector())
+                .actors(movieVO.getActors())
+                .description(movieVO.getDescription())
+                .startAt(movieVO.getStartAt())
+                .endAt(movieVO.getEndAt())
+                .createAt(movieVO.getCreateAt())
+                .schedules(scheduleDTOs)
+                .build();
+    }
 }
