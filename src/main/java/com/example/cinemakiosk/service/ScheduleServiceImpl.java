@@ -1,6 +1,7 @@
 package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.dto.ScheduleDTO;
+import com.example.cinemakiosk.mapper.ScheduleMapper;
 import com.example.cinemakiosk.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -13,9 +14,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService {
     private final ScheduleRepository scheduleRepository;
+    private final ScheduleMapper scheduleMapper;
 
     /**
-     * @param scheduleDTO
+     * 스케줄 등록 메서드
+     * @param scheduleDTO 스케줄 DTO
      */
     @Override
     public void createSchedule(ScheduleDTO scheduleDTO) {
@@ -62,13 +65,5 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public ScheduleDTO getSchedule(Long scheduleId) {
         return null;
-    }
-
-    /**
-     * @param no
-     */
-    @Override
-    public void delete(Long no) {
-
     }
 }

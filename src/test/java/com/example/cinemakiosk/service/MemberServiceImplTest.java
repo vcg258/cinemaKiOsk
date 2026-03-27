@@ -70,7 +70,7 @@ class MemberServiceImplTest {
         PaymentDetailsEntity payment = PaymentDetailsEntity.builder()
                 .id("TEST-PAYMENT-UUID-001")
                 .cost(10000L)
-                .time(LocalDateTime.now())
+                .createAt(LocalDateTime.now())
                 .status(Status.PAY)
                 .build();
         paymentDetailsRepository.save(payment);
