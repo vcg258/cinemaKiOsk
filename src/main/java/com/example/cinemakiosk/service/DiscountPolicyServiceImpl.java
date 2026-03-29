@@ -136,7 +136,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      * @return 사용 검증 통과면 true, 아니면 false
      */
     @Override
-    public boolean authCoupon(Long policyId, String couponNum) {
+    public boolean authCoupon(Long policyId, String couponNum) { // TODO for로 돌리는것보다 DB로 처리하는게 훨씬 효율적 FIX요청
         DiscountPolicyDTO discountPolicyDTO = discountPolicyMapper.checkCoupon(policyId);
         // 정책이 없을 경우 (INNER JOIN을 하였기때문에 정책이 없다면 null)
         if (discountPolicyDTO == null) return false;

@@ -11,22 +11,22 @@ public interface TheaterService {
     List<TheaterDTO> getTheaterAll();
 
     // 상영관 단일 조회
-    TheaterDTO getTheater();
+    TheaterDTO getTheater(Long no);
 
     // 상영관 좌석 정책 업데이트
-    void updateSeatPolicy(Long no);
+    void updateSeatPolicy(Long no, Long policyId);
 
     // 상영관 청소시간 업데이트
-    void updateCleanTime(Long no);
+    void updateCleanTime(Long no, Long cleanTime);
 
     // 좌석 정책 생성
     void createSeat(SeatPolicyDTO seatPolicyDTO);
 
-    // 좌석 정책 1개를 확인
-    SeatPolicyDTO readSeat(Long no);
-
     // 좌석 정책 전체를 확인
     List<SeatPolicyDTO> readAllSeat();
+
+    // 좌석 정책 1개를 확인
+    SeatPolicyDTO readSeat(Long no);
 
     // 좌석 정책 수정
     void updateSeat(SeatPolicyDTO seatPolicyDTO);

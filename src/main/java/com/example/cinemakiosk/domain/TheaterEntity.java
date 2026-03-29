@@ -38,6 +38,22 @@ public class TheaterEntity {
     private List<ScheduleEntity> scheduleEntity; // 1:다
 
     /**
+     * 상영관 좌석정책 업데이트 도메인 메서드
+     * @param entity 좌석정책 변경할때 사용
+     */
+    public void changeSeatPolicy(SeatPolicyEntity entity) {
+        this.seatPolicyEntity = entity;
+    }
+
+    /**
+     * 상영관 정리시간 업데이트 도메인 메서드
+     * @param cleanupTime 정리시간 수정시 사용
+     */
+    public void changeCleantime(Long cleanupTime) {
+        this.cleanupTime = cleanupTime;
+    }
+
+    /**
      * Entity -> DTO
      * @param theaterEntity
      * @return DTO

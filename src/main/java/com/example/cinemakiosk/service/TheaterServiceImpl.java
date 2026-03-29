@@ -36,27 +36,40 @@ public class TheaterServiceImpl implements TheaterService {
     }
 
     /**
-     * @return
+     * 상영관 단일 조회
+     * @return 단일 상영관 조회
      */
     @Override
-    public TheaterDTO getTheater() {
-        return null;
+    public TheaterDTO getTheater(Long no) {
+        TheaterEntity entity = theaterRepository.findById(no).orElseThrow();
+        return TheaterEntity.toDTO(entity);
     }
 
     /**
-     * @param no
+     * 상영관 좌석정책 변경
+     * @param no 상영관 PK
+     * @param policyId 좌석정책 FK
      */
     @Override
-    public void updateSeatPolicy(Long no) {
-
+    public void updateSeatPolicy(Long no, Long policyId) {
+        TheaterEntity theater = theaterRepository.findById(no).orElseThrow();
+        SeatPolicyEntity seatPolicy = seatPolicyRepository.findById(policyId).orElseThrow();
+        theater.changeSeatPolicy(seatPolicy);
+        theaterRepository.save(theater);
+        log.info("updateSeatPolicy... 좌석 정책 업데이트 {} 변경된 정책 {}", theater, seatPolicy);
     }
 
     /**
-     * @param no
+     * 상영관 정리식간 변경
+     * @param no 상영관 PK
+     * @param cleanTime 변경할 정리시간
      */
     @Override
-    public void updateCleanTime(Long no) {
-
+    public void updateCleanTime(Long no, Long cleanTime) {
+        TheaterEntity theater = theaterRepository.findById(no).orElseThrow();
+        theater.changeCleantime(cleanTime);
+        theaterRepository.save(theater);
+        log.info("updateCleanTime... 정리시간 업데이트 {}", theater);
     }
 
     /**
@@ -78,17 +91,6 @@ public class TheaterServiceImpl implements TheaterService {
 
         SeatPolicyEntity seatPolicyEntity = seatPolicyRepository.save(dto);
         log.info("createSeat... 좌석 정책 생성 / 추가 내역: {}", seatPolicyEntity);
-    }
-
-    /**
-     * 좌석 정책 1개만 조회
-     * @param policyId 좌석정책 PK
-     * @return 지정 좌석 정책
-     */
-    @Override
-    public SeatPolicyDTO readSeat(Long policyId) {
-        SeatPolicyEntity policy = seatPolicyRepository.findById(policyId).orElseThrow();
-        return SeatPolicyEntity.toDTO(policy);
     }
 
     /**
@@ -119,6 +121,17 @@ public class TheaterServiceImpl implements TheaterService {
     }
 
     /**
+     * 좌석 정책 1개만 조회
+     * @param policyId 좌석정책 PK
+     * @return 지정 좌석 정책
+     */
+    @Override
+    public SeatPolicyDTO readSeat(Long policyId) {
+        SeatPolicyEntity policy = seatPolicyRepository.findById(policyId).orElseThrow();
+        return SeatPolicyEntity.toDTO(policy);
+    }
+
+    /**
      * 좌석 정책 수정
      * @param seatPolicyDTO 좌석정책 DTO
      */
@@ -137,6 +150,10 @@ public class TheaterServiceImpl implements TheaterService {
      */
     @Override
     public void deleteSeat(Long policyId) {
+        if (theaterRepository.existsBySeatPolicyEntity_PolicyId(policyId)) {
+            log.error("deleteSeat... 현재 사용중인 좌석정책 삭제 불가");
+            return;
+        }
         seatPolicyRepository.deleteById(policyId);
     }
 }

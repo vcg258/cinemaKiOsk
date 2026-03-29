@@ -21,6 +21,21 @@ class TheaterServiceImplTest {
     }
 
     @Test
+    void getTheater() {
+        log.info(theaterService.getTheater(1L));
+    }
+
+    @Test
+    void updateSeatPolicy() {
+        theaterService.updateSeatPolicy(1L, 3L);
+    }
+
+    @Test
+    void updateCleanTime() {
+        theaterService.updateCleanTime(1L, 999L);
+    }
+
+    @Test
     void createSeat() {
         SeatPolicyDTO seatPolicyDTO = SeatPolicyDTO.builder()
                         .name("일반")
@@ -32,13 +47,13 @@ class TheaterServiceImplTest {
     }
 
     @Test
-    void readSeat() {
-        log.info("readSeat... 지정 좌석 정책 : {}", theaterService.readSeat(4L));
+    void readAllSeat() {
+        theaterService.readAllSeat().forEach(log::info);
     }
 
     @Test
-    void readAllSeat() {
-        theaterService.readAllSeat().forEach(log::info);
+    void readSeat() {
+        log.info("readSeat... 지정 좌석 정책 : {}", theaterService.readSeat(4L));
     }
 
     @Test
@@ -54,7 +69,7 @@ class TheaterServiceImplTest {
 
     @Test
     void deleteSeat() {
-        Long policyId = 4L;
+        Long policyId = 5L;
         theaterService.deleteSeat(policyId);
     }
 }
