@@ -1,11 +1,11 @@
 클래스명,어노테이션,접근자,반환타입,메서드 이름,파라미터,비고,,클래스명: 해당 메서드가 속한 클래스명
 "@Configuration
-MapperConfig",이 내용은 기존 파일을 복사,,"@GetMapping(""/"")",,,,,
+MapperConfig",,,"@GetMapping(""/"")",,,사용안함,,
 "@Configuration
-SecurityConfig",당장은 안씀,,"@PostMapping(""/"")",,,,,
+SecurityConfig",아직 안배움 후순위,,"@PostMapping(""/"")",,,,,
 "@Configuration
 FileConfig",일단 보류,,"@PutMapping(""/"")",,,,,
-WebSocketServer,알아서 처리,,"@DeleteMapping(""/"")",,,,,
+WebSocketServer,혜윰 : 알아서 처리,,"@DeleteMapping(""/"")",,,,,
 ,,,작성 대상/순서 : controller -> Mapper -> 일부 DTO -> service,,,,,
 "@Controller 
 @RequestMapping(""/movie"") 
@@ -23,6 +23,9 @@ seat로 갈 때 scheduledDTO를 담아서 보내기",,
 PaymentController","@PostMapping(""/payment"")",public,void,postPayment,"ReservationDTO reservationDTO, Model model",예매내역을 받아서 이것저것 채워서 결제 정보를 저장하고 결과창으로 이동,,
 ,"@GetMapping(""/result"")",public,void,getResult,@RequestParam(“”),,,
 "@Controller
+@RequestMapping(""/mypage"")
+MypageController","@GetMapping(""/lookup"")",public,void,,,,,
+,"@GetMapping(""/booking-detail"")",public,void,,,,,
 "@Controller
 @RequestMapping(""/admin/login"")
 LoginController","@GetMapping(""/main"")",public,void,getMain,,로그인 화면 보여주기,,
@@ -41,7 +44,7 @@ ManagementController","@GetMapping(""/movie/list”)",,,,,,,
 ,"@GetMapping(""/movie/form”)",,,,,,,
 ,"@PostMapping(""/movie/form”)",,,,,,,
 ,"@GetMapping(""/movie/manage”)",,,,,,,
-,"@postMapping(""/movie/manage”)",,,,,,,
+,"@PostMapping(""/movie/manage”)",,,,,,,
 ,"@GetMapping(""/theater/list”)",,,,,,,
 ,"@GetMapping(""/theater/edit”)",,,,,,,
 ,"@PostMapping(""/theater/edit”)",,,,,,,
@@ -52,7 +55,7 @@ ManagementController","@GetMapping(""/movie/list”)",,,,,,,
 ,"@GetMapping(""/policy/form”)",,,,,,,
 ,"@PostMapping(""/policy/form”)",,,,,,,
 ,"@GetMapping(""/policy/manage”)",,,,,,,
-,"@postMapping(""/policy/manage”)",,,,,,,
+,"@PostMapping(""/policy/manage”)",,,,,,,
 "@Controller
 @RequestMapping(""/admin/refund"")
 RefundController","@GetMapping(""/”)",,,,,,,
@@ -77,15 +80,20 @@ SmsService,,public,boolean,sendOtp,null,인증을 위해서 otp를 발송하는 
 ,,,,,,,,
 LoginService,,,,,,"사실상 pin번호 변경 정도의 기능 > 로그인은 인증이 필요하니까...
 Login기능 밖에 없기때문에 그냥 Login으로 ",,
-MembersService,,,,,,,,
-,,public,void,pointHistoryCreate,Long no,포인트 변경내역을 설정,,
-,,public,void,pointHistoryCancel,Long no,환불할 경우 포인트 내역,,
+MembersService,,public,void,createMember,"String phone, Integer point, String paymentId",신규 회원 등록,,
+,,public,void,pointHistoryCreate,"String phone, Integer point, Type type, String paymentId",포인트 보유포인트 처리 내역,,
+,,public,void,pointHistoryCancel,PointHistoryDTO pointHistoryDTO,환불할 경우 포인트 내역,,
 MovieService,,public,void,finish (상영중단 이라서 finish),Long no,해당 영화의 상영 종료일을 오늘 23시 59분으로 설정,,
 BonusPolicyService,,public,void,finish,Long no,해당 정책(이벤트)의 종료일을 오늘 23시 59분으로 설정 + 활성화여부 false,,
-DiscountPolicyService,,public,void,finish,Long no,해당 정책(이벤트)의 종료일을 오늘 23시 59분으로 설정 + 활성화여부 false,,
-,,public,void,create,Long no,특정 정책의 쿠폰을 발행하는 코드,,
-,,public,void,updateDone,String no,쿠폰번호를 사용함으로,,
-,,public,boolean,authCoupon,String no,"쿠폰번호 검증(맞는 이벤트인가, 사용기한내인가, 사용하기 전 쿠폰인가)",,
+DiscountPolicyService,,public,void,finishActivation,Long policyId,해당 정책(이벤트)의 종료일을 오늘 23시 59분으로 설정 + 활성화여부 false,,
+,,public,void,createCouponNum,Long policyId,특정 정책의 쿠폰을 발행하는 코드,,
+,,public,void,updateStatus,"String couponNum, boolean status",쿠폰을 사용함으로 써 사용여부 변경 및 환불로 인한 복구,,
+,,public,boolean,authCoupon,"Long policyId, , String couponNum","쿠폰번호 검증(맞는 이벤트인가, 사용기한내인가, 사용하기 전 쿠폰인가)",,
+,,public,void,changeActivation,"Long id, boolean activation",할인 정책 활성화 / 비활성화,,
+,,public,void,createDiscountPolicy,DiscountPolicyDTO discountPolicyDTO,할인 정책 추가 / 수정,,
+,,public,List<DiscountPolicyDTO>,getDiscountPolicies,,할인 정책 전체 조회 (관리자 관리 메뉴 보기위함),,
+,,public,DiscountPolicyDTO,getDiscountPolicy,Long id,할인 정책 단일 조회 (필요성을 잘모르겠긴함),,
+,,public,Page<DiscountPolicyDTO>,getDiscountPolicyPage,int page,할인 정책 전체 로그포함 조회할때 필요할거같아서 추가함,,
 TheaterService,,,,,,여기는 create 기능 제외,,
 ,,public,void,createSeat,null,좌석 정책에 대한 정보를 추가,,
 ,,public,${객체}DTO,readSeat,Long no,좌석 정책 1개를 확인,,
