@@ -7,6 +7,8 @@ import com.example.cinemakiosk.vo.ScheduleVO;
 import com.example.cinemakiosk.vo.TheaterVO;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,7 @@ public class TheaterEntity {
     @Column(columnDefinition = "BIGINT UNSIGNED DEFAULT 0")
     private Long cleanupTime; // 정리시간(분)
 
+    @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "theaterEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<ScheduleEntity> scheduleEntity; // 1:다
 
@@ -43,7 +46,7 @@ public class TheaterEntity {
 
         return TheaterDTO.builder()
                 .no(theaterEntity.getNo())
-                .seatPolicy(SeatPolicyEntity.toDTO(theaterEntity.getSeatPolicyEntity()))
+                .policyId(theaterEntity.seatPolicyEntity.getPolicyId())
                 .cleanupTime(theaterEntity.getCleanupTime())
                 .build();
     }

@@ -4,6 +4,8 @@ import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.PaymentDetailsDTO;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -24,6 +26,7 @@ public class CouponEntity {
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean status; // 사용여부 (사용가능 = true, 불가능 = false)
 
+    @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToOne(mappedBy = "couponEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private PaymentDetailsEntity paymentDetailsEntity;
 

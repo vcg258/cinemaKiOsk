@@ -6,18 +6,31 @@ import com.example.cinemakiosk.dto.TheaterDTO;
 import java.util.List;
 
 public interface TheaterService {
+
+    // 상영관 전체 조회
+    List<TheaterDTO> getTheaterAll();
+
+    // 상영관 단일 조회
+    TheaterDTO getTheater();
+
+    // 상영관 좌석 정책 업데이트
+    void updateSeatPolicy(Long no);
+
+    // 상영관 청소시간 업데이트
+    void updateCleanTime(Long no);
+
     // 좌석 정책 생성
     void createSeat(SeatPolicyDTO seatPolicyDTO);
 
     // 좌석 정책 1개를 확인
-    TheaterDTO readSeat(Long no);
+    SeatPolicyDTO readSeat(Long no);
 
     // 좌석 정책 전체를 확인
-    List<TheaterDTO> readAllSeat();
+    List<SeatPolicyDTO> readAllSeat();
 
-    // 좌석 정책 1개를 수정
+    // 좌석 정책 수정
     void updateSeat(SeatPolicyDTO seatPolicyDTO);
 
-    // 좌석 정책 1개를 삭제
+    // 좌석 정책 단일 삭제
     void deleteSeat(Long no);
 }

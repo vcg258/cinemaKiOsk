@@ -4,6 +4,8 @@ import com.example.cinemakiosk.domain.enums.Status;
 import com.example.cinemakiosk.dto.*;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -45,6 +47,7 @@ public class PaymentDetailsEntity {
     @Enumerated(EnumType.STRING)
     private Status status;         // ENUM ('PAY','RETURN','FAIL'), 결제 완료, 환불, 실패
 
+    @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "paymentDetailsEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private  List<PointHistoryEntity> pointHistoryEntity;
 

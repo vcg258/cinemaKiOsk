@@ -16,10 +16,15 @@ class TheaterServiceImplTest {
     @Autowired private TheaterService theaterService;
 
     @Test
+    void getTheaterAllTest() {
+        theaterService.getTheaterAll().forEach(log::info);
+    }
+
+    @Test
     void createSeat() {
         SeatPolicyDTO seatPolicyDTO = SeatPolicyDTO.builder()
-                        .name("일반석")
-                        .cost(7000L)
+                        .name("일반")
+                        .cost(5000L)
                         .build();
 
         log.info("theaterDTO: {}", seatPolicyDTO);
@@ -28,17 +33,28 @@ class TheaterServiceImplTest {
 
     @Test
     void readSeat() {
+        log.info("readSeat... 지정 좌석 정책 : {}", theaterService.readSeat(4L));
     }
 
     @Test
     void readAllSeat() {
+        theaterService.readAllSeat().forEach(log::info);
     }
 
     @Test
     void updateSeat() {
+        SeatPolicyDTO policyDTO = SeatPolicyDTO.builder()
+                .policyId(4L)
+                .name("수정")
+                .cost(1000L)
+                .build();
+
+        theaterService.updateSeat(policyDTO);
     }
 
     @Test
     void deleteSeat() {
+        Long policyId = 4L;
+        theaterService.deleteSeat(policyId);
     }
 }

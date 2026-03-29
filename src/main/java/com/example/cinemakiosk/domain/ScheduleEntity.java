@@ -3,6 +3,8 @@ package com.example.cinemakiosk.domain;
 import com.example.cinemakiosk.dto.*;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,9 +35,11 @@ public class ScheduleEntity {
     private LocalDateTime startAt; // 상영 시작 시간
     private LocalDateTime endAt; // 상영 종료 시간
 
+    @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "scheduleEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<ReservationDetailsEntity> reservationDetailsEntity;
 
+    @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToOne(mappedBy = "scheduleEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private StatisticsEntity statisticsEntity; //1:1 이쪽이 부모요소이므로 아이디만 받기
 

@@ -28,13 +28,13 @@ CREATE TABLE IF NOT EXISTS `member` # FK (X)
 (
     `phone`      VARCHAR(20) PRIMARY KEY COMMENT '회원 번호',
     `point`      INT UNSIGNED NULL DEFAULT 0 COMMENT '포인트',
-    `created_at` DATETIME     NOT NULL COMMENT '생성일' # NULL -> NOT NULL
+    `create_at` DATETIME     NOT NULL COMMENT '생성일' # NULL -> NOT NULL
 ) COMMENT '회원(포인트)';
 
 
 CREATE TABLE IF NOT EXISTS `seat_policy` # FK (X)
 (
-    `policy_id` BIGINT UNSIGNED PRIMARY KEY COMMENT '좌석 아이디',
+    `policy_id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '좌석 아이디',
     `name`      VARCHAR(20)     NULL COMMENT '좌석 이름',
     `cost`      BIGINT UNSIGNED NULL DEFAULT 0 COMMENT '좌석 비용'
 ) COMMENT '좌석 정책';
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `movie` # FK (X)
     `movie_id`    BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '영화 인덱스',
     `title`       VARCHAR(100)                   NOT NULL COMMENT '영화 제목',
     `genre`       VARCHAR(50)                    NOT NULL COMMENT '장르',
-    `rating`      ENUM ('ALL', '12', '15', '19') NOT NULL COMMENT '관람 등급',
+    `rating`      ENUM ('ALL', '12', '15', '19') NOT NULL COMMENT '관람 등급', -- TODO
     `runtime`     BIGINT UNSIGNED                NOT NULL COMMENT '상영 시간(분)',
     `director`    VARCHAR(50)                    NOT NULL COMMENT '감독이름',
     `actors`      VARCHAR(255)                   NULL COMMENT '배우(쉼표로 구분)',
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS `coupon`
 CREATE TABLE IF NOT EXISTS `theater`
 (
     `no`           BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '상영관 번호',
-    `policy_id`    BIGINT UNSIGNED        NOT NULL COMMENT '좌석 정책 FK',
+    `policy_id`    BIGINT UNSIGNED NOT NULL COMMENT '좌석 정책 FK',
     `cleanup_time` BIGINT UNSIGNED NULL DEFAULT 0 COMMENT '정리시간',
     CONSTRAINT `fk_theater_policy_id` FOREIGN KEY (`policy_id`) REFERENCES seat_policy (`policy_id`)
         ON DELETE CASCADE ON UPDATE CASCADE
@@ -124,11 +124,11 @@ CREATE TABLE IF NOT EXISTS `schedule`
 CREATE TABLE IF NOT EXISTS statistics
 (
     `id`             BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '통계 고유 번호',
-    `schedule_id`    BIGINT UNSIGNED                                       NOT NULL COMMENT '스케쥴 아이디 FK',
-    `day`            ENUM ('SUN','MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT') NOT NULL COMMENT '요일',
-    `revenue`        BIGINT UNSIGNED                                       NOT NULL COMMENT '수익',
-    `customer_count` BIGINT UNSIGNED                                       NOT NULL COMMENT '관람객 수',
-    `date`           DATE                                                  NOT NULL COMMENT '통계 일자',
+    `schedule_id`    BIGINT UNSIGNED                                                                     NOT NULL COMMENT '스케쥴 아이디 FK',
+    `day`            ENUM ('SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY') NOT NULL COMMENT '요일',
+    `revenue`        BIGINT UNSIGNED                                                                     NOT NULL COMMENT '수익',
+    `customer_count` BIGINT UNSIGNED                                                                     NOT NULL COMMENT '관람객 수',
+    `date`           DATE                                                                                NOT NULL COMMENT '통계 일자',
     CONSTRAINT `fk_statistics_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES schedule (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT '통계';
