@@ -44,6 +44,22 @@ public class ScheduleEntity {
     private StatisticsEntity statisticsEntity; //1:1 이쪽이 부모요소이므로 아이디만 받기
 
     /**
+     * 스케줄 영화 변경 도메인 메서드
+     * @param movieEntity 영화 FK
+     */
+    public void changeMovie(MovieEntity movieEntity) {
+        this.movieEntity = movieEntity;
+    }
+
+    /**
+     * 스케줄 좌석정책 변경 도메인 메서드
+     * @param theaterEntity
+     */
+    public void changeTheater(TheaterEntity theaterEntity) {
+        this.theaterEntity = theaterEntity;
+    }
+
+    /**
      * Entity -> DTO
      * @param scheduleEntity
      * @return DTO

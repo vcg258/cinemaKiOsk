@@ -3,5 +3,10 @@
         PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.cinemakiosk.mapper.ScheduleMapper">
-
+    <select id="checkScheduleOverlap" resultType="Integer">
+        SELECT COUNT(*) FROM schedule
+        WHERE no = #{no}
+        AND start_at &lt; #{endAt} <!-- < -->
+        AND end_at &gt; #{startAt} <!-- > -->
+    </select>
 </mapper>
