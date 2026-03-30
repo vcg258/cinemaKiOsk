@@ -41,7 +41,7 @@ function SeatEditPage() {
     <div>
       <h2 style={pageTitle}>좌석 정책 수정</h2>
       <p style={{ fontSize: 13, color: '#4f4537', marginBottom: 16 }}>
-        좌석을 클릭하면 이용가능/이용불가를 전환할 수 있어.
+        좌석을 클릭하면 이용가능/이용불가를 전환할 수 있습니다.
       </p>
 
       {/* 상영관 선택 */}

@@ -25,3 +25,25 @@ windows용 node_modules
 cd frontend
 npm install
 npm run dev
+
+영화 api 활용 방안
+영화 등록 시에 활용하면 편할 듯
+
+https://gamzzang.tistory.com/128
+
+TMDB
+https://developer.themoviedb.org/reference/movie-popular-list
+
+https://www.themoviedb.org/movie
+
+
+
+
+++
+관리자 페이지 헤더에서 오갈 수 있도록. 
+
+권한 별 뷰 나누기
+
+권한 설정 페이지 개설
+
+회원 정보 조회 및 관리

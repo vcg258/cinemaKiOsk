@@ -52,11 +52,11 @@
   --color-warning-bg-dark: #2e1800;
 
   /* --- Semantic: Info --- */
-  --color-info-bg:      #e8f4fc;
-  --color-info-light:   #70b8e0;
-  --color-info-main:    #2a88c8;
-  --color-info-dark:    #005896;
-  --color-info-bg-dark: #001c38;
+  --color-info-bg:      #70b8e0;
+  --color-info-light:   #2a88c8;
+  --color-info-main:    #005896;
+  --color-info-dark:    #001c38;
+  --color-info-bg-dark: #e8f4fc;
   --color-badge-green:  #4caf50;
 
   /* --- Seat: 좌석 상태 색상 --- */
@@ -139,4 +139,15 @@
   --color-warning-dark: #714000;
   --color-error-dark:   #a82020;
   --color-info-dark:    #005896;
+
+  /* Info 계열 라이트 모드 최적화 */
+  --color-info-light:   #b3d9ff; /* 배경보다 조금 진한 파랑 */
+  --color-info-main:    #0078d4; /* 가독성 좋은 진한 파랑  */
+
+  /* 다른 Semantic 컬러*/
+  --color-success-main: #008a5d;
+  --color-error-main:   #d13438;
+  --color-warning-main: #cd8e00;
+
+
 }

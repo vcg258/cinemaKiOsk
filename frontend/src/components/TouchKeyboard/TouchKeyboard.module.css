@@ -9,13 +9,17 @@
 .overlay {
   position: fixed;
   inset: 0;
-  /* 키보드 아래쪽 절반만 오버레이 처리 (위쪽 콘텐츠 가림 방지) */
-  top: auto;
+  /* top: auto = 키보드 아래쪽 절반만 오버레이 처리 (위쪽 콘텐츠 가림 방지) */
+  /* 0 = 센터로 오게끔 */
+  top: 0;
   bottom: 0;
   z-index: 9999;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  /* justify-content: flex-end = 아래쪽 정렬 */
+  /* 센터 정렬 */
+  justify-content: center;
+  align-items: center; /* 가로 방향도 중앙 정렬 */
 }
 
 /* 키보드 컨테이너 */
@@ -105,6 +109,7 @@
   border-radius: 8px !important;
   font-size: 18px !important;
   font-weight: 600 !important;
+  width: 56px;
   height: 56px !important; /* 키오스크용 큰 버튼 */
   font-family: 'Pretendard', sans-serif !important;
   box-shadow: none !important;
@@ -154,6 +159,7 @@
 
 /* 숫자 키패드: 버튼 더 크게 */
 .numpadWrapper :global(.hg-theme-default.cineos-keyboard .hg-button) {
+  width: 72px;
   height: 72px !important;
   font-size: 28px !important;
   font-weight: 700 !important;

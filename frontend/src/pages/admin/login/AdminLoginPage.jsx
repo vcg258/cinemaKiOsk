@@ -31,7 +31,7 @@ function AdminLoginPage() {
       navigate('/admin/statistics/dashboard')
     } else {
       // UC-11: 실패 시 경고창 (alert 대신 인라인 에러메시지 사용)
-      setError('아이디 또는 비밀번호가 틀렸어.')
+      setError('아이디 또는 비밀번호가 틀렸습니다.')
     }
     setLoading(false)
   }
