@@ -1,6 +1,7 @@
 package com.example.cinemakiosk.domain;
 
 import com.example.cinemakiosk.domain.enums.Rating;
+import com.example.cinemakiosk.domain.enums.RatingConverter;
 import com.example.cinemakiosk.dto.MovieDTO;
 import com.example.cinemakiosk.dto.ScheduleDTO;
 import jakarta.persistence.*;
@@ -32,7 +33,7 @@ public class MovieEntity{
     @Column(name = "genre", length = 50)
     private String genre;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = RatingConverter.class)
     private Rating rating;
 
     @Column(name = "runtime", columnDefinition = "BIGINT UNSIGNED", nullable = false)

@@ -16,9 +16,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PointHistoryDTO {
     private Long pointId; // 포인트 인덱스
-    private PaymentDetailsDTO PaymentDetails; // 결제 고유번호 FK (JPA 용도)
+    private PaymentDetailsDTO paymentDetails; // 결제 고유번호 FK (JPA 용도)
     private String paymentId;
-    private MemberDTO Member; // 회원번호 FK (JPA 용도)
+    private MemberDTO member; // 회원번호 FK (JPA 용도)
     private String phone; // 회원 번호
     private Type type; // 적립 / 사용 ('EARN', 'USE')
     private Integer amountPoint; // 사용할 포인트

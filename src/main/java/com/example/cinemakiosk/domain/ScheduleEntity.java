@@ -68,8 +68,8 @@ public class ScheduleEntity {
 
         return ScheduleDTO.builder()
                 .id(scheduleEntity.getId())
-                .theater(TheaterEntity.toDTO(scheduleEntity.getTheaterEntity()))
-                .movie(MovieEntity.toDTO(scheduleEntity.getMovieEntity()))
+                .no(scheduleEntity.getTheaterEntity().getNo())
+                .movieId(scheduleEntity.getMovieEntity().getMovieId())
                 .startAt(scheduleEntity.getStartAt())
                 .endAt(scheduleEntity.getEndAt())
                 .build();

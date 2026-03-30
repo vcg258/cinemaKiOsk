@@ -1,7 +1,5 @@
 package com.example.cinemakiosk.service;
 
-import com.example.cinemakiosk.domain.MovieEntity;
-import com.example.cinemakiosk.dto.MovieDTO;
 import com.example.cinemakiosk.dto.ScheduleDTO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
@@ -19,14 +17,10 @@ class ScheduleServiceImplTest {
 
     @Test
     void createSchedule() {
-
-        // 영화관 테이블에서 런타임 가져옴
-
         ScheduleDTO scheduleDTO = ScheduleDTO.builder()
-                .startAt(LocalDateTime.now())
-                .endAt(LocalDateTime.now().plusHours(2))
+                .startAt(LocalDateTime.now().minusHours(3))
                 .movieId(1L)
-                .no(1L)
+                .no(3L)
                 .build();
         scheduleService.createSchedule(scheduleDTO);
     }
@@ -41,13 +35,16 @@ class ScheduleServiceImplTest {
 
     @Test
     void getScheduleList() {
+        scheduleService.getScheduleList().forEach(log::info);
     }
 
     @Test
     void getScheduleListByMovie() {
+        scheduleService.getScheduleListByMovie(1L).forEach(log::info);
     }
 
     @Test
     void getSchedule() {
+        log.info(scheduleService.getSchedule(6L));
     }
 }

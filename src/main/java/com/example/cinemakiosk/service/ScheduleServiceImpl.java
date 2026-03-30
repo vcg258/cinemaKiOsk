@@ -8,10 +8,12 @@ import com.example.cinemakiosk.mapper.ScheduleMapper;
 import com.example.cinemakiosk.repository.MovieRepository;
 import com.example.cinemakiosk.repository.ScheduleRepository;
 import com.example.cinemakiosk.repository.TheaterRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Log4j2
@@ -28,28 +30,28 @@ public class ScheduleServiceImpl implements ScheduleService {
      * @param scheduleDTO 스케줄 DTO
      */
     @Override
-    public void createSchedule(ScheduleDTO scheduleDTO) { // TODO 제약 조건이 필요해보임 뭔가 허전함
+    public void createSchedule(ScheduleDTO scheduleDTO) {
 
         // 영화조회와 런타임을 가져오기 위함
         MovieEntity movieEntity = movieRepository.findById(scheduleDTO.getMovieId()).orElseThrow();
         // 상영관 조회를 위함
         TheaterEntity theaterEntity = theaterRepository.findById(scheduleDTO.getNo()).orElseThrow();
+        // 상영종료 시간
+        LocalDateTime endAt = scheduleDTO.getStartAt().plusMinutes(movieEntity.getRuntime());
 
-        if (movieEntity.getMovieId() == null || theaterEntity.getNo() == null) {
-            log.error("createSchedule... 지정한 영화나 좌석정책이 없습니다. 등록 실패");
-            return;
-        }
-        if (scheduleMapper.checkScheduleOverlap(scheduleDTO.getNo(), scheduleDTO.getStartAt(), scheduleDTO.getEndAt()) > 1) {
+        if (scheduleMapper.checkScheduleOverlap(scheduleDTO.getNo(), scheduleDTO.getStartAt(), endAt) > 0) {
             log.info("createSchedule... 지정된 상영관에 시간이 겹칩니다. 등록 실패");
             return;
         }
 
         ScheduleDTO dto = ScheduleDTO.builder()
                 .startAt(scheduleDTO.getStartAt())
-                .endAt(scheduleDTO.getStartAt().plusMinutes(movieEntity.getRuntime())) // 시작시간에서 자동 종료시간 계산
+                .endAt(endAt.plusMinutes(theaterEntity.getCleanupTime()))
                 .no(scheduleDTO.getNo())
                 .movieId(scheduleDTO.getMovieId())
                 .build();
+
+        log.info("createSchedule... 상영관 정리시간(분) : {}", theaterEntity.getCleanupTime());
 
         ScheduleEntity entity = scheduleRepository.save(ScheduleDTO.toEntity(dto));
         log.info("createSchedule... 스케줄 등록 목록: {}, 좌석 정책 번호: {}, 영화 번호: {}", entity,
@@ -58,45 +60,55 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     /**
-     * 스케줄 수정
+     * 스케줄 수정 메서드
      * @param scheduleDTO 스케줄 DTO
      */
     @Override
     public void updateSchedule(ScheduleDTO scheduleDTO) {
-
+        // TODO 제약조건 1: 이미 지난 스케줄(start_at이 현재 시간보다 이전)은 수정 불가
+        // TODO 제약조건 2: 수정 후 시간이 같은 상영관의 다른 스케줄과 겹치는지 검증 (자기 자신 제외하고 체크)
+        // TODO 제약조건 3: 수정 시 endAt도 런타임 + 정리시간 기준으로 재계산
     }
 
     /**
-     * @param scheduleId
+     * 스케줄 제거 메서드
+     * @param scheduleId 스케줄 PK
      */
     @Override
     public void deleteSchedule(Long scheduleId) {
-
+        // TODO 제약조건 1: 이미 상영이 시작된 스케줄(start_at이 현재 시간보다 이전)은 삭제 불가
+        // TODO 제약조건 2: 해당 스케줄에 예약된 좌석이 있으면 삭제 불가 (예약 파트 구현 후 연동 필요)
     }
 
     /**
-     * @return
+     * 스케줄 전체 조회
+     * @return 전체 스케줄 리스트
      */
     @Override
     public List<ScheduleDTO> getScheduleList() {
-        return List.of();
+        List<ScheduleEntity> entityList = scheduleRepository.findAll();
+        return entityList.stream().map(ScheduleEntity::toDTO).toList();
     }
 
     /**
-     * @param movieId
-     * @return
+     * 영화에 해당하는 스케줄 전체 조회
+     * @param movieId 영화 PK
+     * @return 해당하는 전체 영화 리스트
      */
     @Override
     public List<ScheduleDTO> getScheduleListByMovie(Long movieId) {
-        return List.of();
+        List<ScheduleEntity> entityList = scheduleRepository.findByMovieEntity_MovieId(movieId);
+        return entityList.stream().map(ScheduleEntity::toDTO).toList();
     }
 
     /**
-     * @param scheduleId
-     * @return
+     * 스케줄 단일 조회
+     * @param scheduleId 스케줄 PK
+     * @return 스케줄 단일
      */
     @Override
     public ScheduleDTO getSchedule(Long scheduleId) {
-        return null;
+        ScheduleEntity schedule = scheduleRepository.findById(scheduleId).orElseThrow();
+        return ScheduleEntity.toDTO(schedule);
     }
 }

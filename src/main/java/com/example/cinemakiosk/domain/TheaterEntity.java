@@ -62,7 +62,7 @@ public class TheaterEntity {
 
         return TheaterDTO.builder()
                 .no(theaterEntity.getNo())
-                .policyId(theaterEntity.seatPolicyEntity.getPolicyId())
+                .policyId(theaterEntity.getSeatPolicyEntity().getPolicyId())
                 .cleanupTime(theaterEntity.getCleanupTime())
                 .build();
     }

@@ -71,6 +71,8 @@ public class MemberServiceImpl implements MemberService{
         }
 
         MemberEntity member = memberRepository.findById(pointHistoryDTO.getPhone()).orElseThrow();
+        // TODO existsByPhone()으로 존재 확인 후 findById()로 또 조회하고 있어 DB를 2번 호출함
+        //  existsByPhone() 제거하고 findById().orElse(null) 또는 Optional로 한 번에 처리 가능
 
         // 음수 예외처리
         if (pointHistoryDTO.getType() == Type.USE && member.getPoint() == 0) {

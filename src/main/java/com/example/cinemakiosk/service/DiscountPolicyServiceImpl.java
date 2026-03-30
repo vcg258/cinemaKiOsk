@@ -108,6 +108,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     public void changeActivation(Long id, boolean activation) {
         DiscountPolicyEntity discountPolicyEntity = discountPolicyRepository.findById(id).orElseThrow();
         discountPolicyEntity.changeActivation(activation);
+        discountPolicyRepository.save(discountPolicyEntity);
         log.info("changeActivation discountPolicy: {}", discountPolicyEntity);
     }
 
