@@ -227,7 +227,7 @@ function SeatPage() {
       </p>
       <p style={subInfo}>
         선택:{' '}
-        <strong style={{ color: 'var(--color-brand-400)' }}>{selectedIds.length}</strong>
+        <strong style={{ color: 'var(--color-brand-default)' }}>{selectedIds.length}</strong>
         {' '}/ {totalPersons}석
       </p>
 
@@ -240,7 +240,7 @@ function SeatPage() {
       <div style={legend}>
         {[
           { label: '일반',       color: 'var(--color-seat-empty)',    border: 'var(--color-seat-empty-border)' },
-          { label: '선택',       color: 'var(--color-seat-selected)', border: 'var(--color-brand-500)' },
+          { label: '선택',       color: 'var(--color-seat-selected)', border: 'var(--color-brand-hover)' },
           { label: '매진',       color: 'var(--color-seat-sold-out)', border: 'transparent' },
           { label: 'VIP',        color: '#4040a0',                    border: '#6060c0' },
           { label: '리클라이너', color: '#1a5c3a',                    border: '#00ad74' },
@@ -369,7 +369,7 @@ function SeatPage() {
         {isReady && (
           <div style={amountBox}>
             <span style={{ fontSize: 15, color: 'var(--text-secondary)' }}>결제 예정 금액</span>
-            <span style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-brand-400)' }}>
+            <span style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-brand-default)' }}>
               {calcTotal().toLocaleString()}원
             </span>
           </div>
@@ -391,7 +391,7 @@ function SeatPage() {
 /* ── 좌석 타입·상태별 색상 반환 ── */
 function getSeatStyle(seat, selectedIds) {
   if (selectedIds.includes(seat.id)) {
-    return { background: 'var(--color-seat-selected)', border: '1px solid var(--color-brand-500)', cursor: 'pointer' }
+    return { background: 'var(--color-seat-selected)', border: '1px solid var(--color-brand-hover)', cursor: 'pointer' }
   }
   if (seat.status === 'sold_out')  return { background: 'var(--color-seat-sold-out)',  border: '1px solid transparent', cursor: 'not-allowed' }
   if (seat.status === 'disabled')  return { background: 'var(--color-seat-disabled)',  border: '1px solid transparent', cursor: 'not-allowed', opacity: 0.5 }
@@ -463,8 +463,8 @@ const selectedBox = {
 }
 const seatTag     = {
   padding: '4px 12px', background: 'rgba(255,184,0,0.15)',
-  border: '1px solid var(--color-brand-400)',
-  borderRadius: 8, fontSize: 14, color: 'var(--color-brand-400)', fontWeight: 700,
+  border: '1px solid var(--color-brand-default)',
+  borderRadius: 8, fontSize: 14, color: 'var(--color-brand-default)', fontWeight: 700,
 }
 
 /* 결제 버튼 영역 */
@@ -483,7 +483,7 @@ const amountBox = {
   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
   padding: '14px 20px', marginBottom: 16,
   background: 'rgba(255,184,0,0.06)',
-  border: '1px solid var(--color-brand-400)',
+  border: '1px solid var(--color-brand-default)',
   borderRadius: 12,
 }
 const nextBtn   = {

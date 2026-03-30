@@ -50,7 +50,7 @@ function PolicyListPage() {
 
 const headerRow = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }
 const pageTitle = { fontSize: 22, fontWeight: 800, color: 'var(--text-primary)' }
-const addBtn    = { padding: '10px 20px', background: 'var(--color-brand-400)', color: 'var(--btn-primary-text)',
+const addBtn    = { padding: '10px 20px', background: 'var(--color-brand-default)', color: 'var(--btn-primary-text)',
                     border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 700, cursor: 'pointer' }
 const tableWrap = { background: 'var(--bg-surface)', borderRadius: 12, overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }
 const table     = { width: '100%', borderCollapse: 'collapse' }
@@ -62,6 +62,6 @@ const td        = { padding: '12px 16px', fontSize: 14, color: 'var(--text-prima
 const typeBadge = { padding: '2px 8px', background: 'var(--bg-base)', borderRadius: 4,
                     fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }
 const editBtn   = { padding: '6px 14px', background: 'var(--color-info-bg)', color: 'var(--color-info-dark)',
-                    border: '1px solid var(--color-info-light)', borderRadius: 6, fontSize: 13, cursor: 'pointer' }
+                    border: '1px solid var(--color-info-text)', borderRadius: 6, fontSize: 13, cursor: 'pointer' }
 
 export default PolicyListPage

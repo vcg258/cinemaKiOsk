@@ -53,7 +53,7 @@ function PaymentResultPage() {
           <Ticket size={14} style={{ marginRight: 4, verticalAlign: 'middle' }} />
           예매 번호
         </p>
-        <p style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-brand-400)', margin: 0, letterSpacing: 2 }}>
+        <p style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-brand-default)', margin: 0, letterSpacing: 2 }}>
           {bookingId}
         </p>
       </div>
@@ -118,7 +118,7 @@ function PaymentResultPage() {
       </div>
 
       {/* ── 포인트 적립 안내 ── */}
-      <div style={{ ...card, background: 'var(--color-success-bg-dark)', border: '1px solid var(--color-success-dark)' }}>
+      <div style={{ ...card, background: 'var(--color-success-bg)', border: '1px solid var(--color-success-text)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <Gift size={32} color="var(--color-success-light)" strokeWidth={1.5} />
           <div>

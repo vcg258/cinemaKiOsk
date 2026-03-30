@@ -257,11 +257,11 @@ const posterBox      = { width: 120, height: 180, border: '2px dashed var(--bord
 const posterPH       = { width: '100%', height: '100%', display: 'flex', flexDirection: 'column',
                           alignItems: 'center', justifyContent: 'center' }
 const removePosterBtn= { marginTop: 8, padding: '4px 10px', background: 'var(--color-error-bg)',
-                          border: '1px solid var(--color-error-light)', borderRadius: 6,
-                          fontSize: 12, color: 'var(--color-error-dark)', cursor: 'pointer' }
+                          border: '1px solid var(--color-error-text)', borderRadius: 6,
+                          fontSize: 12, color: 'var(--color-error-text)', cursor: 'pointer' }
 const cancelBtn      = { padding: '12px 24px', background: 'var(--bg-base)', border: '1px solid var(--border-default)',
                           borderRadius: 8, fontSize: 15, cursor: 'pointer', color: 'var(--text-secondary)' }
-const submitBtn      = { flex: 1, padding: '12px 24px', background: 'var(--color-brand-400)', color: 'var(--btn-primary-text)',
+const submitBtn      = { flex: 1, padding: '12px 24px', background: 'var(--color-brand-default)', color: 'var(--btn-primary-text)',
                           border: 'none', borderRadius: 8, fontSize: 15, fontWeight: 700, cursor: 'pointer' }
 
 export default MovieFormPage

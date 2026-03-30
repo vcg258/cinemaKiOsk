@@ -12,7 +12,7 @@ function StatsByHourPage() {
     <div>
       <h2 style={pageTitle}>시간대별 통계</h2>
       <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 20 }}>
-        피크 시간: <strong style={{ color: 'var(--color-brand-400)' }}>{peakHour.hour}</strong>
+        피크 시간: <strong style={{ color: 'var(--color-brand-default)' }}>{peakHour.hour}</strong>
         &nbsp;({peakHour.tickets}장)
       </p>
 
@@ -29,7 +29,7 @@ function StatsByHourPage() {
                   style={{
                     width: `${pct}%`,
                     height: '100%',
-                    background: isPeak ? 'var(--color-brand-400)' : 'var(--color-info-main)',
+                    background: isPeak ? 'var(--color-brand-default)' : 'var(--color-info-main)',
                     borderRadius: 4,
                     transition: 'width 0.4s ease',
                   }}
@@ -55,7 +55,7 @@ function StatsByHourPage() {
             {MOCK_HOUR_STATS.map((h) => (
               <tr key={h.hour} style={tr}>
                 <td style={{ ...td, fontWeight: h.hour === peakHour.hour ? 700 : 400,
-                             color: h.hour === peakHour.hour ? 'var(--color-brand-400)' : 'var(--text-primary)' }}>
+                             color: h.hour === peakHour.hour ? 'var(--color-brand-default)' : 'var(--text-primary)' }}>
                   {h.hour}
                   {h.hour === peakHour.hour && <span style={peakBadge}>피크</span>}
                 </td>
@@ -77,7 +77,7 @@ const hourRow     = { display: 'flex', alignItems: 'center', gap: 12 }
 const hourLabel   = { width: 52, fontSize: 13, color: 'var(--text-secondary)', flexShrink: 0 }
 const barBg       = { flex: 1, height: 20, background: 'var(--bg-base)', borderRadius: 4 }
 const ticketCount = { width: 52, fontSize: 13, color: 'var(--text-primary)', textAlign: 'right', flexShrink: 0 }
-const peakBadge   = { marginLeft: 6, padding: '2px 6px', background: 'var(--color-brand-400)',
+const peakBadge   = { marginLeft: 6, padding: '2px 6px', background: 'var(--color-brand-default)',
                       borderRadius: 4, fontSize: 10, color: 'var(--btn-primary-text)', fontWeight: 700 }
 const tableWrap   = { background: 'var(--bg-surface)', borderRadius: 12, overflow: 'hidden',
                       boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }

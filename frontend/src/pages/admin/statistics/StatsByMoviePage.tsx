@@ -20,7 +20,7 @@ function StatsByMoviePage() {
   const RATING_COLOR = {
     ALL: 'var(--color-success-main)',
     '12': 'var(--color-info-main)',
-    '15': 'var(--color-brand-400)',
+    '15': 'var(--color-brand-default)',
     '19': 'var(--color-error-main)',
   }
 
@@ -44,7 +44,7 @@ function StatsByMoviePage() {
             {/* 순위 */}
             <div style={{
               ...rankBadge,
-              background: i === 0 ? 'var(--color-brand-400)' : i === 1 ? 'var(--text-muted)' : i === 2 ? 'var(--color-accent-bronze)' : 'var(--bg-base)',
+              background: i === 0 ? 'var(--color-brand-default)' : i === 1 ? 'var(--text-muted)' : i === 2 ? 'var(--color-accent-bronze)' : 'var(--bg-base)',
               color: i < 3 ? '#fff' : 'var(--text-secondary)',
             }}>
               {i + 1}
@@ -63,7 +63,7 @@ function StatsByMoviePage() {
               {/* 바 그래프 */}
               <div style={{ height: 8, background: 'var(--bg-base)', borderRadius: 4, marginBottom: 6 }}>
                 <div style={{ width: `${(m.revenue / maxRev) * 100}%`, height: '100%',
-                              background: 'var(--color-brand-400)', borderRadius: 4 }} />
+                              background: 'var(--color-brand-default)', borderRadius: 4 }} />
               </div>
 
               <div style={{ display: 'flex', gap: 16, fontSize: 13, color: 'var(--text-secondary)', alignItems: 'center' }}>

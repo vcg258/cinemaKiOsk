@@ -10,9 +10,9 @@ import { useNavigate } from 'react-router-dom'
 import { MOCK_MOVIES } from '../../../api/mockData'
 
 const RATING_COLOR = {
-  ALL: 'var(--color-badge-green)',
+  ALL: 'var(--badge-all)',
   '12': 'var(--color-info-main)',
-  '15': 'var(--color-brand-400)',
+  '15': 'var(--color-brand-default)',
   '19': 'var(--color-error-main)',
 }
 
@@ -92,8 +92,8 @@ function MovieListAdminPage() {
                     <td style={td}>
                       <span style={{
                         padding: '3px 10px', borderRadius: 20, fontSize: 12, fontWeight: 600,
-                        background: isNowPlaying ? 'var(--color-success-bg)' : 'var(--color-brand-tint-50)',
-                        color: isNowPlaying ? 'var(--color-success-main)' : 'var(--color-brand-700)',
+                        background: isNowPlaying ? 'var(--color-success-bg)' : 'var(--primitive-brand-50)',
+                        color: isNowPlaying ? 'var(--color-success-main)' : 'var(--primitive-brand-700)',
                       }}>
                         {isNowPlaying ? '상영 중' : '상영 예정'}
                       </span>
@@ -125,7 +125,7 @@ function MovieListAdminPage() {
 
 const headerRow   = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }
 const pageTitle   = { fontSize: 22, fontWeight: 800, color: 'var(--text-primary)' }
-const addBtn      = { padding: '10px 20px', background: 'var(--color-brand-400)', color: 'var(--btn-primary-text)',
+const addBtn      = { padding: '10px 20px', background: 'var(--color-brand-default)', color: 'var(--btn-primary-text)',
                       border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 700, cursor: 'pointer' }
 const searchInput = { width: '100%', padding: '10px 14px', border: '1px solid var(--border-default)', borderRadius: 8,
                       fontSize: 14, color: 'var(--text-primary)', background: 'var(--input-bg)', marginBottom: 16,
@@ -141,8 +141,8 @@ const tr          = { borderBottom: '1px solid var(--border-subtle)' }
 const td          = { padding: '12px 16px', fontSize: 14, color: 'var(--text-primary)' }
 const noData      = { padding: 24, textAlign: 'center', color: 'var(--text-muted)', fontSize: 14 }
 const editBtn     = { padding: '6px 14px', background: 'var(--color-info-bg)', color: 'var(--color-info-dark)',
-                      border: '1px solid var(--color-info-light)', borderRadius: 6, fontSize: 13, cursor: 'pointer' }
-const deleteBtn   = { padding: '6px 14px', background: 'var(--color-error-bg)', color: 'var(--color-error-dark)',
-                      border: '1px solid var(--color-error-light)', borderRadius: 6, fontSize: 13, cursor: 'pointer' }
+                      border: '1px solid var(--color-info-text)', borderRadius: 6, fontSize: 13, cursor: 'pointer' }
+const deleteBtn   = { padding: '6px 14px', background: 'var(--color-error-bg)', color: 'var(--color-error-text)',
+                      border: '1px solid var(--color-error-text)', borderRadius: 6, fontSize: 13, cursor: 'pointer' }
 
 export default MovieListAdminPage

@@ -110,16 +110,16 @@
   margin-bottom: 18px;
 }
 
-.ratingALL { background: var(--color-badge-green); color: #fff; }
-.rating12  { background: var(--color-brand-400);   color: #0e0b08; }
-.rating15  { background: #ff8c00;                  color: #fff; }
-.rating19  { background: var(--color-error-main);  color: #fff; }
+.ratingALL { background: var(--badge-all);          color: #fff; }           /* 전체관람가 */
+.rating12  { background: var(--color-brand-default); color: #0e0b08; }       /* 12세 (홈 슬라이드용 골드) */
+.rating15  { background: #ff8c00;                  color: #fff; }             /* 15세 (주황) */
+.rating19  { background: var(--color-error-main);  color: #fff; }             /* 청불 (레드) */
 
 /* 영화 제목 */
 .slideTitle {
   font-size: clamp(2rem, 6vw, 4rem);
   font-weight: 800;
-  color: var(--color-neutral-warm-white);
+  color: var(--text-primary);   /* 웜 화이트 (구 color-neutral-warm-white) */
   margin: 0 0 14px;
   line-height: 1.15;
   text-shadow: 0 3px 16px rgba(0, 0, 0, 0.6);
@@ -129,7 +129,7 @@
 /* 장르 */
 .slideGenre {
   font-size: clamp(0.9rem, 2vw, 1.1rem);
-  color: var(--color-neutral-200);
+  color: var(--text-secondary); /* 구 color-neutral-200 */
   margin: 0 0 10px;
   font-weight: 500;
 }
@@ -137,7 +137,7 @@
 /* 상영 기간 */
 .slidePeriod {
   font-size: clamp(0.85rem, 1.8vw, 1rem);
-  color: var(--color-brand-400);
+  color: var(--color-brand-default); /* 골드 강조 */
   margin: 0 0 30px;
   font-weight: 600;
 }
@@ -145,7 +145,7 @@
 /* 터치 유도 문구 — 깜빡임 애니메이션 */
 .cta {
   font-size: clamp(0.8rem, 1.6vw, 0.95rem);
-  color: var(--color-neutral-200);
+  color: var(--text-secondary); /* 구 color-neutral-200 */
   margin: 0;
   letter-spacing: 0.04em;
   animation: ctaPulse 2.2s ease-in-out infinite;
@@ -180,7 +180,7 @@
 
 /* 현재 슬라이드 인디케이터 — 캡슐 모양 */
 .indicatorActive {
-  background: var(--color-brand-400);
+  background: var(--color-brand-default); /* 골드 활성 인디케이터 */
   width: 24px;
   border-radius: 4px;
   transform: scaleY(1.1);
@@ -203,7 +203,7 @@
   border-radius: 8px;
   backdrop-filter: blur(6px);
   cursor: pointer;
-  color: var(--color-neutral-400);
+  color: var(--text-muted);       /* 구 color-neutral-400 */
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -236,8 +236,8 @@
 
 /* 탭 누적 시 골드로 채워짐 */
 .adminDotFilled {
-  background: var(--color-brand-400);
-  border-color: var(--color-brand-400);
+  background: var(--color-brand-default);
+  border-color: var(--color-brand-default);
   transform: scale(1.15);
 }
 
@@ -254,13 +254,13 @@
   align-items: center;
   justify-content: center;
   gap: 16px;
-  color: var(--color-neutral-200);
+  color: var(--text-secondary); /* 구 color-neutral-200 */
 }
 
 .emptyTitle {
   font-size: 1.4rem;
   font-weight: 700;
-  color: var(--color-neutral-warm-white);
+  color: var(--text-primary);   /* 웜 화이트 (구 color-neutral-warm-white) */
 }
 
 .emptySub {

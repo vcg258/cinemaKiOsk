@@ -77,8 +77,8 @@
 /* 30초 이하: 경고 색상 */
 .timerUrgent {
   border-color: var(--color-error-main);
-  background: var(--color-error-bg-dark);
-  color: var(--color-error-light);
+  background: var(--color-error-bg);    /* 다크 에러 배경 (구 color-error-bg-dark) */
+  color: var(--color-error-text);       /* 에러 강조 텍스트 (구 color-error-light) */
   animation: timerPulse 1s ease-in-out infinite;
 }
 

@@ -12,7 +12,7 @@
  *   - 홈 화면(/)에서는 타이머가 동작하지 않음 (홈에서 홈으로 리다이렉트 방지)
  *   - 결제 완료 페이지(/payment/result)에서는 타이머 동작 (완료 후 자동 귀환)
  */
-import { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react'
+import { createContext, useContext, useEffect, useRef, useState, useCallback, type ReactNode } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 /** 비조작 제한 시간 (초) */
@@ -23,16 +23,21 @@ const IDLE_LIMIT = 60
  * remain: 남은 시간 (초)
  * resetTimer: 외부에서 타이머를 수동 리셋할 수 있는 함수
  */
-const IdleTimerContext = createContext({
+const IdleTimerContext = createContext<{
+  remain: number
+  resetTimer: () => void
+  isHome: boolean
+}>({
   remain: IDLE_LIMIT,
   resetTimer: () => {},
+  isHome: false,
 })
 
 /**
  * IdleTimerProvider 컴포넌트
  * CustomerLayout 내부 전체를 감싸서 고객 페이지 전역에서 타이머가 동작하게 함.
  */
-export function IdleTimerProvider({ children }) {
+export function IdleTimerProvider({ children }: { children: ReactNode }) {
   const navigate   = useNavigate()
   const location   = useLocation()
 
@@ -40,7 +45,7 @@ export function IdleTimerProvider({ children }) {
   const [remain, setRemain] = useState(IDLE_LIMIT)
 
   // 1초 카운트다운 인터벌 ref
-  const intervalRef = useRef(null)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined)
 
   // 홈 화면이면 타이머를 일시 중지 (홈→홈 리다이렉트 방지)
   const isHome = location.pathname === '/'

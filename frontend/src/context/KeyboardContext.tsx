@@ -8,7 +8,7 @@
  *   const { openKeyboard, closeKeyboard } = useKeyboard()
  *   <input onFocus={(e) => openKeyboard(e.target, setValue)} />
  */
-import { createContext, useContext, useState, useCallback } from 'react'
+import { type ReactNode, createContext, useContext, useState, useCallback } from 'react'
 
 const KeyboardContext = createContext({
   isOpen: false,
@@ -21,7 +21,7 @@ const KeyboardContext = createContext({
   keyboardType: 'text', // 'text' | 'numeric'
 })
 
-export function KeyboardProvider({ children }) {
+export function KeyboardProvider({ children }: { children: ReactNode }) {
   // 키보드 표시 여부
   const [isOpen, setIsOpen] = useState(false)
   // 현재 포커스된 input 엘리먼트 ref

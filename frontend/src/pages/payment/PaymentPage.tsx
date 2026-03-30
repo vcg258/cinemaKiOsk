@@ -194,7 +194,7 @@ function PaymentPage() {
         )}
         <div style={{ ...priceRow, borderTop: '1px solid var(--border-default)', paddingTop: 14, marginTop: 10 }}>
           <span style={{ fontWeight: 700, fontSize: 18 }}>최종 결제 금액</span>
-          <span style={{ fontWeight: 800, fontSize: 22, color: 'var(--color-brand-400)' }}>
+          <span style={{ fontWeight: 800, fontSize: 22, color: 'var(--color-brand-default)' }}>
             {finalAmount.toLocaleString()}원
           </span>
         </div>
@@ -358,7 +358,7 @@ const inputStyle = {
 }
 const smallBtn  = {
   padding: '14px 20px',
-  background: 'var(--color-brand-400)', color: 'var(--color-neutral-900)',
+  background: 'var(--color-brand-default)', color: 'var(--primitive-neutral-900)',
   border: 'none', borderRadius: 10,
   fontSize: 15, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap',
 }
@@ -381,8 +381,8 @@ const methodBtn  = {
   fontSize: 15, cursor: 'pointer',
 }
 const methodBtnActive = {
-  borderColor: 'var(--color-brand-400)',
-  color: 'var(--color-brand-400)',
+  borderColor: 'var(--color-brand-default)',
+  color: 'var(--color-brand-default)',
   background: 'rgba(255,184,0,0.08)',
   fontWeight: 700,
 }

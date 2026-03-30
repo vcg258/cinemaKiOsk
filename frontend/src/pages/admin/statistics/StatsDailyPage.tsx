@@ -123,7 +123,7 @@ const chartArea  = { display: 'flex', gap: 4, alignItems: 'flex-end',
                      height: 140, overflowX: 'auto' }
 const barCol     = { display: 'flex', flexDirection: 'column', alignItems: 'center',
                      gap: 4, flexShrink: 0, minWidth: 28 }
-const bar        = { width: 20, background: 'var(--color-brand-400)', borderRadius: '4px 4px 0 0',
+const bar        = { width: 20, background: 'var(--color-brand-default)', borderRadius: '4px 4px 0 0',
                      transition: 'height 0.3s' }
 const barLabel   = { fontSize: 10, color: 'var(--text-muted)', transform: 'rotate(-45deg)', transformOrigin: 'top',
                      whiteSpace: 'nowrap', marginTop: 6 }

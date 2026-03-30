@@ -85,14 +85,14 @@
 }
 
 .navItem:hover {
-  background-color: var(--color-brand-tint-50); /* 연한 골드 배경 */
-  color: var(--color-brand-700);
+  background-color: var(--primitive-brand-50); /* 연한 골드 배경 */
+  color: var(--primitive-brand-700);
 }
 
 /* 현재 활성 링크 */
 .navItemActive {
-  background-color: var(--color-brand-tint-100);
-  color: var(--color-brand-700);
+  background-color: var(--primitive-brand-100);
+  color: var(--primitive-brand-700);
   font-weight: 600;
 }
 
@@ -146,9 +146,9 @@
   transition: background-color 0.15s, color 0.15s;
 }
 .themeBtn:hover {
-  background-color: var(--color-brand-tint-50);
-  color: var(--color-brand-700);
-  border-color: var(--color-brand-400);
+  background-color: var(--primitive-brand-50);
+  color: var(--primitive-brand-700);
+  border-color: var(--border-focus); /* 골드 포커스 링 재활용 */
 }
 
 .logoutBtn {
@@ -164,7 +164,7 @@
 .logoutBtn:hover {
   background-color: var(--color-error-bg);
   color: var(--color-error-main);
-  border-color: var(--color-error-light);
+  border-color: var(--color-error-text); /* 에러 강조 텍스트 색 = 구 error-light */
 }
 
 /* 메인 콘텐츠 패딩 */

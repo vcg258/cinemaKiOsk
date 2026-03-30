@@ -25,7 +25,7 @@
 /* 키보드 컨테이너 */
 .keyboardWrapper {
   background: var(--bg-modal);
-  border-top: 2px solid var(--color-brand-400);
+  border-top: 2px solid var(--color-brand-default); /* 골드 강조선 */
   box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.6);
   padding-bottom: env(safe-area-inset-bottom, 0); /* iOS 노치 대응 */
 }
@@ -70,9 +70,9 @@
   transition: all 0.15s;
 }
 .langBtnActive {
-  border-color: var(--color-brand-400);
-  color: var(--color-brand-400);
-  background: rgba(255, 184, 0, 0.1);
+  border-color: var(--color-brand-default);
+  color: var(--color-brand-default);
+  background: rgba(255, 184, 0, 0.1); /* 골드 틴트 (직접값 유지 — rgba라 변수 불가) */
 }
 
 /* 닫기 버튼 */
@@ -119,9 +119,9 @@
 /* 키 버튼 hover/active */
 :global(.hg-theme-default.cineos-keyboard .hg-button:hover),
 :global(.hg-theme-default.cineos-keyboard .hg-button:active) {
-  background: rgba(255, 184, 0, 0.15) !important;
-  border-color: var(--color-brand-400) !important;
-  color: var(--color-brand-400) !important;
+  background: rgba(255, 184, 0, 0.15) !important; /* 골드 틴트 */
+  border-color: var(--color-brand-default) !important;
+  color: var(--color-brand-default) !important;
 }
 
 /* Space 키 */
@@ -135,8 +135,8 @@
 :global(.hg-theme-default.cineos-keyboard .hg-button[data-skbtn="{enter}"]),
 :global(.hg-theme-default.cineos-keyboard .hg-button[data-skbtn="{shift}"]),
 :global(.hg-theme-default.cineos-keyboard .hg-button[data-skbtn="{lock}"]) {
-  background: rgba(255, 184, 0, 0.08) !important;
-  color: var(--color-brand-400) !important;
+  background: rgba(255, 184, 0, 0.08) !important; /* 골드 틴트 */
+  color: var(--color-brand-default) !important;
   font-size: 14px !important;
 }
 
@@ -150,9 +150,9 @@
 
 /* {lang} 버튼 (한/영 전환) — 브랜드 강조 */
 :global(.hg-theme-default.cineos-keyboard .hg-button[data-skbtn="{lang}"]) {
-  background: rgba(255, 184, 0, 0.12) !important;
-  color: var(--color-brand-400) !important;
-  border-color: var(--color-brand-400) !important;
+  background: rgba(255, 184, 0, 0.12) !important; /* 골드 틴트 */
+  color: var(--color-brand-default) !important;
+  border-color: var(--color-brand-default) !important;
   font-size: 14px !important;
   font-weight: 700 !important;
 }

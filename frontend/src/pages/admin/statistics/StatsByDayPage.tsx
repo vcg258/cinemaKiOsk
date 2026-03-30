@@ -12,7 +12,7 @@ const COLORS = [
   'var(--color-info-main)',       // 수
   'var(--color-info-main)',       // 목
   'var(--color-accent-purple)',   // 금
-  'var(--color-brand-400)',       // 토
+  'var(--color-brand-default)',       // 토
 ]
 
 function StatsByDayPage() {

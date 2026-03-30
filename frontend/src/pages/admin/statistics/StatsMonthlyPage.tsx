@@ -57,7 +57,7 @@ function StatsMonthlyPage() {
                                         alignItems: 'center', gap: 6, flex: 1 }}>
               <div
                 style={{
-                  width: '100%', background: 'var(--color-brand-400)', borderRadius: '4px 4px 0 0',
+                  width: '100%', background: 'var(--color-brand-default)', borderRadius: '4px 4px 0 0',
                   height: `${Math.max((m.revenue / maxRevenue) * 130, 4)}px`,
                 }}
                 title={`${m.revenue.toLocaleString()}원`}

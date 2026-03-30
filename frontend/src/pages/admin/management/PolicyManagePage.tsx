@@ -81,7 +81,7 @@ const input     = { padding: '10px 12px', border: '1px solid var(--border-defaul
                     width: '100%', boxSizing: 'border-box' }
 const cancelBtn = { padding: '12px 24px', background: 'var(--bg-base)', border: '1px solid var(--border-default)',
                     borderRadius: 8, fontSize: 14, cursor: 'pointer', color: 'var(--text-secondary)' }
-const submitBtn = { flex: 1, padding: '12px 24px', background: 'var(--color-brand-400)', color: 'var(--btn-primary-text)',
+const submitBtn = { flex: 1, padding: '12px 24px', background: 'var(--color-brand-default)', color: 'var(--btn-primary-text)',
                     border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 700, cursor: 'pointer' }
 
 export default PolicyManagePage

@@ -186,7 +186,7 @@ function MovieDetailPage() {
                   cursor: s.availableSeats === 0 ? 'not-allowed' : 'pointer',
                 }}
               >
-                <p style={{ fontSize: 24, fontWeight: 700, color: 'var(--color-brand-400)', margin: 0 }}>
+                <p style={{ fontSize: 24, fontWeight: 700, color: 'var(--color-brand-default)', margin: 0 }}>
                   {s.startTime}
                 </p>
                 <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '6px 0 0' }}>

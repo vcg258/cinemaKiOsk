@@ -99,7 +99,7 @@ function RefundPage() {
               background: result.status === 'REFUNDED' ? 'var(--color-success-bg)' :
                           result.canRefund ? 'var(--color-warning-bg)' : 'var(--color-error-bg)',
               color: result.status === 'REFUNDED' ? 'var(--color-success-main)' :
-                     result.canRefund ? 'var(--color-warning-dark)' : 'var(--color-error-dark)',
+                     result.canRefund ? 'var(--color-warning-text)' : 'var(--color-error-text)',
             }}>
               {result.status === 'REFUNDED' ? '환불 완료' :
                result.canRefund ? '환불 가능' : '환불 불가 (10분 초과)'}
@@ -159,7 +159,7 @@ const sLabel      = { fontSize: 13, fontWeight: 600, color: 'var(--text-secondar
 const searchRow   = { display: 'flex', gap: 8 }
 const searchInput = { flex: 1, padding: '10px 14px', border: '1px solid var(--border-default)', borderRadius: 8,
                       fontSize: 14, color: 'var(--text-primary)', background: 'var(--input-bg)', outline: 'none' }
-const searchBtn   = { padding: '10px 20px', background: 'var(--color-brand-400)', color: 'var(--btn-primary-text)',
+const searchBtn   = { padding: '10px 20px', background: 'var(--color-brand-default)', color: 'var(--btn-primary-text)',
                       border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 700, cursor: 'pointer',
                       whiteSpace: 'nowrap' }
 const errorMsg    = { fontSize: 13, color: 'var(--color-error-main)', marginTop: 8 }
@@ -171,8 +171,8 @@ const dl          = { display: 'grid', gridTemplateColumns: '80px 1fr', gap: '10
                       marginBottom: 16 }
 const dt          = { fontSize: 13, color: 'var(--text-muted)', fontWeight: 600 }
 const dd          = { fontSize: 14, color: 'var(--text-primary)', margin: 0 }
-const warnBox     = { padding: '12px 16px', background: 'var(--color-error-bg)', border: '1px solid var(--color-error-light)',
-                      borderRadius: 8, color: 'var(--color-error-dark)', fontSize: 13, marginBottom: 12 }
+const warnBox     = { padding: '12px 16px', background: 'var(--color-error-bg)', border: '1px solid var(--color-error-text)',
+                      borderRadius: 8, color: 'var(--color-error-text)', fontSize: 13, marginBottom: 12 }
 const successBox  = { padding: '12px 16px', background: 'var(--color-success-bg)', border: '1px solid var(--color-success-main)',
                       borderRadius: 8, color: 'var(--color-success-main)', fontSize: 13, fontWeight: 600 }
 const refundBtn   = { display: 'block', width: '100%', padding: '14px 0',

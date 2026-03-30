@@ -140,7 +140,7 @@ const selectStyle = { padding: '10px 12px', border: '1px solid var(--border-defa
 const addRow      = { display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }
 const inputS      = { padding: '10px 12px', border: '1px solid var(--border-default)', borderRadius: 8,
                       fontSize: 14, color: 'var(--text-primary)', background: 'var(--input-bg)' }
-const addBtn      = { padding: '10px 18px', background: 'var(--color-brand-400)', color: 'var(--btn-primary-text)',
+const addBtn      = { padding: '10px 18px', background: 'var(--color-brand-default)', color: 'var(--btn-primary-text)',
                       border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 700, cursor: 'pointer' }
 const scheduleChip= { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
                       padding: '10px 14px', background: 'var(--bg-base)', borderRadius: 8,

@@ -45,7 +45,7 @@ export const pageVariants = {
  * - duration: 0.25초 (빠릿빠릿하게)
  */
 export const pageTransition = {
-  ease: 'easeOut',
+  ease: 'easeOut' as const,
   duration: 0.25,
 };
 
@@ -60,6 +60,6 @@ export const adminPageVariants = {
 };
 
 export const adminPageTransition = {
-  ease: 'easeOut',
+  ease: 'easeOut' as const,
   duration: 0.2,
 };

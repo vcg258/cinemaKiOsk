@@ -29,7 +29,7 @@ function StatsDashboardPage() {
   const topMovie    = MOCK_MOVIE_STATS[0]
 
   const summaryCards = [
-    { label: '오늘 매출',    value: fmtWon(todayStat.revenue),                    Icon: Banknote,   color: 'var(--color-brand-400)' },
+    { label: '오늘 매출',    value: fmtWon(todayStat.revenue),                    Icon: Banknote,   color: 'var(--color-brand-default)' },
     { label: '오늘 티켓 수', value: `${todayStat.tickets}장`,                     Icon: Ticket,     color: 'var(--color-info-main)' },
     { label: '이번 달 매출', value: fmtWon(monthStat.revenue),                    Icon: TrendingUp, color: 'var(--color-success-main)' },
     { label: '이번 달 티켓', value: `${monthStat.tickets.toLocaleString()}장`,    Icon: Film,       color: 'var(--color-accent-purple)' },
@@ -64,7 +64,7 @@ function StatsDashboardPage() {
       {topMovie && (
         <div style={topMovieCard}>
           <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Trophy size={14} color="var(--color-brand-400)" /> 박스오피스 1위
+            <Trophy size={14} color="var(--color-brand-default)" /> 박스오피스 1위
           </p>
           <p style={{ fontSize: 20, fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 4px' }}>{topMovie.title}</p>
           <p style={{ fontSize: 14, color: 'var(--text-muted)', margin: 0 }}>
@@ -96,7 +96,7 @@ const cardGrid    = { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, m
 const summaryCard = { background: 'var(--bg-surface)', borderRadius: 12, padding: '20px 18px',
                       boxShadow: '0 1px 4px rgba(0,0,0,0.08)', display: 'flex',
                       flexDirection: 'column' }
-const topMovieCard= { background: 'var(--color-warning-bg)', border: '1px solid var(--color-brand-400)', borderRadius: 12,
+const topMovieCard= { background: 'var(--color-warning-bg)', border: '1px solid var(--color-brand-default)', borderRadius: 12,
                       padding: '16px 20px', marginBottom: 28 }
 const shortcutGrid= { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 12 }
 const shortcutBtn = { padding: '20px 12px', background: 'var(--bg-surface)', border: '1px solid var(--border-default)',

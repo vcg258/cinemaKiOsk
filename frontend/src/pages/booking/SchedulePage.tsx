@@ -243,7 +243,7 @@ function SchedulePage() {
         </div>
         <p style={{ fontSize: 15, color: 'var(--text-secondary)', marginTop: 12 }}>
           총 인원:{' '}
-          <strong style={{ color: 'var(--color-brand-400)', fontSize: 17 }}>
+          <strong style={{ color: 'var(--color-brand-default)', fontSize: 17 }}>
             {totalPersons}명
           </strong>
         </p>
@@ -300,13 +300,13 @@ const movieBadge = {
 }
 const section   = { marginBottom: 40 }
 const stepTitle = {
-  fontSize: 18, fontWeight: 700, color: 'var(--color-brand-400)',
+  fontSize: 18, fontWeight: 700, color: 'var(--color-brand-default)',
   marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10,
 }
 const stepNum   = {
   display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
   width: 28, height: 28, borderRadius: '50%',
-  background: 'var(--color-brand-400)', color: 'var(--color-neutral-900)',
+  background: 'var(--color-brand-default)', color: 'var(--primitive-neutral-900)',
   fontSize: 14, fontWeight: 800, flexShrink: 0,
 }
 
@@ -321,9 +321,9 @@ const dateBtn   = {
   minWidth: 90, position: 'relative',
   display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
 }
-const dateBtnActive = { borderColor: 'var(--color-brand-400)', background: 'rgba(255,184,0,0.1)' }
+const dateBtnActive = { borderColor: 'var(--color-brand-default)', background: 'rgba(255,184,0,0.1)' }
 const todayLabel    = {
-  fontSize: 11, color: 'var(--color-brand-400)', fontWeight: 700,
+  fontSize: 11, color: 'var(--color-brand-default)', fontWeight: 700,
 }
 
 const timeGrid  = { display: 'flex', gap: 16, flexWrap: 'wrap' }
@@ -333,7 +333,7 @@ const timeBtn   = {
   textAlign: 'center', minWidth: 150, cursor: 'pointer',
   color: 'var(--text-primary)',
 }
-const timeBtnActive  = { borderColor: 'var(--color-brand-400)', background: 'rgba(255,184,0,0.1)' }
+const timeBtnActive  = { borderColor: 'var(--color-brand-default)', background: 'rgba(255,184,0,0.1)' }
 const timeBtnSoldOut = { opacity: 0.4, cursor: 'not-allowed' }
 
 const personList = {
@@ -365,8 +365,8 @@ const summaryBox = {
   display: 'flex', alignItems: 'center',
   padding: '12px 20px', marginBottom: 16,
   background: 'rgba(255,184,0,0.08)',
-  border: '1px solid var(--color-brand-400)',
-  borderRadius: 12, fontSize: 15, color: 'var(--color-brand-400)', fontWeight: 600,
+  border: '1px solid var(--color-brand-default)',
+  borderRadius: 12, fontSize: 15, color: 'var(--color-brand-default)', fontWeight: 600,
 }
 const hintBox   = {
   display: 'flex', alignItems: 'center',
