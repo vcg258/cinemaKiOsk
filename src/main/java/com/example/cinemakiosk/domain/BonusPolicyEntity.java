@@ -46,20 +46,6 @@ public class BonusPolicyEntity{
      * @return DTO
      */
     public static BonusPolicyDTO toDTO(BonusPolicyEntity bonusPolicyEntity){
-        //OneToMany 변수는 본인 객체를 제외한 값만 받기. 순환참조 방지.
-        List<PaymentDetailsEntity> paymentDetailsEntities = bonusPolicyEntity.getPaymentDetailsEntity();
-        List<PaymentDetailsDTO> paymentDetailsDTOs = new ArrayList<>();
-
-
-        for (PaymentDetailsEntity paymentDetailsEntity : paymentDetailsEntities){
-            //pk 만 받아오기.
-            PaymentDetailsDTO paymentDetailsDTO = PaymentDetailsDTO.builder()
-                    .id(paymentDetailsEntity.getId())
-                    .build();
-
-            paymentDetailsDTOs.add(paymentDetailsDTO);
-        }
-
         return BonusPolicyDTO.builder()
                 .id(bonusPolicyEntity.getId())
                 .policyName(bonusPolicyEntity.getPolicyName())
@@ -67,7 +53,6 @@ public class BonusPolicyEntity{
                 .createAt(bonusPolicyEntity.getStartAt())
                 .finishedAt(bonusPolicyEntity.getEndAt())
                 .activation(bonusPolicyEntity.getActivation())
-                .paymentDetails(paymentDetailsDTOs)
                 .build();
     }
 }

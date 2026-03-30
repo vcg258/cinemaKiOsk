@@ -18,7 +18,7 @@ class TheaterServiceImplTest {
     @Test
     void createSeat() {
         TheaterDTO theaterDTO = TheaterDTO.builder()
-                .seatPolicyDTO(SeatPolicyDTO.builder()
+                .seatPolicy(SeatPolicyDTO.builder()
                         .name("일반석")
                         .cost(7000L)
                         .build())

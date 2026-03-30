@@ -24,7 +24,6 @@ public class PaymentDetailsVO {
     private LocalDateTime time;              // 결제 시간
     private Long usePoint;                   // 사용 포인트 기본값 0
     private Status status;                   // ENUM ('PAY','RETURN','FAIL'), 결제 완료, 환불, 실패
-    private List<PointHistoryVO> pointHistories;
 
     /**
      * VO -> DTO
@@ -32,20 +31,6 @@ public class PaymentDetailsVO {
      * @return DTO
      */
     public static PaymentDetailsDTO toDTO(PaymentDetailsVO paymentDetailsVO){
-        //OneToMany 변수는 본인 객체를 제외한 값만 받기. 순환참조 방지.
-        List<PointHistoryVO> pointHistoryVOs = paymentDetailsVO.getPointHistories();
-        List<PointHistoryDTO> pointHistoryDTOs = new ArrayList<>();
-
-
-        for (PointHistoryVO pointHistoryVO : pointHistoryVOs){
-            //pk 만 받아오기.
-            PointHistoryDTO pointHistoryDTO = PointHistoryDTO.builder()
-                    .pointId(pointHistoryVO.getPointId())
-                    .build();
-
-            pointHistoryDTOs.add(pointHistoryDTO);
-        }
-
         return PaymentDetailsDTO.builder()
                 .id(paymentDetailsVO.getId())
                 .reservation(ReservationDetailsVO.toDTO(paymentDetailsVO.getReservation()))
@@ -55,7 +40,6 @@ public class PaymentDetailsVO {
                 .time(paymentDetailsVO.getTime())
                 .usePoint(paymentDetailsVO.getUsePoint())
                 .status(paymentDetailsVO.getStatus())
-                .pointHistories(pointHistoryDTOs)
                 .build();
     }
 }

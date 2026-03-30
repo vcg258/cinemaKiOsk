@@ -137,15 +137,15 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
         if (!discountPolicyDTO.isActivation()) return false;
         // 할인 정책이 만료된 경우
         LocalDateTime now = LocalDateTime.now();
-        if (!(now.isBefore(discountPolicyDTO.getEndAt()) && now.isAfter(discountPolicyDTO.getStartAt()))) return false;
+//        if (!(now.isBefore(discountPolicyDTO.getEndAt()) && now.isAfter(discountPolicyDTO.getStartAt()))) return false;
         // 쿠폰 번호가 일치하고 사용여부가 true일경우
-        for (CouponDTO couponDTO : discountPolicyDTO.getCoupons()) {
-            if (couponDTO.getCouponNum().equals(couponNum)) {
-                return couponDTO.isStatus(); // true 사용가능
-            }
-        }
+//        for (String couponNuminList : discountPolicyDTO.get()) {
+//            if (couponNuminList.equals(couponNum)) {
+                return true; // true 사용가능
+//            }
+//        }
 
-        return false; // 나머지 불가능
+//        return false; // 나머지 불가능
     }
 
     /**

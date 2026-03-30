@@ -18,7 +18,6 @@ public class SeatPolicyVO {
     private Long policyId; // 좌석 아이디
     private String name; // 좌석 이름
     private Long cost; // 좌석 비용
-    private List<TheaterVO> theater; //1:다
 
     /**
      * VO -> DTO
@@ -26,22 +25,10 @@ public class SeatPolicyVO {
      * @return DTO
      */
     public static SeatPolicyDTO toDTO(SeatPolicyVO seatPolicyVO){
-        List<TheaterVO> theaterVOs = seatPolicyVO.getTheater();
-        List<TheaterDTO> theaterDTOs = new ArrayList<>();
-
-        for (TheaterVO theaterVO : theaterVOs){
-            TheaterDTO theaterDTO = TheaterDTO.builder()
-                    .no(theaterVO.getNo())
-                    .build();
-
-            theaterDTOs.add(theaterDTO);
-        }
-
         return SeatPolicyDTO.builder()
                 .policyId(seatPolicyVO.getPolicyId())
                 .name(seatPolicyVO.getName())
                 .cost(seatPolicyVO.getCost())
-                .theater(theaterDTOs)
                 .build();
     }
 }

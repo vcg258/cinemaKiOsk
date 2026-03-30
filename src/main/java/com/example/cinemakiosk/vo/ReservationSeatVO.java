@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ReservationSeatVO {
     private Long id;               //인덱스
-    private ReservationDetailsVO reservationDetails;  //예매 내역 아이디
+    private String reservationDetailsId;  //예매 내역 아이디
     private String seatNumber;     //좌석 번호
 
     /**
@@ -26,7 +26,7 @@ public class ReservationSeatVO {
     public static ReservationSeatDTO toDTO(ReservationSeatVO reservationSeatVO){
         return ReservationSeatDTO.builder()
                 .id(reservationSeatVO.getId())
-                .reservationDetails(ReservationDetailsVO.toDTO(reservationSeatVO.getReservationDetails()))
+                .reservationDetailsId(reservationSeatVO.getReservationDetailsId())
                 .seatNumber(reservationSeatVO.getSeatNumber())
                 .build();
     }

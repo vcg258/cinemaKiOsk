@@ -41,16 +41,10 @@ public class CouponEntity {
      * @return DTO
      */
     public static CouponDTO toDTO(CouponEntity couponEntity) {
-        //쿠폰쪽에서 결제의 id만 받는 걸로 진행.
-        PaymentDetailsDTO paymentDetailsDTO = PaymentDetailsDTO.builder()
-                .id(couponEntity.getPaymentDetailsEntity().getId())
-                .build();
-
         return CouponDTO.builder()
                 .couponNum(couponEntity.getCouponNum())
                 .discountPolicy(DiscountPolicyEntity.toDTO(couponEntity.getDiscountPolicyEntity()))
                 .status(couponEntity.isStatus())
-                .paymentDetails(paymentDetailsDTO)
                 .build();
     }
 

@@ -23,7 +23,6 @@ public class ReservationDetailsDTO {
     private MemberDTO phone;                  //  회원 번호
     private LocalDateTime reservationTime; //  예약 시간
     private List<ReservationSeatDTO> seats; //  예매한 좌석들의 정보
-    private List<PaymentDetailsDTO> paymentDetails; // 1:다
 
     /**
      * DTO -> Entity
@@ -31,17 +30,11 @@ public class ReservationDetailsDTO {
      * @return Entity
      */
     public static ReservationDetailsEntity toEntity(ReservationDetailsDTO reservationDetailsDTO) {
-
         List<ReservationSeatDTO> reservationSeatDTOs = reservationDetailsDTO.getSeats();
-        List<ReservationSeatEntity> reservationSeatEntitys = new ArrayList<>();
+        List<ReservationSeatEntity> reservationSeatEntities = new ArrayList<>();
 
         for (ReservationSeatDTO reservationSeatDTO : reservationSeatDTOs) {
-            ReservationSeatEntity reservationSeatEntity = ReservationSeatEntity.builder()
-                    .id(reservationSeatDTO.getId())
-                    .seatNumber(reservationSeatDTO.getSeatNumber())
-                    .build();
-
-            reservationSeatEntitys.add(reservationSeatEntity);
+            reservationSeatEntities.add(ReservationSeatDTO.toEntity(reservationSeatDTO));
         }
 
         return ReservationDetailsEntity.builder()
@@ -49,7 +42,7 @@ public class ReservationDetailsDTO {
                 .scheduleEntity(ScheduleDTO.toEntity(reservationDetailsDTO.getSchedule()))
                 .memberEntity(MemberDTO.toEntity(reservationDetailsDTO.getPhone()))
                 .createAt(reservationDetailsDTO.getReservationTime())
-                .reservationSeatEntity(reservationSeatEntitys)
+                .reservationSeatEntity(reservationSeatEntities)
                 .build();
     }
 
@@ -59,17 +52,11 @@ public class ReservationDetailsDTO {
      * @return VO
      */
     public static ReservationDetailsVO toVO(ReservationDetailsDTO reservationDetailsDTO) {
-
         List<ReservationSeatDTO> reservationSeatDTOs = reservationDetailsDTO.getSeats();
         List<ReservationSeatVO> reservationSeatVOs = new ArrayList<>();
 
         for (ReservationSeatDTO reservationSeatDTO : reservationSeatDTOs) {
-            ReservationSeatVO reservationSeatVO = ReservationSeatVO.builder()
-                    .id(reservationSeatDTO.getId())
-                    .seatNumber(reservationSeatDTO.getSeatNumber())
-                    .build();
-            
-            reservationSeatVOs.add(reservationSeatVO);
+            reservationSeatVOs.add(ReservationSeatDTO.toVO(reservationSeatDTO));
         }
 
         return ReservationDetailsVO.builder()
@@ -93,5 +80,4 @@ public class ReservationDetailsDTO {
 
         return seatName;
     }
-
 }

@@ -24,7 +24,6 @@ public class DiscountPolicyVO {
     private LocalDateTime startAt; // 시작일
     private LocalDateTime endAt; // 만료일
     private boolean activation; // 활성화 여부
-    private List<CouponVO> coupons; // resultMap(collection)
 
     /**
      * VO -> DTO
@@ -32,21 +31,6 @@ public class DiscountPolicyVO {
      * @return DTO
      */
     public static DiscountPolicyDTO toDTO(DiscountPolicyVO discountPolicyVO) {
-        //OneToMany 변수는 본인 객체를 제외한 값만 받기. 순환참조 방지.
-        List<CouponVO> couponVOs = discountPolicyVO.getCoupons();
-        List<CouponDTO> couponEntities = new ArrayList<>();
-
-
-        for (CouponVO coupon : couponVOs){
-            //pk 만 받아오기.
-            CouponDTO couponDTOs = CouponDTO.builder()
-                    .couponNum(coupon.getCouponNum())
-                    .build();
-
-            couponEntities.add(couponDTOs);
-        }
-
-
         return DiscountPolicyDTO.builder()
                 .id(discountPolicyVO.getId())
                 .policyName(discountPolicyVO.getPolicyName())
@@ -56,7 +40,6 @@ public class DiscountPolicyVO {
                 .startAt(discountPolicyVO.getStartAt())
                 .endAt(discountPolicyVO.getEndAt())
                 .activation(discountPolicyVO.isActivation())
-                .coupons(couponEntities)
                 .build();
     }
 }

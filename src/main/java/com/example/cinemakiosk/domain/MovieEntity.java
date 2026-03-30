@@ -30,8 +30,8 @@ public class MovieEntity{
     @Column(name = "genre", length = 50)
     private String genre;
 
-    @Enumerated(EnumType.STRING)
-    private Rating rating;
+//    @Enumerated(EnumType.STRING) //Enum타입이 아니라서 사용하지 않음.ㅁ
+    private String rating;
 
     @Column(name = "runtime", columnDefinition = "BIGINT UNSIGNED", nullable = false)
     private Long runtime;
@@ -89,7 +89,6 @@ public class MovieEntity{
                 .startAt(movieEntity.getStartAt())
                 .endAt(movieEntity.getEndAt())
                 .createAt(movieEntity.getCreateAt())
-                .schedules(scheduleDTOs)
                 .build();
     }
 }

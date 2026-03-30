@@ -35,7 +35,7 @@ public class ReservationSeatEntity {
     public static ReservationSeatDTO toDTO(ReservationSeatEntity reservationSeatEntity){
         return ReservationSeatDTO.builder()
                 .id(reservationSeatEntity.getId())
-                .reservationDetails(ReservationDetailsEntity.toDTO(reservationSeatEntity.getReservationDetailsEntity()))
+                .reservationDetailsId(reservationSeatEntity.getReservationDetailsEntity().getId())
                 .seatNumber(reservationSeatEntity.getSeatNumber())
                 .build();
     }

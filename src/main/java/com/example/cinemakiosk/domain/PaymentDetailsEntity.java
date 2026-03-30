@@ -77,7 +77,6 @@ public class PaymentDetailsEntity {
                 .time(paymentDetailsEntity.getTime())
                 .usePoint(paymentDetailsEntity.getUsePoint())
                 .status(paymentDetailsEntity.getStatus())
-                .pointHistories(pointHistoryDTOs)
                 .build();
     }
     

@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReservationSeatDTO {
     private Long id;               //인덱스
-    private ReservationDetailsDTO reservationDetails;  //예매 내역 아이디
+    private String reservationDetailsId;  //예매 내역 아이디
     private String seatNumber;     //좌석 번호
 
     /**
@@ -26,7 +26,7 @@ public class ReservationSeatDTO {
     public static ReservationSeatEntity toEntity(ReservationSeatDTO reservationSeatDTO){
         return ReservationSeatEntity.builder()
                 .id(reservationSeatDTO.getId())
-                .reservationDetailsEntity(ReservationDetailsDTO.toEntity(reservationSeatDTO.getReservationDetails()))
+                .reservationDetailsEntity(ReservationDetailsEntity.builder().id(reservationSeatDTO.getReservationDetailsId()).build())
                 .seatNumber(reservationSeatDTO.getSeatNumber())
                 .build();
     }
@@ -39,7 +39,7 @@ public class ReservationSeatDTO {
     public static ReservationSeatVO toVO(ReservationSeatDTO reservationSeatDTO){
         return ReservationSeatVO.builder()
                 .id(reservationSeatDTO.getId())
-                .reservationDetails(ReservationDetailsDTO.toVO(reservationSeatDTO.getReservationDetails()))
+                .reservationDetailsId(reservationSeatDTO.getReservationDetailsId())
                 .seatNumber(reservationSeatDTO.getSeatNumber())
                 .build();
     }

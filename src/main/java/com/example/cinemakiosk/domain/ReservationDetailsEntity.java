@@ -46,25 +46,11 @@ public class ReservationDetailsEntity{
      * @return DTO
      */
     public static ReservationDetailsDTO toDTO(ReservationDetailsEntity reservationDetailsEntity) {
-
-        List<ReservationSeatEntity> reservationSeatEntitys = reservationDetailsEntity.getReservationSeatEntity();
-        List<ReservationSeatDTO> reservationSeatDTOs = new ArrayList<>();
-
-        for (ReservationSeatEntity reservationSeatEntity : reservationSeatEntitys) {
-            ReservationSeatDTO reservationSeatDTO = ReservationSeatDTO.builder()
-                    .id(reservationSeatEntity.getId())
-                    .seatNumber(reservationSeatEntity.getSeatNumber())
-                    .build();
-
-            reservationSeatDTOs.add(reservationSeatDTO);
-        }
-
         return ReservationDetailsDTO.builder()
                 .id(reservationDetailsEntity.getId())
                 .schedule(ScheduleEntity.toDTO(reservationDetailsEntity.getScheduleEntity()))
                 .phone(MemberEntity.toDTO(reservationDetailsEntity.getMemberEntity()))
                 .reservationTime(reservationDetailsEntity.getCreateAt())
-                .seats(reservationSeatDTOs)
                 .build();
     }
 

@@ -50,7 +50,6 @@ public class SeatPolicyEntity {
                 .policyId(seatPolicyEntity.getPolicyId())
                 .name(seatPolicyEntity.getName())
                 .cost(seatPolicyEntity.getCost())
-                .theater(theaterDTOs)
                 .build();
     }
 }
