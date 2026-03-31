@@ -2,20 +2,18 @@ package com.example.cinemakiosk.vo;
 
 import com.example.cinemakiosk.dto.ReservationDetailsDTO;
 import com.example.cinemakiosk.dto.ReservationSeatDTO;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
+@ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReservationSeatVO {
     private Long id;               //인덱스
-    private String reservationDetailsId;  //예매 내역 아이디
+    private Long reservationDetailsId;  //예매 내역 아이디
     private String seatNumber;     //좌석 번호
 
     /**

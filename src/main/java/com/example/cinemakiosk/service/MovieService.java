@@ -8,9 +8,6 @@ import com.example.cinemakiosk.dto.MovieResponseDTO;
 import java.util.List;
 
 public interface MovieService {
-
-
-
     // 추가
     void insertMovie(MovieDTO movieDTO);
 

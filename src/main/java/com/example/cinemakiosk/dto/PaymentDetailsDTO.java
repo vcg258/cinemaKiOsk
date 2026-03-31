@@ -5,16 +5,13 @@ import com.example.cinemakiosk.domain.enums.Status;
 import com.example.cinemakiosk.domain.PointHistoryEntity;
 import com.example.cinemakiosk.vo.PaymentDetailsVO;
 import com.example.cinemakiosk.vo.PointHistoryVO;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

@@ -27,8 +27,11 @@ VALUES (1, '연기자 목록', current_timestamp, '설명임', '감독', date_ad
 
 
 -- 스케쥴 등록. 해당 매커니즘은 타이밍을 설정 하면 해당 영화의 상영일에 맞춰서 전부 추가되는 형식.
-insert into schedule (id, end_at, start_at, movie_id, no)
+insert ignore into schedule (id, end_at, start_at, movie_id, no)
 VALUES (1,CURRENT_TIMESTAMP, date_add(current_timestamp,interval 200 minute), 1,1),
        (2,CURRENT_TIMESTAMP, date_add(current_timestamp,interval 200 minute), 1,2),
        (3,CURRENT_TIMESTAMP, date_add(current_timestamp,interval 200 minute), 1,3);
 
+-- member 등록
+insert ignore  into member (phone, create_at, point)
+    VALUE ('01088771113', current_timestamp, 0)

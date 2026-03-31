@@ -4,16 +4,13 @@ import com.example.cinemakiosk.domain.BonusPolicyEntity;
 import com.example.cinemakiosk.domain.PaymentDetailsEntity;
 import com.example.cinemakiosk.vo.BonusPolicyVO;
 import com.example.cinemakiosk.vo.PaymentDetailsVO;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

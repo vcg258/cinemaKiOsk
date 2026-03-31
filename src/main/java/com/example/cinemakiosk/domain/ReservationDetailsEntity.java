@@ -20,7 +20,8 @@ import java.util.List;
 public class ReservationDetailsEntity{
     @Id
     @Column(length = 36)
-    private String id;                     // 예매 고유번호(uuid)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;                     // 예매 고유번호
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id", columnDefinition = "BIGINT UNSIGNED", nullable = false, foreignKey = @ForeignKey(name = "fk_reservation_details_payment_id"))
