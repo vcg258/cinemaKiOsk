@@ -1,28 +1,29 @@
 /**
- * SchedulePage.jsx — 날짜·시간·인원 선택 (UC-03 1~3단계)
+ * SchedulePage.jsx — 시간·인원 선택 (UC-03 2~3단계)
  *
  * 동작 흐름:
- *  1. 날짜 선택 (오늘~6일 후, 가로 스크롤)
- *  2. 선택된 날짜의 상영 시간 선택
- *  3. 인원 유형별 수 선택 (성인/청소년/경로/장애인)
- *  4. "다음: 좌석 선택" → SeatPage 로 이동하며 예매 정보 전달
+ *  1. 당일 상영 시간 선택 (날짜 선택 제거 — 당일 예매만 지원)
+ *  2. 인원 유형별 수 선택 (성인/청소년/경로/장애인)
+ *  3. "다음: 좌석 선택" → SeatPage 로 이동하며 예매 정보 전달
  *
- * state 수신: location.state.movieId, location.state.movieTitle
+ * state 수신:
+ *  - location.state.movieId     : 영화 ID
+ *  - location.state.movieTitle  : 영화 제목
+ *  - location.state.preSelectedSchedule (선택적): 상세 페이지에서 미리 선택한 시간
  *
  * 변경사항:
- *  - 이모지 제거 → Lucide 아이콘 사용
- *  - 다음 버튼: fixed footer 제거 → 인원 선택 섹션 바로 아래 배치 (키오스크 사용성)
- *  - 비활성 버튼에 조건 안내 메시지 표시
- *  - 반말 제거 (UI 텍스트 존댓말)
+ *  - 날짜 선택 제거 → 오늘 날짜로 고정 (당일 예매만 가능)
+ *  - preSelectedSchedule 지원 → 상세 페이지에서 시간 클릭 시 자동 선택
+ *  - STEP 번호 재정렬 (1: 시간 선택, 2: 인원 선택)
  * TODO: GET /api/schedules?movieId=&date= 연동
  */
 import { useState, useMemo } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { ChevronLeft, Film, Calendar, Clock, Users, ChevronDown, ChevronUp, Info } from 'lucide-react'
-import { MOCK_SCHEDULES, SCHEDULE_DATES, MOCK_MOVIES, PERSON_TYPES } from '../../api/mockData'
+import { ChevronLeft, Film, Clock, Users, ChevronDown, ChevronUp, Info } from 'lucide-react'
+import { MOCK_SCHEDULES, MOCK_MOVIES, PERSON_TYPES } from '../../api/mockData'
 
 /** 날짜 포맷: "03/29(토)" */
-function fmtDateLabel(dateStr) {
+function fmtDateLabel(dateStr: string) {
   const d = new Date(dateStr)
   const days = ['일', '월', '화', '수', '목', '금', '토']
   const mm = String(d.getMonth() + 1).padStart(2, '0')
@@ -34,8 +35,8 @@ function SchedulePage() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  // 이전 페이지(MovieDetail)에서 넘겨받은 movieId, movieTitle
-  const { movieId, movieTitle } = location.state ?? {}
+  // 이전 페이지(MovieDetail)에서 넘겨받은 movieId, movieTitle, preSelectedSchedule
+  const { movieId, movieTitle, preSelectedSchedule } = location.state ?? {}
 
   // movieId 없으면 홈으로 리다이렉트
   if (!movieId) {
@@ -46,23 +47,20 @@ function SchedulePage() {
   const movie    = MOCK_MOVIES.find((m) => m.id === movieId)
   const allSched = MOCK_SCHEDULES[movieId] ?? []
 
+  // 오늘 날짜 고정 (당일 예매만 가능)
+  const today = new Date().toISOString().slice(0, 10)
+
   // ── 선택 상태 ──
-  const [selectedDate,  setSelectedDate]  = useState(SCHEDULE_DATES[0])
-  const [selectedSched, setSelectedSched] = useState(null) // 선택된 상영 일정
+  // preSelectedSchedule: 상세 페이지에서 시간 클릭 시 초기값으로 세팅
+  const [selectedSched, setSelectedSched] = useState(preSelectedSchedule ?? null)
   // 인원: { ADULT: 1, TEEN: 0, SENIOR: 0, DISABLED: 0 }
   const [persons, setPersons] = useState({ ADULT: 1, TEEN: 0, SENIOR: 0, DISABLED: 0 })
 
-  // 선택된 날짜의 상영 목록
+  // 오늘 날짜의 상영 목록만 표시
   const daySchedules = useMemo(
-    () => allSched.filter((s) => s.date === selectedDate),
-    [allSched, selectedDate]
+    () => allSched.filter((s) => s.date === today),
+    [allSched, today]
   )
-
-  /** 날짜 변경 → 시간 선택 초기화 */
-  const handleDateChange = (date) => {
-    setSelectedDate(date)
-    setSelectedSched(null)
-  }
 
   /** 인원 수 변경 (+/-) */
   const changePerson = (type, delta) => {
@@ -116,46 +114,27 @@ function SchedulePage() {
 
       {/* ── 페이지 제목 ── */}
       <h2 style={pageTitle}>
-        <Calendar size={24} style={{ marginRight: 10, verticalAlign: 'middle' }} />
-        날짜 · 시간 · 인원 선택
+        <Clock size={24} style={{ marginRight: 10, verticalAlign: 'middle' }} />
+        시간 · 인원 선택
       </h2>
 
-      {/* 영화 제목 배지 */}
-      <div style={movieBadge}>
-        <Film size={16} style={{ marginRight: 6 }} />
-        {movieTitle ?? movie?.title}
+      {/* 영화 제목 + 날짜 배지 */}
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 36 }}>
+        <div style={movieBadge}>
+          <Film size={16} style={{ marginRight: 6 }} />
+          {movieTitle ?? movie?.title}
+        </div>
+        {/* 당일 예매만 가능하므로 오늘 날짜 표시 */}
+        <div style={movieBadge}>
+          <Clock size={16} style={{ marginRight: 6 }} />
+          {fmtDateLabel(today)} 당일 예매
+        </div>
       </div>
 
-      {/* ── STEP 1: 날짜 선택 ── */}
+      {/* ── STEP 1: 시간 선택 ── */}
       <section style={section}>
         <h3 style={stepTitle}>
           <span style={stepNum}>1</span>
-          날짜 선택
-        </h3>
-        <div style={dateRow}>
-          {SCHEDULE_DATES.map((date) => {
-            const isToday    = date === new Date().toISOString().slice(0, 10)
-            const isSelected = date === selectedDate
-            return (
-              <button
-                key={date}
-                onClick={() => handleDateChange(date)}
-                style={{ ...dateBtn, ...(isSelected ? dateBtnActive : {}) }}
-              >
-                {isToday && <span style={todayLabel}>오늘</span>}
-                <span style={{ fontSize: 17, fontWeight: isSelected ? 700 : 400 }}>
-                  {fmtDateLabel(date)}
-                </span>
-              </button>
-            )
-          })}
-        </div>
-      </section>
-
-      {/* ── STEP 2: 시간 선택 ── */}
-      <section style={section}>
-        <h3 style={stepTitle}>
-          <span style={stepNum}>2</span>
           시간 선택
         </h3>
         {daySchedules.length === 0 ? (
@@ -199,10 +178,10 @@ function SchedulePage() {
         )}
       </section>
 
-      {/* ── STEP 3: 인원 선택 ── */}
+      {/* ── STEP 2: 인원 선택 ── */}
       <section style={section}>
         <h3 style={stepTitle}>
-          <span style={stepNum}>3</span>
+          <span style={stepNum}>2</span>
           인원 선택
           <span style={{ fontSize: 14, color: 'var(--text-muted)', fontWeight: 400, marginLeft: 8 }}>
             (최대 8명)
@@ -256,7 +235,7 @@ function SchedulePage() {
         {canProceed ? (
           <div style={summaryBox}>
             <Users size={16} style={{ marginRight: 6 }} />
-            {fmtDateLabel(selectedDate)} · {selectedSched.startTime} · {selectedSched.theaterName} · {totalPersons}명
+            {fmtDateLabel(today)} · {selectedSched.startTime} · {selectedSched.theaterName} · {totalPersons}명
           </div>
         ) : (
           <div style={hintBox}>

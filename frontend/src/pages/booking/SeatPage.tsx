@@ -4,17 +4,14 @@
  * 동작:
  *  - 상영관 좌석 배치도 표시 (행 라벨 + 좌석 그리드)
  *  - 좌석 상태: empty(빈자리) | sold_out(매진) | disabled(사용불가) | selected(내가 선택)
- *  - 인원 수만큼만 선택 가능
- *  - 2인 이상 선택 시: 첫 번째 좌석 클릭 기준 같은 행에서 연속된 빈자리를 일괄 선택
+ *  - 인원 수만큼만 개별 선택 가능 (클릭 토글)
  *  - 좌석 타입별 단가 적용 (일반:5000 / VIP:7000 / 리클라이너:10000 / 커플:15000)
  *  - 청소년 할인 2000원 반영
  *  - 결제하기 → PaymentPage 로 이동
  *
  * 변경사항:
- *  - 요금정책 반영 (SEAT_PRICES)
- *  - 연결 좌석 자동 선택 로직
- *  - 버튼 fixed footer 제거 → 콘텐츠 내 하단 배치
- *  - 비활성 조건 메시지 표시
+ *  - 연속 좌석 강제 선택 제거 → 개별 토글 선택으로 변경
+ *  - 인원 수 초과 시 선택 불가 (안내 메시지 표시)
  *
  * state 수신: movieId, movieTitle, schedule, persons, totalPersons
  * TODO: GET /api/seats?scheduleId= 연동 + WebSocket STOMP 구독
@@ -61,64 +58,28 @@ function SeatPage() {
   const [selectedIds, setSelectedIds] = useState([])
 
   /**
-   * 같은 행(row)에서 startCol 부터 오른쪽으로 count 개의 연속된 빈 좌석 찾기
-   * @param {string} row - 행 레이블 (A, B, C ...)
-   * @param {number} startCol - 시작 열 번호
-   * @param {number} count - 필요한 좌석 수
-   * @returns {string[]} 좌석 id 배열 (count 개 찾으면 반환, 못 찾으면 빈 배열)
-   */
-  const findConsecutiveSeats = (row, startCol, count) => {
-    // 해당 행의 빈 좌석 목록 (열 순서 정렬)
-    const rowSeats = seats
-      .filter((s) => s.row === row && s.status === 'empty')
-      .sort((a, b) => a.col - b.col)
-
-    // startCol 부터 오른쪽으로 연속된 좌석 찾기
-    const startIdx = rowSeats.findIndex((s) => s.col === startCol)
-    if (startIdx === -1) return []
-
-    const consecutive = []
-    for (let i = startIdx; i < rowSeats.length && consecutive.length < count; i++) {
-      // 연속성 체크: 이전 좌석의 col + 1 이어야 함
-      if (consecutive.length === 0 || rowSeats[i].col === rowSeats[i - 1].col + 1) {
-        consecutive.push(rowSeats[i].id)
-      } else {
-        break // 연속성 끊어지면 탐색 중단
-      }
-    }
-
-    return consecutive.length === count ? consecutive : []
-  }
-
-  /**
-   * 좌석 클릭 처리
+   * 좌석 클릭 처리 (개별 토글 방식)
    *
-   * 1인 선택: 기존 방식 (개별 토글)
-   * 2인 이상: 클릭한 좌석 기준으로 같은 행에서 연속된 빈 좌석 totalPersons 개 일괄 선택
-   *   - 연속 자리 없으면 경고 없이 선택 무시 (UI 에서 안내)
-   *   - 이미 선택된 좌석 클릭 시 전체 선택 해제
+   * - 매진/비활성 좌석은 클릭 무시
+   * - 이미 선택된 좌석 클릭 → 선택 해제 (토글)
+   * - 선택되지 않은 좌석 클릭:
+   *     → 이미 totalPersons 개 선택됐으면 무시 (안내 메시지 표시)
+   *     → 아니면 선택 목록에 추가
    */
   const handleSeatClick = (seat) => {
     if (seat.status === 'sold_out' || seat.status === 'disabled') return
 
-    // 이미 선택된 좌석 클릭 → 전체 선택 해제
     if (selectedIds.includes(seat.id)) {
-      setSelectedIds([])
+      // 이미 선택된 좌석 → 선택 해제
+      setSelectedIds((prev) => prev.filter((id) => id !== seat.id))
       return
     }
 
-    if (totalPersons === 1) {
-      // 1인: 개별 선택
-      setSelectedIds([seat.id])
-      return
-    }
+    // 인원 수 초과 시 선택 불가
+    if (selectedIds.length >= totalPersons) return
 
-    // 2인 이상: 연속 좌석 일괄 선택 시도
-    const consecutive = findConsecutiveSeats(seat.row, seat.col, totalPersons)
-    if (consecutive.length === totalPersons) {
-      setSelectedIds(consecutive)
-    }
-    // 연속 자리 없으면 무시 (하단 안내 메시지로 표시)
+    // 선택 목록에 추가
+    setSelectedIds((prev) => [...prev, seat.id])
   }
 
   /**
@@ -149,13 +110,14 @@ function SeatPage() {
   const isReady = selectedIds.length === totalPersons
 
   /**
-   * 비활성 안내 메시지
+   * 안내 메시지
+   * - 선택 중일 때: 남은 선택 수 표시
+   * - 선택 완료: 빈 문자열 반환
    */
   const getHintMessage = () => {
-    if (selectedIds.length === 0) {
-      return totalPersons >= 2
-        ? `좌석을 터치하면 ${totalPersons}개의 연속된 좌석이 자동으로 선택됩니다.`
-        : `좌석을 선택해 주세요. (${totalPersons}석 선택 필요)`
+    const remaining = totalPersons - selectedIds.length
+    if (remaining > 0) {
+      return `좌석을 선택해 주세요. (${selectedIds.length}/${totalPersons}석 선택됨, ${remaining}석 남음)`
     }
     return ''
   }

@@ -1,21 +1,15 @@
 /**
- * PaymentPage.jsx — 결제 처리
+ * PaymentPage.tsx — 결제 처리
  *
  * 동작:
- *  - 예매 요약 (영화·시간·좌석·인원) 표시
- *  - 인원 유형별 할인 금액 계산 (좌석 타입별 단가 적용)
- *  - 회원 인증: 먼저 휴대폰 번호로 인증 (인증 완료 후 포인트 사용 섹션 표시)
- *  - 포인트 사용: 인증 완료된 경우에만 표시 (전액 포인트 결제 시 결제 수단 생략)
+ *  - 결제 진입 시 포인트 적립 모달 팝업 (Y/N 선택)
+ *    - Y: 회원 인증(전화번호 입력 → 인증번호 확인) 진행 → 인증 완료 시 포인트 사용 가능
+ *    - N: 모달 닫고 바로 결제 수단 선택으로 이동
+ *  - 포인트 사용: 결제 화면에서 사용할 포인트 직접 입력 → 적용
  *  - 결제 수단: 카드 / 간편결제 (현금 제거)
- *  - 전역 1분 타이머 (CustomerLayout 에서 관리) — 별도 타이머 제거
- *
- * 변경사항:
- *  - UC 레이블 텍스트 제거
- *  - 이모지 제거 → Lucide 아이콘 사용
- *  - 현금 결제 제거
- *  - 순서 변경: 회원 인증 먼저 → 인증 완료 시 포인트 사용 표시
- *  - 10분 임시 점유 타이머 제거 (전역 1분 타이머로 대체)
- *  - 입력창에 터치 키보드 연동
+ *  - 전액 포인트 결제 시 결제 수단 선택 생략
+ *  - 모달 닫힌 후 다시 열 수 있는 버튼 제공
+ *  - 전역 1분 타이머 (CustomerLayout 에서 관리)
  *
  * state 수신: movieId, movieTitle, schedule, persons, totalPersons,
  *             selectedSeats, selectedSeatObjects, totalAmount, theater
@@ -24,8 +18,8 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import {
-  ChevronLeft, Phone, CheckCircle, Coins,
-  CreditCard, Wallet, Info
+  Phone, CheckCircle, Coins,
+  CreditCard, Wallet, Info, Gift, X
 } from 'lucide-react'
 import { PERSON_TYPES, PAYMENT_METHODS, SEAT_PRICES, SEAT_TYPE_LABEL } from '../../api/mockData'
 import { useKeyboard } from '../../context/KeyboardContext'
@@ -44,7 +38,7 @@ function PaymentPage() {
     persons = {}, totalPersons = 0,
     selectedSeats = [],
     selectedSeatObjects = [],
-    totalAmount = 0,    // SeatPage 에서 계산된 좌석 단가 합계 (할인 적용 후)
+    totalAmount = 0,
     theater,
   } = state
 
@@ -53,43 +47,61 @@ function PaymentPage() {
     return null
   }
 
-  // ── 금액 계산 ──
-  // SeatPage에서 이미 좌석 단가 + 인원 할인을 적용한 totalAmount 를 받음
-  // 표시용 좌석 단가 합계 (할인 전)
+  // ── 금액 계산 (SeatPage에서 좌석 단가 + 인원 할인 적용된 값 수신) ──
   const seatPriceTotal = selectedSeatObjects.reduce((acc, seat) => {
     return acc + (SEAT_PRICES[seat?.seatType] ?? SEAT_PRICES.NORMAL)
   }, 0)
-
-  // 인원 할인 합산
   const discountTotal = PERSON_TYPES.reduce((acc, { type, discount }) => {
     return acc + (persons[type] ?? 0) * discount
   }, 0)
-
-  // 정상가 (할인 전) — 표시용
   const normalPrice = seatPriceTotal
 
-  // ── 회원 인증 상태 ──
-  const [phone,           setPhone]           = useState('')
-  const [verifyCode,      setVerifyCode]      = useState('')
-  const [isVerified,      setIsVerified]      = useState(false)  // 인증 완료 여부
-  const [verifyError,     setVerifyError]     = useState('')
-  const [codeSent,        setCodeSent]        = useState(false)  // 인증번호 발송 여부
+  // ──────────────────────────────────────────────────
+  // [포인트 적립 모달 상태]
+  // showPointModal: 결제 진입 시 true → 팝업 표시
+  // wantPoints: true=적립 원함(인증 진행) / false=적립 안함 / null=미선택
+  // ──────────────────────────────────────────────────
+  const [showPointModal, setShowPointModal] = useState(true)      // 진입 시 자동 오픈
+  const [wantPoints,     setWantPoints]     = useState<boolean | null>(null)
 
-  // ── 포인트 상태 (인증 완료 후에만 활성화) ──
+  /**
+   * 모달에서 "네, 적립할게요" 클릭
+   * → wantPoints = true, 모달 닫고 인증 섹션 표시
+   */
+  const handleModalYes = () => {
+    setWantPoints(true)
+    setShowPointModal(false)
+  }
+
+  /**
+   * 모달에서 "괜찮아요 (건너뛰기)" 클릭
+   * → wantPoints = false, 모달 닫고 바로 결제 수단으로
+   */
+  const handleModalNo = () => {
+    setWantPoints(false)
+    setShowPointModal(false)
+  }
+
+  // ── 회원 인증 상태 ──
+  const [phone,       setPhone]       = useState('')
+  const [verifyCode,  setVerifyCode]  = useState('')
+  const [isVerified,  setIsVerified]  = useState(false)
+  const [verifyError, setVerifyError] = useState('')
+  const [codeSent,    setCodeSent]    = useState(false)
+
+  // ── 포인트 사용 상태 ──
   const [pointInput, setPointInput] = useState('')
-  const [pointUsed,  setPointUsed]  = useState(0)   // 실제 적용된 포인트
+  const [pointUsed,  setPointUsed]  = useState(0)
 
   // ── 결제 수단 ──
   const [payMethod, setPayMethod] = useState('CARD')
 
-  // 최종 결제 금액 = totalAmount - pointUsed
+  // 최종 결제 금액
   const finalAmount = Math.max(totalAmount - pointUsed, 0)
   const pointEarned = Math.floor(finalAmount * POINT_RATE)
-
-  // 포인트 전액 결제 시 결제 수단 선택 불필요
   const isFullPoint = finalAmount === 0
 
-  /** 인증번호 발송 (더미) */
+  /** 인증번호 발송 (더미) — TODO: POST /api/auth/send-code 연동 */
   const handleSendCode = () => {
     if (!phone || phone.replace(/\D/g, '').length < 10) {
       setVerifyError('올바른 휴대폰 번호를 입력해 주세요.')
@@ -97,13 +109,9 @@ function PaymentPage() {
     }
     setCodeSent(true)
     setVerifyError('')
-    // TODO: POST /api/auth/send-code 연동
   }
 
-  /**
-   * 인증번호 확인 (더미 처리)
-   * 실제: POST /api/auth/verify-code
-   */
+  /** 인증번호 확인 (더미 처리) — TODO: POST /api/auth/verify-code 연동 */
   const handleVerify = () => {
     if (verifyCode === '123456') {
       setIsVerified(true)
@@ -117,12 +125,11 @@ function PaymentPage() {
   const handlePointApply = () => {
     const p = Number(pointInput)
     if (!p || p <= 0) return
-    setPointUsed(Math.min(p, totalAmount)) // totalAmount 초과 불가
+    setPointUsed(Math.min(p, totalAmount))
   }
 
-  /** 결제 완료 처리 */
+  /** 결제 완료 */
   const handlePay = () => {
-    // TODO: POST /api/bookings/pay 연동
     navigate('/payment/result', {
       state: {
         ...state,
@@ -137,6 +144,47 @@ function PaymentPage() {
 
   return (
     <div style={pageWrap}>
+
+      {/* ══════════════════════════════════════════════════
+          [포인트 적립 모달]
+          결제 진입 시 자동으로 표시.
+          닫힌 후 하단 "포인트 적립 선택" 버튼으로 재오픈 가능.
+          ══════════════════════════════════════════════════ */}
+      {showPointModal && (
+        /* 딤 오버레이 + 모달 중앙 배치 */
+        <div style={modalOverlay}>
+          <div style={modalBox}>
+            {/* 닫기 버튼 (상단 우측) */}
+            <button
+              onClick={handleModalNo}
+              style={modalCloseBtn}
+              aria-label="모달 닫기"
+            >
+              <X size={20} />
+            </button>
+
+            {/* 아이콘 + 타이틀 */}
+            <div style={{ textAlign: 'center', marginBottom: 24 }}>
+              <Gift size={48} color="var(--color-brand-default)" style={{ marginBottom: 12 }} />
+              <h3 style={modalTitle}>포인트 적립하시겠어요?</h3>
+              <p style={modalDesc}>
+                결제 금액의 5%가 포인트로 적립됩니다.<br />
+                회원 인증 후 포인트를 사용하실 수도 있습니다.
+              </p>
+            </div>
+
+            {/* 선택 버튼 */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <button onClick={handleModalYes} style={modalBtnYes}>
+                네, 적립할게요
+              </button>
+              <button onClick={handleModalNo} style={modalBtnNo}>
+                괜찮아요 (건너뛰기)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <h2 style={pageTitle}>결제</h2>
 
@@ -170,10 +218,10 @@ function PaymentPage() {
             <span>−{discountTotal.toLocaleString()}원</span>
           </div>
         )}
-        {/* 좌석 타입 상세 */}
+        {/* 좌석 타입 상세 (할인 전 분류별) */}
         <div style={{ marginTop: 8, marginBottom: 8 }}>
           {selectedSeatObjects.length > 0 && (() => {
-            const byType = {}
+            const byType: Record<string, number> = {}
             selectedSeatObjects.forEach((s) => {
               const t = s?.seatType ?? 'NORMAL'
               byType[t] = (byType[t] ?? 0) + 1
@@ -198,104 +246,132 @@ function PaymentPage() {
             {finalAmount.toLocaleString()}원
           </span>
         </div>
-        <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 8 }}>
-          적립 예정 포인트: {pointEarned.toLocaleString()}P
-        </p>
-      </div>
-
-      {/* ── 회원 인증 ── */}
-      {/* 포인트 사용을 위한 선행 단계 — 항상 표시 */}
-      <div style={card}>
-        <h3 style={cardTitle}>
-          <Phone size={16} style={{ marginRight: 8, verticalAlign: 'middle' }} />
-          회원 인증
-        </h3>
-
-        {isVerified ? (
-          /* 인증 완료 상태 */
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: '#00ad74', fontSize: 15, fontWeight: 600 }}>
-            <CheckCircle size={20} />
-            인증이 완료되었습니다. 포인트를 사용하실 수 있습니다.
-          </div>
-        ) : (
-          /* 인증 진행 폼 */
-          <div>
-            <p style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 14 }}>
-              포인트 사용을 원하시면 휴대폰 번호로 인증해 주세요.
-            </p>
-            <div style={{ display: 'flex', gap: 10, marginBottom: 12 }}>
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                onFocus={(e) => openKeyboard(e.target, phone, setPhone, 'numeric')}
-                placeholder="010-0000-0000"
-                style={inputStyle}
-                maxLength={13}
-              />
-              <button onClick={handleSendCode} style={smallBtn}>
-                인증번호 발송
-              </button>
-            </div>
-            {codeSent && (
-              <div style={{ display: 'flex', gap: 10, marginBottom: 8 }}>
-                <input
-                  type="text"
-                  value={verifyCode}
-                  onChange={(e) => setVerifyCode(e.target.value)}
-                  onFocus={(e) => openKeyboard(e.target, verifyCode, setVerifyCode, 'numeric')}
-                  placeholder="인증번호 6자리"
-                  style={inputStyle}
-                  maxLength={6}
-                />
-                <button onClick={handleVerify} style={smallBtn}>확인</button>
-              </div>
-            )}
-            {verifyError && (
-              <p style={{ color: '#e03c3c', fontSize: 13 }}>{verifyError}</p>
-            )}
-            {!codeSent && (
-              <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                <Info size={12} style={{ marginRight: 4, verticalAlign: 'middle' }} />
-                인증 없이 계속하시면 포인트를 사용하실 수 없습니다.
-              </p>
-            )}
-          </div>
+        {/* 포인트 적립 선택 시 적립 예정 표시 */}
+        {wantPoints && (
+          <p style={{ fontSize: 13, color: '#00ad74', marginTop: 8 }}>
+            적립 예정 포인트: {pointEarned.toLocaleString()}P
+          </p>
         )}
       </div>
 
-      {/* ── 포인트 사용 (인증 완료 시에만 표시) ── */}
-      {isVerified && (
-        <div style={card}>
-          <h3 style={cardTitle}>
-            <Coins size={16} style={{ marginRight: 8, verticalAlign: 'middle' }} />
-            포인트 사용
-          </h3>
-          {pointUsed > 0 ? (
-            <div style={{ color: '#00ad74', fontSize: 15, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8 }}>
-              <CheckCircle size={18} />
-              {pointUsed.toLocaleString()}P 적용 완료
-              <button
-                onClick={() => { setPointUsed(0); setPointInput('') }}
-                style={{ ...cancelBtn, marginLeft: 'auto', fontSize: 13 }}
-              >
-                취소
-              </button>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', gap: 10 }}>
-              <input
-                type="number"
-                value={pointInput}
-                onChange={(e) => setPointInput(e.target.value)}
-                onFocus={(e) => openKeyboard(e.target, pointInput, setPointInput)}
-                placeholder="사용할 포인트 입력"
-                style={inputStyle}
-                min={0}
-              />
-              <button onClick={handlePointApply} style={smallBtn}>적용</button>
+      {/* ──────────────────────────────────────────────
+          [포인트 적립/사용 섹션]
+          wantPoints = true 일 때만 표시 (모달에서 Y 선택)
+          wantPoints = false 이면 숨김
+          ────────────────────────────────────────────── */}
+      {wantPoints === true && (
+        <>
+          {/* ── 회원 인증 ── */}
+          <div style={card}>
+            <h3 style={cardTitle}>
+              <Phone size={16} style={{ marginRight: 8, verticalAlign: 'middle' }} />
+              회원 인증
+            </h3>
+
+            {isVerified ? (
+              /* 인증 완료 */
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: '#00ad74', fontSize: 15, fontWeight: 600 }}>
+                <CheckCircle size={20} />
+                인증 완료! 포인트를 사용하실 수 있습니다.
+              </div>
+            ) : (
+              /* 인증 진행 폼 */
+              <div>
+                <p style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 14 }}>
+                  휴대폰 번호로 인증해 주세요. (없으면 자동 가입)
+                </p>
+                <div style={{ display: 'flex', gap: 10, marginBottom: 12 }}>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    onFocus={(e) => openKeyboard(e.target, phone, setPhone, 'numeric')}
+                    placeholder="010-0000-0000"
+                    style={inputStyle}
+                    maxLength={13}
+                  />
+                  <button onClick={handleSendCode} style={smallBtn}>
+                    인증번호 발송
+                  </button>
+                </div>
+                {codeSent && (
+                  <div style={{ display: 'flex', gap: 10, marginBottom: 8 }}>
+                    <input
+                      type="text"
+                      value={verifyCode}
+                      onChange={(e) => setVerifyCode(e.target.value)}
+                      onFocus={(e) => openKeyboard(e.target, verifyCode, setVerifyCode, 'numeric')}
+                      placeholder="인증번호 6자리"
+                      style={inputStyle}
+                      maxLength={6}
+                    />
+                    <button onClick={handleVerify} style={smallBtn}>확인</button>
+                  </div>
+                )}
+                {verifyError && (
+                  <p style={{ color: '#e03c3c', fontSize: 13 }}>{verifyError}</p>
+                )}
+                {!codeSent && (
+                  <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                    <Info size={12} style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                    테스트 인증번호: 123456
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* ── 포인트 사용 (인증 완료 시에만 표시) ── */}
+          {isVerified && (
+            <div style={card}>
+              <h3 style={cardTitle}>
+                <Coins size={16} style={{ marginRight: 8, verticalAlign: 'middle' }} />
+                포인트 사용
+              </h3>
+              {pointUsed > 0 ? (
+                <div style={{ color: '#00ad74', fontSize: 15, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <CheckCircle size={18} />
+                  {pointUsed.toLocaleString()}P 적용 완료
+                  <button
+                    onClick={() => { setPointUsed(0); setPointInput('') }}
+                    style={{ ...cancelBtn, marginLeft: 'auto' }}
+                  >
+                    취소
+                  </button>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <input
+                    type="number"
+                    value={pointInput}
+                    onChange={(e) => setPointInput(e.target.value)}
+                    onFocus={(e) => openKeyboard(e.target, pointInput, setPointInput)}
+                    placeholder="사용할 포인트 입력"
+                    style={inputStyle}
+                    min={0}
+                  />
+                  <button onClick={handlePointApply} style={smallBtn}>적용</button>
+                </div>
+              )}
             </div>
           )}
+        </>
+      )}
+
+      {/* ──────────────────────────────────────────────
+          [포인트 적립 다시 선택 버튼]
+          모달이 닫힌 후(wantPoints !== null) 하단에 작게 표시
+          클릭 시 모달 재오픈
+          ────────────────────────────────────────────── */}
+      {!showPointModal && (
+        <div style={{ marginBottom: 8 }}>
+          <button
+            onClick={() => setShowPointModal(true)}
+            style={reopenBtn}
+          >
+            <Gift size={15} style={{ marginRight: 6 }} />
+            포인트 적립 선택 다시 하기
+          </button>
         </div>
       )}
 
@@ -306,7 +382,6 @@ function PaymentPage() {
             <CreditCard size={16} style={{ marginRight: 8, verticalAlign: 'middle' }} />
             결제 수단
           </h3>
-          {/* 2×2 그리드로 배치 (키오스크 버튼 크기 고려) */}
           <div style={methodGrid}>
             {PAYMENT_METHODS.map((m) => (
               <button
@@ -329,7 +404,7 @@ function PaymentPage() {
       <div style={{ marginTop: 16 }}>
         <button onClick={handlePay} style={payBtn}>
           {isFullPoint
-            ? `포인트로 결제하기`
+            ? '포인트로 결제하기'
             : `${finalAmount.toLocaleString()}원 결제하기`}
         </button>
       </div>
@@ -338,6 +413,61 @@ function PaymentPage() {
 }
 
 /* ── 스타일 ── */
+
+/* 모달 딤 오버레이 — fixed로 전체 화면 덮음 */
+const modalOverlay: React.CSSProperties = {
+  position: 'fixed', inset: 0, zIndex: 100,
+  background: 'rgba(0, 0, 0, 0.65)',
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  padding: '0 40px',
+}
+/* 모달 박스 */
+const modalBox: React.CSSProperties = {
+  position: 'relative',
+  width: '100%', maxWidth: 520,
+  background: 'var(--bg-surface)',
+  borderRadius: 20, padding: '40px 36px 32px',
+  boxShadow: '0 20px 60px rgba(0,0,0,0.4)',
+}
+const modalCloseBtn: React.CSSProperties = {
+  position: 'absolute', top: 16, right: 16,
+  background: 'none', border: 'none',
+  color: 'var(--text-muted)', cursor: 'pointer', padding: 6, lineHeight: 0,
+}
+const modalTitle: React.CSSProperties = {
+  fontSize: 22, fontWeight: 800,
+  color: 'var(--text-primary)', marginBottom: 12,
+}
+const modalDesc: React.CSSProperties = {
+  fontSize: 15, color: 'var(--text-secondary)',
+  lineHeight: 1.7, margin: 0,
+}
+/* 모달 Y 버튼 — 강조 */
+const modalBtnYes: React.CSSProperties = {
+  display: 'block', width: '100%', padding: '20px 0',
+  background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)',
+  border: 'none', borderRadius: 14,
+  fontSize: 18, fontWeight: 800, cursor: 'pointer',
+}
+/* 모달 N 버튼 — 서브 */
+const modalBtnNo: React.CSSProperties = {
+  display: 'block', width: '100%', padding: '16px 0',
+  background: 'var(--bg-base)',
+  border: '1px solid var(--border-default)',
+  borderRadius: 14, color: 'var(--text-muted)',
+  fontSize: 16, fontWeight: 600, cursor: 'pointer',
+}
+
+/* 포인트 모달 재오픈 버튼 — 작고 서브텍스트 스타일 */
+const reopenBtn: React.CSSProperties = {
+  display: 'inline-flex', alignItems: 'center',
+  padding: '10px 18px',
+  background: 'var(--bg-surface)',
+  border: '1px solid var(--border-default)',
+  borderRadius: 10, color: 'var(--text-secondary)',
+  fontSize: 14, cursor: 'pointer',
+}
+
 const pageWrap  = { maxWidth: 680, margin: '0 auto', padding: '32px 40px 80px' }
 const pageTitle = { fontSize: 24, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 24 }
 const card      = { background: 'var(--bg-surface)', borderRadius: 16, padding: '22px 24px', marginBottom: 18 }

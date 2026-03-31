@@ -29,9 +29,9 @@ function AdminLoginPage() {
   const [loading, setLoading] = useState(false)
   const [error,   setError]   = useState('')
 
-  // PrivateRoute에서 리다이렉트될 때 전달한 원래 경로 — 없으면 대시보드로
+  // PrivateRoute에서 리다이렉트될 때 전달한 원래 경로 — 없으면 영화 목록으로
   const from = (location.state as { from?: Location })?.from?.pathname
-    ?? '/admin/statistics/dashboard'
+    ?? '/admin/management/movie/list'
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault()

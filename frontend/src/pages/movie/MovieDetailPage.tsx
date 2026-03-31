@@ -62,10 +62,27 @@ function MovieDetailPage() {
   const rating    = RATING_INFO[movie.rating] ?? RATING_INFO['ALL']
   const isSoldOut = movie.endAt !== null && totalAvailable === 0
 
-  /** 예매하기 → SchedulePage 로 movieId 전달 */
+  /**
+   * 예매하기 버튼 클릭 → SchedulePage 이동
+   * preSelectedSchedule 없으면 시간 선택부터 시작
+   */
   const handleBook = () => {
     navigate('/booking/schedule', {
       state: { movieId: movie.id, movieTitle: movie.title },
+    })
+  }
+
+  /**
+   * 특정 상영 시간 클릭 → SchedulePage 로 이동하면서 해당 스케줄 pre-select
+   * SchedulePage 에서 selectedSched 초기값으로 사용됨
+   */
+  const handleBookWithSchedule = (schedule) => {
+    navigate('/booking/schedule', {
+      state: {
+        movieId:            movie.id,
+        movieTitle:         movie.title,
+        preSelectedSchedule: schedule, // 상세 페이지에서 선택한 시간 전달
+      },
     })
   }
 
@@ -178,7 +195,7 @@ function MovieDetailPage() {
             {todaySchedules.map((s) => (
               <button
                 key={s.scheduleId}
-                onClick={handleBook}
+                onClick={() => handleBookWithSchedule(s)} /* 클릭한 시간 전달 */
                 disabled={s.availableSeats === 0}
                 style={{
                   ...scheduleItem,

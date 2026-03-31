@@ -19,7 +19,8 @@ import { useNavigate } from 'react-router-dom'
 import { Search, X, Film } from 'lucide-react'
 import {
   NOW_PLAYING, UPCOMING,
-  GENRE_OPTIONS, RATING_OPTIONS,
+  GENRE_OPTIONS, RATING_OPTIONS, THEATER_TYPE_OPTIONS,
+  MOCK_SCHEDULES, MOCK_THEATERS,
 } from '../../api/mockData'
 import { useKeyboard } from '../../context/KeyboardContext'
 import styles from './MovieListPage.module.css'
@@ -49,12 +50,33 @@ function MovieListPage() {
   const [activeTab, setActiveTab] = useState('now')
 
   // 필터 상태
-  const [selectedGenre,  setSelectedGenre]  = useState('전체')
-  const [selectedRating, setSelectedRating] = useState('')
-  const [searchQuery,    setSearchQuery]    = useState('')
+  const [selectedGenre,       setSelectedGenre]       = useState('전체')
+  const [selectedRating,      setSelectedRating]      = useState('')
+  // 상영관 타입 필터: 'ALL' | 'NORMAL' | 'RECLINER'
+  const [selectedTheaterType, setSelectedTheaterType] = useState('ALL')
+  const [searchQuery,         setSearchQuery]         = useState('')
 
   // 탭에 따라 기본 목록 결정
   const baseList = activeTab === 'now' ? NOW_PLAYING : UPCOMING
+
+  /**
+   * 영화의 오늘 상영 일정에 해당하는 상영관 타입을 반환
+   * - 해당 영화의 오늘 일정 → 상영관 id → MOCK_THEATERS 에서 hasRecliner 확인
+   * - 리클라이너 상영관이 하나라도 있으면 RECLINER 포함
+   * - 일반 상영관이 하나라도 있으면 NORMAL 포함
+   */
+  const getMovieTheaterTypes = (movieId: number): Set<string> => {
+    const today     = new Date().toISOString().slice(0, 10)
+    const schedules = (MOCK_SCHEDULES[movieId] ?? []).filter((s) => s.date === today)
+    const types     = new Set<string>()
+    schedules.forEach((s) => {
+      const theater = MOCK_THEATERS.find((t) => t.id === s.theaterId)
+      if (!theater) return
+      if (theater.hasRecliner) types.add('RECLINER')
+      else                      types.add('NORMAL')
+    })
+    return types
+  }
 
   /**
    * useMemo로 필터링 결과 메모이제이션
@@ -62,18 +84,29 @@ function MovieListPage() {
    */
   const filteredMovies = useMemo(() => {
     return baseList.filter(movie => {
+      // 장르 필터
       if (selectedGenre !== '전체' && !movie.genre.includes(selectedGenre)) return false
+      // 등급 필터
       if (selectedRating && movie.rating !== selectedRating) return false
+      // 상영관 타입 필터 (전체가 아닐 때만 적용)
+      if (selectedTheaterType !== 'ALL') {
+        const types = getMovieTheaterTypes(movie.id)
+        // 해당 타입의 상영관에서 상영 중인 영화만 통과
+        if (!types.has(selectedTheaterType)) return false
+      }
+      // 검색어 필터
       if (searchQuery.trim() && !movie.title.includes(searchQuery.trim())) return false
       return true
     })
-  }, [baseList, selectedGenre, selectedRating, searchQuery])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [baseList, selectedGenre, selectedRating, selectedTheaterType, searchQuery])
 
   /** 탭 전환 시 필터 초기화 */
   const handleTabChange = (tab) => {
     setActiveTab(tab)
     setSelectedGenre('전체')
     setSelectedRating('')
+    setSelectedTheaterType('ALL')
     setSearchQuery('')
   }
 
@@ -151,6 +184,23 @@ function MovieListPage() {
                 type="button"
                 className={`${styles.chip} ${selectedRating === opt.value ? styles.chipActive : ''}`}
                 onClick={() => setSelectedRating(opt.value)}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 상영관 타입 필터: 일반상영관 / 리클라이너 상영관 */}
+        <div className={styles.filterRow}>
+          <span className={styles.filterLabel}>상영관</span>
+          <div className={styles.chipGroup} role="group">
+            {THEATER_TYPE_OPTIONS.map(opt => (
+              <button
+                key={opt.value}
+                type="button"
+                className={`${styles.chip} ${selectedTheaterType === opt.value ? styles.chipActive : ''}`}
+                onClick={() => setSelectedTheaterType(opt.value)}
               >
                 {opt.label}
               </button>

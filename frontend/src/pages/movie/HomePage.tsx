@@ -5,7 +5,6 @@
  * 동작:
  *  - 상영 중 영화를 풀스크린 슬라이드쇼로 표시 (5초 자동 전환)
  *  - 화면 어디든 터치 → /movie/list 이동
- *  - 우하단 [관리] 버튼 5회 연속 탭 (3초 이내) → /admin/login 이동
  */
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -14,12 +13,6 @@ import styles from './HomePage.module.css'
 
 /** 슬라이드 자동 전환 간격 (ms) */
 const SLIDE_INTERVAL = 5000
-
-/** 관리자 버튼: 필요한 연속 탭 횟수 */
-const ADMIN_TAP_COUNT = 5
-
-/** 관리자 버튼: 탭 간격 제한 (ms) — 이 시간 초과 시 카운터 리셋 */
-const ADMIN_TAP_TIMEOUT = 3000
 
 /** 등급 → 표시 텍스트 */
 const RATING_LABEL = {
@@ -84,32 +77,6 @@ function HomePage() {
     slideTimerRef.current = setInterval(nextSlide, SLIDE_INTERVAL)
   }
 
-  /**
-   * 관리자 버튼 탭 처리
-   * - 탭할 때마다 카운트 증가
-   * - 3초 내에 5회 달성 시 /admin/login 이동
-   * - 3초 타임아웃 초과 시 카운터 리셋
-   * - e.stopPropagation(): body 클릭 이벤트로 전파 차단
-   */
-  const handleAdminTap = (e) => {
-    e.stopPropagation()
-
-    const newCount = adminTapCount + 1
-    setAdminTapCount(newCount)
-
-    clearTimeout(adminTimerRef.current)
-
-    if (newCount >= ADMIN_TAP_COUNT) {
-      setAdminTapCount(0)
-      navigate('/admin/login')
-      return
-    }
-
-    adminTimerRef.current = setTimeout(() => {
-      setAdminTapCount(0)
-    }, ADMIN_TAP_TIMEOUT)
-  }
-
   // 컴포넌트 언마운트 시 타이머 정리
   useEffect(() => {
     return () => {
@@ -149,17 +116,17 @@ function HomePage() {
             className={`${styles.slide} ${index === currentIndex ? styles.slideActive : ''}`}
             aria-hidden={index !== currentIndex}
           >
-            {/* 배경: 그라디언트 + 포스터 이미지 */}
+            {/* 배경: 그라디언트 + 포스터 이미지
+                posterUrl 없으면 placeholder-poster.jpg 로 폴백
+                onError: 이미지 로드 실패 시 숨겨서 그라디언트 배경 노출 */}
             <div className={`${styles.slideBg} ${styles[`slideBg${(index % 6) + 1}`]}`}>
-              {movie.posterUrl && (
-                <img
-                  className={styles.slidePoster}
-                  src={movie.posterUrl}
-                  alt=""
-                  aria-hidden="true"
-                  onError={e => { e.target.style.display = 'none' }}
-                />
-              )}
+              <img
+                className={styles.slidePoster}
+                src={movie.posterUrl || '/placeholder-poster.jpg'}
+                alt=""
+                aria-hidden="true"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+              />
             </div>
 
             {/* 하단 딤 오버레이 */}
@@ -198,22 +165,6 @@ function HomePage() {
           </div>
         )}
       </div>
-
-      {/* ── 관리자 접근 버튼 (우하단) ── */}
-      {/*<button*/}
-      {/*  type="button"*/}
-      {/*  className={styles.adminBtn}*/}
-      {/*  onClick={handleAdminTap}*/}
-      {/*  aria-hidden="true"*/}
-      {/*  tabIndex={-1}*/}
-      {/*>*/}
-      {/*  <span className={styles.adminDots} aria-hidden="true">*/}
-      {/*    {Array.from({ length: ADMIN_TAP_COUNT }).map((_, i) => (*/}
-      {/*      <i key={i} className={`${styles.adminDot} ${i < adminTapCount ? styles.adminDotFilled : ''}`} />*/}
-      {/*    ))}*/}
-      {/*  </span>*/}
-      {/*  <span className={styles.adminLabel}>관리자</span>*/}
-      {/*</button>*/}
 
     </div>
   )

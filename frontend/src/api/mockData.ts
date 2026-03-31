@@ -20,6 +20,18 @@ export interface Movie {
   endAt: string | null;
 }
 
+/**
+ * 상영관 타입 필터 옵션
+ * - ALL: 전체
+ * - NORMAL: 일반상영관 (hasRecliner: false)
+ * - RECLINER: 리클라이너 상영관 (hasRecliner: true)
+ */
+export const THEATER_TYPE_OPTIONS = [
+  { label: '전체',            value: 'ALL'      },
+  { label: '일반상영관',      value: 'NORMAL'   },
+  { label: '리클라이너 상영관', value: 'RECLINER' },
+] as const;
+
 export interface Theater {
   id: number;
   name: string;
@@ -41,7 +53,7 @@ export const MOCK_MOVIES = [
     title: '듄: 파트 2',
     genre: 'SF / 어드벤처',
     rating: '12',      // ALL / 12 / 15 / 19
-    posterUrl: null,
+    posterUrl: '/placeholder-poster.jpg',
     synopsis:
       '아라키스를 정복하기 위한 폴 아트레이데스의 여정. 차니와 함께 프레멘 전사가 되어 제국에 맞선다. 황금빛 모래 위에서 펼쳐지는 장대한 전쟁과 사랑의 이야기.',
     director: '드니 빌뇌브',
@@ -55,7 +67,7 @@ export const MOCK_MOVIES = [
     title: '쿵푸팬더 4',
     genre: '애니메이션 / 코미디',
     rating: 'ALL',
-    posterUrl: null,
+    posterUrl: '/placeholder-poster.jpg',
     synopsis:
       '포의 새로운 여정. 진정한 영웅은 누구인가? 용의 전사의 자리를 이어받을 후계자를 찾아라. 더 강해지고 더 웃긴 쿵푸 대모험.',
     director: '마이크 미첼',
@@ -69,7 +81,7 @@ export const MOCK_MOVIES = [
     title: '범죄도시 5',
     genre: '액션 / 범죄',
     rating: '15',
-    posterUrl: null,
+    posterUrl: '/placeholder-poster.jpg',
     synopsis:
       '마석도가 돌아왔다. 이번엔 더 강한 적과 마주치는데... 마석도의 주먹은 여전히 무섭고, 악당들은 끊이질 않는다.',
     director: '이상용',
@@ -83,7 +95,7 @@ export const MOCK_MOVIES = [
     title: '인사이드 아웃 3',
     genre: '애니메이션 / 드라마',
     rating: 'ALL',
-    posterUrl: null,
+    posterUrl: '/placeholder-poster.jpg',
     synopsis:
       '이제 고등학생이 된 라일리. 더 복잡해진 감정들과 새로운 감정 캐릭터의 등장. 성장통 속에서 진짜 나를 찾아가는 이야기.',
     director: '켈시 만',
@@ -97,7 +109,7 @@ export const MOCK_MOVIES = [
     title: '가디언즈 오브 갤럭시: 레거시',
     genre: 'SF / 액션',
     rating: '12',
-    posterUrl: null,
+    posterUrl: '/placeholder-poster.jpg',
     synopsis:
       '가디언즈의 마지막 임무. 로켓의 과거가 밝혀지고, 팀은 최후의 싸움에 나선다. 웃음과 눈물이 공존하는 마블의 걸작.',
     director: '제임스 건',
@@ -111,7 +123,7 @@ export const MOCK_MOVIES = [
     title: '공조3',
     genre: '액션 / 코미디',
     rating: '15',
-    posterUrl: null,
+    posterUrl: '/placeholder-poster.jpg',
     synopsis:
       '강진태와 림철령의 세 번째 합작! 이번엔 유럽 무대에서 펼쳐지는 남북 공조. 더 크고 더 웃긴 국제 스케일의 버디 액션.',
     director: '이석훈',
@@ -125,7 +137,7 @@ export const MOCK_MOVIES = [
     title: '엑소시스트: 비기닝',
     genre: '공포 / 스릴러',
     rating: '19',
-    posterUrl: null,
+    posterUrl: '/placeholder-poster.jpg',
     synopsis:
       '악마와의 첫 번째 만남. 메린 신부의 시작을 다룬 프리퀄. 원작의 공포를 계승하면서도 새로운 공포를 선보인다.',
     director: '데이비드 고든 그린',
@@ -139,7 +151,7 @@ export const MOCK_MOVIES = [
     title: '스파이더맨: 비욘드 더 스파이더버스',
     genre: 'SF / 애니메이션',
     rating: '12',
-    posterUrl: null,
+    posterUrl: '/placeholder-poster.jpg',
     synopsis:
       '마일스 모랄레스의 여정은 계속된다. 멀티버스의 운명을 건 마지막 싸움. 전작의 감동을 뛰어넘는 애니메이션의 새 역사.',
     director: '호아킨 도스 산토스',
