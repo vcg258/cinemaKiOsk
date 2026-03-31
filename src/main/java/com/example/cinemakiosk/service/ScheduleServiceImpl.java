@@ -49,6 +49,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .endAt(endAt.plusMinutes(theaterEntity.getCleanupTime()))
                 .no(scheduleDTO.getNo())
                 .movieId(scheduleDTO.getMovieId())
+                .expired(false)
                 .build();
 
         log.info("createSchedule... 상영관 정리시간(분) : {}", theaterEntity.getCleanupTime());
@@ -105,12 +106,32 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     /**
-     * 스케줄 제거 메서드
-     * @param scheduleId 스케줄 PK
+     * 스케줄 상태 변경
+     * @param id 스케줄 PK
+     * @param expired 변경할 상태
      */
     @Override
-    public void deleteSchedule(Long scheduleId) {
-        scheduleRepository.deleteById(scheduleId);
+    public void updateExpired(Long id, boolean expired) {
+        ScheduleEntity scheduleEntity = scheduleRepository.findById(id).orElseThrow();
+        // 만약 이미 지나간 스케줄이라면 상태 변경 불가
+        if (LocalDateTime.now().isAfter(scheduleEntity.getStartAt())) {
+            log.error("updateExpired... 이미 지나간 스케줄 변경 실패");
+            return;
+        }
+
+        scheduleEntity.changeExpired(expired);
+        log.info("updateExpired... 스케줄 상태 변경 성공 : {}", scheduleEntity);
+        scheduleRepository.save(scheduleEntity);
+
+    }
+
+    /**
+     * 스케줄 제거 메서드
+     * @param id 스케줄 PK
+     */
+    @Override
+    public void deleteSchedule(Long id) {
+        scheduleRepository.deleteById(id);
     }
 
     /**
@@ -136,12 +157,12 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     /**
      * 스케줄 단일 조회
-     * @param scheduleId 스케줄 PK
+     * @param id 스케줄 PK
      * @return 스케줄 단일
      */
     @Override
-    public ScheduleDTO getSchedule(Long scheduleId) {
-        ScheduleEntity schedule = scheduleRepository.findById(scheduleId).orElseThrow();
+    public ScheduleDTO getSchedule(Long id) {
+        ScheduleEntity schedule = scheduleRepository.findById(id).orElseThrow();
         return ScheduleEntity.toDTO(schedule);
     }
 }

@@ -20,6 +20,7 @@ public class ScheduleDTO {
     private Long movieId; // 영화관 FK
     private LocalDateTime startAt; // 상영 시작 시간
     private LocalDateTime endAt; // 상영 종료 시간
+    private boolean expired; // 활성화 여부 (유효 = True, 비활성화 = False)
 
     /**
      * DTO -> Entity
@@ -56,6 +57,7 @@ public class ScheduleDTO {
                 .movieEntity(movieEntity)
                 .startAt(scheduleDTO.getStartAt())
                 .endAt(scheduleDTO.getEndAt())
+                .expired(scheduleDTO.isExpired())
                 .build();
     }
 
@@ -71,6 +73,7 @@ public class ScheduleDTO {
                 .movieId(scheduleDTO.getMovieId())
                 .startAt(scheduleDTO.getStartAt())
                 .endAt(scheduleDTO.getEndAt())
+                .expired(scheduleDTO.isExpired())
                 .build();
     }
 }

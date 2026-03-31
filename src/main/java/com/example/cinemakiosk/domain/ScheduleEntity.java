@@ -35,6 +35,9 @@ public class ScheduleEntity {
     private LocalDateTime startAt; // 상영 시작 시간
     private LocalDateTime endAt; // 상영 종료 시간
 
+    @Column(nullable = false, columnDefinition = "TINYINT DEFAULT FALSE")
+    private boolean expired; // 활성화 여부 (유효 = True, 비활성화 = False)
+
     @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "scheduleEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<ReservationDetailsEntity> reservationDetailsEntity;
@@ -42,6 +45,14 @@ public class ScheduleEntity {
     @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToOne(mappedBy = "scheduleEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private StatisticsEntity statisticsEntity; //1:1 이쪽이 부모요소이므로 아이디만 받기
+
+    /**
+     * 스케줄 활성화 여부 변경
+     * @param expired 스케줄 활성화 여부
+     */
+    public void changeExpired(boolean expired) {
+        this.expired = expired;
+    }
 
     /**
      * 스케줄 상영시간 변경 도메인 메서드

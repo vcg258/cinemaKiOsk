@@ -33,6 +33,13 @@ class ScheduleServiceImplTest {
     }
 
     @Test
+    void updateExpired() {
+        Long id = 10L;
+        boolean status = true;
+        scheduleService.updateExpired(id, status);
+    }
+
+    @Test
     void deleteSchedule() {
         scheduleService.deleteSchedule(11L);
     }
@@ -66,6 +73,7 @@ class ScheduleServiceImplTest {
                 .no(3L)
                 .movieId(1L)
                 .startAt(LocalDateTime.of(2027, 1, 1, 9, 0))
+                .expired(false)
                 .build();
         scheduleService.createSchedule(dto);
     }
@@ -78,6 +86,7 @@ class ScheduleServiceImplTest {
                 .no(1L)
                 .movieId(1L)
                 .startAt(LocalDateTime.of(2026, 3, 29, 9, 30))
+                .expired(false)
                 .build();
         scheduleService.createSchedule(dto);
     }
@@ -95,6 +104,7 @@ class ScheduleServiceImplTest {
                 .no(3L)
                 .movieId(3L)
                 .startAt(LocalDateTime.of(2027, 1, 1, 14, 0))
+                .expired(false)
                 .build();
         scheduleService.updateSchedule(dto);
     }
@@ -107,6 +117,7 @@ class ScheduleServiceImplTest {
                 .no(2L)
                 .movieId(3L)
                 .startAt(LocalDateTime.of(2026, 1, 1, 9, 0))
+                .expired(false)
                 .build();
         scheduleService.updateSchedule(dto);
     }
@@ -120,6 +131,7 @@ class ScheduleServiceImplTest {
                 .no(2L)
                 .movieId(3L)
                 .startAt(LocalDateTime.of(2026, 3, 29, 9, 30))
+                .expired(false)
                 .build();
         scheduleService.updateSchedule(dto);
     }

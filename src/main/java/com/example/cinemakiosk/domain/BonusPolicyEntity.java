@@ -1,14 +1,12 @@
 package com.example.cinemakiosk.domain;
 
 import com.example.cinemakiosk.dto.BonusPolicyDTO;
-import com.example.cinemakiosk.dto.PaymentDetailsDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -44,33 +42,34 @@ public class BonusPolicyEntity{
     private List<PaymentDetailsEntity> paymentDetailsEntity;
 
     /**
+     * 정책 종료 시간 수정 도메인 메서드
+     * @param endAt 종료시간 지정
+     */
+    public void changeEndAt(LocalDateTime endAt) {
+        this.endAt = endAt;
+    }
+
+    /**
+     * 할인정책 만료여부 변경 도메인 메서드
+     * @param activation 만료여부
+     */
+    public void changeActivation(boolean activation) {
+        this.activation = activation;
+    }
+
+    /**
      * Entity -> DTO
      * @param bonusPolicyEntity
      * @return DTO
      */
     public static BonusPolicyDTO toDTO(BonusPolicyEntity bonusPolicyEntity){
-        //OneToMany 변수는 본인 객체를 제외한 값만 받기. 순환참조 방지.
-        List<PaymentDetailsEntity> paymentDetailsEntities = bonusPolicyEntity.getPaymentDetailsEntity();
-        List<PaymentDetailsDTO> paymentDetailsDTOs = new ArrayList<>();
-
-
-        for (PaymentDetailsEntity paymentDetailsEntity : paymentDetailsEntities){
-            //pk 만 받아오기.
-            PaymentDetailsDTO paymentDetailsDTO = PaymentDetailsDTO.builder()
-                    .id(paymentDetailsEntity.getId())
-                    .build();
-
-            paymentDetailsDTOs.add(paymentDetailsDTO);
-        }
-
         return BonusPolicyDTO.builder()
                 .id(bonusPolicyEntity.getId())
                 .policyName(bonusPolicyEntity.getPolicyName())
                 .giveValue(bonusPolicyEntity.getGiveValue())
-                .createAt(bonusPolicyEntity.getStartAt())
+                .startAt(bonusPolicyEntity.getStartAt())
                 .finishedAt(bonusPolicyEntity.getEndAt())
                 .activation(bonusPolicyEntity.getActivation())
-                .paymentDetails(paymentDetailsDTOs)
                 .build();
     }
 }

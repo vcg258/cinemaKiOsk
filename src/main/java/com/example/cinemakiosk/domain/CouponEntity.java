@@ -23,7 +23,7 @@ public class CouponEntity {
     @JoinColumn(name = "policy_id", nullable = false, columnDefinition = "BIGINT UNSIGNED", foreignKey = @ForeignKey(name = "fk_discount_policy_coupon_id"))
     private DiscountPolicyEntity discountPolicyEntity; // 할인 정책 인덱스 FK
 
-    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(nullable = false, columnDefinition = "TINYINT DEFAULT FALSE")
     private boolean status; // 사용여부 (사용가능 = true, 불가능 = false)
 
     @OnDelete(action= OnDeleteAction.CASCADE)

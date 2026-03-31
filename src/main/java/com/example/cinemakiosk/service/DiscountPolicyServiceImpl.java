@@ -88,9 +88,8 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     @Override
     public void finishActivation(Long id) { // TODO batch 사용으로 만료시간이 되면 자동 비활성화로 변경 해야함
         DiscountPolicyEntity discountPolicyEntity = discountPolicyRepository.findById(id).orElseThrow();
-
-        if (!discountPolicyEntity.isActivation()) {
-            log.info("finishActivation... 이미 비활성화 된 정책입니다. {}", discountPolicyEntity);
+        if (LocalDateTime.now().isAfter(discountPolicyEntity.getEndAt()) || !discountPolicyEntity.isActivation()) {
+            log.error("finishActivation... 이미 비활성화 된 정책입니다. {}", discountPolicyEntity);
             return;
         }
 

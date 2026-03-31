@@ -21,6 +21,7 @@ public class ScheduleVO {
     private Long movieId; // 영화 번호 FK
     private LocalDateTime startAt; // 상영 시작 시간
     private LocalDateTime endAt; // 상영 종료 시간
+    private boolean expired; // 활성화 여부 (유효 = True, 비활성화 = False)
 
     /**
      * VO -> DTO
@@ -35,6 +36,7 @@ public class ScheduleVO {
                 .movieId(scheduleVO.getMovieId())
                 .startAt(scheduleVO.getStartAt())
                 .endAt(scheduleVO.getEndAt())
+                .expired(scheduleVO.isExpired())
                 .build();
     }
 }
