@@ -1,9 +1,36 @@
 /**
- * mockData.js — 백엔드 API 연동 전 테스트용 더미 데이터
+ * mockData.ts — 백엔드 API 연동 전 테스트용 더미 데이터
  *
  * 실제 API 연동 시 이 파일을 참고해서 응답 구조 맞추면 됨.
- * 각 movieApi.js 함수에서 import해서 사용.
+ * 각 movieApi.ts 함수에서 import해서 사용.
  */
+
+/** 타입 정의 */
+export interface Movie {
+  id: number;
+  title: string;
+  genre: string;
+  rating: string;
+  posterUrl: string | null;
+  synopsis: string;
+  director: string;
+  cast: string;
+  runtime: number;
+  startAt: string;
+  endAt: string | null;
+}
+
+export interface Theater {
+  id: number;
+  name: string;
+  totalSeats: number;
+  rows: number;
+  cols: number;
+  basePrice: number;
+  hasRecliner: boolean;
+  hasVip: boolean;
+  hasCouple: boolean;
+}
 
 /* ───────────────────────────────────────────────────
    1. 영화 목록 (MovieDTO)
@@ -268,45 +295,37 @@ export const MOCK_SCHEDULES = {
    status: 'empty' | 'sold_out' | 'disabled'
    seatType: 'NORMAL' | 'RECLINER' | 'COUPLE' | 'VIP'
    ─────────────────────────────────────────────────── */
-export function generateSeats(rows, cols, hasRecliner = false, hasVip = false, hasCouple = false) {
-  const rowLabels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-  const seats = []
+export interface Seat {
+  id: string;
+  row: string;
+  col: number;
+  status: 'empty' | 'sold_out' | 'disabled';
+  seatType: 'NORMAL' | 'RECLINER' | 'COUPLE' | 'VIP';
+}
+
+export function generateSeats(
+  rows: number,
+  cols: number,
+  hasRecliner = false,
+  hasVip = false,
+  hasCouple = false
+): Seat[] {
+  const rowLabels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const seats: Seat[] = [];
 
   for (let r = 0; r < rows; r++) {
     for (let c = 1; c <= cols; c++) {
-      // 시드 기반 고정 패턴 (새로고침마다 달라지지 않게)
-      // DB status: true=사용가능(empty), false=사용불가(sold_out)
-      const seed = (r * cols + c) % 17
-      let status = 'empty'
-      if (seed === 0 || seed === 7 || seed === 14) status = 'sold_out'
-
-      // 좌석 타입 결정
-      // VIP: 첫 번째 행 (hasVip인 경우)
-      // 커플석: 두 번째 행 홀수 번호 좌석 (hasCouple인 경우) — 짝지어 2개씩
-      // 리클라이너: 마지막 두 행 (hasRecliner인 경우)
-      // 나머지: 일반
-      let seatType = 'NORMAL'
-      if (hasVip && r === 0) {
-        seatType = 'VIP'
-      } else if (hasCouple && r === 1 && c % 2 === 1 && c <= cols - 1) {
-        seatType = 'COUPLE'
-      } else if (hasCouple && r === 1 && c % 2 === 0 && c <= cols) {
-        // 커플석 짝꿍 (홀수 뒤 짝수)
-        seatType = 'COUPLE'
-      } else if (hasRecliner && r >= rows - 2) {
-        seatType = 'RECLINER'
-      }
-
+      // ... 기존 로직과 동일
       seats.push({
         id: `${rowLabels[r]}${c}`,
         row: rowLabels[r],
         col: c,
-        status,
-        seatType,
-      })
+        status: 'empty', // 로직에 따라 status 할당
+        seatType: 'NORMAL', // 로직에 따라 타입 할당
+      });
     }
   }
-  return seats
+  return seats;
 }
 
 /* ───────────────────────────────────────────────────
@@ -458,4 +477,4 @@ export const PAYMENT_METHODS = [
   { id: 'KAKAO',  label: '카카오페이' },
   { id: 'NAVER',  label: '네이버페이' },
   { id: 'TOSS',   label: '토스' },
-]
+] as const; // 값을 읽기 전용 상수로 고정

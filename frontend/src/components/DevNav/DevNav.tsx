@@ -18,10 +18,10 @@ import { Code2, ChevronDown, ChevronUp } from 'lucide-react'
 const CUSTOMER_LINKS = [
   { label: '홈',          path: '/' },
   { label: '영화 목록',    path: '/movie/list' },
-  { label: '날짜 선택',    path: '/booking/schedule' },
-  { label: '좌석 선택',    path: '/booking/seat' },
-  { label: '결제',         path: '/payment' },
-  { label: '결제 완료',    path: '/payment/result' },
+  // { label: '날짜 선택',    path: '/booking/schedule' },
+  // { label: '좌석 선택',    path: '/booking/seat' },
+  // { label: '결제',         path: '/payment' },
+  // { label: '결제 완료',    path: '/payment/result' },
 ]
 
 const ADMIN_LINKS = [
