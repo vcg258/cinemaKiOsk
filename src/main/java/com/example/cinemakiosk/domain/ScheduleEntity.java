@@ -44,6 +44,16 @@ public class ScheduleEntity {
     private StatisticsEntity statisticsEntity; //1:1 이쪽이 부모요소이므로 아이디만 받기
 
     /**
+     * 스케줄 상영시간 변경 도메인 메서드
+     * @param startAt 상영시작 시간
+     * @param endAt 상영종료 시간
+     */
+    public void changeStartAt(LocalDateTime startAt, LocalDateTime endAt) {
+        this.startAt = startAt;
+        this.endAt = endAt;
+    }
+
+    /**
      * 스케줄 영화 변경 도메인 메서드
      * @param movieEntity 영화 FK
      */
@@ -53,7 +63,7 @@ public class ScheduleEntity {
 
     /**
      * 스케줄 좌석정책 변경 도메인 메서드
-     * @param theaterEntity
+     * @param theaterEntity 좌석정책 FK
      */
     public void changeTheater(TheaterEntity theaterEntity) {
         this.theaterEntity = theaterEntity;

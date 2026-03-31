@@ -65,9 +65,43 @@ public class ScheduleServiceImpl implements ScheduleService {
      */
     @Override
     public void updateSchedule(ScheduleDTO scheduleDTO) {
-        // TODO 제약조건 1: 이미 지난 스케줄(start_at이 현재 시간보다 이전)은 수정 불가
-        // TODO 제약조건 2: 수정 후 시간이 같은 상영관의 다른 스케줄과 겹치는지 검증 (자기 자신 제외하고 체크)
-        // TODO 제약조건 3: 수정 시 endAt도 런타임 + 정리시간 기준으로 재계산
+        // 수정할 스케줄 선택
+        ScheduleEntity scheduleEntity = scheduleRepository.findById(scheduleDTO.getId()).orElseThrow();
+        // 영화와 런타임을 가져오기 위함
+        MovieEntity movieEntity = movieRepository.findById(scheduleDTO.getMovieId()).orElseThrow();
+        // 상영관과 정리시간을 가져오기 위함
+        TheaterEntity theaterEntity = theaterRepository.findById(scheduleDTO.getNo()).orElseThrow();
+        // 상영종료 시간
+        LocalDateTime endAt = scheduleDTO.getStartAt().plusMinutes(movieEntity.getRuntime());
+
+        // 이미 지난 스케줄(상영 시작시간이 현재 시간보다 이전)은 수정 불가
+        if (scheduleDTO.getStartAt().isBefore(LocalDateTime.now())) {
+            log.info("수정 요청 : {} ", scheduleDTO);
+            log.warn("updateSchedule... 이미 지난 스케줄 수정 실패");
+            return;
+        }
+
+        /*
+        수정할때 아직 수정전이라 자기자신도 그대로 남아있기때문에 자기자신은 제외 시키고 시간이 겹치는지 검증해야함
+         */
+
+        // 수정 후 시간이 같은 상영관의 다른 스케줄과 겹치는지 검증 (자기자신 제외)
+        if (scheduleMapper.checkScheduleOverlapExcludeSelf(scheduleDTO.getNo(), scheduleDTO.getStartAt(),
+                endAt, scheduleEntity.getId()) > 0) {
+            log.info("수정 요청 : {} ", scheduleDTO);
+            log.error("updateSchedule... 지정 상영관의 시간과 수정을 요청한 시간과 겹칩니다 수정 실패");
+            return;
+        }
+
+
+        // 수정 시 endAt도 런타임 + 정리시간 기준으로 재계산
+        scheduleEntity.changeStartAt(scheduleDTO.getStartAt(), endAt.plusMinutes(theaterEntity.getCleanupTime()));
+        // 상영관 변경
+        scheduleEntity.changeTheater(theaterEntity);
+        // 영화 변경
+        scheduleEntity.changeMovie(movieEntity);
+        log.info("updateSchedule... 수정완료 {}", scheduleEntity);
+        scheduleRepository.save(scheduleEntity);
     }
 
     /**
@@ -76,8 +110,7 @@ public class ScheduleServiceImpl implements ScheduleService {
      */
     @Override
     public void deleteSchedule(Long scheduleId) {
-        // TODO 제약조건 1: 이미 상영이 시작된 스케줄(start_at이 현재 시간보다 이전)은 삭제 불가
-        // TODO 제약조건 2: 해당 스케줄에 예약된 좌석이 있으면 삭제 불가 (예약 파트 구현 후 연동 필요)
+        scheduleRepository.deleteById(scheduleId);
     }
 
     /**

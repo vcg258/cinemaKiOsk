@@ -20,6 +20,6 @@ public interface ScheduleService {
     // 영화에 해당하는 스케줄 목록 전체 조회
     List<ScheduleDTO> getScheduleListByMovie(Long movieId);
 
-    // 스케줄 하나 조회 (좌석 선택 화면에서 사용)
+    // 스케줄 하나 조회
     ScheduleDTO getSchedule(Long scheduleId);
 }
