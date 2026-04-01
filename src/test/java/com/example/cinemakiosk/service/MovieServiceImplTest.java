@@ -24,7 +24,7 @@ class MovieServiceImplTest {
         LocalDateTime now = LocalDateTime.now();
         MovieDTO movieDTO = MovieDTO.builder()
                 .genre("wpwp")
-                .rating(Rating.valueOf(Rating.FIFTEEN.getConversion()))
+                .rating(String.valueOf(Rating.FIFTEEN.getConversion()))
                 .actors("일반인1")
                 .createAt(LocalDateTime.now())
                 .startAt(LocalDateTime.now())

@@ -180,6 +180,17 @@ public class MemberServiceImpl implements MemberService{
     }
 
     /**
+     * 지정 회원 전체 로그 조회
+     * @param phone 회원 PK
+     * @return 지정 회원 전체 로그 조회
+     */
+    @Override
+    public List<PointHistoryDTO> getMembersAllLog(String phone) {
+        List<PointHistoryEntity> entity = pointHistoryRepository.findByMemberEntity_Phone(phone);
+        return entity.stream().map(PointHistoryEntity::toDTO).toList();
+    }
+
+    /**
      * 회원 단일 조회
      * @param phone 회원 PK
      * @return 지정 회원

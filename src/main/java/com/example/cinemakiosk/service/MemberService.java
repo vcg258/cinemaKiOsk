@@ -18,6 +18,9 @@ public interface MemberService {
     // 회원 전체 조회
     List<MemberDTO> getMembersAll();
 
+    // 지정 회원 전체 로그 조회
+    List<PointHistoryDTO> getMembersAllLog(String phone);
+
     // 회원 단일 조회
     MemberDTO getMember(String phone);
 }

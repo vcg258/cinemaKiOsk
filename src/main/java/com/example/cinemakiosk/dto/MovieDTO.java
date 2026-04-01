@@ -8,6 +8,7 @@ import com.example.cinemakiosk.vo.ScheduleVO;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +30,8 @@ public class MovieDTO {
     private String director;
     private String actors;
     private String description;
-    private LocalDateTime startAt;
-    private LocalDateTime endAt;
+    private LocalDate startAt;
+    private LocalDate endAt;
     private LocalDateTime createAt;
     private MultipartFile image;
 

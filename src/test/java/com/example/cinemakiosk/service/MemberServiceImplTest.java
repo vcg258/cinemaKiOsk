@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
 class MemberServiceImplTest {
     @Autowired private MemberService memberService;
 
-
     @Test
     void createMember() {
         for (int i = 1; i <= 4; i++) {
@@ -62,7 +61,12 @@ class MemberServiceImplTest {
     }
 
     @Test
-    void getMembersTest() {
+    void getMembersAllLogTest() {
+        memberService.getMembersAllLog("01088771113").forEach(log::info);
+    }
+
+    @Test
+    void getMemberTest() {
         log.info(memberService.getMember("01012345234"));
     }
 

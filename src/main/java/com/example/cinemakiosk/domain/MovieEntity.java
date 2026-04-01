@@ -9,6 +9,7 @@ import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,10 +51,10 @@ public class MovieEntity{
     private String description;
 
     @Column(name = "start_at", nullable = false)
-    private LocalDateTime startAt;
+    private LocalDate startAt;
 
     @Column(name = "end_at")
-    private LocalDateTime endAt;
+    private LocalDate endAt;
 
     @Column(name = "create_at", updatable = false)
     private LocalDateTime createAt;

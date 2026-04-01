@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +27,8 @@ public class MovieVO {
     private final String director;      // 감독
     private final String actors;        // 주연 배우
     private final String description;   // 줄거리
-    private final LocalDateTime startAt; // 상영 시작일
-    private final LocalDateTime endAt;   // 상영 종료일
+    private final LocalDate startAt; // 상영 시작일
+    private final LocalDate endAt;   // 상영 종료일
     private final LocalDateTime createAt; // 등록일
 
     /**
