@@ -1,10 +1,13 @@
 package com.example.cinemakiosk.domain;
 
 import com.example.cinemakiosk.domain.enums.Rating;
+import com.example.cinemakiosk.domain.enums.RatingConverter;
 import com.example.cinemakiosk.dto.MovieDTO;
 import com.example.cinemakiosk.dto.ScheduleDTO;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -30,8 +33,8 @@ public class MovieEntity{
     @Column(name = "genre", length = 50)
     private String genre;
 
-//    @Enumerated(EnumType.STRING) //Enum타입이 아니라서 사용하지 않음.ㅁ
-    private String rating;
+    @Convert(converter = RatingConverter.class)
+    private Rating rating;
 
     @Column(name = "runtime", columnDefinition = "BIGINT UNSIGNED", nullable = false)
     private Long runtime;
@@ -54,6 +57,7 @@ public class MovieEntity{
     @Column(name = "create_at", updatable = false)
     private LocalDateTime createAt;
 
+    @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "movieEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<ScheduleEntity> scheduleEntity;
 
@@ -89,6 +93,7 @@ public class MovieEntity{
                 .startAt(movieEntity.getStartAt())
                 .endAt(movieEntity.getEndAt())
                 .createAt(movieEntity.getCreateAt())
+                .schedules(scheduleDTOs)
                 .build();
     }
 }

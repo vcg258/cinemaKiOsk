@@ -11,15 +11,18 @@ public interface ScheduleService {
     // 스케줄 수정
     void updateSchedule(ScheduleDTO scheduleDTO);
 
-    // 스케줄 삭제
-    void deleteSchedule(Long scheduleId);
+    // 스케줄 상태 변경
+    void updateExpired(Long id, boolean expired);
 
-    // 스케줄 전체 목록 조회 (관리자 화면)
+    // 스케줄 삭제
+    void deleteSchedule(Long id);
+
+    // 스케줄 전체 목록 조회
     List<ScheduleDTO> getScheduleList();
 
-    // 영화에 해당하는 스케줄 목록 조회 (날짜 / 시간대 선택 화면)
+    // 영화에 해당하는 스케줄 목록 전체 조회
     List<ScheduleDTO> getScheduleListByMovie(Long movieId);
 
-    // 스케줄 하나 조회 (좌석 선택 화면에서 사용)
-    ScheduleDTO getSchedule(Long scheduleId);
+    // 스케줄 하나 조회
+    ScheduleDTO getSchedule(Long id);
 }

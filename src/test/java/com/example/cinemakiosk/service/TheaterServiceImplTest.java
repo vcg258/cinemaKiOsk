@@ -16,31 +16,60 @@ class TheaterServiceImplTest {
     @Autowired private TheaterService theaterService;
 
     @Test
-    void createSeat() {
-        TheaterDTO theaterDTO = TheaterDTO.builder()
-                .seatPolicy(SeatPolicyDTO.builder()
-                        .name("일반석")
-                        .cost(7000L)
-                        .build())
-                    .build();
-
-        log.info("theaterDTO: {}", theaterDTO);
-        theaterService.createSeat(theaterDTO);
+    void getTheaterAllTest() {
+        theaterService.getTheaterAll().forEach(log::info);
     }
 
     @Test
-    void readSeat() {
+    void getTheater() {
+        log.info(theaterService.getTheater(1L));
+    }
+
+    @Test
+    void updateSeatPolicy() {
+        theaterService.updateSeatPolicy(1L, 3L);
+    }
+
+    @Test
+    void updateCleanTime() {
+        theaterService.updateCleanTime(1L, 999L);
+    }
+
+    @Test
+    void createSeat() {
+        SeatPolicyDTO seatPolicyDTO = SeatPolicyDTO.builder()
+                        .name("일반")
+                        .cost(5000L)
+                        .build();
+
+        log.info("theaterDTO: {}", seatPolicyDTO);
+        theaterService.createSeat(seatPolicyDTO);
     }
 
     @Test
     void readAllSeat() {
+        theaterService.readAllSeat().forEach(log::info);
+    }
+
+    @Test
+    void readSeat() {
+        log.info("readSeat... 지정 좌석 정책 : {}", theaterService.readSeat(4L));
     }
 
     @Test
     void updateSeat() {
+        SeatPolicyDTO policyDTO = SeatPolicyDTO.builder()
+                .policyId(4L)
+                .name("수정")
+                .cost(1000L)
+                .build();
+
+        theaterService.updateSeat(policyDTO);
     }
 
     @Test
     void deleteSeat() {
+        Long policyId = 5L;
+        theaterService.deleteSeat(policyId);
     }
 }

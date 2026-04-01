@@ -1,13 +1,12 @@
 package com.example.cinemakiosk.domain;
 
 import com.example.cinemakiosk.dto.MemberDTO;
-import com.example.cinemakiosk.dto.PointHistoryDTO;
-import com.example.cinemakiosk.dto.ReservationDetailsDTO;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,12 +24,15 @@ public class MemberEntity{
     @Column(nullable = false, columnDefinition = "DATETIME DEFAULT NOW()")
     private LocalDateTime createAt; // 생성일
 
+    @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "memberEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<PointHistoryEntity> pointHistoryEntity;
+
+    @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "memberEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<ReservationDetailsEntity> reservationDetailsEntity;
 
-    public void setPoint(int point){
+    public void changePoint(int point){
         this.point = point;
     }
 
@@ -40,6 +42,7 @@ public class MemberEntity{
      * @return DTO
      */
     public static MemberDTO toDTO(MemberEntity memberEntity){
+
         return MemberDTO.builder()
                 .phone(memberEntity.getPhone())
                 .point(memberEntity.getPoint())

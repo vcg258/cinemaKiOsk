@@ -1,8 +1,6 @@
 package com.example.cinemakiosk.dto;
 
-import com.example.cinemakiosk.domain.ReservationDetailsEntity;
-import com.example.cinemakiosk.domain.ScheduleEntity;
-import com.example.cinemakiosk.domain.StatisticsEntity;
+import com.example.cinemakiosk.domain.*;
 import com.example.cinemakiosk.vo.*;
 import lombok.*;
 
@@ -16,10 +14,13 @@ import java.util.List;
 @AllArgsConstructor
 public class ScheduleDTO {
     private Long id; // 스케줄 인덱스
-    private TheaterDTO theater; // 상영관 정보 FK
-    private MovieDTO movie; // 영화 번호 FK
+    private TheaterDTO theater; // 상영관 정보 FK (JPA 전용)
+    private Long no; // 상영관 FK
+    private MovieDTO movie; // 영화 번호 FK (JPA 전용)
+    private Long movieId; // 영화관 FK
     private LocalDateTime startAt; // 상영 시작 시간
     private LocalDateTime endAt; // 상영 종료 시간
+    private boolean expired; // 활성화 여부 (유효 = True, 비활성화 = False)
 
     /**
      * DTO -> Entity
@@ -27,12 +28,36 @@ public class ScheduleDTO {
      * @return Entity
      */
     public static ScheduleEntity toEntity(ScheduleDTO scheduleDTO) {
+
+        TheaterEntity theaterEntity = null;
+        if (scheduleDTO.getTheater() != null) {
+            theaterEntity = TheaterEntity.builder()
+                    .no(scheduleDTO.getTheater().getNo())
+                    .build();
+        } else if (scheduleDTO.getNo() != null) {
+            theaterEntity = TheaterEntity.builder()
+                    .no(scheduleDTO.getNo())
+                    .build();
+        }
+
+        MovieEntity movieEntity = null;
+        if (scheduleDTO.getMovie() != null) {
+            movieEntity = MovieEntity.builder()
+                    .movieId(scheduleDTO.getMovie().getMovieId())
+                    .build();
+        } else if (scheduleDTO.getMovieId() != null) {
+            movieEntity = MovieEntity.builder()
+                    .movieId(scheduleDTO.getMovieId())
+                    .build();
+        }
+
         return ScheduleEntity.builder()
                 .id(scheduleDTO.getId())
-                .theaterEntity(TheaterDTO.toEntity(scheduleDTO.getTheater()))
-                .movieEntity(MovieDTO.toEntity(scheduleDTO.getMovie()))
+                .theaterEntity(theaterEntity)
+                .movieEntity(movieEntity)
                 .startAt(scheduleDTO.getStartAt())
                 .endAt(scheduleDTO.getEndAt())
+                .expired(scheduleDTO.isExpired())
                 .build();
     }
 
@@ -44,10 +69,11 @@ public class ScheduleDTO {
     public static ScheduleVO toVO(ScheduleDTO scheduleDTO) {
         return ScheduleVO.builder()
                 .id(scheduleDTO.getId())
-                .theater(TheaterDTO.toVO(scheduleDTO.getTheater()))
-                .movie(MovieDTO.toVO(scheduleDTO.getMovie()))
+                .no(scheduleDTO.getNo())
+                .movieId(scheduleDTO.getMovieId())
                 .startAt(scheduleDTO.getStartAt())
                 .endAt(scheduleDTO.getEndAt())
+                .expired(scheduleDTO.isExpired())
                 .build();
     }
 }

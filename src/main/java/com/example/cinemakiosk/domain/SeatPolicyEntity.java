@@ -6,6 +6,8 @@ import com.example.cinemakiosk.vo.SeatPolicyVO;
 import com.example.cinemakiosk.vo.TheaterVO;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +28,19 @@ public class SeatPolicyEntity {
     @Column(columnDefinition = "BIGINT UNSIGNED DEFAULT 0")
     private Long cost; // 좌석 비용
 
+    @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "seatPolicyEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<TheaterEntity> theaterEntity; //1:다
+
+    /**
+     * 좌석정책 업데이트를 위한 도메인 메서드
+     * @param name 수정 이름
+     * @param cost 수정 비용
+     */
+    public void updateSeatPolicy(String name, Long cost) {
+        this.name = name;
+        this.cost = cost;
+    }
 
     /**
      * Entity -> DTO
@@ -35,17 +48,6 @@ public class SeatPolicyEntity {
      * @return DTO
      */
     public static SeatPolicyDTO toDTO(SeatPolicyEntity seatPolicyEntity){
-        List<TheaterEntity> theaterEntitys = seatPolicyEntity.getTheaterEntity();
-        List<TheaterDTO> theaterDTOs = new ArrayList<>();
-
-        for (TheaterEntity theaterEntity : theaterEntitys){
-            TheaterDTO theaterDTO = TheaterDTO.builder()
-                    .no(theaterEntity.getNo())
-                    .build();
-
-            theaterDTOs.add(theaterDTO);
-        }
-
         return SeatPolicyDTO.builder()
                 .policyId(seatPolicyEntity.getPolicyId())
                 .name(seatPolicyEntity.getName())

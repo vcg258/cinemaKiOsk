@@ -21,7 +21,7 @@ public class PaymentDetailsDTO {
     private BonusPolicyDTO bonusPolicy;       // 사용한 적립 정책
     private CouponDTO couponNum;              // 사용한 할인 쿠폰, 없는 경우 null
     private Long cost;                       // 결제 금액
-    private LocalDateTime time;              // 결제 시간
+    private LocalDateTime createAt;              // 결제 시간
     private Long usePoint;                   // 사용 포인트 기본값 0
     private Status status;                   // ENUM ('PAY','RETURN','FAIL'), 결제 완료, 환불, 실패
 
@@ -37,7 +37,7 @@ public class PaymentDetailsDTO {
                 .bonusPolicyEntity(BonusPolicyDTO.toEntity(paymentDetailsDTO.getBonusPolicy()))
                 .couponEntity(CouponDTO.toEntity(paymentDetailsDTO.getCouponNum()))
                 .cost(paymentDetailsDTO.getCost())
-                .time(paymentDetailsDTO.getTime())
+                .createAt(paymentDetailsDTO.getCreateAt())
                 .usePoint(paymentDetailsDTO.getUsePoint())
                 .status(paymentDetailsDTO.getStatus())
                 .build();
@@ -55,7 +55,7 @@ public class PaymentDetailsDTO {
                 .bonusPolicy(BonusPolicyDTO.toVO(paymentDetailsDTO.getBonusPolicy()))
                 .couponNum(CouponDTO.toVO(paymentDetailsDTO.getCouponNum()))
                 .cost(paymentDetailsDTO.getCost())
-                .time(paymentDetailsDTO.getTime())
+                .createAt(paymentDetailsDTO.getCreateAt())
                 .usePoint(paymentDetailsDTO.getUsePoint())
                 .status(paymentDetailsDTO.getStatus())
                 .build();

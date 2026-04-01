@@ -1,24 +1,22 @@
 package com.example.cinemakiosk.dto;
 
 import com.example.cinemakiosk.domain.BonusPolicyEntity;
-import com.example.cinemakiosk.domain.PaymentDetailsEntity;
 import com.example.cinemakiosk.vo.BonusPolicyVO;
 import com.example.cinemakiosk.vo.PaymentDetailsVO;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @Builder
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class BonusPolicyDTO {
     private Long id;                 // 적립 정책 인덱스
     private String policyName;       // 정책 이름
     private Long giveValue;          // 적립 비율
-    private LocalDateTime createAt;  //	시작일
+    private LocalDateTime startAt;  //	시작일
     private LocalDateTime finishedAt;//	만료일
     private Boolean activation;      // 활성화 여부(중요할까?)
 
@@ -32,7 +30,7 @@ public class BonusPolicyDTO {
                 .id(bonusPolicyDTO.getId())
                 .policyName(bonusPolicyDTO.getPolicyName())
                 .giveValue(bonusPolicyDTO.getGiveValue())
-                .startAt(bonusPolicyDTO.getCreateAt())
+                .startAt(bonusPolicyDTO.getStartAt())
                 .endAt(bonusPolicyDTO.getFinishedAt())
                 .activation(bonusPolicyDTO.getActivation())
                 .build();
@@ -48,7 +46,7 @@ public class BonusPolicyDTO {
                 .id(bonusPolicyDTO.getId())
                 .policyName(bonusPolicyDTO.getPolicyName())
                 .giveValue(bonusPolicyDTO.getGiveValue())
-                .createAt(bonusPolicyDTO.getCreateAt())
+                .startAt(bonusPolicyDTO.getStartAt())
                 .finishedAt(bonusPolicyDTO.getFinishedAt())
                 .activation(bonusPolicyDTO.getActivation())
                 .build();
