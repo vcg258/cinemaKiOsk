@@ -7,7 +7,7 @@ import com.example.cinemakiosk.vo.MovieVO;
 import com.example.cinemakiosk.vo.ScheduleVO;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ public class MovieDTO {
     private Long movieId;
     private String title;
     private String genre;
-    private Rating rating;      // ALL / 12 / 15 / 19
+    private String rating;      // ALL / 12 / 15 / 19
     private Long runtime;
     private String director;
     private String actors;
@@ -32,8 +32,18 @@ public class MovieDTO {
     private LocalDateTime startAt;
     private LocalDateTime endAt;
     private LocalDateTime createAt;
-    private List<ScheduleDTO> schedules;
     private MultipartFile image;
+
+    @JsonIgnore
+    private List<ScheduleDTO> schedules;
+
+
+
+
+
+    public void clearImage() {
+        this.image = null;
+    }
 
     /**
      * DTO -> Entity
@@ -46,20 +56,22 @@ public class MovieDTO {
         List<ScheduleEntity> scheduleEntities = new ArrayList<>();
 
 
-        for (ScheduleDTO schedule : scheduleDTOS){
-            //pk 만 받아오기.
-            ScheduleEntity scheduleEntity = ScheduleEntity.builder()
-                    .id(schedule.getId())
-                    .build();
+        if (scheduleDTOS != null) {
+            for (ScheduleDTO schedule : scheduleDTOS) {
+                //pk 만 받아오기.
+                ScheduleEntity scheduleEntity = ScheduleEntity.builder()
+                        .id(schedule.getId())
+                        .build();
 
-            scheduleEntities.add(scheduleEntity);
+                scheduleEntities.add(scheduleEntity);
+            }
         }
 
         return MovieEntity.builder()
                 .movieId(movieDTO.getMovieId())
                 .title(movieDTO.getTitle())
                 .genre(movieDTO.getGenre())
-                .rating(movieDTO.getRating())
+                .rating(Rating.fromConversion(movieDTO.getRating()))
                 .runtime(movieDTO.getRuntime())
                 .director(movieDTO.getDirector())
                 .actors(movieDTO.getActors())
@@ -81,15 +93,16 @@ public class MovieDTO {
         List<ScheduleVO> scheduleVOs = new ArrayList<>();
 
 
-        for (ScheduleDTO schedule : scheduleDTOS){
-            //pk 만 받아오기.
-            ScheduleVO scheduleEntity = ScheduleVO.builder()
-                    .id(schedule.getId())
-                    .build();
+        if (scheduleDTOS != null) {
+            for (ScheduleDTO schedule : scheduleDTOS) {
+                //pk 만 받아오기.
+                ScheduleVO scheduleEntity = ScheduleVO.builder()
+                        .id(schedule.getId())
+                        .build();
 
-            scheduleVOs.add(scheduleEntity);
+                scheduleVOs.add(scheduleEntity);
+            }
         }
-
         return MovieVO.builder()
                 .movieId(movieDTO.getMovieId())
                 .title(movieDTO.getTitle())

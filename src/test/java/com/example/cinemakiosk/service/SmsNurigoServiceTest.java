@@ -13,7 +13,7 @@ class SmsNurigoServiceTest {
 
     @Test
     public void testSendSms() {
-        String toPhone = "01049393069";
+        String toPhone = "01049393069"; // 메시지 받을 번호
         String content = "발송 테스트";
         smsNurigoService.sendSms(toPhone, content);
     }

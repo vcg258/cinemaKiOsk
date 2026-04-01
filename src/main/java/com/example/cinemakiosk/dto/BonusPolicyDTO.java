@@ -4,19 +4,18 @@ import com.example.cinemakiosk.domain.BonusPolicyEntity;
 import com.example.cinemakiosk.domain.PaymentDetailsEntity;
 import com.example.cinemakiosk.vo.BonusPolicyVO;
 import com.example.cinemakiosk.vo.PaymentDetailsVO;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Builder
-@AllArgsConstructor
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString
 public class BonusPolicyDTO {
     private Long id;                 // 적립 정책 인덱스
     private String policyName;       // 정책 이름
@@ -36,14 +35,15 @@ public class BonusPolicyDTO {
         List<PaymentDetailsDTO> paymentDetailsDTOs = bonusPolicyDTO.getPaymentDetails();
         List<PaymentDetailsEntity> paymentDetailsEntitys = new ArrayList<>();
 
+        if (paymentDetailsDTOs != null) {
+            for (PaymentDetailsDTO paymentDetailsDTO : paymentDetailsDTOs) {
+                //pk 만 받아오기.
+                PaymentDetailsEntity paymentDetailsEntity = PaymentDetailsEntity.builder()
+                        .id(paymentDetailsDTO.getId())
+                        .build();
 
-        for (PaymentDetailsDTO paymentDetailsDTO : paymentDetailsDTOs){
-            //pk 만 받아오기.
-            PaymentDetailsEntity paymentDetailsEntity = PaymentDetailsEntity.builder()
-                    .id(paymentDetailsDTO.getId())
-                    .build();
-
-            paymentDetailsEntitys.add(paymentDetailsEntity);
+                paymentDetailsEntitys.add(paymentDetailsEntity);
+            }
         }
 
         return BonusPolicyEntity.builder()
@@ -67,14 +67,15 @@ public class BonusPolicyDTO {
         List<PaymentDetailsDTO> paymentDetailsDTOs = bonusPolicyDTO.getPaymentDetails();
         List<PaymentDetailsVO> paymentDetailsVOs = new ArrayList<>();
 
+        if (paymentDetailsDTOs != null) {
+            for (PaymentDetailsDTO paymentDetailsDTO : paymentDetailsDTOs) {
+                //pk 만 받아오기.
+                PaymentDetailsVO paymentDetailsVO = PaymentDetailsVO.builder()
+                        .id(paymentDetailsDTO.getId())
+                        .build();
 
-        for (PaymentDetailsDTO paymentDetailsDTO : paymentDetailsDTOs){
-            //pk 만 받아오기.
-            PaymentDetailsVO paymentDetailsVO = PaymentDetailsVO.builder()
-                    .id(paymentDetailsDTO.getId())
-                    .build();
-
-            paymentDetailsVOs.add(paymentDetailsVO);
+                paymentDetailsVOs.add(paymentDetailsVO);
+            }
         }
 
         return BonusPolicyVO.builder()

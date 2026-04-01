@@ -7,13 +7,12 @@ public enum Rating {
     FIFTEEN,
     NINETEEN;
 
-
     public String getConversion() {
         return switch (this) {
             case ALL -> "ALL";
             case TWELVE -> "12";
             case FIFTEEN -> "15";
-            case NINETEEN -> "18";
+            case NINETEEN -> "19";
         };
     }
 

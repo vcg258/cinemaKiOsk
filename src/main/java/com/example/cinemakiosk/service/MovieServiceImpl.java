@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,55 +41,103 @@ public class MovieServiceImpl implements MovieService {
     public void insertMovie(MovieDTO movieDTO) {
 
         log.info("movieDTO: {} ", movieDTO);
+        log.info("rating2: {}", movieDTO.getRating());
 
         // -------- 영화 정보 저장 -------- //
-        movieRepository.save(MovieDTO.toEntity(movieDTO));
 
+        MovieEntity movieEntity = MovieDTO.toEntity(movieDTO);
+        log.info("rating3: {}", movieEntity.getRating());
+        movieRepository.save(movieEntity);
 
         // -------- 영화 이미지 저장 -------- //
-
-        String movieName = movieDTO.getTitle();
-        log.info("movieName : {} ", movieName);
-
-
-        // 1. 저장할 파일이름 처리
-        // startAt
-        String startAt = movieDTO.getStartAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
-        // 원본 파일명 사용
         MultipartFile file = movieDTO.getImage();
-        log.info("file: {} ", file);
         String originalFilename = file.getOriginalFilename();
-        log.info("originalFilename : {} ", originalFilename);
-
-
-
-        Path path = Paths.get(uploadPath, originalFilename);
-
-        log.info("path : {} ", path);
-
-
-        // 2. 파일을 저장
-        // 섬네일 이미지는 업로드하는 파일이 이미지일 때만 처리하도록 구성
-        // 파일 이름은 맨 앞에 's_'로 시작하도록 구성.
-
 
         try {
-            file.transferTo(path); // 실제 파일 저장
-
-            // (업로드된 파일이 아니라) 저장된 파일(path)이 이미지 파일인지 검사
-            String contentType = Files.probeContentType(path);
-            if (contentType != null && contentType.startsWith("image")) {
-                File thumbnailFile = new File(uploadPath, "s_" + originalFilename);
-                Thumbnailator.createThumbnail(path.toFile(), thumbnailFile, 200, 200);
-
-                log.info("thumbnailFile: {}", thumbnailFile);
-            }
+            saveImage(file.getBytes(), originalFilename);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
+
+    public void saveImage(byte[] imageBytes, String filename) throws IOException {
+        Path path = Paths.get(uploadPath, filename);
+
+        // 파일 저장
+        Files.write(path, imageBytes);
+
+        // 썸네일 생성
+        String contentType = Files.probeContentType(path);
+        if (contentType != null && contentType.startsWith("image")) {
+            File thumbnailFile = new File(uploadPath, "s_" + filename);
+            Thumbnailator.createThumbnail(path.toFile(), thumbnailFile, 200, 200);
+            log.info("thumbnailFile: {}", thumbnailFile);
+        }
+    }
+
+    // 수정
+    @Override
+    public void modify(MovieDTO movieDTO) {
+
+        // 1. 기존 데이터를 들고옴
+        Optional<MovieEntity> optionalMovie = movieRepository.findById(movieDTO.getMovieId());
+        MovieEntity movieEntity = optionalMovie.orElseThrow();
+
+        // 전체 수정
+        movieEntity.update(movieDTO);
+        movieRepository.save(movieEntity);
+
+        // 3. 첨부파일 처리 (새 이미지가 있을 때만)
+        MultipartFile file = movieDTO.getImage();
+
+        if (file != null && !file.isEmpty()) {
+
+            // 1) 기존 이미지 삭제 (원본 + 썸네일)
+            String oldFilename = movieDTO.getImage().getOriginalFilename(); // 기존 파일명 컬럼
+
+            if (oldFilename != null && !oldFilename.isBlank()) {
+                // 원본 삭제
+                Path oldPath = Paths.get(uploadPath, oldFilename);
+                try { Files.deleteIfExists(oldPath); } catch (IOException e) { log.warn("원본 삭제 실패: {}", oldPath); }
+
+                // 썸네일 삭제
+                Path oldThumbPath = Paths.get(uploadPath, "s_" + oldFilename);
+                try { Files.deleteIfExists(oldThumbPath); } catch (IOException e) { log.warn("썸네일 삭제 실패: {}", oldThumbPath); }
+            }
+
+            // 2) 새 이미지 저장
+            String originalFilename = file.getOriginalFilename();
+            Path newPath = Paths.get(uploadPath, originalFilename);
+
+            try {
+                file.transferTo(newPath);
+
+                // 썸네일 생성
+                String contentType = Files.probeContentType(newPath);
+                if (contentType != null && contentType.startsWith("image")) {
+                    File thumbnailFile = new File(uploadPath, "s_" + originalFilename);
+                    Thumbnailator.createThumbnail(newPath.toFile(), thumbnailFile, 200, 200);
+                }
+
+                // 3) DB에 새 파일명 업데이트
+//                movieEntity.setImageName(originalFilename);
+//                movieRepository.save(movieEntity);
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
 
     // 상세 조회
     @Override
@@ -99,10 +148,6 @@ public class MovieServiceImpl implements MovieService {
         return movieDTO;
     }
 
-    /**
-     * @param title
-     * @return
-     */
     @Override
     public MovieDTO getMovieByTitle(String title) {
         return null;
@@ -115,7 +160,24 @@ public class MovieServiceImpl implements MovieService {
 
         List<MovieDTO> movieDTOList = new ArrayList<>();
         for (MovieEntity movieEntity : movieEntityList) {
+
             movieDTOList.add(MovieEntity.toDTO(movieEntity));
+        }
+        return movieDTOList;
+    }
+
+    // 상영중인 영화 전체 조회
+    @Override
+    public List<MovieDTO> getScreeningPeriodAllMovies() {
+        List<MovieEntity> movieEntityList = movieRepository.findAll();
+        LocalDateTime now = LocalDateTime.now();
+
+        List<MovieDTO> movieDTOList = new ArrayList<>();
+        for (MovieEntity movieEntity : movieEntityList) {
+
+            if(now.isAfter(movieEntity.getStartAt()) && now.isBefore(movieEntity.getEndAt())) {
+                movieDTOList.add(MovieEntity.toDTO(movieEntity));
+            }
         }
         return movieDTOList;
     }
@@ -169,5 +231,13 @@ public class MovieServiceImpl implements MovieService {
 
 
         return null;
+    }
+
+
+
+    // 삭제
+    @Override
+    public void remove(long movieId) {
+        movieRepository.deleteById(movieId);
     }
 }
