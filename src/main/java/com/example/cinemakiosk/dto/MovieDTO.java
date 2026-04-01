@@ -24,7 +24,7 @@ public class MovieDTO {
     private Long movieId;
     private String title;
     private String genre;
-    private Rating rating;      // ALL / 12 / 15 / 19
+    private String rating;      // ALL / 12 / 15 / 19
     private Long runtime;
     private String director;
     private String actors;
@@ -34,17 +34,23 @@ public class MovieDTO {
     private LocalDateTime createAt;
     private MultipartFile image;
 
+
+    public void clearImage() {
+        this.image = null;
+    }
+
     /**
      * DTO -> Entity
      * @param movieDTO DTO
      * @return Entity
      */
     public static MovieEntity toEntity(MovieDTO movieDTO) {
+
         return MovieEntity.builder()
                 .movieId(movieDTO.getMovieId())
                 .title(movieDTO.getTitle())
                 .genre(movieDTO.getGenre())
-                .rating(movieDTO.getRating())
+                .rating(Rating.fromConversion(movieDTO.getRating()))
                 .runtime(movieDTO.getRuntime())
                 .director(movieDTO.getDirector())
                 .actors(movieDTO.getActors())

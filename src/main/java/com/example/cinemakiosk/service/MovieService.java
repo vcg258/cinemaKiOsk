@@ -5,11 +5,15 @@ import com.example.cinemakiosk.dto.MovieDTO;
 import com.example.cinemakiosk.dto.MovieRequestDTO;
 import com.example.cinemakiosk.dto.MovieResponseDTO;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface MovieService {
     // 추가
     void insertMovie(MovieDTO movieDTO);
+
+    // 영화 이미지 추가
+    void saveImage(byte[] imageBytes, String filename) throws IOException;
 
     // 상세 조회
     MovieDTO getMovieById(long movieId);
@@ -19,6 +23,9 @@ public interface MovieService {
 
     // 전체 조회
     List<MovieDTO> getAllMovies();
+
+    // 현재 상영중인 영화 전체 조회
+    List<MovieDTO> getScreeningPeriodAllMovies();
 
     // 제목 키워드로 조회
     List<MovieDTO> getMovie(String keyWord);
@@ -31,5 +38,16 @@ public interface MovieService {
 
     // 여러 조건 조회
     MovieResponseDTO<MovieDTO> getList(MovieRequestDTO movieRequestDTO);
+
+
+    // 수정
+    void modify(MovieDTO movieDTO);
+
+    // 삭제
+    void remove(long movieId);
+
+
+
+
 }
 

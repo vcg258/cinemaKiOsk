@@ -188,7 +188,7 @@ public class PreviewController {
         m.put("title", dto.getTitle());
         m.put("genre", dto.getGenre());
         /* Rating 열거형 → 표시용 문자열 변환 (FIFTEEN → "15", ALL → "ALL" 등) */
-        m.put("rating", dto.getRating() != null ? dto.getRating() : "ALL");
+        m.put("rating", dto.getRating());
         m.put("runtime", dto.getRuntime());
         m.put("director", dto.getDirector());
         m.put("actors", dto.getActors());

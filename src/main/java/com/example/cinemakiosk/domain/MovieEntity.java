@@ -20,6 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "movie")
+@Setter
 public class MovieEntity{
 
     @Id
@@ -61,6 +62,24 @@ public class MovieEntity{
     @OneToMany(mappedBy = "movieEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<ScheduleEntity> scheduleEntity;
 
+
+    // 수정 메서드
+    public void update(MovieDTO dto) {
+        this.title = dto.getTitle();
+        this.genre = dto.getGenre();
+        this.rating = Rating.fromConversion(dto.getRating());
+        this.runtime = dto.getRuntime();
+        this.director = dto.getDirector();
+        this.actors = dto.getActors();
+        this.description = dto.getDescription();
+        this.startAt = dto.getStartAt();
+        this.endAt = dto.getEndAt();
+        this.createAt = dto.getCreateAt();
+    }
+
+
+
+
     /**
      * Entity -> DTO
      * @param movieEntity
@@ -72,7 +91,7 @@ public class MovieEntity{
                 .movieId(movieEntity.getMovieId())
                 .title(movieEntity.getTitle())
                 .genre(movieEntity.getGenre())
-                .rating(movieEntity.getRating())
+                .rating(movieEntity.getRating().getConversion())
                 .runtime(movieEntity.getRuntime())
                 .director(movieEntity.getDirector())
                 .actors(movieEntity.getActors())

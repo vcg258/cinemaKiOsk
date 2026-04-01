@@ -78,4 +78,12 @@ class MovieServiceImplTest {
             log.info(movieDTO);
         }
     }
+
+//    // 수정
+//    @Test
+//    void modify() {
+//        moviceService.modify();
+//    }
+
+    // 삭제
 }
