@@ -1,6 +1,7 @@
 package com.example.cinemakiosk.dto;
 
 import com.example.cinemakiosk.domain.ScheduleEntity;
+import com.example.cinemakiosk.domain.SeatPolicyEntity;
 import com.example.cinemakiosk.domain.TheaterEntity;
 import com.example.cinemakiosk.vo.ScheduleVO;
 import com.example.cinemakiosk.vo.SeatPolicyVO;
@@ -17,10 +18,9 @@ import java.util.List;
 @AllArgsConstructor
 public class TheaterDTO {
     private Long no; // 상영관 번호
-    private SeatPolicyDTO seatPolicy; // 좌석 정책 FK
+    private SeatPolicyDTO seatPolicy; // 좌석정책 FK (JPA 전용)
+    private Long policyId; // 좌석정책 FK
     private Long cleanupTime; // 정리시간(분)
-    private List<ScheduleDTO> schedule; // 1:다
-    private SeatPolicyDTO seatPolicyDTO;
 
     /**
      * DTO -> Entity
@@ -28,22 +28,26 @@ public class TheaterDTO {
      * @return Entity
      */
     public static TheaterEntity toEntity(TheaterDTO theaterDTO){
-        List<ScheduleDTO> scheduleDTOs = theaterDTO.getSchedule();
-        List<ScheduleEntity> scheduleEntitys = new ArrayList<>();
 
-        for (ScheduleDTO scheduleDTO : scheduleDTOs){
-            ScheduleEntity scheduleEntity = ScheduleEntity.builder()
-                    .id(scheduleDTO.getId())
+        SeatPolicyEntity seatPolicyEntity = null;
+        if (theaterDTO.getSeatPolicy() != null) {
+            seatPolicyEntity = SeatPolicyEntity.builder()
+                    .policyId(theaterDTO.getSeatPolicy().getPolicyId())
                     .build();
+        } else if (theaterDTO.getPolicyId() != null) {
+            seatPolicyEntity = SeatPolicyEntity.builder()
+                    .policyId(theaterDTO.getPolicyId())
+                    .build();
+        }
 
-            scheduleEntitys.add(scheduleEntity);
+        if (seatPolicyEntity == null) {
+            throw new IllegalArgumentException("필수값 누락 NotNull(Theater policyId)");
         }
 
         return TheaterEntity.builder()
                 .no(theaterDTO.getNo())
-                .seatPolicyEntity(SeatPolicyDTO.toEntity(theaterDTO.getSeatPolicy()))
+                .seatPolicyEntity(seatPolicyEntity)
                 .cleanupTime(theaterDTO.getCleanupTime())
-                .scheduleEntity(scheduleEntitys)
                 .build();
     }
 
@@ -53,22 +57,11 @@ public class TheaterDTO {
      * @return VO
      */
     public static TheaterVO toVO(TheaterDTO theaterDTO){
-        List<ScheduleDTO> scheduleDTOs = theaterDTO.getSchedule();
-        List<ScheduleVO> scheduleVOs = new ArrayList<>();
-
-        for (ScheduleDTO scheduleDTO : scheduleDTOs){
-            ScheduleVO scheduleVO = ScheduleVO.builder()
-                    .id(scheduleDTO.getId())
-                    .build();
-
-            scheduleVOs.add(scheduleVO);
-        }
 
         return TheaterVO.builder()
                 .no(theaterDTO.getNo())
-                .seatPolicy(SeatPolicyDTO.toVO(theaterDTO.getSeatPolicy()))
+                .policyId(theaterDTO.getPolicyId())
                 .cleanupTime(theaterDTO.getCleanupTime())
-                .schedule(scheduleVOs)
                 .build();
     }
 }

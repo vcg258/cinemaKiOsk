@@ -4,4 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.cinemakiosk.mapper.ReservationSeatMapper">
 
+    <insert id="insertSeats">
+        insert into reservation_seat (seat_number, reservation_id)
+        values
+            <foreach collection="seats" separator="," item="seat">
+                (#{seat.seatNumber}, #{id})
+            </foreach>
+        ;
+    </insert>
 </mapper>

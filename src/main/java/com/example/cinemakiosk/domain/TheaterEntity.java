@@ -7,6 +7,8 @@ import com.example.cinemakiosk.vo.ScheduleVO;
 import com.example.cinemakiosk.vo.TheaterVO;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +33,25 @@ public class TheaterEntity {
     @Column(columnDefinition = "BIGINT UNSIGNED DEFAULT 0")
     private Long cleanupTime; // 정리시간(분)
 
+    @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "theaterEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<ScheduleEntity> scheduleEntity; // 1:다
+
+    /**
+     * 상영관 좌석정책 업데이트 도메인 메서드
+     * @param entity 좌석정책 변경할때 사용
+     */
+    public void changeSeatPolicy(SeatPolicyEntity entity) {
+        this.seatPolicyEntity = entity;
+    }
+
+    /**
+     * 상영관 정리시간 업데이트 도메인 메서드
+     * @param cleanupTime 정리시간 수정시 사용
+     */
+    public void changeCleantime(Long cleanupTime) {
+        this.cleanupTime = cleanupTime;
+    }
 
     /**
      * Entity -> DTO
@@ -40,22 +59,11 @@ public class TheaterEntity {
      * @return DTO
      */
     public static TheaterDTO toDTO(TheaterEntity theaterEntity){
-        List<ScheduleEntity> scheduleEntitys = theaterEntity.getScheduleEntity();
-        List<ScheduleDTO> scheduleDTOs = new ArrayList<>();
-
-        for (ScheduleEntity scheduleEntity : scheduleEntitys){
-            ScheduleDTO scheduleDTO = ScheduleDTO.builder()
-                    .id(scheduleEntity.getId())
-                    .build();
-
-            scheduleDTOs.add(scheduleDTO);
-        }
 
         return TheaterDTO.builder()
                 .no(theaterEntity.getNo())
-                .seatPolicy(SeatPolicyEntity.toDTO(theaterEntity.getSeatPolicyEntity()))
+                .policyId(theaterEntity.getSeatPolicyEntity().getPolicyId())
                 .cleanupTime(theaterEntity.getCleanupTime())
-                .schedule(scheduleDTOs)
                 .build();
     }
 }

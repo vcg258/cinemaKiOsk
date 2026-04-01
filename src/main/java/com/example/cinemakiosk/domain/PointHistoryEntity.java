@@ -46,8 +46,6 @@ public class PointHistoryEntity{
     public static PointHistoryDTO toDTO(PointHistoryEntity pointHistoryEntity){
         return PointHistoryDTO.builder()
                 .pointId(pointHistoryEntity.getPointId())
-                .paymentId(PaymentDetailsEntity.toDTO(pointHistoryEntity.getPaymentDetailsEntity()))
-                .phone(MemberEntity.toDTO(pointHistoryEntity.getMemberEntity()))
                 .type(pointHistoryEntity.getType())
                 .amountPoint(pointHistoryEntity.getAmountPoint())
                 .createAt(pointHistoryEntity.getCreateAt())

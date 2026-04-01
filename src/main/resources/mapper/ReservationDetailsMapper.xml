@@ -4,5 +4,31 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.cinemakiosk.mapper.ReservationDetailsMapper">
 
-    <select id="selectOneById" resultType="com.example.cinemakiosk.vo.ReservationDetailsVO"></select>
+    <select id="selectOneById" resultMap="reservationDetailMap">
+        SELECT
+            rd.id,
+            rd.phone,
+            rd.schedule_id,
+            rd.create_at,
+            rs.id AS rs_id, -- 중복 방지를 위해 좌석 ID에 별칭 부여
+            rs.reservation_id,
+            rs.seat_number
+        FROM reservation_details rd
+                 LEFT JOIN reservation_seat rs ON rd.id = rs.reservation_id
+        WHERE rd.id = #{no}
+    </select>
+
+    <resultMap id="reservationDetailMap" type="com.example.cinemakiosk.vo.ReservationDetailsVO" autoMapping="true">
+        <id property="id" column="id"/>
+<!--        <association property="schedule">-->
+<!--            -->
+<!--        </association>-->
+<!--        <association property="schedule">-->
+
+<!--        </association>-->
+        <collection property="seats" ofType="com.example.cinemakiosk.vo.ReservationSeatVO" autoMapping="true">
+            <id property="id" column="rs_id"/>
+
+        </collection>
+    </resultMap>
 </mapper>

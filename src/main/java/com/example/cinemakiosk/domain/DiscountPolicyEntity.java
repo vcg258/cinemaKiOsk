@@ -6,6 +6,8 @@ import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,7 +16,7 @@ import java.util.List;
 @Entity
 @Getter
 @Builder
-@ToString(exclude = "coupon")
+@ToString(exclude = "coupons")
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "discount_policy")
@@ -42,6 +44,7 @@ public class DiscountPolicyEntity {
     @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean activation; // 활성화 여부
 
+    @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "discountPolicyEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<CouponEntity> coupons;
 
@@ -67,20 +70,6 @@ public class DiscountPolicyEntity {
      * @return DTO
      */
     public static DiscountPolicyDTO toDTO(DiscountPolicyEntity discountPolicyEntity) {
-        //OneToMany 변수는 본인 객체를 제외한 값만 받기. 순환참조 방지.
-        List<CouponEntity> couponEntities = discountPolicyEntity.getCoupons();
-        List<CouponDTO> couponDTOs = new ArrayList<>();
-
-
-        for (CouponEntity coupon : couponEntities){
-            //pk 만 받아오기.
-            CouponDTO couponDTO = CouponDTO.builder()
-                    .couponNum(coupon.getCouponNum())
-                    .build();
-
-            couponDTOs.add(couponDTO);
-        }
-
         return DiscountPolicyDTO.builder()
                 .id(discountPolicyEntity.getId())
                 .policyName(discountPolicyEntity.getPolicyName())
@@ -90,7 +79,6 @@ public class DiscountPolicyEntity {
                 .startAt(discountPolicyEntity.getStartAt())
                 .endAt(discountPolicyEntity.getEndAt())
                 .activation(discountPolicyEntity.isActivation())
-                .coupons(couponDTOs)
                 .build();
     }
 }

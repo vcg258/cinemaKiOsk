@@ -6,10 +6,7 @@ import com.example.cinemakiosk.dto.PaymentDetailsDTO;
 import com.example.cinemakiosk.dto.ReservationDetailsDTO;
 import com.example.cinemakiosk.dto.ReservationSeatDTO;
 import com.example.cinemakiosk.dto.ScheduleDTO;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import com.example.cinemakiosk.vo.ScheduleVO;
 import com.example.cinemakiosk.vo.ReservationSeatVO;
 
@@ -19,16 +16,15 @@ import java.util.List;
 
 @Getter
 @Builder
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReservationDetailsVO {
-    private String id;                     // 예매 고유번호(uuid)
+    private Long id;                     // 예매 고유번호
     private ScheduleVO schedule;           //  스케쥴 정보
     private MemberVO phone;                  //  회원 번호
     private LocalDateTime reservationTime; //  예약 시간
     private List<ReservationSeatVO> seats; //  예매한 좌석들의 정보
-    private List<PaymentDetailsVO> paymentDetails; // 1:다
-
 
     /**
      * VO -> DTO
@@ -36,17 +32,11 @@ public class ReservationDetailsVO {
      * @return DTO
      */
     public static ReservationDetailsDTO toDTO(ReservationDetailsVO reservationDetailsVO) {
-
         List<ReservationSeatVO> reservationSeatVOs = reservationDetailsVO.getSeats();
         List<ReservationSeatDTO> reservationSeatDTOs = new ArrayList<>();
 
         for (ReservationSeatVO reservationSeatVO : reservationSeatVOs) {
-            ReservationSeatDTO reservationSeatDTO = ReservationSeatDTO.builder()
-                    .id(reservationSeatVO.getId())
-                    .seatNumber(reservationSeatVO.getSeatNumber())
-                    .build();
-
-            reservationSeatDTOs.add(reservationSeatDTO);
+            reservationSeatDTOs.add(ReservationSeatVO.toDTO(reservationSeatVO));
         }
 
         return ReservationDetailsDTO.builder()

@@ -4,6 +4,8 @@ import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.PaymentDetailsDTO;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -21,9 +23,10 @@ public class CouponEntity {
     @JoinColumn(name = "policy_id", nullable = false, columnDefinition = "BIGINT UNSIGNED", foreignKey = @ForeignKey(name = "fk_discount_policy_coupon_id"))
     private DiscountPolicyEntity discountPolicyEntity; // 할인 정책 인덱스 FK
 
-    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(nullable = false, columnDefinition = "TINYINT DEFAULT FALSE")
     private boolean status; // 사용여부 (사용가능 = true, 불가능 = false)
 
+    @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToOne(mappedBy = "couponEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private PaymentDetailsEntity paymentDetailsEntity;
 
@@ -41,16 +44,11 @@ public class CouponEntity {
      * @return DTO
      */
     public static CouponDTO toDTO(CouponEntity couponEntity) {
-        //쿠폰쪽에서 결제의 id만 받는 걸로 진행.
-        PaymentDetailsDTO paymentDetailsDTO = PaymentDetailsDTO.builder()
-                .id(couponEntity.getPaymentDetailsEntity().getId())
-                .build();
 
         return CouponDTO.builder()
                 .couponNum(couponEntity.getCouponNum())
-                .discountPolicy(DiscountPolicyEntity.toDTO(couponEntity.getDiscountPolicyEntity()))
+                .policyId(couponEntity.getDiscountPolicyEntity().getId())
                 .status(couponEntity.isStatus())
-                .paymentDetails(paymentDetailsDTO)
                 .build();
     }
 

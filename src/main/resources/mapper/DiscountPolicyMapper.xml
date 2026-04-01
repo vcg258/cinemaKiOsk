@@ -18,7 +18,7 @@
             <result property="policyId" column="policy_id"/>
         </collection>
     </resultMap>
-
+<!--TODO 얘는 OneToOne이라 association쓰는게 맞지 않을까?-->
     <select id="checkCoupon" resultMap="discountPolicyResultMap">
         SELECT * FROM discount_policy DP
         JOIN coupon C ON DP.id = C.policy_id WHERE C.policy_id = #{policy_id}

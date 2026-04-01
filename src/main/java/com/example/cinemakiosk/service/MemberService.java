@@ -1,6 +1,9 @@
 package com.example.cinemakiosk.service;
 
+import com.example.cinemakiosk.dto.MemberDTO;
 import com.example.cinemakiosk.dto.PointHistoryDTO;
+
+import java.util.List;
 
 public interface MemberService {
     // 신규 회원등록
@@ -11,4 +14,10 @@ public interface MemberService {
 
     // 환불할 경우 포인트 내역
     void pointHistoryCancel(PointHistoryDTO pointHistoryDTO);
+
+    // 회원 전체 조회
+    List<MemberDTO> getMembersAll();
+
+    // 회원 단일 조회
+    MemberDTO getMember(String phone);
 }

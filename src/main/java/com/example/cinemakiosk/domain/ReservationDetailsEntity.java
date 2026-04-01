@@ -4,6 +4,8 @@ import com.example.cinemakiosk.dto.ReservationDetailsDTO;
 import com.example.cinemakiosk.dto.ReservationSeatDTO;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -20,7 +22,8 @@ import java.util.List;
 public class ReservationDetailsEntity{
     @Id
     @Column(length = 36)
-    private String id;                     // 예매 고유번호(uuid)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;                     // 예매 고유번호
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id", columnDefinition = "BIGINT UNSIGNED", nullable = false, foreignKey = @ForeignKey(name = "fk_reservation_details_payment_id"))
@@ -34,9 +37,11 @@ public class ReservationDetailsEntity{
     @Column(nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
     private LocalDateTime createAt; //  예약 시간
 
+    @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "reservationDetailsEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<ReservationSeatEntity> reservationSeatEntity;
 
+    @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "reservationDetailsEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<PaymentDetailsEntity> paymentDetailsEntity;
 
@@ -46,25 +51,11 @@ public class ReservationDetailsEntity{
      * @return DTO
      */
     public static ReservationDetailsDTO toDTO(ReservationDetailsEntity reservationDetailsEntity) {
-
-        List<ReservationSeatEntity> reservationSeatEntitys = reservationDetailsEntity.getReservationSeatEntity();
-        List<ReservationSeatDTO> reservationSeatDTOs = new ArrayList<>();
-
-        for (ReservationSeatEntity reservationSeatEntity : reservationSeatEntitys) {
-            ReservationSeatDTO reservationSeatDTO = ReservationSeatDTO.builder()
-                    .id(reservationSeatEntity.getId())
-                    .seatNumber(reservationSeatEntity.getSeatNumber())
-                    .build();
-
-            reservationSeatDTOs.add(reservationSeatDTO);
-        }
-
         return ReservationDetailsDTO.builder()
                 .id(reservationDetailsEntity.getId())
                 .schedule(ScheduleEntity.toDTO(reservationDetailsEntity.getScheduleEntity()))
                 .phone(MemberEntity.toDTO(reservationDetailsEntity.getMemberEntity()))
                 .reservationTime(reservationDetailsEntity.getCreateAt())
-                .seats(reservationSeatDTOs)
                 .build();
     }
 

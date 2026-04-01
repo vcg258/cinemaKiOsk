@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class TheaterVO {
     private Long no; // 상영관 번호
-    private SeatPolicyVO seatPolicy; // 좌석 정책 FK
+    private Long policyId; // 좌석정책 FK
     private Long cleanupTime; // 정리시간(분)
     private List<ScheduleVO> schedule; // 1:다
 
@@ -27,22 +27,11 @@ public class TheaterVO {
      * @return DTO
      */
     public static TheaterDTO toDTO(TheaterVO theaterVO){
-        List<ScheduleVO> scheduleVOs = theaterVO.getSchedule();
-        List<ScheduleDTO> scheduleDTOs = new ArrayList<>();
-
-        for (ScheduleVO scheduleVO : scheduleVOs){
-            ScheduleDTO scheduleDTO = ScheduleDTO.builder()
-                    .id(scheduleVO.getId())
-                    .build();
-
-            scheduleDTOs.add(scheduleDTO);
-        }
 
         return TheaterDTO.builder()
                 .no(theaterVO.getNo())
-                .seatPolicy(SeatPolicyVO.toDTO(theaterVO.getSeatPolicy()))
+                .policyId(theaterVO.getPolicyId())
                 .cleanupTime(theaterVO.getCleanupTime())
-                .schedule(scheduleDTOs)
                 .build();
     }
 }

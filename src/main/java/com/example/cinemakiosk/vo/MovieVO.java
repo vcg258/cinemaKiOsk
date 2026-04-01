@@ -21,7 +21,7 @@ public class MovieVO {
     private final Long movieId;         // 영화 인덱스
     private final String title;         // 영화 제목
     private final String genre;         // 장르
-    private final Rating rating;        // 관람 등급
+    private final String rating;        // 관람 등급
     private final Long runtime;         // 상영 시간 (분)
     private final String director;      // 감독
     private final String actors;        // 주연 배우
@@ -29,7 +29,6 @@ public class MovieVO {
     private final LocalDateTime startAt; // 상영 시작일
     private final LocalDateTime endAt;   // 상영 종료일
     private final LocalDateTime createAt; // 등록일
-    private List<ScheduleVO> schedules;
 
     /**
      * VO -> DTO
@@ -37,20 +36,6 @@ public class MovieVO {
      * @return DTO
      */
     public static MovieDTO toDTO(MovieVO movieVO) {
-        //OneToMany 변수는 본인 객체를 제외한 값만 받기. 순환참조 방지.
-        List<ScheduleVO> scheduleVOs = movieVO.getSchedules();
-        List<ScheduleDTO> scheduleDTOs = new ArrayList<>();
-
-
-        for (ScheduleVO schedule : scheduleVOs){
-            //pk 만 받아오기.
-            ScheduleDTO scheduleDTO = ScheduleDTO.builder()
-                    .id(schedule.getId())
-                    .build();
-
-            scheduleDTOs.add(scheduleDTO);
-        }
-
         return MovieDTO.builder()
                 .movieId(movieVO.getMovieId())
                 .title(movieVO.getTitle())
@@ -63,7 +48,6 @@ public class MovieVO {
                 .startAt(movieVO.getStartAt())
                 .endAt(movieVO.getEndAt())
                 .createAt(movieVO.getCreateAt())
-                .schedules(scheduleDTOs)
                 .build();
     }
 }

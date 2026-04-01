@@ -3,6 +3,8 @@ package com.example.cinemakiosk.service;
 import com.example.cinemakiosk.domain.enums.ConditionType;
 import com.example.cinemakiosk.domain.enums.DiscountType;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
+import com.example.cinemakiosk.repository.CouponRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,33 +17,6 @@ import java.time.LocalDateTime;
 @SpringBootTest
 class DiscountPolicyEntityServiceImplTest {
     @Autowired private DiscountPolicyService discountPolicyService;
-
-    @Test
-    public void createCouponNumTest() {
-        discountPolicyService.createCouponNum(1L);
-    }
-
-    @Test
-    public void updateCouponStatusTest() {
-        discountPolicyService.updateStatus("55de90a7b78f", true);
-    }
-
-    @Test
-    public void authCouponTest() {
-        boolean result = discountPolicyService.authCoupon(1L, "55de90a7b78f");
-        log.info("result: {}", result);
-    }
-
-    @Test
-    public void finalActivationTest() {
-        discountPolicyService.finishActivation(1L);
-
-    }
-
-    @Test
-    public void changeActivationTest() {
-        discountPolicyService.changeActivation(1L, false);
-    }
 
     @Test
     public void createDiscountPolicyTest() {
@@ -71,10 +46,42 @@ class DiscountPolicyEntityServiceImplTest {
     }
 
     @Test
+    public void finalActivationTest() {
+        discountPolicyService.finishActivation(1L);
+
+    }
+
+    @Test
+    public void changeActivationTest() {
+        discountPolicyService.changeActivation(1L, true);
+    }
+
+    @Test
+    public void createCouponNumTest() {
+        discountPolicyService.createCouponNum(1L);
+    }
+
+    @Test
+    public void authCouponTest() {
+        boolean result = discountPolicyService.authCoupon(1L, "8930bc2b36dd");
+        log.info("result: {}", result);
+    }
+
+    @Test
+    public void updateCouponStatusTest() {
+        discountPolicyService.updateStatus("8930bc2b36dd", false);
+    }
+
+    @Test
     public void getDiscountPolicyPageTest() {
         Page<DiscountPolicyDTO> page = discountPolicyService.getDiscountPolicyPage(1);
         log.info("전체 개수: {}", page.getTotalElements());
         log.info("전체 페이지: {}", page.getTotalPages());
         log.info("전체 페이지 내용: {}", page.getContent());
+    }
+
+    @Test
+    public void test() {
+        log.info(discountPolicyService.getCoupon("8930bc2b36dd"));
     }
 }

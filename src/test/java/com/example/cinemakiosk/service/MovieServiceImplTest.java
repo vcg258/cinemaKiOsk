@@ -24,7 +24,7 @@ class MovieServiceImplTest {
         LocalDateTime now = LocalDateTime.now();
         MovieDTO movieDTO = MovieDTO.builder()
                 .genre("wpwp")
-                .rating(Rating.FIFTEEN.getConversion())
+                .rating(Rating.valueOf(Rating.FIFTEEN.getConversion()))
                 .actors("일반인1")
                 .createAt(LocalDateTime.now())
                 .startAt(LocalDateTime.now())
@@ -78,4 +78,12 @@ class MovieServiceImplTest {
             log.info(movieDTO);
         }
     }
+
+//    // 수정
+//    @Test
+//    void modify() {
+//        moviceService.modify();
+//    }
+
+    // 삭제
 }
