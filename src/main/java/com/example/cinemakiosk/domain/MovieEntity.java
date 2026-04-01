@@ -67,19 +67,6 @@ public class MovieEntity{
      * @return DTO
      */
     public static MovieDTO toDTO(MovieEntity movieEntity) {
-        //OneToMany 변수는 본인 객체를 제외한 값만 받기. 순환참조 방지.
-        List<ScheduleEntity> scheduleEntities = movieEntity.getScheduleEntity();
-        List<ScheduleDTO> scheduleDTOs = new ArrayList<>();
-
-
-        for (ScheduleEntity schedule : scheduleEntities){
-            //pk 만 받아오기.
-            ScheduleDTO scheduleDTO = ScheduleDTO.builder()
-                    .id(schedule.getId())
-                    .build();
-
-            scheduleDTOs.add(scheduleDTO);
-        }
 
         return MovieDTO.builder()
                 .movieId(movieEntity.getMovieId())
@@ -93,7 +80,6 @@ public class MovieEntity{
                 .startAt(movieEntity.getStartAt())
                 .endAt(movieEntity.getEndAt())
                 .createAt(movieEntity.getCreateAt())
-                .schedules(scheduleDTOs)
                 .build();
     }
 }
