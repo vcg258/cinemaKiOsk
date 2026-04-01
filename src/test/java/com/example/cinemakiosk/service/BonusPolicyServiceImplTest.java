@@ -5,41 +5,52 @@ import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Log4j2
 @SpringBootTest
 class BonusPolicyServiceImplTest {
+    @Autowired BonusService bonusService;
 
-    @Autowired
-    private BonusPolicyService bonusPolicyService;
-
-
-    // 등록
     @Test
-    void addBonusPolicy() {
-        BonusPolicyDTO bonusPolicyDTO = BonusPolicyDTO.builder()
-                .policyName("테스트 정책")
-                .giveValue(30L)
+    void createBonusPolicy() {
+        BonusPolicyDTO dto = BonusPolicyDTO.builder()
+                .policyName("test")
+                .giveValue(5000L)
+                .startAt(LocalDateTime.now())
+                .finishedAt(LocalDateTime.now().plusDays(3))
                 .activation(true)
-                .createAt(LocalDateTime.now())
-                .finishedAt(LocalDateTime.now())
                 .build();
-
-        bonusPolicyService.addBonusPolicy(bonusPolicyDTO);
-
+        bonusService.createBonusPolicy(dto);
     }
 
-    // 조회
+    @Test
+    void finishActivation() {
+        bonusService.finishActivation(5L);
+    }
+
+    @Test
+    void changeActivation() {
+        bonusService.changeActivation(5L, false);
+    }
+
     @Test
     void getBonusPolicies() {
-        List<BonusPolicyDTO> bonusPolicyDTOList = bonusPolicyService.getBonusPolicies();
-        for (BonusPolicyDTO bonusPolicyDTO : bonusPolicyDTOList) {
-            log.info(bonusPolicyDTO);
-        }
+        bonusService.getBonusPolicies().forEach(log::info);
+    }
+
+    @Test
+    void getBonusPolicy() {
+        log.info(bonusService.getBonusPolicy(5L));
+    }
+
+    @Test
+    void getBonusPolicyPage() {
+        Page<BonusPolicyDTO> page = bonusService.getBonusPolicyPage(1);
+        log.info("전체 개수 {}", page.getTotalElements());
+        log.info("전체 페이지 {}", page.getTotalPages());
+        log.info("전체 내용 {}", page.getContent());
     }
 }

@@ -2,11 +2,7 @@ package com.example.cinemakiosk.dto;
 
 import com.example.cinemakiosk.domain.BonusPolicyEntity;
 import com.example.cinemakiosk.vo.BonusPolicyVO;
-import com.example.cinemakiosk.vo.PaymentDetailsVO;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
