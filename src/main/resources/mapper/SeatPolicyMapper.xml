@@ -3,11 +3,19 @@
         PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.cinemakiosk.mapper.SeatPolicyMapper">
+    <select id="selectOneById" resultMap="seatPolicyVO">
+        select * from cinema_kiosk.seat_policy where policy_id = #{no};
+    </select>
 
-    <insert id="insert">
-        insert into cinema_kiosk.seat_policy (cost, name)
-        value (#{cost}, #{name});
-    </insert>
+    <select id="selectAll" resultMap="seatPolicyVO">
+        select * from cinema_kiosk.seat_policy
+    </select>
+
+    <resultMap id="seatPolicyVO" type="com.example.cinemakiosk.vo.SeatPolicyVO" autoMapping="true">
+        <id property="policyId" column="policy_id"/>
+    </resultMap>
+
+
 
 
 </mapper>

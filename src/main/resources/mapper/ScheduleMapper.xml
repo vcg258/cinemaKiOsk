@@ -4,4 +4,67 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.cinemakiosk.mapper.ScheduleMapper">
 
+    <resultMap id="scheduleVO" type="com.example.cinemakiosk.vo.ScheduleVO" autoMapping="true">
+        <id property="id" column="id"/>
+        <association property="movie"
+                     resultMap="com.example.cinemakiosk.mapper.MovieMapper.movieVO"
+                     columnPrefix="mv_"
+        />
+
+        <association property="theater"
+                     resultMap="com.example.cinemakiosk.mapper.TheaterMapper.theaterVO"
+                     columnPrefix="th_"
+        />
+    </resultMap>
+
+    <select id="selectOneById" resultMap="scheduleVO">
+        SELECT s.id,
+               s.movie_id,
+               s.no,
+               s.start_at,
+               s.end_at,
+
+               mv.movie_id      AS mv_movie_id,
+               mv.title         AS mv_title,
+               mv.runtime       AS mv_runtime,
+
+               th.no           AS th_no,
+               th.policy_id    AS th_policy_id,
+               th.cleanup_time AS th_cleanup_time,
+
+               sp.policy_id    AS th_sp_policy_id,
+               sp.name         AS th_sp_name,
+               sp.cost         AS th_sp_cost
+
+        FROM cinema_kiosk.schedule s
+                 INNER JOIN cinema_kiosk.movie mv ON s.movie_id = mv.movie_id
+                 INNER JOIN cinema_kiosk.theater th ON s.no = th.no
+                 INNER JOIN cinema_kiosk.seat_policy sp ON th.policy_id = sp.policy_id
+        WHERE s.id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="scheduleVO">
+        SELECT sc.id,
+               sc.movie_id,
+               sc.no,
+               sc.start_at,
+               sc.end_at,
+
+               mv.movie_id      AS mv_movie_id,
+               mv.title         AS mv_title,
+               mv.runtime       AS mv_runtime,
+
+               th.no           AS th_no,
+               th.policy_id    AS th_policy_id,
+               th.cleanup_time AS th_cleanup_time,
+
+               sp.policy_id    AS th_sp_policy_id,
+               sp.name         AS th_sp_name,
+               sp.cost         AS th_sp_cost
+
+        FROM cinema_kiosk.schedule sc
+                 INNER JOIN cinema_kiosk.movie mv ON sc.movie_id = mv.movie_id
+                 INNER JOIN cinema_kiosk.theater th ON sc.no = th.no
+                 INNER JOIN cinema_kiosk.seat_policy sp ON th.policy_id = sp.policy_id
+    </select>
 </mapper>

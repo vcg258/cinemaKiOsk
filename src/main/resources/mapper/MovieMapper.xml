@@ -17,4 +17,17 @@
             </if>
         </where>
     </select>
+    <select id="selectOneById" resultMap="movieVO">
+        select * from cinema_kiosk.movie where movie_id = #{no};
+    </select>
+
+    <select id="selectAll" resultMap="movieVO">
+        select * from cinema_kiosk.movie;
+    </select>
+
+    <resultMap id="movieVO" type="com.example.cinemakiosk.vo.MovieVO" autoMapping="true">
+        <id property="movieId" column="movie_id"/>
+    </resultMap>
+
+
 </mapper>

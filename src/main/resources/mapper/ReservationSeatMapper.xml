@@ -12,4 +12,17 @@
             </foreach>
         ;
     </insert>
+
+    <resultMap id="seatListVO" type="com.example.cinemakiosk.vo.ReservationSeatVO" autoMapping="true">
+        <id property="id" column="id"/>
+    </resultMap>
+
+    <select id="selectAllById" resultMap="seatListVO">
+        select
+            st.id,
+            st.reservation_id,
+            st.seat_number
+        from cinema_kiosk.reservation_seat st
+        where reservation_id = #{no}
+    </select>
 </mapper>

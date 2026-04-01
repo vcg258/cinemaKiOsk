@@ -4,4 +4,33 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.cinemakiosk.mapper.TheaterMapper">
 
+    <resultMap id="theaterVO" type="com.example.cinemakiosk.vo.TheaterVO" autoMapping="true">
+        <id property="no" column="no"/>
+        <association property="seatPolicy"
+                     resultMap="com.example.cinemakiosk.mapper.SeatPolicyMapper.seatPolicyVO"
+                     columnPrefix="sp_"/>
+    </resultMap>
+
+    <select id="selectOneById" resultMap="theaterVO">
+        select th.*,
+               sp.policy_id sp_policy_id,
+               sp.name      sp_name,
+               sp.cost      sp_cost
+        from cinema_kiosk.theater th
+                 inner join cinema_kiosk.seat_policy sp
+                            on th.policy_id = sp.policy_id
+        where th.no = #{no}
+    </select>
+
+    <select id="selectAll" resultMap="theaterVO">
+        select th.*,
+               sp.policy_id sp_policy_id,
+               sp.name      sp_name,
+               sp.cost      sp_cost
+        from cinema_kiosk.theater th
+                 inner join cinema_kiosk.seat_policy sp
+                            on th.policy_id = sp.policy_id
+    </select>
+
+
 </mapper>

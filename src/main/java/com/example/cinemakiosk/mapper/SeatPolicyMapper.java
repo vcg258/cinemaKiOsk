@@ -1,15 +1,11 @@
 package com.example.cinemakiosk.mapper;
 
 import com.example.cinemakiosk.vo.SeatPolicyVO;
-import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Mapper;import java.util.List;
 
 @Mapper
 public interface SeatPolicyMapper {
-    void insert(SeatPolicyVO seatPolicyVO);
+    SeatPolicyVO selectOneById(Long no);
 
-    SeatPolicyVO selectOne(Long no);
-
-    SeatPolicyVO selectAll();
-
-
+    List<SeatPolicyVO> selectAll();
 }

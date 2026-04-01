@@ -1,8 +1,9 @@
 package com.example.cinemakiosk.mapper;
 
+import com.example.cinemakiosk.vo.BonusPolicyVO;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface BonusPolicyMapper {
-//해당 mapper는 사용 안함.
+    BonusPolicyVO selectOneById(Long no);
 }

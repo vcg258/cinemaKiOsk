@@ -3,25 +3,53 @@
         PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.cinemakiosk.mapper.DiscountPolicyMapper">
-    <resultMap id="discountPolicyResultMap" type="com.example.cinemakiosk.dto.DiscountPolicyDTO">
+    <!--    <resultMap id="discountPolicyResultMap" type="com.example.cinemakiosk.dto.DiscountPolicyDTO">-->
+    <!--        <id property="id" column="id"/>-->
+    <!--        <result property="activation" column="activation"/>-->
+    <!--        <result property="policyName" column="policy_name"/>-->
+    <!--        <result property="discountType" column="discount_type"/>-->
+    <!--        <result property="startAt" column="start_at"/>-->
+    <!--        <result property="endAt" column="end_at"/>-->
+    <!--        <result property="conditionType" column="condition_type"/>-->
+    <!--        <result property="discountValue" column="discount_value"/>-->
+    <!--        <collection property="coupons" ofType="com.example.cinemakiosk.vo.CouponVO">-->
+    <!--            <id property="couponNum" column="coupon_num"/>-->
+    <!--            <result property="status" column="status"/>-->
+    <!--            <result property="policyId" column="policy_id"/>-->
+    <!--        </collection>-->
+    <!--    </resultMap>-->
+
+    <!--    <select id="checkCoupon" resultMap="discountPolicyResultMap">-->
+    <!--        SELECT * FROM discount_policy DP-->
+    <!--        JOIN coupon C ON DP.id = C.policy_id WHERE C.policy_id = #{policy_id}-->
+    <!--    </select>-->
+
+    <resultMap id="discountVO" type="com.example.cinemakiosk.vo.DiscountPolicyVO" autoMapping="true">
         <id property="id" column="id"/>
-        <result property="activation" column="activation"/>
-        <result property="policyName" column="policy_name"/>
-        <result property="discountType" column="discount_type"/>
-        <result property="startAt" column="start_at"/>
-        <result property="endAt" column="end_at"/>
-        <result property="conditionType" column="condition_type"/>
-        <result property="discountValue" column="discount_value"/>
-<!--        <collection property="coupons" ofType="com.example.cinemakiosk.vo.CouponVO">-->
-<!--            <id property="couponNum" column="coupon_num"/>-->
-<!--            <result property="status" column="status"/>-->
-<!--            <result property="policyId" column="policy_id"/>-->
-<!--        </collection>-->
     </resultMap>
 
-<!--    <select id="checkCoupon" resultMap="discountPolicyResultMap">-->
-<!--        SELECT * FROM discount_policy DP-->
-<!--        JOIN coupon C ON DP.id = C.policy_id WHERE C.policy_id = #{policy_id}-->
-<!--    </select>-->
+    <select id="selectOneById" resultMap="discountVO">
+        select dp.id,
+               dp.activation,
+               dp.condition_type,
+               dp.discount_type,
+               dp.discount_value,
+               dp.end_at,
+               dp.policy_name,
+               dp.start_at
+        from cinema_kiosk.discount_policy dp
+        where id = #{no}
+    </select>
 
+    <select id="selectAll" resultMap="discountVO">
+        select dp.id,
+               dp.activation,
+               dp.condition_type,
+               dp.discount_type,
+               dp.discount_value,
+               dp.end_at,
+               dp.policy_name,
+               dp.start_at
+        from cinema_kiosk.discount_policy dp
+    </select>
 </mapper>
