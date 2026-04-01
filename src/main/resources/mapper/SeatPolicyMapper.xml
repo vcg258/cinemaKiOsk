@@ -4,4 +4,10 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.cinemakiosk.mapper.SeatPolicyMapper">
 
+    <insert id="insert">
+        insert into cinema_kiosk.seat_policy (cost, name)
+        value (#{cost}, #{name});
+    </insert>
+
+
 </mapper>
