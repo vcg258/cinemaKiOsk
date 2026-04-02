@@ -10,7 +10,6 @@ import java.util.List;
 public interface ReservationSeatMapper {
     //좌석 정보를 한번에 입력하는 메서드
     void insertSeats(ReservationDetailsVO reservationDetailsVO);
-
     //예매 고유번호를 이용해서 좌석 정보를 모두 가져 오는 메서드
     List<ReservationSeatVO> selectAllById(Long no);
 }

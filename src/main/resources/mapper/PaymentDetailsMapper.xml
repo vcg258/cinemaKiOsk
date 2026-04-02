@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.cinemakiosk.mapper.PaymentDetailsMapper">
 
-    <resultMap id="paymentVO" type="com.example.cinemakiosk.vo.PaymentDetailsVO">
+    <resultMap id="paymentVO" type="com.example.cinemakiosk.vo.PaymentDetailsVO" autoMapping="true">
         <id property="id" column="id"/>
         <association property="bonusPolicy"
                      resultMap="com.example.cinemakiosk.mapper.BonusPolicyMapper.bonusVO"
@@ -66,6 +66,14 @@
                mv.movie_id       as rd_sc_mv_movie_id,
                mv.title          as rd_sc_mv_title,
                mv.runtime        as rd_sc_mv_runtime,
+               mv.actors       AS rd_sc_mv_actors,
+               mv.director     AS rd_sc_mv_director,
+               mv.rating       AS rd_sc_mv_rating,
+               mv.genre        AS rd_sc_mv_genre,
+               mv.description  AS rd_sc_mv_description,
+               mv.create_at    AS rd_sc_mv_create_at,
+               mv.start_at     AS rd_sc_mv_start_at,
+               mv.end_at       AS rd_sc_mv_end_at,
 
                th.no             as rd_sc_th_no,
                th.policy_id      as rd_sc_th_policy_id,
@@ -86,9 +94,9 @@
                st.seat_number    as rd_st_seat_number
 
         from cinema_kiosk.payment_details pm
-                 inner join cinema_kiosk.bonus_policy bp on bp.id = pm.bonus_policy_id
-                 inner join cinema_kiosk.coupon cp on cp.coupon_num = pm.coupon_num
-                 inner join cinema_kiosk.discount_policy dp on cp.policy_id = dp.id
+                 left join cinema_kiosk.bonus_policy bp on bp.id = pm.bonus_policy_id
+                 left join cinema_kiosk.coupon cp on cp.coupon_num = pm.coupon_num
+                 left join cinema_kiosk.discount_policy dp on cp.policy_id = dp.id
                  inner join cinema_kiosk.reservation_details rd on rd.id = pm.reservation_id
                  inner join cinema_kiosk.schedule sc on rd.schedule_id = sc.id
                  inner join cinema_kiosk.movie mv on sc.movie_id = mv.movie_id
@@ -165,9 +173,9 @@
                st.seat_number    as rd_st_seat_number
 
         from cinema_kiosk.payment_details pm
-                 inner join cinema_kiosk.bonus_policy bp on bp.id = pm.bonus_policy_id
-                 inner join cinema_kiosk.coupon cp on cp.coupon_num = pm.coupon_num
-                 inner join cinema_kiosk.discount_policy dp on cp.policy_id = dp.id
+                 left join cinema_kiosk.bonus_policy bp on bp.id = pm.bonus_policy_id
+                 left join cinema_kiosk.coupon cp on cp.coupon_num = pm.coupon_num
+                 left join cinema_kiosk.discount_policy dp on cp.policy_id = dp.id
                  inner join cinema_kiosk.reservation_details rd on rd.id = pm.reservation_id
                  inner join cinema_kiosk.schedule sc on rd.schedule_id = sc.id
                  inner join cinema_kiosk.movie mv on sc.movie_id = mv.movie_id

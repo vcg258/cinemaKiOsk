@@ -7,6 +7,7 @@ import java.util.List;
 
 @Mapper
 public interface PaymentDetailsMapper {
+
     PaymentDetailsVO selectOneById(String uuid);
 
     List<PaymentDetailsVO> selectAll();

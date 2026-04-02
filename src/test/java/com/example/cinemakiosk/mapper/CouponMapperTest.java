@@ -1,6 +1,6 @@
 package com.example.cinemakiosk.mapper;
 
-import com.example.cinemakiosk.vo.DiscountPolicyVO;
+import com.example.cinemakiosk.vo.CouponVO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +10,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Log4j2
 @SpringBootTest
-class DiscountPolicyMapperTest {
-    @Autowired private DiscountPolicyMapper discountPolicyMapper;
+class CouponMapperTest {
+    @Autowired private CouponMapper couponMapper;
 
     @Test
-    public void selectOneTest(){
-        DiscountPolicyVO discountPolicyVO = discountPolicyMapper.selectOneById(1L);
-        log.info(discountPolicyVO);
+    public void selectOne(){
+        CouponVO testCoupon01 = couponMapper.selectOneByNum("testCoupon01");
+        log.info(testCoupon01);
     }
 
 }

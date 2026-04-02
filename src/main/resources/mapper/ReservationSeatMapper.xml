@@ -15,6 +15,7 @@
 
     <resultMap id="seatListVO" type="com.example.cinemakiosk.vo.ReservationSeatVO" autoMapping="true">
         <id property="id" column="id"/>
+        <result property="reservationDetailsId" column="reservation_id"/>
     </resultMap>
 
     <select id="selectAllById" resultMap="seatListVO">

@@ -1,16 +1,15 @@
 package com.example.cinemakiosk.vo;
 
 import com.example.cinemakiosk.dto.AdminDTO;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Builder
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
 public class AdminVO {
 

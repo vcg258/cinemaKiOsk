@@ -6,6 +6,8 @@
 
     <resultMap id="bonusVO" type="com.example.cinemakiosk.vo.BonusPolicyVO" autoMapping="true">
         <id property="id" column="id"/>
+        <result property="createAt" column="start_at"/>
+        <result property="finishedAt" column="end_at"/>
     </resultMap>
 
     <select id="selectOneById" resultMap="bonusVO">

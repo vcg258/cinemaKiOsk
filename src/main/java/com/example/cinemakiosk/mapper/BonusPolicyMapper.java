@@ -5,5 +5,6 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface BonusPolicyMapper {
+    //보너스 아이디를 이용해서 찾아오는 mapper
     BonusPolicyVO selectOneById(Long no);
 }

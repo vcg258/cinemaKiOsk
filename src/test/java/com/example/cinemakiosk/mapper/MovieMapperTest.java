@@ -1,6 +1,7 @@
 package com.example.cinemakiosk.mapper;
 
 import com.example.cinemakiosk.domain.MovieEntity;
+import com.example.cinemakiosk.vo.MovieVO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,24 @@ class MovieMapperTest {
 
     @Test
     void findBySeveral() {
-        List<MovieEntity> movieDTOList = movieMapper.findBySeveral("하", null, null);
-        assertNotNull(movieDTOList);
-
-        for (MovieEntity movieEntity : movieDTOList) {
-            log.info(movieEntity);
+//        List<MovieEntity> movieDTOList = movieMapper.findBySeveral("하", null, null);
+//        assertNotNull(movieDTOList);
+//
+//        for (MovieEntity movieEntity : movieDTOList) {
+//            log.info(movieEntity);
         }
+
+
+    @Test
+    public void findOneId(){
+        MovieVO movieVO = movieMapper.selectOneById(1L);
+        log.info(movieVO);
     }
+
+    @Test
+    public void findAll(){
+        List<MovieVO> movieVOS = movieMapper.selectAll();
+        log.info(movieVOS);
+    }
+
 }

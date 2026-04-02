@@ -3,10 +3,7 @@ package com.example.cinemakiosk.vo;
 import com.example.cinemakiosk.domain.enums.Rating;
 import com.example.cinemakiosk.dto.MovieDTO;
 import com.example.cinemakiosk.dto.ScheduleDTO;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,23 +12,26 @@ import java.util.List;
 @Getter
 @Builder
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
 public class MovieVO {
 
-    private final Long movieId;         // 영화 인덱스
-    private final String title;         // 영화 제목
-    private final String genre;         // 장르
-    private final String rating;        // 관람 등급
-    private final Long runtime;         // 상영 시간 (분)
-    private final String director;      // 감독
-    private final String actors;        // 주연 배우
-    private final String description;   // 줄거리
-    private final LocalDateTime startAt; // 상영 시작일
-    private final LocalDateTime endAt;   // 상영 종료일
-    private final LocalDateTime createAt; // 등록일
+    private Long movieId;         // 영화 인덱스
+    private String title;         // 영화 제목
+    private String genre;         // 장르
+    private String rating;        // 관람 등급
+    private Long runtime;         // 상영 시간 (분)
+    private String director;      // 감독
+    private String actors;        // 주연 배우
+    private String description;   // 줄거리
+    private LocalDateTime startAt; // 상영 시작일
+    private LocalDateTime endAt;   // 상영 종료일
+    private LocalDateTime createAt; // 등록일
 
     /**
      * VO -> DTO
+     *
      * @param movieVO VO
      * @return DTO
      */

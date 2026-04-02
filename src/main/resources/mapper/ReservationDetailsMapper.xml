@@ -6,6 +6,7 @@
 
     <resultMap id="reservationVO" type="com.example.cinemakiosk.vo.ReservationDetailsVO">
         <id property="id" column="id"/>
+        <result property="reservationTime" column="create_at"/>
         <association property="schedule"
                      resultMap="com.example.cinemakiosk.mapper.ScheduleMapper.scheduleVO"
                      columnPrefix="sc_"
@@ -36,6 +37,14 @@
                mv.movie_id       AS sc_mv_movie_id,
                mv.title          AS sc_mv_title,
                mv.runtime        AS sc_mv_runtime,
+               mv.actors       AS sc_mv_actors,
+               mv.director     AS sc_mv_director,
+               mv.rating       AS sc_mv_rating,
+               mv.genre        AS sc_mv_genre,
+               mv.description  AS sc_mv_description,
+               mv.create_at    AS sc_mv_create_at,
+               mv.start_at     AS sc_mv_start_at,
+               mv.end_at       AS sc_mv_end_at,
 
                th.no             AS sc_th_no,
                th.policy_id      AS sc_th_policy_id,
@@ -81,6 +90,14 @@
                mv.movie_id       AS sc_mv_movie_id,
                mv.title          AS sc_mv_title,
                mv.runtime        AS sc_mv_runtime,
+               mv.actors       AS sc_mv_actors,
+               mv.director     AS sc_mv_director,
+               mv.rating       AS sc_mv_rating,
+               mv.genre        AS sc_mv_genre,
+               mv.description  AS sc_mv_description,
+               mv.create_at    AS sc_mv_create_at,
+               mv.start_at     AS sc_mv_start_at,
+               mv.end_at       AS sc_mv_end_at,
 
                th.no             AS sc_th_no,
                th.policy_id      AS sc_th_policy_id,
