@@ -4,13 +4,6 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  build: {
-    // 빌드 결과물을 Spring Boot static 폴더로 직접 출력
-    // → npm run build 실행 시 ../src/main/resources/static 에 파일 생성
-    // → Spring Boot가 classpath:/static/ 에서 자동으로 서빙
-    outDir: '../src/main/resources/static',
-    emptyOutDir: true, // 빌드 전 기존 파일 제거 (구 Thymeleaf 정적 파일 덮어씀)
-  },
   server: {
     port: 3000, // 개발 서버 포트
     proxy: {
