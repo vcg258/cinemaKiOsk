@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SmsNurigoController {
     private final SmsNurigoService smsNurigoService;
 
-    @PostMapping("/sms")
+    @PostMapping("/api/sms")
     public void Sms(String toPhone, String content) {
         log.info("Sending SMS to " + toPhone);
         log.info("content {} ", content);

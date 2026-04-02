@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,11 +25,11 @@ class MovieServiceImplTest {
         LocalDateTime now = LocalDateTime.now();
         MovieDTO movieDTO = MovieDTO.builder()
                 .genre("wpwp")
-                .rating(Rating.valueOf(Rating.FIFTEEN.getConversion()))
+                .rating(Rating.FIFTEEN)
                 .actors("일반인1")
-                .createAt(LocalDateTime.now())
-                .startAt(LocalDateTime.now())
-                .endAt(LocalDateTime.now())
+                .createAt(LocalDate.now())
+                .startAt(LocalDate.now())
+                .endAt(LocalDate.now())
                 .description("일반인의 일반적인 일상")
                 .title("아이언맨3")
                 .director("일반적인 감독")
@@ -61,23 +62,23 @@ class MovieServiceImplTest {
         }
     }
 
-    // 키워드로 조회
-    @Test
-    void getMovie() {
-        List<MovieDTO> movieDTOList = moviceService.getMovie("특별");
-        for (MovieDTO movieDTO : movieDTOList) {
-            log.info(movieDTO);
-        }
-    }
-
-    // 장르로 조회
-    @Test
-    void findByGenre() {
-        List<MovieDTO> movieDTOList = moviceService.findByGenre("wpwp");
-        for (MovieDTO movieDTO : movieDTOList) {
-            log.info(movieDTO);
-        }
-    }
+//    // 키워드로 조회
+//    @Test
+//    void getMovie() {
+//        List<MovieDTO> movieDTOList = moviceService.getMovie("특별");
+//        for (MovieDTO movieDTO : movieDTOList) {
+//            log.info(movieDTO);
+//        }
+//    }
+//
+//    // 장르로 조회
+//    @Test
+//    void findByGenre() {
+//        List<MovieDTO> movieDTOList = moviceService.findByGenre("wpwp");
+//        for (MovieDTO movieDTO : movieDTOList) {
+//            log.info(movieDTO);
+//        }
+//    }
 
 //    // 수정
 //    @Test

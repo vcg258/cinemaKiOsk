@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -316,13 +317,13 @@ public class PreviewController {
             /* 현재 상영 중: startAt <= now AND endAt >= now */
             return all.stream()
                     .filter(m -> m.getStartAt() != null && m.getEndAt() != null
-                            && !m.getStartAt().isAfter(now) && !m.getEndAt().isBefore(now))
+                            && !m.getStartAt().isAfter(ChronoLocalDate.from(now)) && !m.getEndAt().isBefore(ChronoLocalDate.from(now)))
                     .map(this::toViewMap)
                     .collect(Collectors.toList());
         } else {
             /* 상영 예정: startAt > now */
             return all.stream()
-                    .filter(m -> m.getStartAt() != null && m.getStartAt().isAfter(now))
+                    .filter(m -> m.getStartAt() != null && m.getStartAt().isAfter(ChronoLocalDate.from(now)))
                     .map(this::toViewMap)
                     .collect(Collectors.toList());
         }
