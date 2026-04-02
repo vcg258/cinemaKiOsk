@@ -20,8 +20,6 @@ import java.util.List;
 @Builder
 @ToString
 public class MovieDTO {
-
-
     private Long movieId;
     private String title;
     private String genre;
