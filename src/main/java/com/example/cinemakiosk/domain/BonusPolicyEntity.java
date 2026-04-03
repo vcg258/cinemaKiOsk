@@ -51,9 +51,12 @@ public class BonusPolicyEntity{
 
     /**
      * 할인정책 만료여부 변경 도메인 메서드
-     * @param activation 만료여부
      */
     public void changeActivation(boolean activation) {
+        // 만료여부가 같을 경우 return
+        if (this.activation == activation) {
+            return;
+        }
         this.activation = activation;
     }
 

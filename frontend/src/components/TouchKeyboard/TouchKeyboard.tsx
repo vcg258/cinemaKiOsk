@@ -23,7 +23,7 @@ import {useEffect, useRef, useState} from 'react'
 import Keyboard from 'simple-keyboard'
 import * as Hangul from 'hangul-js';
 import 'simple-keyboard/build/css/index.css'
-import KoreanLayout from 'simple-keyboard-layouts/build/layouts/Korean'
+import KoreanLayout from 'simple-keyboard-layouts/build/layouts/korean'
 import {useKeyboard} from '../../context/KeyboardContext'
 import styles from './TouchKeyboard.module.css'
 

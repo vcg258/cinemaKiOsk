@@ -26,37 +26,22 @@ public class MemberServiceImpl implements MemberService{
 
     /**
      * 신규 회원등록 및 포인트 내역 추가
-     * @param phone 회원 PK
-     * @param point 포인트
-     * @param paymentId 결제내역 PK
+     * @param memberDTO 회원 DTO
      */
     @Override
-    public void createMember(String phone, Integer point, String paymentId) { // TODO 회원가입이 쉽기떄문에 일정 기간이 지나면 삭제 되는 기능 있으면 좋을듯
-        if (memberRepository.existsByPhone(phone)) {
+    public void createMember(MemberDTO memberDTO) { // TODO 회원가입이 쉽기떄문에 일정 기간이 지나면 삭제 되는 기능 있으면 좋을듯
+        if (memberRepository.existsByPhone(memberDTO.getPhone())) {
             log.warn("createMember... 회원 존재함 생성 불가능");
             return; // 회원이 존재하면 생성하지 않음
         }
 
-        MemberDTO memberDTO = MemberDTO.builder()
-                .phone(phone)
-                .point(point)
+        MemberDTO dto = MemberDTO.builder()
+                .phone(memberDTO.getPhone())
+                .point(memberDTO.getPoint())
                 .createAt(LocalDateTime.now())
                 .build();
-        log.info("createMember... 신규 회원 정보 : {}", memberDTO);
-        memberRepository.save(MemberDTO.toEntity(memberDTO));
-
-
-        PointHistoryDTO pointHistoryDTO = PointHistoryDTO.builder()
-                .paymentId(paymentId)
-                .phone(phone)
-                .type(Type.EARN)
-                .amountPoint(point)
-                .createAt(LocalDateTime.now())
-                .build();
-
-        log.info("createMember... 신규 회원 포인트 내역 추가 : {}", pointHistoryDTO);
-        pointHistoryRepository.save(PointHistoryDTO.toEntity(pointHistoryDTO)); // 포인트 내역 추가
-
+        log.info("createMember... 신규 회원 정보 : {}", dto);
+        memberRepository.save(MemberDTO.toEntity(dto));
     }
 
     /**
@@ -65,8 +50,8 @@ public class MemberServiceImpl implements MemberService{
      */
     @Override
     public void pointHistoryCreate(PointHistoryDTO pointHistoryDTO) {
-        if (!memberRepository.existsByPhone(pointHistoryDTO.getPhone())) { // 회원 내역없으면 return
-            log.warn("pointHistoryCreate... 등록된 회원 정보가 존재하지 않습니다");
+        if (!memberRepository.existsByPhone(pointHistoryDTO.getPhone())) { // 회원 내역 없으면 return
+            log.error("pointHistoryCreate... 등록된 회원 정보가 존재하지 않습니다");
             return;
         }
 

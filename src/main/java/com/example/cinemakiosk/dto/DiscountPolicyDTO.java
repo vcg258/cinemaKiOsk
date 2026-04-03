@@ -6,6 +6,9 @@ import com.example.cinemakiosk.domain.DiscountPolicyEntity;
 import com.example.cinemakiosk.domain.enums.DiscountType;
 import com.example.cinemakiosk.vo.CouponVO;
 import com.example.cinemakiosk.vo.DiscountPolicyVO;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +23,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DiscountPolicyDTO {
+    // JSON으로 Request는 하지 않음 Response만 허용
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id; // 할인 정책 인덱스
     private String policyName; // 정책이름
     private DiscountType discountType; // 할인 방식
@@ -28,6 +33,8 @@ public class DiscountPolicyDTO {
     private LocalDateTime startAt; // 시작일
     private LocalDateTime endAt; // 만료일
     private boolean activation; // 활성화 여부
+
+    @JsonIgnore // JSON으로 변환하는거 무시
     private List<CouponVO> coupons; // resultMap(collection)
 
     /**

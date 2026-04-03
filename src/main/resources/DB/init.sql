@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `movie` # FK (X)
     `movie_id`    BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '영화 인덱스',
     `title`       VARCHAR(100)                   NOT NULL COMMENT '영화 제목',
     `genre`       VARCHAR(50)                    NOT NULL COMMENT '장르',
-    `rating`      ENUM ('ALL', '12', '15', '19') NOT NULL COMMENT '관람 등급', -- TODO
+    `rating`      ENUM ('ALL', '12', '15', '19') NOT NULL COMMENT '관람 등급',
     `runtime`     BIGINT UNSIGNED                NOT NULL COMMENT '상영 시간(분)',
     `director`    VARCHAR(50)                    NOT NULL COMMENT '감독이름',
     `actors`      VARCHAR(255)                   NULL COMMENT '배우(쉼표로 구분)',
@@ -185,7 +185,7 @@ CREATE TABLE IF NOT EXISTS `point_history`
     `phone`        VARCHAR(20)                                       NOT NULL COMMENT '회원 번호 FK',
     `type`         ENUM ('EARN', 'USE', 'REFUND_EARN', 'REFUND_USE') NOT NULL COMMENT '적립 / 사용 / 환불-적립 / 환불-사용',
     `amount_point` INT UNSIGNED                                      NOT NULL COMMENT '적립/사용 포인트',
-    `create_at`    DATETIME                                          NOT NULL COMMENT '포인트 변경일', # TODO BaseTime안쓸시 change_at
+    `create_at`    DATETIME                                          NOT NULL COMMENT '포인트 변경일',
     CONSTRAINT `fk_point_history_payment_id` FOREIGN KEY (`payment_id`) REFERENCES payment_details (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_point_history_phone` FOREIGN KEY (`phone`) REFERENCES member (`phone`)
