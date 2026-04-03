@@ -20,16 +20,16 @@ public interface DiscountPolicyService {
     void finishActivation(Long id);
 
     // 할인정책 활성화 / 비활성화
-    void changeActivation(Long id, boolean activation);
+    void changeActivation(DiscountPolicyDTO discountPolicyDTO);
 
     // 특정 정책의 쿠폰 번호 발행
     void createCouponNum(Long policyId);
 
     // 쿠폰 사용 검증 (정책 기간, 사용여부, 정책에 해당하는 쿠폰)
-    boolean authCoupon(Long policyId, String couponNum);
+    boolean authCoupon(CouponDTO couponDTO);
 
     // 쿠폰을 사용함으로써 사용여부 업데이트 및 환불로 인한 복구
-    void updateStatus(String couponNum, boolean status);
+    void updateStatus(CouponDTO couponDTO);
 
     // 페이징 처리 (로그까지 전체 조회)
     Page<DiscountPolicyDTO> getDiscountPolicyPage(int page);

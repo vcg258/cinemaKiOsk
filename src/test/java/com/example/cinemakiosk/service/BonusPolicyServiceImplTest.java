@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Log4j2
 @SpringBootTest
@@ -33,7 +34,8 @@ class BonusPolicyServiceImplTest {
 
     @Test
     void changeActivation() {
-        bonusService.changeActivation(5L, false);
+        List<Long> list = List.of(1L, 2L);
+        bonusService.changeActivation(list);
     }
 
     @Test

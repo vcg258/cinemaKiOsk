@@ -2,6 +2,7 @@ package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.domain.enums.ConditionType;
 import com.example.cinemakiosk.domain.enums.DiscountType;
+import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
 import com.example.cinemakiosk.repository.CouponRepository;
 import jakarta.transaction.Transactional;
@@ -53,7 +54,11 @@ class DiscountPolicyEntityServiceImplTest {
 
     @Test
     public void changeActivationTest() {
-        discountPolicyService.changeActivation(1L, true);
+        DiscountPolicyDTO discountPolicyDTO = DiscountPolicyDTO.builder()
+                .id(2L)
+                .activation(false)
+                .build();
+        discountPolicyService.changeActivation(discountPolicyDTO);
     }
 
     @Test
@@ -63,13 +68,21 @@ class DiscountPolicyEntityServiceImplTest {
 
     @Test
     public void authCouponTest() {
-        boolean result = discountPolicyService.authCoupon(1L, "8930bc2b36dd");
+        CouponDTO couponDTO = CouponDTO.builder()
+                .couponNum("8930bc2b36dd")
+                .policyId(1L)
+                .build();
+        boolean result = discountPolicyService.authCoupon(couponDTO);
         log.info("result: {}", result);
     }
 
     @Test
     public void updateCouponStatusTest() {
-        discountPolicyService.updateStatus("8930bc2b36dd", false);
+        CouponDTO couponDTO = CouponDTO.builder()
+                .couponNum("8930bc2b36dd")
+                .status(false)
+                .build();
+        discountPolicyService.updateStatus(couponDTO);
     }
 
     @Test

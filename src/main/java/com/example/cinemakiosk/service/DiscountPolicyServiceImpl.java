@@ -100,13 +100,12 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
 
     /**
      * 할인 정책 활성화 / 비활성화
-     * @param id 정책 번호 FK
-     * @param activation 할인 정책 상태
+     * @param discountPolicyDTO 정책 DTO
      */
     @Override
-    public void changeActivation(Long id, boolean activation) {
-        DiscountPolicyEntity discountPolicyEntity = discountPolicyRepository.findById(id).orElseThrow();
-        discountPolicyEntity.changeActivation(activation);
+    public void changeActivation(DiscountPolicyDTO discountPolicyDTO) {
+        DiscountPolicyEntity discountPolicyEntity = discountPolicyRepository.findById(discountPolicyDTO.getId()).orElseThrow();
+        discountPolicyEntity.changeActivation(discountPolicyDTO.isActivation());
         discountPolicyRepository.save(discountPolicyEntity);
         log.info("changeActivation discountPolicy: {}", discountPolicyEntity);
     }
@@ -131,23 +130,31 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
 
     /**
      * 쿠폰 사용 검증 (정책 기간, 사용여부, 정책에 해당하는 쿠폰, 쿠폰번호)
-     * @param policyId 정책 번호 FK
-     * @param couponNum 쿠폰 번호 검사
+     * @param couponDTO 쿠폰 DTO
      * @return 사용 검증 통과면 true, 아니면 false
      */
     @Override
-    public boolean authCoupon(Long policyId, String couponNum) { // TODO for로 돌리는것보다 DB로 처리하는게 훨씬 효율적 FIX요청
-        DiscountPolicyDTO discountPolicyDTO = discountPolicyMapper.checkCoupon(policyId);
+    public boolean authCoupon(CouponDTO couponDTO) { // TODO for로 돌리는것보다 DB로 처리하는게 훨씬 효율적 FIX요청
+        DiscountPolicyDTO discountPolicyDTO = discountPolicyMapper.checkCoupon(couponDTO.getPolicyId());
         // 정책이 없을 경우 (INNER JOIN을 하였기때문에 정책이 없다면 null)
-        if (discountPolicyDTO == null) return false;
+        if (discountPolicyDTO == null) {
+            log.error("authCoupon... 정책이 없음");
+            return false;
+        }
         // 정책이 비활성화 일 경우
-        if (!discountPolicyDTO.isActivation()) return false;
+        if (!discountPolicyDTO.isActivation()) {
+            log.error("authCoupon... 정책 비활성화");
+            return false;
+        }
         // 할인 정책이 만료된 경우
         LocalDateTime now = LocalDateTime.now();
-        if (!(now.isBefore(discountPolicyDTO.getEndAt()) && now.isAfter(discountPolicyDTO.getStartAt()))) return false;
+        if (!(now.isBefore(discountPolicyDTO.getEndAt()) && now.isAfter(discountPolicyDTO.getStartAt()))) {
+            log.error("authCoupon...정책 만료");
+            return false;
+        }
         // 쿠폰 번호가 일치하고 사용여부가 true일경우
         for (CouponVO couponVO : discountPolicyDTO.getCoupons()) {
-            if (couponVO.getCouponNum().equals(couponNum)) {
+            if (couponVO.getCouponNum().equals(couponDTO.getCouponNum())) {
                 return couponVO.isStatus(); // true 사용가능
             }
         }
@@ -157,12 +164,12 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
 
     /**
      * 쿠폰을 사용함으로써 사용여부 업데이트 및 환불시 쿠폰 복구
-     * @param couponNum 쿠폰번호
+     * @param couponDTO 쿠폰 DTO
      */
     @Override
-    public void updateStatus(String couponNum, boolean status) {
-        CouponEntity couponEntity = couponRepository.findById(couponNum).orElseThrow();
-        couponEntity.changeStatus(status); // 사용후 변경
+    public void updateStatus(CouponDTO couponDTO) {
+        CouponEntity couponEntity = couponRepository.findById(couponDTO.getCouponNum()).orElseThrow();
+        couponEntity.changeStatus(couponDTO.isStatus()); // 사용후 변경
         couponRepository.save(couponEntity);
         log.info("coupon: {}", couponEntity);
     }

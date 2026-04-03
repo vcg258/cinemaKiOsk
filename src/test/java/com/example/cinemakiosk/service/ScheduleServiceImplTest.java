@@ -34,9 +34,12 @@ class ScheduleServiceImplTest {
 
     @Test
     void updateExpired() {
-        Long id = 10L;
-        boolean status = true;
-        scheduleService.updateExpired(id, status);
+        ScheduleDTO scheduleDTO = ScheduleDTO.builder()
+                .id(10L)
+                .expired(true)
+                .build();
+
+        scheduleService.updateExpired(scheduleDTO);
     }
 
     @Test

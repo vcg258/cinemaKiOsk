@@ -23,7 +23,7 @@ public class BonusServiceImpl implements BonusService {
     private final BonusPolicyMapper bonusPolicyMapper;
 
     /**
-     * 할인정책 추가 / 수정
+     * 적립정책 추가 / 수정
      * @param bonusPolicyDTO 활인정책 DTO
      */
     @Override
@@ -46,7 +46,7 @@ public class BonusServiceImpl implements BonusService {
     }
 
     /**
-     * 적립 정책 종료 (23시 59분으로 지정 활성화 여부 FALSE)
+     * 적립정책 종료 (23시 59분으로 지정 활성화 여부 FALSE)
      * @param id 적립 정책 PK
      */
     @Override
@@ -62,21 +62,23 @@ public class BonusServiceImpl implements BonusService {
     }
 
     /**
-     * 할인정책 만료여부
-     * @param id 할인정책 PK
-     * @param activation 만료여부 지정
+     * 적립정책 만료여부
+     * @param ids 적립정책들 PK
      */
     @Override
-    public void changeActivation(Long id, boolean activation) {
-        BonusPolicyEntity policy = bonusPolicyRepository.findById(id).orElseThrow();
-        policy.changeActivation(activation);
-        log.info("changeActivation... 만료여부 변경 : {}", policy);
-        bonusPolicyRepository.save(policy);
+    public void changeActivation(List<Long> ids) {
+        List<BonusPolicyEntity> bonusPolicyEntities = bonusPolicyRepository.findAllById(ids);
+
+        bonusPolicyEntities.forEach(bonusPolicyEntity -> {
+            bonusPolicyEntity.changeActivation(true); // TODO 수정 한번에 적용 해결해야함
+            log.info("changeActivation... 만료여부 변경 : {}", bonusPolicyEntity);
+        });
+        bonusPolicyRepository.saveAll(bonusPolicyEntities);
     }
 
     /**
-     * 할인 정책 전체 조회
-     * @return 전체 할인정책을 담은 리스트
+     * 적립정책 전체 조회
+     * @return 전체 적립정책을 담은 리스트
      */
     @Override
     public List<BonusPolicyDTO> getBonusPolicies() {
@@ -85,9 +87,9 @@ public class BonusServiceImpl implements BonusService {
     }
 
     /**
-     * 할인 정책 단일 조회
-     * @param id 할인정책 PK
-     * @return 지정 할인 정책
+     * 적립정책 단일 조회
+     * @param id 적립정책 PK
+     * @return 지정 적립정책
      */
     @Override
     public BonusPolicyDTO getBonusPolicy(Long id) {

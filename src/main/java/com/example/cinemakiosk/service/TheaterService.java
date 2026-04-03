@@ -17,10 +17,10 @@ public interface TheaterService {
     TheaterDTO getTheater(Long no);
 
     // 상영관 좌석 정책 업데이트
-    void updateSeatPolicy(Long no, Long policyId);
+    void updateSeatPolicy(TheaterDTO theaterDTO);
 
     // 상영관 청소시간 업데이트
-    void updateCleanTime(Long no, Long cleanTime);
+    void updateCleanTime(TheaterDTO theaterDTO);
 
     // 좌석 정책 생성
     void createSeat(SeatPolicyDTO seatPolicyDTO);

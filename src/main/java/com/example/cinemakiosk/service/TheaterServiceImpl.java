@@ -62,13 +62,12 @@ public class TheaterServiceImpl implements TheaterService {
 
     /**
      * 상영관 좌석정책 변경
-     * @param no 상영관 PK
-     * @param policyId 좌석정책 FK
+     * @param theaterDTO 상영관 DTO
      */
     @Override
-    public void updateSeatPolicy(Long no, Long policyId) {
-        TheaterEntity theater = theaterRepository.findById(no).orElseThrow();
-        SeatPolicyEntity seatPolicy = seatPolicyRepository.findById(policyId).orElseThrow();
+    public void updateSeatPolicy(TheaterDTO theaterDTO) {
+        TheaterEntity theater = theaterRepository.findById(theaterDTO.getNo()).orElseThrow();
+        SeatPolicyEntity seatPolicy = seatPolicyRepository.findById(theaterDTO.getPolicyId()).orElseThrow();
         theater.changeSeatPolicy(seatPolicy);
         theaterRepository.save(theater);
         log.info("updateSeatPolicy... 좌석 정책 업데이트 {} 변경된 정책 {}", theater, seatPolicy);
@@ -76,13 +75,12 @@ public class TheaterServiceImpl implements TheaterService {
 
     /**
      * 상영관 정리식간 변경
-     * @param no 상영관 PK
-     * @param cleanTime 변경할 정리시간
+     * @param theaterDTO 상영관 DTO
      */
     @Override
-    public void updateCleanTime(Long no, Long cleanTime) {
-        TheaterEntity theater = theaterRepository.findById(no).orElseThrow();
-        theater.changeCleantime(cleanTime);
+    public void updateCleanTime(TheaterDTO theaterDTO) {
+        TheaterEntity theater = theaterRepository.findById(theaterDTO.getNo()).orElseThrow();
+        theater.changeCleantime(theaterDTO.getCleanupTime());
         theaterRepository.save(theater);
         log.info("updateCleanTime... 정리시간 업데이트 {}", theater);
     }

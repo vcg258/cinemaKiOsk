@@ -36,12 +36,14 @@ class TheaterServiceImplTest {
 
     @Test
     void updateSeatPolicy() {
-        theaterService.updateSeatPolicy(1L, 3L);
+        TheaterDTO theaterDTO = TheaterDTO.builder().no(1L).policyId(1L).build();
+        theaterService.updateSeatPolicy(theaterDTO);
     }
 
     @Test
     void updateCleanTime() {
-        theaterService.updateCleanTime(1L, 999L);
+        TheaterDTO theaterDTO = TheaterDTO.builder().no(1L).cleanupTime(50L).build();
+        theaterService.updateCleanTime(theaterDTO);
     }
 
     @Test
