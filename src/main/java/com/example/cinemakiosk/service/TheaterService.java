@@ -7,6 +7,9 @@ import java.util.List;
 
 public interface TheaterService {
 
+    // 상영관 등록 (대공사를 할 수 도있으니까 일단 넣어놔봄)
+    void createTheater(TheaterDTO theaterDTO);
+
     // 상영관 전체 조회
     List<TheaterDTO> getTheaterAll();
 

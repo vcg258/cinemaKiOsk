@@ -81,7 +81,12 @@ class DiscountPolicyEntityServiceImplTest {
     }
 
     @Test
-    public void test() {
+    public void getCouponAllTest() {
+        discountPolicyService.getCouponAll().forEach(log::info);
+    }
+
+    @Test
+    public void getCouponTest() {
         log.info(discountPolicyService.getCoupon("8930bc2b36dd"));
     }
 }

@@ -26,6 +26,21 @@ public class TheaterServiceImpl implements TheaterService {
     private final TheaterMapper theaterMapper;
 
     /**
+     * 상영관 등록
+     * @param theaterDTO 상영관 DTO
+     */
+    @Override
+    public void createTheater(TheaterDTO theaterDTO) {
+        TheaterDTO dto = TheaterDTO.builder()
+                .policyId(theaterDTO.getPolicyId())
+                .cleanupTime(theaterDTO.getCleanupTime())
+                .build();
+
+        theaterRepository.save(TheaterDTO.toEntity(dto));
+        log.info("createTheater... 등록완료 {}", dto);
+    }
+
+    /**
      * 상영관 전체 조회
      * @return 상영관 전체를 담은 리스트
      */

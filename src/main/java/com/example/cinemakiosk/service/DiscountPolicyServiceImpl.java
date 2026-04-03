@@ -180,6 +180,16 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     }
 
     /**
+     * 쿠폰 전체 조회
+     * @return 전체 쿠폰을 담은 리스트
+     */
+    @Override
+    public List<CouponDTO> getCouponAll() {
+        List<CouponEntity> entityList = couponRepository.findAll();
+        return entityList.stream().map(CouponEntity::toDTO).toList();
+    }
+
+    /**
      * 쿠폰 단일 조회
      * @param couponNum 쿠폰 번호
      * @return 쿠폰 하나 조회

@@ -16,6 +16,15 @@ class TheaterServiceImplTest {
     @Autowired private TheaterService theaterService;
 
     @Test
+    void createTheater() {
+        TheaterDTO theaterDTO = TheaterDTO.builder()
+                .policyId(1L)
+                .cleanupTime(1000L)
+                .build();
+        theaterService.createTheater(theaterDTO);
+    }
+
+    @Test
     void getTheaterAllTest() {
         theaterService.getTheaterAll().forEach(log::info);
     }
