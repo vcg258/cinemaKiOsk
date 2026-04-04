@@ -15,7 +15,7 @@ public interface ScheduleService {
     void updateExpired(List<Long> ids, boolean expired);
 
     // 스케줄 삭제
-    void deleteSchedule(Long id);
+    void deleteSchedule(List<Long> ids);
 
     // 스케줄 전체 목록 조회
     List<ScheduleDTO> getScheduleList();

@@ -105,7 +105,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public void changeActivation(List<Long> ids, boolean activation) {
-        List<DiscountPolicyEntity> discountPolicies = discountPolicyRepository.findAll();
+        List<DiscountPolicyEntity> discountPolicies = discountPolicyRepository.findAllById(ids);
         discountPolicies.forEach(policy -> {
             if (policy.isActivation() == activation) {
                 log.warn("같은 상태값 변경 x {}", policy);

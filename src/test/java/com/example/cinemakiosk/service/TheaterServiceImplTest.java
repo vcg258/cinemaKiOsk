@@ -7,8 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
 
 @Log4j2
 @SpringBootTest
@@ -36,14 +35,16 @@ class TheaterServiceImplTest {
 
     @Test
     void updateSeatPolicy() {
-        TheaterDTO theaterDTO = TheaterDTO.builder().no(1L).policyId(1L).build();
-        theaterService.updateSeatPolicy(theaterDTO);
+        List<Long> theaterDTOList = List.of(1L, 2L);
+        Long policyId = 3L;
+        theaterService.updateSeatPolicy(theaterDTOList, policyId);
     }
 
     @Test
     void updateCleanTime() {
-        TheaterDTO theaterDTO = TheaterDTO.builder().no(1L).cleanupTime(50L).build();
-        theaterService.updateCleanTime(theaterDTO);
+        List<Long> theaterDTOList = List.of(1L, 2L);
+        Long cleanupTime = 1000L;
+        theaterService.updateCleanTime(theaterDTOList, cleanupTime);
     }
 
     @Test

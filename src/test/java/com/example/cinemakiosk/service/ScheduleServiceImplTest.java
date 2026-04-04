@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Log4j2
 @SpringBootTest
@@ -34,17 +35,15 @@ class ScheduleServiceImplTest {
 
     @Test
     void updateExpired() {
-        ScheduleDTO scheduleDTO = ScheduleDTO.builder()
-                .id(10L)
-                .expired(true)
-                .build();
-
-        scheduleService.updateExpired(scheduleDTO);
+        List<Long> ids = List.of(1L);
+        boolean expired = true;
+        scheduleService.updateExpired(ids, expired);
     }
 
     @Test
     void deleteSchedule() {
-        scheduleService.deleteSchedule(11L);
+        List<Long> ids = List.of(1L);
+        scheduleService.deleteSchedule(ids);
     }
 
     @Test
@@ -146,7 +145,8 @@ class ScheduleServiceImplTest {
     @Test
     void deleteSchedule_성공() {
         // 스케줄 ID 8번 삭제
-        scheduleService.deleteSchedule(8L);
+        List<Long> ids = List.of(1L);
+        scheduleService.deleteSchedule(ids);
         // 삭제 후 조회 시 예외 발생 확인
         org.junit.jupiter.api.Assertions.assertThrows(Exception.class,
                 () -> scheduleService.getSchedule(8L));

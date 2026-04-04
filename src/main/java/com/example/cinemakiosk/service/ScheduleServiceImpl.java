@@ -134,11 +134,14 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     /**
      * 스케줄 제거 메서드
-     * @param id 스케줄 PK
+     * @param ids 스케줄 PKs
      */
     @Override
-    public void deleteSchedule(Long id) {
-        scheduleRepository.deleteById(id);
+    public void deleteSchedule(List<Long> ids) {
+        List<ScheduleEntity> scheduleEntity = scheduleRepository.findAllById(ids);
+        scheduleEntity.forEach(schedule -> {
+            scheduleRepository.deleteById(schedule.getId());
+        });
     }
 
     /**

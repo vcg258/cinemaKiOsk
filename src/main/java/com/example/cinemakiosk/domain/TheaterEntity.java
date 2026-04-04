@@ -42,6 +42,9 @@ public class TheaterEntity {
      * @param entity 좌석정책 변경할때 사용
      */
     public void changeSeatPolicy(SeatPolicyEntity entity) {
+        if (this.seatPolicyEntity == entity) {
+            return;
+        }
         this.seatPolicyEntity = entity;
     }
 
