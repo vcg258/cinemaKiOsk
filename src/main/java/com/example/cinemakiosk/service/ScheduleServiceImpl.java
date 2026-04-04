@@ -3,12 +3,12 @@ package com.example.cinemakiosk.service;
 import com.example.cinemakiosk.domain.MovieEntity;
 import com.example.cinemakiosk.domain.ScheduleEntity;
 import com.example.cinemakiosk.domain.TheaterEntity;
+import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
 import com.example.cinemakiosk.dto.ScheduleDTO;
 import com.example.cinemakiosk.mapper.ScheduleMapper;
 import com.example.cinemakiosk.repository.MovieRepository;
 import com.example.cinemakiosk.repository.ScheduleRepository;
 import com.example.cinemakiosk.repository.TheaterRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -41,7 +41,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         if (scheduleMapper.checkScheduleOverlap(scheduleDTO.getNo(), scheduleDTO.getStartAt(), endAt) > 0) {
             log.info("createSchedule... 지정된 상영관에 시간이 겹칩니다. 등록 실패");
-            return;
+            throw new IllegalStateException();
         }
 
         ScheduleDTO dto = ScheduleDTO.builder()
@@ -49,7 +49,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .endAt(endAt.plusMinutes(theaterEntity.getCleanupTime()))
                 .no(scheduleDTO.getNo())
                 .movieId(scheduleDTO.getMovieId())
-                .expired(false)
+                .activation(false)
                 .build();
 
         log.info("createSchedule... 상영관 정리시간(분) : {}", theaterEntity.getCleanupTime());
@@ -79,7 +79,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         if (scheduleDTO.getStartAt().isBefore(LocalDateTime.now())) {
             log.info("수정 요청 : {} ", scheduleDTO);
             log.warn("updateSchedule... 이미 지난 스케줄 수정 실패");
-            return;
+            throw new IllegalStateException();
         }
 
         /*
@@ -91,7 +91,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                 endAt, scheduleEntity.getId()) > 0) {
             log.info("수정 요청 : {} ", scheduleDTO);
             log.error("updateSchedule... 지정 상영관의 시간과 수정을 요청한 시간과 겹칩니다 수정 실패");
-            return;
+            throw new IllegalStateException();
         }
 
 
@@ -107,12 +107,11 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     /**
      * 스케줄 상태 변경
-     * @param ids 스케줄 PKs
-     * @param expired 만료여부
+     * @param request 요청 DTO
      */
     @Override
-    public void updateExpired(List<Long> ids, boolean expired) {
-        List<ScheduleEntity> scheduleEntities = scheduleRepository.findAllById(ids);
+    public void updateActivation(ActivationRequest request) {
+        List<ScheduleEntity> scheduleEntities = scheduleRepository.findAllById(request.getIds());
 
         scheduleEntities.forEach(scheduleEntity -> {
             // 만약 이미 지나간 스케줄이라면 상태 변경 불가
@@ -120,14 +119,14 @@ public class ScheduleServiceImpl implements ScheduleService {
                 log.error("updateExpired... 이미 지나간 스케줄 변경 실패");
                 return;
             }
-            if (scheduleEntity.isExpired() == expired) {
+            if (scheduleEntity.isActivation() == request.isActivation()) {
                 log.error("만료여부 일치 변경 실패 : {} ", scheduleEntity);
                 return;
             }
-            scheduleEntity.changeExpired(expired);
+            scheduleEntity.changeActivation(request.isActivation());
+            log.info("updateExpired... 스케줄 상태 변경 성공 : {}", scheduleEntities);
         });
 
-        log.info("updateExpired... 스케줄 상태 변경 성공 : {}", scheduleEntities);
         scheduleRepository.saveAll(scheduleEntities);
 
     }

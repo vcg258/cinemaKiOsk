@@ -2,6 +2,8 @@ package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
+import com.example.cinemakiosk.dto.RequestDTO.CouponStatusRequest;
+import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -20,7 +22,7 @@ public interface DiscountPolicyService {
     void finishActivation(Long id);
 
     // 할인정책 활성화 / 비활성화
-    void changeActivation(List<Long> ids, boolean activation);
+    void changeActivation(ActivationRequest request);
 
     // 특정 정책의 쿠폰 번호 발행
     void createCouponNum(Long policyId);
@@ -32,7 +34,7 @@ public interface DiscountPolicyService {
     void updateStatus(CouponDTO couponDTO);
 
     // 여러건 지정후 상태 사용여부 업데이트
-    void updateStatusCoupons(List<String> couponNums, boolean status);
+    void updateStatusCoupons(CouponStatusRequest request);
 
     // 페이징 처리 (로그까지 전체 조회)
     Page<DiscountPolicyDTO> getDiscountPolicyPage(int page);

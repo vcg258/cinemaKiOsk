@@ -1,5 +1,6 @@
 package com.example.cinemakiosk.service;
 
+import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
 import com.example.cinemakiosk.dto.ScheduleDTO;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public interface ScheduleService {
     void updateSchedule(ScheduleDTO scheduleDTO);
 
     // 스케줄 상태 변경
-    void updateExpired(List<Long> ids, boolean expired);
+    void updateActivation(ActivationRequest request);
 
     // 스케줄 삭제
     void deleteSchedule(List<Long> ids);

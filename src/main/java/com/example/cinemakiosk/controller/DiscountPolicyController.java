@@ -1,16 +1,17 @@
 package com.example.cinemakiosk.controller;
 
+import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
+import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
 import com.example.cinemakiosk.service.DiscountPolicyService;
-import com.solapi.shadow.retrofit2.http.Path;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Log4j2
 @RestController
@@ -23,7 +24,7 @@ public class DiscountPolicyController {
     @PostMapping("")
     public ResponseEntity<Void> addDiscountPolicies(@RequestBody DiscountPolicyDTO discountPolicyDTO) {
         discountPolicyService.createDiscountPolicy(discountPolicyDTO);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build(); // 생성
     }
 
     @Operation(summary = "할인정책 전체 조회")
@@ -45,13 +46,29 @@ public class DiscountPolicyController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "할인정책 활성화 비활성화",
-            description = "ex) {\"ids\": [1, 2], \"activation\": false}")
+    @Operation(summary = "할인정책 활성화 비활성화")
     @PatchMapping("/activation")
-    public ResponseEntity<Void> changeDiscountPolicyActivation(@RequestBody Map<String, Object> request) {
-        List<Long> ids = (List<Long>) request.get("ids");
-        boolean activation = (boolean) request.get("activation");
-        discountPolicyService.changeActivation(ids, activation);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Void> changeDiscountPolicyActivation(@RequestBody ActivationRequest request) {
+        discountPolicyService.changeActivation(request);
+        return ResponseEntity.noContent().build(); // 204 변경됨 하지만 다시 값을 보여줄 필요는 없음
+    }
+
+    @Operation(summary = "지정 정책에 쿠폰 발행")
+    @PostMapping("/coupon/{policyId}")
+    public ResponseEntity<Void> addCoupon(@PathVariable Long policyId) { // TODO 따로 DTO를 넣자는 의견이 있음 일단 보류
+        discountPolicyService.createCouponNum(policyId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @Operation(summary = "쿠폰 전체 조회")
+    @GetMapping("/coupon/list")
+    public ResponseEntity<List<CouponDTO>> getCoupons() {
+        return ResponseEntity.ok(discountPolicyService.getCouponAll());
+    }
+
+    @Operation(summary = "지정 쿠폰 조회")
+    @GetMapping("/coupon/{couponNum}")
+    public ResponseEntity<CouponDTO> getCoupon(@PathVariable String couponNum) {
+        return ResponseEntity.ok(discountPolicyService.getCoupon(couponNum));
     }
 }

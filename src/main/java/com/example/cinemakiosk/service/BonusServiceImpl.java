@@ -2,6 +2,7 @@ package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.domain.BonusPolicyEntity;
 import com.example.cinemakiosk.dto.BonusPolicyDTO;
+import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
 import com.example.cinemakiosk.mapper.BonusPolicyMapper;
 import com.example.cinemakiosk.repository.BonusPolicyRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public class BonusServiceImpl implements BonusService {
     public void createBonusPolicy(BonusPolicyDTO bonusPolicyDTO) {
         if (bonusPolicyRepository.existsByPolicyNameAndEndAtAfter(bonusPolicyDTO.getPolicyName(), LocalDateTime.now())) {
             log.error("createBonusPolicy... 활성화된 정책중 이름이 중복됩니다 추가 / 수정 실패");
-            return;
+            throw new IllegalStateException();
         }
 
         BonusPolicyDTO dto = BonusPolicyDTO.builder()
@@ -53,7 +54,7 @@ public class BonusServiceImpl implements BonusService {
     public void finishActivation(Long id) { // TODO batch 사용으로 만료시간이 되면 자동 비활성화로 변경 해야함
         BonusPolicyEntity bonusPolicyEntity = bonusPolicyRepository.findById(id).orElseThrow();
         if (LocalDateTime.now().isAfter(bonusPolicyEntity.getEndAt()) || !bonusPolicyEntity.getActivation()) {
-            log.error("finishActivation... 이미 비활성화 된 정책입니다.");
+            throw new IllegalStateException();
         }
 
         bonusPolicyEntity.changeEndAt(LocalDateTime.now().withHour(23).withMinute(59).withSecond(59));
@@ -63,18 +64,18 @@ public class BonusServiceImpl implements BonusService {
 
     /**
      * 적립정책 만료여부 (Controller는 Map사용하자)
-     * @param ids 적립정책들 PK
-     * @param activation 만료여부
+     *
+     * @param request 요청 DTO
      */
     @Override
-    public void changeActivation(List<Long> ids, boolean activation) {
-        List<BonusPolicyEntity> bonusPolicyEntities = bonusPolicyRepository.findAllById(ids);
+    public void changeActivation(ActivationRequest request) {
+        List<BonusPolicyEntity> bonusPolicyEntities = bonusPolicyRepository.findAllById(request.getIds());
         bonusPolicyEntities.forEach(bonusPolicyEntity -> {
-            if (bonusPolicyEntity.getActivation() == activation) {
+            if (bonusPolicyEntity.getActivation() == request.isActivation()) {
                 log.warn("이미 같은 상태값 변경 안됨 {}", bonusPolicyEntity);
                 return;
             }
-            bonusPolicyEntity.changeActivation(activation);
+            bonusPolicyEntity.changeActivation(request.isActivation());
             log.info("changeActivation... 만료여부 변경 : {}", bonusPolicyEntity);
         });
         bonusPolicyRepository.saveAll(bonusPolicyEntities);

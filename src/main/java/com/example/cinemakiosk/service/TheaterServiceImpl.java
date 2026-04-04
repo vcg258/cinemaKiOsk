@@ -112,7 +112,7 @@ public class TheaterServiceImpl implements TheaterService {
         // 중복 이름 예외
         if (seatPolicyRepository.existsByName(dto.getName())) {
             log.error("중복된 좌석정책이 있습니다.");
-            return;
+            throw new IllegalStateException();
         }
 
         SeatPolicyEntity seatPolicyEntity = seatPolicyRepository.save(dto);
@@ -178,7 +178,7 @@ public class TheaterServiceImpl implements TheaterService {
     public void deleteSeat(Long policyId) {
         if (theaterRepository.existsBySeatPolicyEntity_PolicyId(policyId)) {
             log.error("deleteSeat... 현재 사용중인 좌석정책 삭제 불가");
-            return;
+            throw new IllegalStateException();
         }
         seatPolicyRepository.deleteById(policyId);
     }

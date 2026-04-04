@@ -4,10 +4,11 @@ import com.example.cinemakiosk.domain.CouponEntity;
 import com.example.cinemakiosk.domain.DiscountPolicyEntity;
 import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
+import com.example.cinemakiosk.dto.RequestDTO.CouponStatusRequest;
+import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
 import com.example.cinemakiosk.mapper.DiscountPolicyMapper;
 import com.example.cinemakiosk.repository.CouponRepository;
 import com.example.cinemakiosk.repository.DiscountPolicyRepository;
-import com.example.cinemakiosk.vo.CouponVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -17,8 +18,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Log4j2
@@ -37,7 +38,8 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     public void createDiscountPolicy(DiscountPolicyDTO discountPolicyDTO) {
         // 현재 활성화 된 할인정책 이름 중복 방지
         if (discountPolicyRepository.existsByPolicyNameAndEndAtAfter(discountPolicyDTO.getPolicyName(), LocalDateTime.now())) {
-            throw new IllegalArgumentException("이미 사용하는 정책 이름입니다.");
+            log.error("이미 사용하는 정책 이름입니다. {}", discountPolicyDTO.getPolicyName());
+            throw new IllegalStateException();
         }
         DiscountPolicyDTO dto = DiscountPolicyDTO.builder()
                 .id(discountPolicyDTO.getId())
@@ -62,12 +64,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     @Override
     public List<DiscountPolicyDTO> getDiscountPolicies() {
         List<DiscountPolicyEntity> discountPolicies = discountPolicyRepository.findAll();
-        List<DiscountPolicyDTO> discountPolicyDTO = new ArrayList<>();
-        for (DiscountPolicyEntity discountPolicyEntity : discountPolicies) {
-            DiscountPolicyDTO dto = DiscountPolicyEntity.toDTO(discountPolicyEntity);
-            discountPolicyDTO.add(dto);
-        }
-        return discountPolicyDTO;
+        return discountPolicies.stream().map(DiscountPolicyEntity::toDTO).toList();
     }
 
     /**
@@ -90,7 +87,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
         DiscountPolicyEntity discountPolicyEntity = discountPolicyRepository.findById(id).orElseThrow();
         if (LocalDateTime.now().isAfter(discountPolicyEntity.getEndAt()) || !discountPolicyEntity.isActivation()) {
             log.error("finishActivation... 이미 비활성화 된 정책입니다. {}", discountPolicyEntity);
-            return;
+            throw new IllegalStateException();
         }
 
         discountPolicyEntity.finalDiscountPolicy(LocalDateTime.now().withHour(23).withMinute(59).withSecond(59));
@@ -100,19 +97,19 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
 
     /**
      * 할인 정책 활성화 / 비활성화
-     * @param ids 정책 PKs
-     * @param activation 만료여부
+     *
+     * @param request
      */
     @Override
-    public void changeActivation(List<Long> ids, boolean activation) {
-        List<DiscountPolicyEntity> discountPolicies = discountPolicyRepository.findAllById(ids);
+    public void changeActivation(ActivationRequest request) {
+        List<DiscountPolicyEntity> discountPolicies = discountPolicyRepository.findAllById(request.getIds());
         discountPolicies.forEach(policy -> {
-            if (policy.isActivation() == activation) {
+            if (policy.isActivation() == request.isActivation()) {
                 log.warn("같은 상태값 변경 x {}", policy);
                 return;
             }
 
-            policy.changeActivation(activation);
+            policy.changeActivation(request.isActivation());
             log.info("changeActivation discountPolicy: {}", policy);
         });
         discountPolicyRepository.saveAll(discountPolicies);
@@ -142,32 +139,31 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      * @return 사용 검증 통과면 true, 아니면 false
      */
     @Override
-    public boolean authCoupon(CouponDTO couponDTO) { // TODO for로 돌리는것보다 DB로 처리하는게 훨씬 효율적 FIX요청
+    public boolean authCoupon(CouponDTO couponDTO) {
         DiscountPolicyDTO discountPolicyDTO = discountPolicyMapper.checkCoupon(couponDTO.getPolicyId());
         // 정책이 없을 경우 (INNER JOIN을 하였기때문에 정책이 없다면 null)
         if (discountPolicyDTO == null) {
             log.error("authCoupon... 정책이 없음");
-            return false;
+            throw new NoSuchElementException();
         }
         // 정책이 비활성화 일 경우
         if (!discountPolicyDTO.isActivation()) {
             log.error("authCoupon... 정책 비활성화");
-            return false;
+            throw new IllegalStateException();
         }
         // 할인 정책이 만료된 경우
         LocalDateTime now = LocalDateTime.now();
         if (!(now.isBefore(discountPolicyDTO.getEndAt()) && now.isAfter(discountPolicyDTO.getStartAt()))) {
             log.error("authCoupon...정책 만료");
-            return false;
+            throw new IllegalStateException();
         }
-        // 쿠폰 번호가 일치하고 사용여부가 true일경우
-        for (CouponVO couponVO : discountPolicyDTO.getCoupons()) {
-            if (couponVO.getCouponNum().equals(couponDTO.getCouponNum())) {
-                return couponVO.isStatus(); // true 사용가능
-            }
+        // 쿠폰 번호와 할인정책이 일치하고 사용여부가 true일경우
+        CouponEntity coupon = couponRepository
+                .findByCouponNumAndDiscountPolicyEntityIdAndStatusTrue(couponDTO.getCouponNum(), couponDTO.getPolicyId()).orElse(null);
+        if (coupon == null) {
+            throw new IllegalArgumentException();
         }
-
-        return false; // 나머지 불가능
+        return true; // 위 조건문 다 통과 사용가능
     }
 
     /**
@@ -184,18 +180,18 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
 
     /**
      * 지정한 여러건 쿠폰 상태 변경
-     * @param couponNums 쿠폰 번호를 모은 리스트
-     * @param status 사용여부
+     *
+     * @param request
      */
     @Override
-    public void updateStatusCoupons(List<String> couponNums, boolean status) {
-        List<CouponEntity> couponEntities = couponRepository.findAllById(couponNums);
+    public void updateStatusCoupons(CouponStatusRequest request) {
+        List<CouponEntity> couponEntities = couponRepository.findAllById(request.getCouponNums());
         couponEntities.forEach(couponEntity -> {
-            if (couponEntity.isStatus() == status) {
+            if (couponEntity.isStatus() == request.isStatus()) {
                 log.warn("이미 사용한 쿠폰은 변경 안함");
                 return;
             }
-            couponEntity.changeStatus(status);
+            couponEntity.changeStatus(request.isStatus());
             log.info("상태 변경 완료 {}", couponEntity);
         });
         couponRepository.saveAll(couponEntities);

@@ -1,6 +1,7 @@
 package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.dto.BonusPolicyDTO;
+import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public interface BonusService {
     void finishActivation(Long id);
 
     // 적립 정책 만료여부 (딸깍)
-    void changeActivation(List<Long> ids, boolean activation);
+    void changeActivation(ActivationRequest request);
 
     // 할인정책 전체 조회
     List<BonusPolicyDTO> getBonusPolicies();

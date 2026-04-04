@@ -7,7 +7,6 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,7 +35,7 @@ public class ScheduleEntity {
     private LocalDateTime endAt; // 상영 종료 시간
 
     @Column(nullable = false, columnDefinition = "TINYINT DEFAULT FALSE")
-    private boolean expired; // 활성화 여부 (유효 = True, 비활성화 = False)
+    private boolean activation; // 활성화 여부 (유효 = True, 비활성화 = False)
 
     @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "scheduleEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
@@ -48,13 +47,13 @@ public class ScheduleEntity {
 
     /**
      * 스케줄 활성화 여부 변경
-     * @param expired 스케줄 활성화 여부
+     * @param activation 스케줄 활성화 여부
      */
-    public void changeExpired(boolean expired) {
-        if (this.expired == expired) {
+    public void changeActivation(boolean activation) {
+        if (this.activation == activation) {
             return;
         }
-        this.expired = expired;
+        this.activation = activation;
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.example.cinemakiosk.service;
 
+import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
 import com.example.cinemakiosk.dto.ScheduleDTO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
@@ -34,10 +35,11 @@ class ScheduleServiceImplTest {
     }
 
     @Test
-    void updateExpired() {
-        List<Long> ids = List.of(1L);
-        boolean expired = true;
-        scheduleService.updateExpired(ids, expired);
+    void updateActivation() {
+        ActivationRequest request = new ActivationRequest();
+        request.setIds(List.of(1L));
+        request.setActivation(false);
+        scheduleService.updateActivation(request);
     }
 
     @Test
@@ -75,7 +77,7 @@ class ScheduleServiceImplTest {
                 .no(3L)
                 .movieId(1L)
                 .startAt(LocalDateTime.of(2027, 1, 1, 9, 0))
-                .expired(false)
+                .activation(false)
                 .build();
         scheduleService.createSchedule(dto);
     }
@@ -88,7 +90,7 @@ class ScheduleServiceImplTest {
                 .no(1L)
                 .movieId(1L)
                 .startAt(LocalDateTime.of(2026, 3, 29, 9, 30))
-                .expired(false)
+                .activation(false)
                 .build();
         scheduleService.createSchedule(dto);
     }
@@ -106,7 +108,7 @@ class ScheduleServiceImplTest {
                 .no(3L)
                 .movieId(3L)
                 .startAt(LocalDateTime.of(2027, 1, 1, 14, 0))
-                .expired(false)
+                .activation(false)
                 .build();
         scheduleService.updateSchedule(dto);
     }
@@ -119,7 +121,7 @@ class ScheduleServiceImplTest {
                 .no(2L)
                 .movieId(3L)
                 .startAt(LocalDateTime.of(2026, 1, 1, 9, 0))
-                .expired(false)
+                .activation(false)
                 .build();
         scheduleService.updateSchedule(dto);
     }
@@ -133,7 +135,7 @@ class ScheduleServiceImplTest {
                 .no(2L)
                 .movieId(3L)
                 .startAt(LocalDateTime.of(2026, 3, 29, 9, 30))
-                .expired(false)
+                .activation(false)
                 .build();
         scheduleService.updateSchedule(dto);
     }

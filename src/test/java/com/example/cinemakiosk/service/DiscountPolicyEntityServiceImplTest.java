@@ -4,8 +4,8 @@ import com.example.cinemakiosk.domain.enums.ConditionType;
 import com.example.cinemakiosk.domain.enums.DiscountType;
 import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
-import com.example.cinemakiosk.repository.CouponRepository;
-import jakarta.transaction.Transactional;
+import com.example.cinemakiosk.dto.RequestDTO.CouponStatusRequest;
+import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,9 +55,10 @@ class DiscountPolicyEntityServiceImplTest {
 
     @Test
     public void changeActivationTest() {
-        List<Long> ids = List.of(1L, 2L);
-        boolean activation = false;
-        discountPolicyService.changeActivation(ids, activation);
+        ActivationRequest request =  new ActivationRequest();
+        request.setActivation(true);
+        request.setIds(List.of(1L, 2L));
+        discountPolicyService.changeActivation(request);
     }
 
     @Test
@@ -86,9 +87,10 @@ class DiscountPolicyEntityServiceImplTest {
 
     @Test
     public void updateCouponStatusAll() {
-        List<String> list = List.of("cf45106e8ae6", "fc2f8fa7091d");
-        boolean status = false;
-        discountPolicyService.updateStatusCoupons(list, status);
+        CouponStatusRequest request = new CouponStatusRequest();
+        request.setStatus(false);
+        request.setCouponNums(List.of("cf45106e8ae6", "fc2f8fa7091d"));
+        discountPolicyService.updateStatusCoupons(request);
 
     }
 

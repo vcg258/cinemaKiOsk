@@ -1,6 +1,7 @@
 package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.dto.BonusPolicyDTO;
+import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +35,10 @@ class BonusPolicyServiceImplTest {
 
     @Test
     void changeActivation() {
-        List<Long> list = List.of(1L, 2L);
-        bonusService.changeActivation(list, true);
+        ActivationRequest request = new ActivationRequest();
+        request.setIds(List.of(1L, 2L));
+        request.setActivation(true);
+        bonusService.changeActivation(request);
     }
 
     @Test

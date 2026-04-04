@@ -58,7 +58,7 @@ INSERT INTO `theater` (`no`, `policy_id`, `cleanup_time`) VALUES (1, 1, 15), (2,
 -- 4. 상영 스케줄 (schedule) - expired 포함 (3배 확장)
 -- 오늘 날짜(2026-03-31) 기준 과거는 TRUE, 미래는 FALSE
 -- ############################################################
-INSERT INTO `schedule` (`id`, `no`, `movie_id`, `start_at`, `end_at`, `expired`) VALUES
+INSERT INTO `schedule` (`id`, `no`, `movie_id`, `start_at`, `end_at`, `activation`) VALUES
                                                                                      (1, 1, 1, '2026-03-25 09:00:00', '2026-03-25 11:15:00', TRUE),
                                                                                      (2, 2, 2, '2026-03-26 10:00:00', '2026-03-26 11:50:00', TRUE),
                                                                                      (3, 3, 3, '2026-03-27 13:00:00', '2026-03-27 15:00:00', TRUE),
