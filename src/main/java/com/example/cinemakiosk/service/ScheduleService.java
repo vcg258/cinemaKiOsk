@@ -12,7 +12,7 @@ public interface ScheduleService {
     void updateSchedule(ScheduleDTO scheduleDTO);
 
     // 스케줄 상태 변경
-    void updateExpired(ScheduleDTO scheduleDTO);
+    void updateExpired(List<Long> ids, boolean expired);
 
     // 스케줄 삭제
     void deleteSchedule(Long id);

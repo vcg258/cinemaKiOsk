@@ -31,6 +31,9 @@ public interface DiscountPolicyService {
     // 쿠폰을 사용함으로써 사용여부 업데이트 및 환불로 인한 복구
     void updateStatus(CouponDTO couponDTO);
 
+    // 여러건 지정후 상태 사용여부 업데이트
+    void updateStatusCoupons(List<String> couponNums, boolean status);
+
     // 페이징 처리 (로그까지 전체 조회)
     Page<DiscountPolicyDTO> getDiscountPolicyPage(int page);
 

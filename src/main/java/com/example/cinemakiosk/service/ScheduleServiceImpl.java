@@ -107,20 +107,28 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     /**
      * 스케줄 상태 변경
-     * @param scheduleDTO 스케줄 DTO
+     * @param ids 스케줄 PKs
+     * @param expired 만료여부
      */
     @Override
-    public void updateExpired(ScheduleDTO scheduleDTO) {
-        ScheduleEntity scheduleEntity = scheduleRepository.findById(scheduleDTO.getId()).orElseThrow();
-        // 만약 이미 지나간 스케줄이라면 상태 변경 불가
-        if (LocalDateTime.now().isAfter(scheduleEntity.getStartAt())) {
-            log.error("updateExpired... 이미 지나간 스케줄 변경 실패");
-            return;
-        }
+    public void updateExpired(List<Long> ids, boolean expired) {
+        List<ScheduleEntity> scheduleEntities = scheduleRepository.findAllById(ids);
 
-        scheduleEntity.changeExpired(scheduleDTO.isExpired());
-        log.info("updateExpired... 스케줄 상태 변경 성공 : {}", scheduleEntity);
-        scheduleRepository.save(scheduleEntity);
+        scheduleEntities.forEach(scheduleEntity -> {
+            // 만약 이미 지나간 스케줄이라면 상태 변경 불가
+            if (LocalDateTime.now().isAfter(scheduleEntity.getStartAt())) {
+                log.error("updateExpired... 이미 지나간 스케줄 변경 실패");
+                return;
+            }
+            if (scheduleEntity.isExpired() == expired) {
+                log.error("만료여부 일치 변경 실패 : {} ", scheduleEntity);
+                return;
+            }
+            scheduleEntity.changeExpired(expired);
+        });
+
+        log.info("updateExpired... 스케줄 상태 변경 성공 : {}", scheduleEntities);
+        scheduleRepository.saveAll(scheduleEntities);
 
     }
 

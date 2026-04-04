@@ -183,6 +183,26 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     }
 
     /**
+     * 지정한 여러건 쿠폰 상태 변경
+     * @param couponNums 쿠폰 번호를 모은 리스트
+     * @param status 사용여부
+     */
+    @Override
+    public void updateStatusCoupons(List<String> couponNums, boolean status) {
+        List<CouponEntity> couponEntities = couponRepository.findAllById(couponNums);
+        couponEntities.forEach(couponEntity -> {
+            if (couponEntity.isStatus() == status) {
+                log.warn("이미 사용한 쿠폰은 변경 안함");
+                return;
+            }
+            couponEntity.changeStatus(status);
+            log.info("상태 변경 완료 {}", couponEntity);
+        });
+        couponRepository.saveAll(couponEntities);
+
+    }
+
+    /**
      * 10페이지씩 페이징 처리 (로그 포함 전체 조회)
      * @param page 몇번째 페이지 부터 가져올건지 정하는 변수
      * @return 페이징 결과 1페이지 일경우 1 ~ 10번 까지

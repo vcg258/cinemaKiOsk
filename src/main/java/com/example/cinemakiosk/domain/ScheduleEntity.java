@@ -51,6 +51,9 @@ public class ScheduleEntity {
      * @param expired 스케줄 활성화 여부
      */
     public void changeExpired(boolean expired) {
+        if (this.expired == expired) {
+            return;
+        }
         this.expired = expired;
     }
 

@@ -35,6 +35,9 @@ public class CouponEntity {
      * @param status 변경할 상태값
      */
     public void changeStatus(boolean status) {
+        if (this.status == status) {
+            return;
+        }
         this.status = status;
     }
 

@@ -23,7 +23,7 @@ class DiscountPolicyEntityServiceImplTest {
     @Test
     public void createDiscountPolicyTest() {
         DiscountPolicyDTO discountPolicyDTO = DiscountPolicyDTO.builder()
-                .policyName("test1")
+                .policyName("test2")
                 .discountType(DiscountType.RATIO)
                 .discountValue(50L)
                 .conditionType(ConditionType.JOB)
@@ -62,7 +62,7 @@ class DiscountPolicyEntityServiceImplTest {
 
     @Test
     public void createCouponNumTest() {
-        discountPolicyService.createCouponNum(1L);
+        discountPolicyService.createCouponNum(2L);
     }
 
     @Test
@@ -82,6 +82,14 @@ class DiscountPolicyEntityServiceImplTest {
                 .status(false)
                 .build();
         discountPolicyService.updateStatus(couponDTO);
+    }
+
+    @Test
+    public void updateCouponStatusAll() {
+        List<String> list = List.of("cf45106e8ae6", "fc2f8fa7091d");
+        boolean status = false;
+        discountPolicyService.updateStatusCoupons(list, status);
+
     }
 
     @Test
