@@ -100,14 +100,22 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
 
     /**
      * 할인 정책 활성화 / 비활성화
-     * @param discountPolicyDTO 정책 DTO
+     * @param ids 정책 PKs
+     * @param activation 만료여부
      */
     @Override
-    public void changeActivation(DiscountPolicyDTO discountPolicyDTO) {
-        DiscountPolicyEntity discountPolicyEntity = discountPolicyRepository.findById(discountPolicyDTO.getId()).orElseThrow();
-        discountPolicyEntity.changeActivation(discountPolicyDTO.isActivation());
-        discountPolicyRepository.save(discountPolicyEntity);
-        log.info("changeActivation discountPolicy: {}", discountPolicyEntity);
+    public void changeActivation(List<Long> ids, boolean activation) {
+        List<DiscountPolicyEntity> discountPolicies = discountPolicyRepository.findAll();
+        discountPolicies.forEach(policy -> {
+            if (policy.isActivation() == activation) {
+                log.warn("같은 상태값 변경 x {}", policy);
+                return;
+            }
+
+            policy.changeActivation(activation);
+            log.info("changeActivation discountPolicy: {}", policy);
+        });
+        discountPolicyRepository.saveAll(discountPolicies);
     }
 
     /**

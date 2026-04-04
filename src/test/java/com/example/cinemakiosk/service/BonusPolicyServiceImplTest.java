@@ -35,7 +35,7 @@ class BonusPolicyServiceImplTest {
     @Test
     void changeActivation() {
         List<Long> list = List.of(1L, 2L);
-        bonusService.changeActivation(list);
+        bonusService.changeActivation(list, true);
     }
 
     @Test

@@ -13,7 +13,7 @@ public interface BonusService {
     void finishActivation(Long id);
 
     // 적립 정책 만료여부 (딸깍)
-    void changeActivation(List<Long> ids);
+    void changeActivation(List<Long> ids, boolean activation);
 
     // 할인정책 전체 조회
     List<BonusPolicyDTO> getBonusPolicies();

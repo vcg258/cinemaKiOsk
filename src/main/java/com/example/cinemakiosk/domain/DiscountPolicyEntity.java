@@ -60,6 +60,9 @@ public class DiscountPolicyEntity {
      * 할인 정책 활성화 ON / OFF (만든김에 버튼하나 딸깍 누르면 변경될거 생각해서 만들어봄)
      */
     public void changeActivation(boolean activation) {
+        if (this.activation == activation) {
+            return;
+        }
         this.activation = activation;
     }
 

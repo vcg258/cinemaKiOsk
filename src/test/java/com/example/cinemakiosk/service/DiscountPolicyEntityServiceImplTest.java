@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Log4j2
 @SpringBootTest
@@ -54,11 +55,9 @@ class DiscountPolicyEntityServiceImplTest {
 
     @Test
     public void changeActivationTest() {
-        DiscountPolicyDTO discountPolicyDTO = DiscountPolicyDTO.builder()
-                .id(2L)
-                .activation(false)
-                .build();
-        discountPolicyService.changeActivation(discountPolicyDTO);
+        List<Long> ids = List.of(1L, 2L);
+        boolean activation = false;
+        discountPolicyService.changeActivation(ids, activation);
     }
 
     @Test

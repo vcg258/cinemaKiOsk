@@ -20,7 +20,7 @@ public interface DiscountPolicyService {
     void finishActivation(Long id);
 
     // 할인정책 활성화 / 비활성화
-    void changeActivation(DiscountPolicyDTO discountPolicyDTO);
+    void changeActivation(List<Long> ids, boolean activation);
 
     // 특정 정책의 쿠폰 번호 발행
     void createCouponNum(Long policyId);

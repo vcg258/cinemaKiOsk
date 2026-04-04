@@ -62,15 +62,19 @@ public class BonusServiceImpl implements BonusService {
     }
 
     /**
-     * 적립정책 만료여부
+     * 적립정책 만료여부 (Controller는 Map사용하자)
      * @param ids 적립정책들 PK
+     * @param activation 만료여부
      */
     @Override
-    public void changeActivation(List<Long> ids) {
+    public void changeActivation(List<Long> ids, boolean activation) {
         List<BonusPolicyEntity> bonusPolicyEntities = bonusPolicyRepository.findAllById(ids);
-
         bonusPolicyEntities.forEach(bonusPolicyEntity -> {
-            bonusPolicyEntity.changeActivation(true); // TODO 수정 한번에 적용 해결해야함
+            if (bonusPolicyEntity.getActivation() == activation) {
+                log.warn("이미 같은 상태값 변경 안됨 {}", bonusPolicyEntity);
+                return;
+            }
+            bonusPolicyEntity.changeActivation(activation);
             log.info("changeActivation... 만료여부 변경 : {}", bonusPolicyEntity);
         });
         bonusPolicyRepository.saveAll(bonusPolicyEntities);

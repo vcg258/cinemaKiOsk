@@ -50,7 +50,7 @@ public class BonusPolicyEntity{
     }
 
     /**
-     * 할인정책 만료여부 변경 도메인 메서드
+     * 적립정책 만료여부 변경 도메인 메서드
      */
     public void changeActivation(boolean activation) {
         // 만료여부가 같을 경우 return
