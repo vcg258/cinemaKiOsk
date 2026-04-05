@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-public interface BonusService {
+public interface BonusPolicyService {
     // 적립 정책 추가 / 수정
     void createBonusPolicy(BonusPolicyDTO bonusPolicyDTO);
 

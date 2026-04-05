@@ -39,7 +39,7 @@ public class DiscountPolicyController {
         return ResponseEntity.ok(discountPolicyService.getDiscountPolicy(id));
     }
 
-    @Operation(summary = "할인정책 종료지정", description = "만료시간이 지났거나 비활성화 일 경우 그냥 넘어감")
+    @Operation(summary = "할인정책 종료지정")
     @PatchMapping("/{id}/finish")
     public ResponseEntity<Void> finishDiscountPolicy(@PathVariable Long id) {
         discountPolicyService.finishActivation(id);
@@ -57,7 +57,7 @@ public class DiscountPolicyController {
     @PostMapping("/coupon/{policyId}")
     public ResponseEntity<Void> addCoupon(@PathVariable Long policyId) { // TODO 따로 DTO를 넣자는 의견이 있음 일단 보류
         discountPolicyService.createCouponNum(policyId);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 생성
     }
 
     @Operation(summary = "쿠폰 전체 조회")

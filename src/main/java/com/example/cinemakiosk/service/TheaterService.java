@@ -1,5 +1,6 @@
 package com.example.cinemakiosk.service;
 
+import com.example.cinemakiosk.dto.RequestDTO.TheaterRequest;
 import com.example.cinemakiosk.dto.SeatPolicyDTO;
 import com.example.cinemakiosk.dto.TheaterDTO;
 
@@ -17,10 +18,10 @@ public interface TheaterService {
     TheaterDTO getTheater(Long no);
 
     // 상영관 좌석 정책 업데이트
-    void updateSeatPolicy(List<Long> nos, Long policyId); // TODO 요청DTO를 만드는게 맞는지 고민중 (데이터타입 둘다 같음 하지만 변수명이 의미하는 자체가 다름)
+    void updateSeatPolicy(TheaterRequest request);
 
     // 상영관 청소시간 업데이트
-    void updateCleanTime(List<Long> policyIds, Long cleanupTime);
+    void updateCleanTime(TheaterRequest request);
 
     // 좌석 정책 생성
     void createSeat(SeatPolicyDTO seatPolicyDTO);

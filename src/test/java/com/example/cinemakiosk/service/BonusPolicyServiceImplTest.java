@@ -14,7 +14,8 @@ import java.util.List;
 @Log4j2
 @SpringBootTest
 class BonusPolicyServiceImplTest {
-    @Autowired BonusService bonusService;
+    @Autowired
+    BonusPolicyService bonusService;
 
     @Test
     void createBonusPolicy() {

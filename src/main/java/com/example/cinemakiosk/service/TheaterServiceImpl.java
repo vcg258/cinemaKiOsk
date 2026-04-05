@@ -2,6 +2,7 @@ package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.domain.SeatPolicyEntity;
 import com.example.cinemakiosk.domain.TheaterEntity;
+import com.example.cinemakiosk.dto.RequestDTO.TheaterRequest;
 import com.example.cinemakiosk.dto.SeatPolicyDTO;
 import com.example.cinemakiosk.dto.TheaterDTO;
 import com.example.cinemakiosk.mapper.SeatPolicyMapper;
@@ -60,16 +61,14 @@ public class TheaterServiceImpl implements TheaterService {
 
     /**
      * 상영관 좌석정책 변경
-     *
-     * @param nos 상영관 PKs
-     * @param policyId 변경할 좌석 정책 PK
+     * @param request 상영관 요청 DTO
      */
     @Override
-    public void updateSeatPolicy(List<Long> nos, Long policyId) {
-        List<TheaterEntity> theater = theaterRepository.findAllById(nos);
-        SeatPolicyEntity seatPolicy = seatPolicyRepository.findById(policyId).orElseThrow();
+    public void updateSeatPolicy(TheaterRequest request) {
+        List<TheaterEntity> theater = theaterRepository.findAllById(request.getIds());
+        SeatPolicyEntity seatPolicy = seatPolicyRepository.findById(request.getChangeValue()).orElseThrow();
         theater.forEach(theaterEntity -> {
-            if (theaterEntity.getSeatPolicyEntity().getPolicyId().equals(policyId)) {
+            if (theaterEntity.getSeatPolicyEntity().getPolicyId().equals(request.getChangeValue())) {
                 log.error("변경할 좌석 정책과 동일 변경 X {}", theaterEntity);
                 return;
             }
@@ -81,18 +80,17 @@ public class TheaterServiceImpl implements TheaterService {
 
     /**
      * 상영관 정리시간 변경
-     * @param policyIds 좌석정책 PKs
-     * @param cleanupTime 변경할 정리시간
+     * @param request 상영관 요청 DTO
      */
     @Override
-    public void updateCleanTime(List<Long> policyIds, Long cleanupTime) {
-        List<TheaterEntity> theater = theaterRepository.findAllById(policyIds);
+    public void updateCleanTime(TheaterRequest request) {
+        List<TheaterEntity> theater = theaterRepository.findAllById(request.getIds());
         theater.forEach(theaterEntity -> {
-            if (theaterEntity.getSeatPolicyEntity().getPolicyId().equals(cleanupTime)) {
+            if (theaterEntity.getSeatPolicyEntity().getPolicyId().equals(request.getChangeValue())) {
                 log.error("정리시간 동일 변경 X {}", theaterEntity);
                 return;
             }
-            theaterEntity.changeCleantime(cleanupTime);
+            theaterEntity.changeCleantime(request.getChangeValue());
         });
         theaterRepository.saveAll(theater);
         log.info("updateCleanTime... 정리시간 업데이트 {}", theater);

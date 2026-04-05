@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 public class ReservationSeatEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "BIGINT UNSIGNED")
     private Long id;               //인덱스
 
     @ManyToOne(fetch = FetchType.LAZY)

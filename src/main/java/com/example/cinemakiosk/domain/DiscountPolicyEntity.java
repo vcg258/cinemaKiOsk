@@ -24,24 +24,27 @@ public class DiscountPolicyEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT UNSIGNED")
     @Id private Long id; // 할인 정책 인덱스
-    @Column(length = 20)
+
+    @Column(length = 20, nullable = false)
     private String policyName; // 정책이름
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private DiscountType discountType; // 할인 방식
 
-    @Column(columnDefinition = "BIGINT UNSIGNED")
+    @Column(nullable = false, columnDefinition = "BIGINT UNSIGNED")
     private Long discountValue; // 할인 값
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ConditionType conditionType; // 할인 유형
 
-    @Column(columnDefinition = "DATETIME DEFAULT NOW()")
+    @Column(nullable = false, columnDefinition = "DATETIME DEFAULT NOW()")
     private LocalDateTime startAt; // 시작일
 
     private LocalDateTime endAt; // 만료일
 
-    @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean activation; // 활성화 여부
 
     @OnDelete(action= OnDeleteAction.CASCADE)

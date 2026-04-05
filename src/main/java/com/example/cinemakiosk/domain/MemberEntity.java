@@ -19,7 +19,7 @@ import java.util.List;
 public class MemberEntity{
     @Column(length = 20)
     @Id private String phone; // 회원 번호
-    @Column(columnDefinition = "INT UNSIGNED DEFAULT 0")
+    @Column(nullable = false, columnDefinition = "INT UNSIGNED DEFAULT 0")
     private Integer point; // 포인트
     @Column(nullable = false, columnDefinition = "DATETIME DEFAULT NOW()")
     private LocalDateTime createAt; // 생성일

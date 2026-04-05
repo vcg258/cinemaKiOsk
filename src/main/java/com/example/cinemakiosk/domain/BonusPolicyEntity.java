@@ -34,7 +34,7 @@ public class BonusPolicyEntity{
     @Column(nullable = false)
     private LocalDateTime endAt;//	만료일
 
-    @Column(nullable = false, columnDefinition = "TINYINT DEFAULT 0")
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean activation;      // 활성화 여부(중요할까?)
 
     @OnDelete(action= OnDeleteAction.CASCADE)

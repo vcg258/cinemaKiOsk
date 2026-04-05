@@ -19,7 +19,7 @@ import java.util.List;
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class BonusServiceImpl implements BonusService {
+public class BonusPolicyServiceImpl implements BonusPolicyService {
     private final BonusPolicyRepository bonusPolicyRepository;
     private final BonusPolicyMapper bonusPolicyMapper;
 
