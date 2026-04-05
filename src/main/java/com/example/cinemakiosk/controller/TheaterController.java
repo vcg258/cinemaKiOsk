@@ -47,7 +47,7 @@ public class TheaterController {
     @Operation(summary = "상영관 정리시간 수정")
     @PatchMapping("/theater/cleantime")
     public ResponseEntity<Void> modifyTheaterCleanTime(@RequestBody TheaterRequest request){
-        theaterService.updateSeatPolicy(request);
+        theaterService.updateCleanTime( request);
         return ResponseEntity.ok().build();
     }
 

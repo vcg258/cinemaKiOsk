@@ -5,6 +5,7 @@ import com.example.cinemakiosk.domain.PaymentDetailsEntity;
 import com.example.cinemakiosk.domain.PointHistoryEntity;
 import com.example.cinemakiosk.domain.enums.Type;
 import com.example.cinemakiosk.vo.PointHistoryVO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -16,8 +17,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PointHistoryDTO {
     private Long pointId; // 포인트 인덱스
+    @JsonIgnore
     private PaymentDetailsDTO paymentDetails; // 결제 고유번호 FK (JPA 용도)
     private String paymentId;
+    @JsonIgnore
     private MemberDTO member; // 회원번호 FK (JPA 용도)
     private String phone; // 회원 번호
     private Type type; // 적립 / 사용 ('EARN', 'USE')

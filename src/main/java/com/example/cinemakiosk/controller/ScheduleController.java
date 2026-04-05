@@ -24,7 +24,7 @@ public class ScheduleController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @Operation(summary = "스케줄 수정")
+    @Operation(summary = "스케줄 수정", description = "id, endAt, activation은 X")
     @PutMapping("")
     public ResponseEntity<Void> modifySchedule(@RequestBody ScheduleDTO scheduleDTO){
         scheduleService.updateSchedule(scheduleDTO);
@@ -39,7 +39,7 @@ public class ScheduleController {
     }
 
     @Operation(summary = "스케줄 삭제")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}") // TODO 이거 완성해야함
     public ResponseEntity<Void> deleteSchedule(@RequestParam List<Long> ids){
         return null;
     }

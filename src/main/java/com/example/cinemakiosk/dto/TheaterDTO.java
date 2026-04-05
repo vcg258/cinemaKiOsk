@@ -6,6 +6,7 @@ import com.example.cinemakiosk.domain.TheaterEntity;
 import com.example.cinemakiosk.vo.ScheduleVO;
 import com.example.cinemakiosk.vo.SeatPolicyVO;
 import com.example.cinemakiosk.vo.TheaterVO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class TheaterDTO {
     private Long no; // 상영관 번호
+    @JsonIgnore
     private SeatPolicyDTO seatPolicy; // 좌석정책 FK (JPA 전용)
     private Long policyId; // 좌석정책 FK
     private Long cleanupTime; // 정리시간(분)

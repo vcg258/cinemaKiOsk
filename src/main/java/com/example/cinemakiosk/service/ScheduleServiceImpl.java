@@ -76,7 +76,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         LocalDateTime endAt = scheduleDTO.getStartAt().plusMinutes(movieEntity.getRuntime());
 
         // 이미 지난 스케줄(상영 시작시간이 현재 시간보다 이전)은 수정 불가
-        if (scheduleDTO.getStartAt().isBefore(LocalDateTime.now())) {
+        if (LocalDateTime.now().isAfter(scheduleEntity.getEndAt())) {
             log.info("수정 요청 : {} ", scheduleDTO);
             log.warn("updateSchedule... 이미 지난 스케줄 수정 실패");
             throw new IllegalStateException();
@@ -115,8 +115,8 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         scheduleEntities.forEach(scheduleEntity -> {
             // 만약 이미 지나간 스케줄이라면 상태 변경 불가
-            if (LocalDateTime.now().isAfter(scheduleEntity.getStartAt())) {
-                log.error("updateExpired... 이미 지나간 스케줄 변경 실패");
+            if (LocalDateTime.now().isAfter(scheduleEntity.getEndAt())) {
+                log.error("updateActivation... 이미 지나간 스케줄 변경 실패");
                 return;
             }
             if (scheduleEntity.isActivation() == request.isActivation()) {
@@ -124,7 +124,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                 return;
             }
             scheduleEntity.changeActivation(request.isActivation());
-            log.info("updateExpired... 스케줄 상태 변경 성공 : {}", scheduleEntities);
+            log.info("updateActivation... 스케줄 상태 변경 성공 : {}", scheduleEntities);
         });
 
         scheduleRepository.saveAll(scheduleEntities);

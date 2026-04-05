@@ -5,6 +5,7 @@ import com.example.cinemakiosk.domain.DiscountPolicyEntity;
 import com.example.cinemakiosk.domain.PaymentDetailsEntity;
 import com.example.cinemakiosk.vo.CouponVO;
 import com.example.cinemakiosk.vo.PaymentDetailsVO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CouponDTO {
     private String couponNum; // 쿠폰 번호
+    @JsonIgnore
     private DiscountPolicyDTO discountPolicy; // 할인 정책 인덱스 FK (JPA용도)
     private boolean status; // 사용여부 (사용가능 = true, 불가능 = false)
     private Long policyId; // 할인 정책 인덱스 FK (Mapper)
