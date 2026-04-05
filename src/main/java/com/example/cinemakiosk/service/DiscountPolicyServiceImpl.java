@@ -121,6 +121,12 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public void createCouponNum(Long policyId) {
+        DiscountPolicyEntity policy = discountPolicyRepository.findById(policyId).orElseThrow();
+        if (!policy.getId().equals(policyId)) {
+            log.error("createCouponNum... 지정한 할인정책이 없음 발행 X");
+            throw new IllegalArgumentException();
+        }
+
         String couponNum = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
         CouponDTO couponDTO = CouponDTO.builder()
                 .couponNum(couponNum)
