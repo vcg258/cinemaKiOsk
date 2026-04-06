@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `bonus_policy` # FK (X)
     `policy_name` VARCHAR(20)     NOT NULL COMMENT '정책 이름',
     `give_value`  BIGINT UNSIGNED NOT NULL COMMENT '적립 비율',
     `start_at`    DATETIME        NOT NULL COMMENT '시작일',
-    `end_at`      DATETIME        NOT NULL COMMENT '만료일',
+    `end_at`      DATETIME        NULL COMMENT '만료일',
     `activation`  BOOLEAN         NOT NULL COMMENT '활성화 여부'
 ) COMMENT '적립 행사 정책(자체 이벤트)';
 
@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS statistics
 
 CREATE TABLE IF NOT EXISTS `reservation_details`
 (
-    `id`          varchar(36) PRIMARY KEY COMMENT '예매 고유번호, uuid',
+    `id`          VARCHAR(36) PRIMARY KEY COMMENT '예매 고유번호',
     `schedule_id` BIGINT UNSIGNED                    NOT NULL COMMENT '스케쥴 아이디 FK',
     `phone`       VARCHAR(20)                        NULL COMMENT '회원 번호 FK', # NOT NULL -> NULL 이유 : 비회원일 경우 NULL
     `create_at`   DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '예매 기준시',

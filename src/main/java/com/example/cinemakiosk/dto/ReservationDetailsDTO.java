@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReservationDetailsDTO {
-    private Long id;                     // 예매 고유번호
+    private String id;                     // 예매 고유번호
     private ScheduleDTO schedule;           //  스케쥴 정보
     private MemberDTO phone;                  //  회원 번호
     private LocalDateTime reservationTime; //  예약 시간

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ReservationSeatVO {
     private Long id;               //인덱스
-    private Long reservationDetailsId;  //예매 내역 아이디
+    private String reservationDetailsId;  //예매 내역 아이디
     private String seatNumber;     //좌석 번호
 
     /**

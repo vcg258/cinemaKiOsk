@@ -39,9 +39,10 @@ public class ScheduleController {
     }
 
     @Operation(summary = "스케줄 삭제")
-    @DeleteMapping("/{id}") // TODO 이거 완성해야함
+    @DeleteMapping("/schedule/del")
     public ResponseEntity<Void> deleteSchedule(@RequestParam List<Long> ids){
-        return null;
+        scheduleService.deleteSchedule(ids);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "스케줄 전체 조회")

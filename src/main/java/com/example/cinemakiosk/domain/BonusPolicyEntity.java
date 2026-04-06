@@ -31,7 +31,6 @@ public class BonusPolicyEntity{
     @Column(nullable = false)
     private LocalDateTime startAt;  //	시작일
 
-    @Column(nullable = false)
     private LocalDateTime endAt;//	만료일
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")

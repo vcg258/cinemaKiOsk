@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReservationDetailsVO {
-    private Long id;                     // 예매 고유번호
+    private String id;                     // 예매 고유번호
     private ScheduleVO schedule;           //  스케쥴 정보
     private MemberVO phone;                  //  회원 번호
     private LocalDateTime reservationTime; //  예약 시간
