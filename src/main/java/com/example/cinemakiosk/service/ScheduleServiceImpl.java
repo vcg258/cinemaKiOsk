@@ -40,8 +40,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         LocalDateTime endAt = scheduleDTO.getStartAt().plusMinutes(movieEntity.getRuntime());
 
         if (scheduleMapper.checkScheduleOverlap(scheduleDTO.getNo(), scheduleDTO.getStartAt(), endAt) > 0) {
-            log.info("createSchedule... 지정된 상영관에 시간이 겹칩니다. 등록 실패");
-            throw new IllegalStateException();
+            throw new IllegalStateException("지정된 상영관에 시간이 겹칩니다. 등록 실패");
         }
 
         ScheduleDTO dto = ScheduleDTO.builder()
@@ -78,8 +77,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         // 이미 지난 스케줄(상영 시작시간이 현재 시간보다 이전)은 수정 불가
         if (LocalDateTime.now().isAfter(scheduleEntity.getEndAt())) {
             log.info("수정 요청 : {} ", scheduleDTO);
-            log.warn("updateSchedule... 이미 지난 스케줄 수정 실패");
-            throw new IllegalStateException();
+            throw new IllegalStateException("이미 지난 스케줄 수정 실패");
         }
 
         /*
@@ -90,8 +88,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         if (scheduleMapper.checkScheduleOverlapExcludeSelf(scheduleDTO.getNo(), scheduleDTO.getStartAt(),
                 endAt, scheduleEntity.getId()) > 0) {
             log.info("수정 요청 : {} ", scheduleDTO);
-            log.error("updateSchedule... 지정 상영관의 시간과 수정을 요청한 시간과 겹칩니다 수정 실패");
-            throw new IllegalStateException();
+            throw new IllegalStateException("지정 상영관의 시간과 수정을 요청한 시간과 겹칩니다 수정 실패");
         }
 
 

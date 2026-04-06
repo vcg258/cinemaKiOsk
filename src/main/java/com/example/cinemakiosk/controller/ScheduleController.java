@@ -18,14 +18,14 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @Operation(summary = "스케줄 등록")
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<Void> addSchedule(@RequestBody ScheduleDTO scheduleDTO){
         scheduleService.createSchedule(scheduleDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @Operation(summary = "스케줄 수정", description = "id, endAt, activation은 X")
-    @PutMapping("")
+    @PutMapping
     public ResponseEntity<Void> modifySchedule(@RequestBody ScheduleDTO scheduleDTO){
         scheduleService.updateSchedule(scheduleDTO);
         return ResponseEntity.ok().build();
@@ -39,7 +39,7 @@ public class ScheduleController {
     }
 
     @Operation(summary = "스케줄 삭제")
-    @DeleteMapping("/schedule/del")
+    @DeleteMapping("/del")
     public ResponseEntity<Void> deleteSchedule(@RequestParam List<Long> ids){
         scheduleService.deleteSchedule(ids);
         return ResponseEntity.noContent().build();

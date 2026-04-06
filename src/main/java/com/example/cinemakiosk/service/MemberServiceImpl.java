@@ -31,10 +31,9 @@ public class MemberServiceImpl implements MemberService{
      * @param memberDTO 회원 DTO
      */
     @Override
-    public void createMember(MemberDTO memberDTO) { // TODO 회원가입이 쉽기떄문에 일정 기간이 지나면 삭제 되는 기능 있으면 좋을듯
+    public void createMember(MemberDTO memberDTO) {
         if (memberRepository.existsByPhone(memberDTO.getPhone())) {
-            log.warn("createMember... 회원 존재함 생성 불가능");
-            throw new IllegalStateException();
+            throw new IllegalStateException("회원 존재함 생성 불가능");
         }
 
         MemberDTO dto = MemberDTO.builder()
@@ -57,14 +56,12 @@ public class MemberServiceImpl implements MemberService{
         // 회원 정보 존재하지 않을 경우
         MemberEntity member = memberRepository.findById(pointHistoryDTO.getPhone()).orElse(null);
         if (member == null) {
-            log.error("pointHistoryCreate... 등록된 회원 정보가 존재하지 않습니다");
-            throw new NoSuchElementException();
+            throw new NoSuchElementException("등록된 회원 정보가 존재하지 않습니다");
         }
 
         // 잔여포인트 보다 사용금액이 더 많으면 예외처리
         if (pointHistoryDTO.getAmountPoint() > member.getPoint()) {
-            log.error("pointHistoryCreate... 포인트 부족");
-            throw new IllegalStateException();
+            throw new IllegalStateException("포인트 부족");
         }
 
         // 타입별 적립 / 사용
@@ -107,20 +104,17 @@ public class MemberServiceImpl implements MemberService{
 
         // 해당 내역이 이 결제의 것인지 검증 (결제내역의 PK를 가져와 포인트내역의 PK와 비교함)
         if (!pointHistory.getPaymentDetailsEntity().getId().equals(pointHistoryDTO.getPaymentId())) {
-            log.error("pointHistoryCancel... 결제 내역 불일치");
-            throw new NoSuchElementException();
+            throw new NoSuchElementException("결제 내역 불일치");
         }
 
         // 이미 환불된 내역 체크 (해당 포인트 내역에서 PK를 조회 했는데 환불 타입이 있다면 이미 환불처리)
         if (pointHistory.getType() == Type.REFUND_EARN || pointHistory.getType() == Type.REFUND_USE) {
-            log.warn("pointHistoryCancel... 이미 환불처리된 내역");
-            throw new IllegalStateException();
+            throw new IllegalStateException("이미 환불처리된 내역");
         }
 
         // 음수 예외처리
         if (pointHistoryDTO.getType() == Type.USE && member.getPoint() == 0) {
-            log.warn("pointHistoryCancel... 잔여 포인트 없음");
-            throw new IllegalStateException();
+            throw new IllegalStateException("잔여 포인트 없음");
         }
 
         // 타입이 EARN일 경우 REFUND_EARN 아니면 REFUND_USE

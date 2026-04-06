@@ -30,8 +30,7 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
     @Override
     public void createBonusPolicy(BonusPolicyDTO bonusPolicyDTO) {
         if (bonusPolicyRepository.existsByPolicyNameAndEndAtAfter(bonusPolicyDTO.getPolicyName(), LocalDateTime.now())) {
-            log.error("createBonusPolicy... 활성화된 정책중 이름이 중복됩니다 추가 / 수정 실패");
-            throw new IllegalStateException();
+            throw new IllegalStateException("createBonusPolicy... 활성화된 정책중 이름이 중복됩니다 추가 / 수정 실패");
         }
 
         BonusPolicyDTO dto = BonusPolicyDTO.builder()
@@ -54,7 +53,7 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
     public void finishActivation(Long id) { // TODO batch 사용으로 만료시간이 되면 자동 비활성화로 변경 해야함
         BonusPolicyEntity bonusPolicyEntity = bonusPolicyRepository.findById(id).orElseThrow();
         if (LocalDateTime.now().isAfter(bonusPolicyEntity.getEndAt()) || !bonusPolicyEntity.getActivation()) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("적립정책이 이미 비활성화임 종료 지정 불가능");
         }
 
         bonusPolicyEntity.changeEndAt(LocalDateTime.now().withHour(23).withMinute(59).withSecond(59));
@@ -63,8 +62,7 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
     }
 
     /**
-     * 적립정책 만료여부 (Controller는 Map사용하자)
-     *
+     * 적립정책 만료여부
      * @param request 요청 DTO
      */
     @Override

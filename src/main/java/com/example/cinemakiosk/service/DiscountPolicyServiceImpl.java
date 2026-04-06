@@ -38,8 +38,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     public void createDiscountPolicy(DiscountPolicyDTO discountPolicyDTO) {
         // 현재 활성화 된 할인정책 이름 중복 방지
         if (discountPolicyRepository.existsByPolicyNameAndEndAtAfter(discountPolicyDTO.getPolicyName(), LocalDateTime.now())) {
-            log.error("이미 사용하는 정책 이름입니다. {}", discountPolicyDTO.getPolicyName());
-            throw new IllegalStateException();
+            throw new IllegalStateException("이미 사용하는 정책 이름입니다.");
         }
         DiscountPolicyDTO dto = DiscountPolicyDTO.builder()
                 .id(discountPolicyDTO.getId())
@@ -86,8 +85,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     public void finishActivation(Long id) { // TODO batch 사용으로 만료시간이 되면 자동 비활성화로 변경 해야함
         DiscountPolicyEntity discountPolicyEntity = discountPolicyRepository.findById(id).orElseThrow();
         if (LocalDateTime.now().isAfter(discountPolicyEntity.getEndAt()) || !discountPolicyEntity.isActivation()) {
-            log.error("finishActivation... 이미 비활성화 된 정책입니다. {}", discountPolicyEntity);
-            throw new IllegalStateException();
+            throw new IllegalStateException("이미 비활성화 된 정책입니다.");
         }
 
         discountPolicyEntity.finalDiscountPolicy(LocalDateTime.now().withHour(23).withMinute(59).withSecond(59));
@@ -97,7 +95,6 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
 
     /**
      * 할인 정책 활성화 / 비활성화
-     *
      * @param request
      */
     @Override
@@ -123,8 +120,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     public void createCouponNum(Long policyId) {
         DiscountPolicyEntity policy = discountPolicyRepository.findById(policyId).orElseThrow();
         if (!policy.getId().equals(policyId)) {
-            log.error("createCouponNum... 지정한 할인정책이 없음 발행 X");
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("지정한 할인정책이 없음 발행 X");
         }
 
         String couponNum = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
@@ -141,33 +137,29 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
 
     /**
      * 쿠폰 사용 검증 (정책 기간, 사용여부, 정책에 해당하는 쿠폰, 쿠폰번호)
-     * @param couponDTO 쿠폰 DTO
+     * @param couponNum 쿠폰번호
      * @return 사용 검증 통과면 true, 아니면 false
      */
     @Override
-    public boolean authCoupon(CouponDTO couponDTO) {
-        DiscountPolicyDTO discountPolicyDTO = discountPolicyMapper.checkCoupon(couponDTO.getPolicyId());
+    public boolean authCoupon(String couponNum) {
+        DiscountPolicyDTO discountPolicy = discountPolicyMapper.checkCoupon(couponNum);
         // 정책이 없을 경우 (INNER JOIN을 하였기때문에 정책이 없다면 null)
-        if (discountPolicyDTO == null) {
-            log.error("authCoupon... 정책이 없음");
-            throw new NoSuchElementException();
+        if (discountPolicy == null) {
+            throw new NoSuchElementException("authCoupon... 정책이 없음");
         }
         // 정책이 비활성화 일 경우
-        if (!discountPolicyDTO.isActivation()) {
-            log.error("authCoupon... 정책 비활성화");
-            throw new IllegalStateException();
+        if (!discountPolicy.isActivation()) {
+            throw new IllegalStateException("authCoupon... 정책 비활성화");
         }
         // 할인 정책이 만료된 경우
         LocalDateTime now = LocalDateTime.now();
-        if (!(now.isBefore(discountPolicyDTO.getEndAt()) && now.isAfter(discountPolicyDTO.getStartAt()))) {
-            log.error("authCoupon...정책 만료");
-            throw new IllegalStateException();
+        if (!(now.isBefore(discountPolicy.getEndAt()) && now.isAfter(discountPolicy.getStartAt()))) {
+            throw new IllegalStateException("authCoupon...정책 만료");
         }
-        // 쿠폰 번호와 할인정책이 일치하고 사용여부가 true일경우
         CouponEntity coupon = couponRepository
-                .findByCouponNumAndDiscountPolicyEntityIdAndStatusTrue(couponDTO.getCouponNum(), couponDTO.getPolicyId()).orElse(null);
+                .findByCouponNumAndDiscountPolicyEntityIdAndStatusTrue(couponNum, discountPolicy.getId()).orElse(null);
         if (coupon == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("쿠폰 번호와 할인정책이 일치하고 사용여부가 true 인 녀셕 없음");
         }
         return true; // 위 조건문 다 통과 사용가능
     }
@@ -186,8 +178,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
 
     /**
      * 지정한 여러건 쿠폰 상태 변경
-     *
-     * @param request
+     * @param request 요청 DTO
      */
     @Override
     public void updateStatusCoupons(CouponStatusRequest request) {

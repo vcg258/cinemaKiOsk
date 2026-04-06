@@ -68,11 +68,7 @@ class DiscountPolicyEntityServiceImplTest {
 
     @Test
     public void authCouponTest() {
-        CouponDTO couponDTO = CouponDTO.builder()
-                .couponNum("8930bc2b36dd")
-                .policyId(1L)
-                .build();
-        boolean result = discountPolicyService.authCoupon(couponDTO);
+        boolean result = discountPolicyService.authCoupon("8930bc2b36dd");
         log.info("result: {}", result);
     }
 

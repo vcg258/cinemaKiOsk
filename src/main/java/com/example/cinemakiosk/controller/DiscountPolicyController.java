@@ -21,7 +21,7 @@ public class DiscountPolicyController {
     private final DiscountPolicyService discountPolicyService;
 
     @Operation(summary = "할인정책 등록")
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<Void> addDiscountPolicies(@RequestBody DiscountPolicyDTO discountPolicyDTO) {
         discountPolicyService.createDiscountPolicy(discountPolicyDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build(); // 생성
@@ -58,6 +58,12 @@ public class DiscountPolicyController {
     public ResponseEntity<Void> addCoupon(@PathVariable Long policyId) { // TODO 따로 DTO를 넣자는 의견이 있음 일단 보류
         discountPolicyService.createCouponNum(policyId);
         return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 생성
+    }
+
+    @Operation(summary = "쿠폰 검증")
+    @PostMapping("/coupon/auth")
+    public ResponseEntity<Boolean> authCoupon(@RequestParam String couponNum) {
+        return ResponseEntity.ok(discountPolicyService.authCoupon(couponNum));
     }
 
     @Operation(summary = "쿠폰 전체 조회")
