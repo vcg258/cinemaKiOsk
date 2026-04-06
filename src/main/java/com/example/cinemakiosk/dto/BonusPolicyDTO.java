@@ -16,7 +16,7 @@ public class BonusPolicyDTO {
     private String policyName;       // 정책 이름
     private Long giveValue;          // 적립 비율
     private LocalDateTime startAt;  //	시작일
-    private LocalDateTime finishedAt;//	만료일
+    private LocalDateTime endAt;//	만료일
     private Boolean activation;      // 활성화 여부(중요할까?)
 
     /**
@@ -30,7 +30,7 @@ public class BonusPolicyDTO {
                 .policyName(bonusPolicyDTO.getPolicyName())
                 .giveValue(bonusPolicyDTO.getGiveValue())
                 .startAt(bonusPolicyDTO.getStartAt())
-                .endAt(bonusPolicyDTO.getFinishedAt())
+                .endAt(bonusPolicyDTO.getEndAt())
                 .activation(bonusPolicyDTO.getActivation())
                 .build();
     }
@@ -46,7 +46,7 @@ public class BonusPolicyDTO {
                 .policyName(bonusPolicyDTO.getPolicyName())
                 .giveValue(bonusPolicyDTO.getGiveValue())
                 .startAt(bonusPolicyDTO.getStartAt())
-                .finishedAt(bonusPolicyDTO.getFinishedAt())
+                .endAt(bonusPolicyDTO.getEndAt())
                 .activation(bonusPolicyDTO.getActivation())
                 .build();
     }

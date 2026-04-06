@@ -47,4 +47,8 @@
                dp.start_at
         from cinema_kiosk.discount_policy dp
     </select>
+
+    <resultMap id="discountVO" type="com.example.cinemakiosk.vo.DiscountPolicyVO" autoMapping="true">
+        <id property="id" column="id"/>
+    </resultMap>
 </mapper>

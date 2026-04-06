@@ -108,7 +108,7 @@ VALUES (1, 'a01', 1),
        (23, 'a03', 6),
        (24, 'a04', 6);
 
-insert ignore into payment_details (id, cost, status, time, use_point, bonus_policy_id, coupon_num, reservation_id)
+insert ignore into payment_details (id, cost, status, create_at, use_point, bonus_policy_id, coupon_num, reservation_id)
 values ('11111111-1111-1111-1111-111111111111', 50000, 'PAY', current_timestamp, 0, 1, null, 1),
        ('22222222-2222-2222-2222-222222222222', 50000, 'PAY', current_timestamp, 0, 1, null, 2),
        ('33333333-3333-3333-3333-333333333333', 50000, 'PAY', current_timestamp, 0, 1, null, 3),

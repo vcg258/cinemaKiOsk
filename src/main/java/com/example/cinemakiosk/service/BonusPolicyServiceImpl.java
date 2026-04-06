@@ -37,7 +37,7 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
                 .policyName(bonusPolicyDTO.getPolicyName())
                 .giveValue(bonusPolicyDTO.getGiveValue())
                 .startAt(bonusPolicyDTO.getStartAt())
-                .finishedAt(bonusPolicyDTO.getFinishedAt())
+                .endAt(bonusPolicyDTO.getEndAt())
                 .activation(bonusPolicyDTO.getActivation())
                 .build();
 

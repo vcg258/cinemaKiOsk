@@ -57,7 +57,7 @@ public class MovieEntity{
     @Column(name = "end_at")
     private LocalDate endAt;
 
-    @Column(name = "create_at", columnDefinition = "DEFAULT NOW()")
+    @Column(name = "create_at", columnDefinition = "DATE DEFAULT NOW()")
     private LocalDate createAt;
 
     @OnDelete(action= OnDeleteAction.CASCADE)

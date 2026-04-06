@@ -70,7 +70,7 @@ public class BonusPolicyEntity{
                 .policyName(bonusPolicyEntity.getPolicyName())
                 .giveValue(bonusPolicyEntity.getGiveValue())
                 .startAt(bonusPolicyEntity.getStartAt())
-                .finishedAt(bonusPolicyEntity.getEndAt())
+                .endAt(bonusPolicyEntity.getEndAt())
                 .activation(bonusPolicyEntity.getActivation())
                 .build();
     }
