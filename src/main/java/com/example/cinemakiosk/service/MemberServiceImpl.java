@@ -79,8 +79,8 @@ public class MemberServiceImpl implements MemberService{
 
         log.info("pointHistoryCreate... 포인트 업데이트 내역 추가 : {}", dto);
 
-//        PointHistoryEntity pointHistory = pointHistoryRepository.save(PointHistoryDTO.toEntity(dto)); // 포인트 내역 추가
-//        log.info("pointHistoryCreate... 포인트 업데이트 내역 : {}", pointHistory);
+        PointHistoryEntity pointHistory = pointHistoryRepository.save(PointHistoryDTO.toEntity(dto)); // 포인트 내역 추가
+        log.info("pointHistoryCreate... 포인트 업데이트 내역 : {}", pointHistory);
 
         member.changePoint(amount);
 //        memberRepository.save(member); // 회원 잔여포인트 업데이트
