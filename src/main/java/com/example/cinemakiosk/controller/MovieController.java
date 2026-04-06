@@ -2,6 +2,7 @@ package com.example.cinemakiosk.controller;
 
 import com.example.cinemakiosk.dto.MovieDTO;
 import com.example.cinemakiosk.service.MovieService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.coobird.thumbnailator.Thumbnailator;
@@ -34,44 +35,6 @@ import java.util.UUID;
 public class MovieController {
 
 
-
-
-
-    /*
-    swagger 사용법 (null유무)
-     */
-
-    /* upload
-    1. movieId null
-
-     */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // 이미지 저장 경로
     @Value("${my.upload.path}")
     private String uploadPath;
@@ -79,84 +42,82 @@ public class MovieController {
     private final MovieService movieService;
 
 
-    /**
-     * 영화 등록
-     * @param movieDTO 영화 정보
-     */
+
+    // 영화등록
+    @Operation(summary = "영화등록",
+            description = "1. movieId = 0 지우기 (비우기)\n 2. image = 사진 안올렸다면 Send empty value 체크 해제\n" +
+                    "3. posterPath = tmdb/search 에서 찾은 posterPath 입력\n" +
+                    "- image, posterPath 둘다 업로드시 posterPath 이미지로 저장")
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void upload(@ModelAttribute MovieDTO movieDTO) {
+    public ResponseEntity<Void> upload(@ModelAttribute MovieDTO movieDTO) {
         log.info("upload post...");
         movieService.insertMovie(movieDTO);
+        return ResponseEntity.ok().build();
     }
 
 
-    /**
-     * 영화 수정
-     * @param movieDTO
-     */
+
+    // 영화수정
+    @Operation(summary = "영화수정",
+            description = "1. 수정할 영화의 movieId 입력\n 2. image = 사진 안올렸다면 Send empty value 체크 해제")
     @PostMapping(value = "/modify", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void modify(@ModelAttribute MovieDTO movieDTO) {
+    public ResponseEntity<Void> modify(@ModelAttribute MovieDTO movieDTO) {
         log.info("Modify post...");
         movieService.modify(movieDTO);
+        return ResponseEntity.ok().build();
     }
 
 
-
-    /**
-     * 영화 삭제
-     * @param movieId 영화 PK
-     */
+    // 영화삭제
+    @Operation(summary = "영화삭제",
+            description = "삭제할 영화의 movieId 입력")
     @GetMapping("/remove")
-    public void remove(@RequestParam Long movieId) {
+    public ResponseEntity<Void> remove(@RequestParam Long movieId) {
         log.info("Remove post...");
         movieService.remove(movieId);
+        return ResponseEntity.ok().build();
+
     }
 
 
 
 
-    /**
-     * 상영중(상영기간중)인 영화 조회
-     * @return 현재 상영중인 영화
-     */
+
+    // 상영중인 영화 조회
+    @Operation(summary = "상영중인 영화 조회 (고객용)")
     @GetMapping("/all")
-    public List<MovieDTO> readAll() {
+    public ResponseEntity<List<MovieDTO>> readAll() {
         log.info("screening_period get...");
 
         List<MovieDTO> movieDTOList = movieService.getScreeningPeriodAllMovies();
         log.info("movieDTOList: {}", movieDTOList);
-        return movieDTOList;
+        return ResponseEntity.ok(movieDTOList);
     }
 
-    /**
-     * 전체 영화 조회
-     * @param model
-     * @return 현재 db에 저장된 모든 영화
-     */
+    // 전체 영화 조회
+    @Operation(summary = "전체영화 조회 (관리자용)")
     @GetMapping("/realAll")
-    public List<MovieDTO> ManagerReadAll(Model model) {
+    public ResponseEntity<List<MovieDTO>> ManagerReadAll() {
         log.info("read get...");
         List<MovieDTO> movieDTOList = movieService.getAllMovies();
         log.info("movieDTOList: {}", movieDTOList);
-        return movieDTOList;
+        return ResponseEntity.ok(movieDTOList);
     }
 
 
-
-
-
-
     // 영화 사진 반환
-    @GetMapping("/bigImage/{fileName}")
-    public ResponseEntity<Resource> bigImage(@PathVariable String fileName) {
+    @Operation(summary = "영화 사진 반환",
+            description = "1. 영화 제목 입력시 영화 이미지 반환\n 2. 맨 앞에 s_ 붙일 시 썸네일 이미지 반환\n - 영화 제목이 중복일시 에러")
+    @GetMapping("/{titleName}")
+    public ResponseEntity<Resource> image(@PathVariable String titleName) {
         try {
             File directory = new File(uploadPath);
 
-            String title = fileName;
+            String title = titleName;
 
             // 썸네일 요청일시
-            if (fileName.startsWith("s_")) {
-                title = fileName.substring(2);
+            if (titleName.startsWith("s_")) {
+                title = titleName.substring(2);
             }
             // 얻은 영화 제목으로 movieId 찾기
             MovieDTO movieDTO = movieService.getMovieByTitle(title);
@@ -166,7 +127,7 @@ public class MovieController {
             File[] files = directory.listFiles((dir, name) -> {
                 int lastDot = name.lastIndexOf('.');
                 // 썸네일 요청일시
-                if (fileName.startsWith("s_")){
+                if (titleName.startsWith("s_")){
                     return name.substring(0, lastDot).equals(String.valueOf("s_" + movieId));
                 }
                 return name.substring(0, lastDot).equals(String.valueOf(movieId));
@@ -181,7 +142,7 @@ public class MovieController {
             Resource resource = new FileSystemResource(targetFile);
 
             HttpHeaders headers = new HttpHeaders();
-            // 실제 파일의 확장자에 맞는 MIME 타입을 동적으로 추출 (jpg, png, webp같은)
+            // 실제 파일의 확장자에 맞는 MIME 타입을 추출 (jpg, png, webp같은)
             headers.add("Content-Type", Files.probeContentType(targetFile.toPath()));
 
             // 확장자와 파일반환

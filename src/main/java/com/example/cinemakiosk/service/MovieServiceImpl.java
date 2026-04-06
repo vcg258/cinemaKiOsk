@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 
@@ -39,7 +40,11 @@ public class MovieServiceImpl implements MovieService {
     @Value("${my.upload.path}")
     private String uploadPath;
 
-    // 등록
+
+    /**
+     * 영화 등록
+     * @param movieDTO 영화 정보
+     */
     @Override
     public void insertMovie(MovieDTO movieDTO) {
         log.info("movieDTO: {} ", movieDTO);
@@ -57,13 +62,21 @@ public class MovieServiceImpl implements MovieService {
     }
 
 
-    // 수정
+    /**
+     * 영화 수정
+     * @param movieDTO
+     */
     @Override
     public void modify(MovieDTO movieDTO) {
 
+        if (movieDTO.getMovieId() == null) {
+            throw new IllegalArgumentException("movieId가 null입니다.");
+        }
+
         // 1. 기존 데이터 들고옴
         MovieEntity movieEntity = movieRepository.findById(movieDTO.getMovieId())
-                .orElseThrow();
+                .orElseThrow(() -> new NoSuchElementException("movieId를 찾을 수 없습니다"));
+
 
         // 2. 전체 수정
         movieEntity.update(movieDTO);
@@ -90,7 +103,7 @@ public class MovieServiceImpl implements MovieService {
             try {
                 saveImageFromDTO(movieDTO, filename);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException("이미지 저장에 실패했습니다: " + filename);
             }
 
 
@@ -129,11 +142,20 @@ public class MovieServiceImpl implements MovieService {
 
 
 
-    // 삭제
+
+    /**
+     * 영화 삭제
+     * @param movieId 영화 PK
+     */
     @Override
     public void remove(long movieId) {
+        MovieEntity movieEntity = movieRepository.findById(movieId)
+                .orElseThrow(() -> new NoSuchElementException("movieId를 찾을 수 없습니다"));
+        String filename = movieEntity.getMovieId() + ".jpg";  // movieId로 파일
+
+
         movieRepository.deleteById(movieId);
-        MovieEntity movieEntity = movieRepository.findById(movieId).orElseThrow();
+
     }
 
 
@@ -142,9 +164,8 @@ public class MovieServiceImpl implements MovieService {
     // 상세 조회
     @Override
     public MovieDTO getMovieById(long movieId) {
-        Optional<MovieEntity> optionalMovieEntity = movieRepository.findById(movieId);
-        MovieEntity movieEntity = optionalMovieEntity.orElseThrow();
-        MovieDTO movieDTO = MovieEntity.toDTO(movieEntity);
+        MovieEntity optionalMovieEntity = movieRepository.findById(movieId).orElseThrow();
+        MovieDTO movieDTO = MovieEntity.toDTO(optionalMovieEntity);
         return movieDTO;
     }
 
@@ -158,7 +179,11 @@ public class MovieServiceImpl implements MovieService {
         return movieDTO;
     }
 
-    //전체 조회
+
+    /**
+     * 전체 영화 조회
+     * @return 현재 db에 저장된 모든 영화
+     */
     @Override
     public List<MovieDTO> getAllMovies() {
         List<MovieEntity> movieEntityList = movieRepository.findAll();
@@ -171,7 +196,10 @@ public class MovieServiceImpl implements MovieService {
         return movieDTOList;
     }
 
-    // 상영중인 영화 전체 조회
+    /**
+     * 상영중(상영기간중)인 영화 조회
+     * @return 현재 상영중인 영화
+     */
     @Override
     public List<MovieDTO> getScreeningPeriodAllMovies() {
         List<MovieEntity> movieEntityList = movieRepository.findAll();

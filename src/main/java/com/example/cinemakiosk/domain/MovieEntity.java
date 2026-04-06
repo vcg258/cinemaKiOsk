@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.modelmapper.internal.bytebuddy.implementation.bind.annotation.Default;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -50,10 +51,10 @@ public class MovieEntity{
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "start_at", nullable = false)
+    @Column(name = "start_at")
     private LocalDate startAt;
 
-    @Column(name = "end_at", nullable = false)
+    @Column(name = "end_at")
     private LocalDate endAt;
 
     @Column(name = "create_at")
