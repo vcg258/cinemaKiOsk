@@ -8,8 +8,9 @@ import java.util.List;
 
 public interface TmdbService {
 
-    // 이미지 url 다운로드 후 저장
-    void downloadAndSavePoster(String posterPath, String title) throws IOException;
+
+    // 인기 영화 목록 (검색없을 시 기본값)
+    public List<TmdbMovieDTO> getPopularMovies(int page);
 
     // 검색 목록
     // id, title, poster(image url)
@@ -18,5 +19,8 @@ public interface TmdbService {
     // 선택한 영화 ID로 상세조회
     // runtime, genres
     MovieDTO searchMovieDetail(Long tmdbId);
+
+    // 이미지 url 다운로드
+    void downloadAndSavePoster(String posterPath, String title) throws IOException;
 
 }

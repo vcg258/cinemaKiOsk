@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.modelmapper.internal.bytebuddy.implementation.bind.annotation.Default;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,7 +30,7 @@ public class MovieEntity{
     @Column(name = "movie_id", columnDefinition = "BIGINT UNSIGNED")
     private Long movieId;
 
-    @Column(name = "title", nullable = false, length = 100)
+    @Column(name = "title", length = 100, nullable = false)
     private String title;
 
     @Column(name = "genre", length = 50)
@@ -41,7 +42,7 @@ public class MovieEntity{
     @Column(name = "runtime", columnDefinition = "BIGINT UNSIGNED", nullable = false)
     private Long runtime;
 
-    @Column(name = "director", length = 50, nullable = false)
+    @Column(name = "director", length = 50)
     private String director;
 
     @Column(name = "actors", length = 255)
@@ -56,8 +57,8 @@ public class MovieEntity{
     @Column(name = "end_at")
     private LocalDate endAt;
 
-    @Column(name = "create_at", updatable = false)
-    private LocalDateTime createAt;
+    @Column(name = "create_at", columnDefinition = "DEFAULT NOW()")
+    private LocalDate createAt;
 
     @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "movieEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
@@ -68,7 +69,7 @@ public class MovieEntity{
     public void update(MovieDTO dto) {
         this.title = dto.getTitle();
         this.genre = dto.getGenre();
-        this.rating = Rating.fromConversion(dto.getRating());
+        this.rating = dto.getRating();
         this.runtime = dto.getRuntime();
         this.director = dto.getDirector();
         this.actors = dto.getActors();
@@ -92,7 +93,7 @@ public class MovieEntity{
                 .movieId(movieEntity.getMovieId())
                 .title(movieEntity.getTitle())
                 .genre(movieEntity.getGenre())
-                .rating(movieEntity.getRating().getConversion())
+                .rating(movieEntity.getRating())
                 .runtime(movieEntity.getRuntime())
                 .director(movieEntity.getDirector())
                 .actors(movieEntity.getActors())

@@ -39,3 +39,5 @@ VALUES (1,CURRENT_TIMESTAMP, date_add(current_timestamp,interval 200 minute), 1,
 -- member 등록
 insert ignore  into member (phone, create_at, point)
     VALUE ('01088771113', current_timestamp, 0)
+
+

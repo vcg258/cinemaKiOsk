@@ -2,16 +2,11 @@ package com.example.cinemakiosk.dto;
 
 import com.example.cinemakiosk.domain.MovieEntity;
 import com.example.cinemakiosk.domain.enums.Rating;
-import com.example.cinemakiosk.domain.ScheduleEntity;
 import com.example.cinemakiosk.vo.MovieVO;
-import com.example.cinemakiosk.vo.ScheduleVO;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
@@ -23,20 +18,17 @@ public class MovieDTO {
     private Long movieId;
     private String title;
     private String genre;
-    private String rating;      // ALL / 12 / 15 / 19
+    private Rating rating;      // ALL / 12 / 15 / 19
     private Long runtime;
     private String director;
     private String actors;
     private String description;
     private LocalDate startAt;
     private LocalDate endAt;
-    private LocalDateTime createAt;
+    private LocalDate createAt;
     private MultipartFile image;
+    private String posterPath;
 
-
-    public void clearImage() {
-        this.image = null;
-    }
 
     /**
      * DTO -> Entity
@@ -49,7 +41,7 @@ public class MovieDTO {
                 .movieId(movieDTO.getMovieId())
                 .title(movieDTO.getTitle())
                 .genre(movieDTO.getGenre())
-                .rating(Rating.fromConversion(movieDTO.getRating()))
+                .rating(movieDTO.getRating())
                 .runtime(movieDTO.getRuntime())
                 .director(movieDTO.getDirector())
                 .actors(movieDTO.getActors())
