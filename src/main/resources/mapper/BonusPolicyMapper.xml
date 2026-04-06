@@ -4,4 +4,21 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.cinemakiosk.mapper.BonusPolicyMapper">
 
+    <resultMap id="bonusVO" type="com.example.cinemakiosk.vo.BonusPolicyVO" autoMapping="true">
+        <id property="id" column="id"/>
+        <result property="createAt" column="start_at"/>
+        <result property="finishedAt" column="end_at"/>
+    </resultMap>
+
+    <select id="selectOneById" resultMap="bonusVO">
+        select bp.id,
+               bp.activation,
+               bp.end_at,
+               bp.give_value,
+               bp.policy_name,
+               bp.start_at
+
+        from cinema_kiosk.bonus_policy bp
+        where bp.id=#{no}
+    </select>
 </mapper>

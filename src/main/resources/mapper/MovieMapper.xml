@@ -3,18 +3,31 @@
         PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.cinemakiosk.mapper.MovieMapper">
-    <select id="findBySeveral" resultType="com.example.cinemakiosk.dto.MovieDTO">
-        SELECT * FROM movie
-        <where>
-            <if test="keyWord != null and keyWord != ''">
-                AND title LIKE CONCAT('%', #{keyWord}, '%')
-            </if>
-            <if test="genre != null and genre != ''">
-                AND genre = #{genre}
-            </if>
-            <if test="rating != null">
-                AND rating = #{rating}
-            </if>
-        </where>
+<!--    <select id="findBySeveral" resultType="com.example.cinemakiosk.dto.MovieDTO">-->
+<!--        SELECT * FROM movie-->
+<!--        <where>-->
+<!--            <if test="keyWord != null and keyWord != ''">-->
+<!--                AND title LIKE CONCAT('%', #{keyWord}, '%')-->
+<!--            </if>-->
+<!--            <if test="genre != null and genre != ''">-->
+<!--                AND genre = #{genre}-->
+<!--            </if>-->
+<!--            <if test="rating != null">-->
+<!--                AND rating = #{rating}-->
+<!--            </if>-->
+<!--        </where>-->
+<!--    </select>-->
+    <select id="selectOneById" resultMap="movieVO">
+        select * from cinema_kiosk.movie where movie_id = #{no};
     </select>
+
+    <select id="selectAll" resultMap="movieVO">
+        select * from cinema_kiosk.movie;
+    </select>
+
+    <resultMap id="movieVO" type="com.example.cinemakiosk.vo.MovieVO" autoMapping="true">
+        <id property="movieId" column="movie_id"/>
+    </resultMap>
+
+
 </mapper>

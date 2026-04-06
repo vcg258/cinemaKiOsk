@@ -1,9 +1,12 @@
 package com.example.cinemakiosk.mapper;
 
+import com.example.cinemakiosk.vo.ScheduleVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDateTime;
+
+import java.util.List;
 
 @Mapper
 public interface ScheduleMapper {
@@ -13,4 +16,9 @@ public interface ScheduleMapper {
     // 위 메서드와 동일한데 자기자신을 제외하고 검증하는 메서드 (UPDATE 전용)
     int checkScheduleOverlapExcludeSelf(@Param("no") Long no, @Param("startAt") LocalDateTime startAt,
                                         @Param("endAt") LocalDateTime endAt, @Param("scheduleId") Long scheduleId);
+    //id를 이용해서 스케쥴을 조회
+    ScheduleVO selectOneById(Long no);
+    //스케줄을 전체 조회
+    List<ScheduleVO> selectAll();
+
 }

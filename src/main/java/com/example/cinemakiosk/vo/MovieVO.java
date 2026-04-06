@@ -2,17 +2,15 @@ package com.example.cinemakiosk.vo;
 
 import com.example.cinemakiosk.domain.enums.Rating;
 import com.example.cinemakiosk.dto.MovieDTO;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Getter
 @Builder
 @ToString
-@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
 public class MovieVO {
 
     private final Long movieId;         // 영화 인덱스

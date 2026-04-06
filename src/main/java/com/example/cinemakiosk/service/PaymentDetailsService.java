@@ -10,7 +10,7 @@ public interface PaymentDetailsService {
     public void create(PaymentDetailsDTO paymentDetailsDTO);
 
     //결제 내역 조회
-    public PaymentDetailsDTO read(Long no);
+    public PaymentDetailsDTO read(String uuid);
 
     //결제 내역 전체조회
     public List<PaymentDetailsDTO> readAll();
@@ -19,5 +19,5 @@ public interface PaymentDetailsService {
     public void update(PaymentDetailsDTO paymentDetailsDTO);
 
     //환불 진행.
-    public void cancel(Long no);
+    public void cancel(String uuid);
 }

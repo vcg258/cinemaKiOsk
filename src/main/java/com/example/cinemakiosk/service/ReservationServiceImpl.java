@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
@@ -52,29 +53,36 @@ public class ReservationServiceImpl implements ReservationService {
         ReservationDetailsVO reservationDetailsVO = reservationDetailsMapper.selectOneById(no);
         log.info("아니 이거 뭐야 먼저 말좀 : {} ",reservationDetailsVO);
         return ReservationDetailsVO.toDTO(reservationDetailsVO);
-
     }
 
     //예매 내역 전체 조회
     @Override
     public List<ReservationDetailsDTO> readAll(){
-        return List.of();
+        List<ReservationDetailsVO> reservationDetailsVOS = reservationDetailsMapper.selectAll();
+        List<ReservationDetailsDTO> reservationDetailsDTOS = new ArrayList<>();
+
+        for (ReservationDetailsVO reservationVo : reservationDetailsVOS){
+            reservationDetailsDTOS.add(ReservationDetailsVO.toDTO(reservationVo));
+        }
+
+        return reservationDetailsDTOS;
     }
 
     @Override
     public List<String> readAllSeatByScheduleId(Long scheduleId) {
-        return List.of();
+        return reservationSeatMapper.selectAllSeatByScheduleId(scheduleId);
     }
 
     //예매 내역 변경.
     @Override
     public void update(ReservationDetailsDTO reservationDetailsDTO){
-
+        ReservationDetailsEntity reservationDetailsEntity = ReservationDetailsDTO.toEntity(reservationDetailsDTO);
+        reservationDetailsRepository.save(reservationDetailsEntity);
     }
 
-    //유효기간 지난 예매 삭제
+    //환불의 경우 예매 좌석 삭제 처리로 자리 잡을 수 있게 해줌.
     @Override
     public void delete(Long no){
-
+        reservationDetailsRepository.deleteById(no);
     }
 }

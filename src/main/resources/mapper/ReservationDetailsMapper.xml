@@ -4,31 +4,127 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.cinemakiosk.mapper.ReservationDetailsMapper">
 
-    <select id="selectOneById" resultMap="reservationDetailMap">
-        SELECT
-            rd.id,
-            rd.phone,
-            rd.schedule_id,
-            rd.create_at,
-            rs.id AS rs_id, -- 중복 방지를 위해 좌석 ID에 별칭 부여
-            rs.reservation_id,
-            rs.seat_number
-        FROM reservation_details rd
-                 LEFT JOIN reservation_seat rs ON rd.id = rs.reservation_id
-        WHERE rd.id = #{no}
+    <resultMap id="reservationVO" type="com.example.cinemakiosk.vo.ReservationDetailsVO">
+        <id property="id" column="id"/>
+        <result property="reservationTime" column="create_at"/>
+        <association property="schedule"
+                     resultMap="com.example.cinemakiosk.mapper.ScheduleMapper.scheduleVO"
+                     columnPrefix="sc_"
+        />
+        <association property="phone"
+                     resultMap="com.example.cinemakiosk.mapper.MemberMapper.MemberVO"
+                     columnPrefix="mb_"
+        />
+        <collection property="seats"
+                    resultMap="com.example.cinemakiosk.mapper.ReservationSeatMapper.seatListVO"
+                    columnPrefix="st_"
+        />
+    </resultMap>
+
+    <select id="selectOneById" resultMap="reservationVO">
+
+        select rd.id,
+               rd.phone,
+               rd.create_at,
+               rd.schedule_id,
+
+               sc.id             as sc_id,
+               sc.movie_id       as sc_movie_id,
+               sc.no             as sc_no,
+               sc.start_at       as sc_start_at,
+               sc.end_at         as sc_end_at,
+
+               mv.movie_id       AS sc_mv_movie_id,
+               mv.title          AS sc_mv_title,
+               mv.runtime        AS sc_mv_runtime,
+               mv.actors       AS sc_mv_actors,
+               mv.director     AS sc_mv_director,
+               mv.rating       AS sc_mv_rating,
+               mv.genre        AS sc_mv_genre,
+               mv.description  AS sc_mv_description,
+               mv.create_at    AS sc_mv_create_at,
+               mv.start_at     AS sc_mv_start_at,
+               mv.end_at       AS sc_mv_end_at,
+
+               th.no             AS sc_th_no,
+               th.policy_id      AS sc_th_policy_id,
+               th.cleanup_time   AS sc_th_cleanup_time,
+
+               sp.policy_id      AS sc_th_sp_policy_id,
+               sp.name           AS sc_th_sp_name,
+               sp.cost           AS sc_th_sp_cost,
+
+
+               mb.phone          as mb_phone,
+               mb.create_at      as mb_create_at,
+               mb.point          as mb_point,
+
+
+               st.id             as st_id,
+               st.reservation_id as st_reservation_id,
+               st.seat_number    as st_seat_number
+
+        from cinema_kiosk.reservation_details rd
+                 inner join cinema_kiosk.schedule sc on rd.schedule_id = sc.id
+                 INNER JOIN cinema_kiosk.movie mv ON sc.movie_id = mv.movie_id
+                 INNER JOIN cinema_kiosk.theater th ON sc.no = th.no
+                 INNER JOIN cinema_kiosk.seat_policy sp ON th.policy_id = sp.policy_id
+                 inner join cinema_kiosk.member mb on rd.phone = mb.phone
+                 inner join cinema_kiosk.reservation_seat st on rd.id = st.reservation_id
+
+        where rd.id = #{no};
     </select>
 
-    <resultMap id="reservationDetailMap" type="com.example.cinemakiosk.vo.ReservationDetailsVO" autoMapping="true">
-        <id property="id" column="id"/>
-<!--        <association property="schedule">-->
-<!--            -->
-<!--        </association>-->
-<!--        <association property="schedule">-->
+    <select id="selectAll" resultMap="reservationVO">
+        select rd.id,
+               rd.phone,
+               rd.create_at,
+               rd.schedule_id,
 
-<!--        </association>-->
-        <collection property="seats" ofType="com.example.cinemakiosk.vo.ReservationSeatVO" autoMapping="true">
-            <id property="id" column="rs_id"/>
+               sc.id             as sc_id,
+               sc.movie_id       as sc_movie_id,
+               sc.no             as sc_no,
+               sc.start_at       as sc_start_at,
+               sc.end_at         as sc_end_at,
 
-        </collection>
-    </resultMap>
+               mv.movie_id       AS sc_mv_movie_id,
+               mv.title          AS sc_mv_title,
+               mv.runtime        AS sc_mv_runtime,
+               mv.actors       AS sc_mv_actors,
+               mv.director     AS sc_mv_director,
+               mv.rating       AS sc_mv_rating,
+               mv.genre        AS sc_mv_genre,
+               mv.description  AS sc_mv_description,
+               mv.create_at    AS sc_mv_create_at,
+               mv.start_at     AS sc_mv_start_at,
+               mv.end_at       AS sc_mv_end_at,
+
+               th.no             AS sc_th_no,
+               th.policy_id      AS sc_th_policy_id,
+               th.cleanup_time   AS sc_th_cleanup_time,
+
+               sp.policy_id      AS sc_th_sp_policy_id,
+               sp.name           AS sc_th_sp_name,
+               sp.cost           AS sc_th_sp_cost,
+
+
+               mb.phone          as mb_phone,
+               mb.create_at      as mb_create_at,
+               mb.point          as mb_point,
+
+
+               st.id             as st_id,
+               st.reservation_id as st_reservation_id,
+               st.seat_number    as st_seat_number
+
+        from cinema_kiosk.reservation_details rd
+                 inner join cinema_kiosk.schedule sc on rd.schedule_id = sc.id
+                 INNER JOIN cinema_kiosk.movie mv ON sc.movie_id = mv.movie_id
+                 INNER JOIN cinema_kiosk.theater th ON sc.no = th.no
+                 INNER JOIN cinema_kiosk.seat_policy sp ON th.policy_id = sp.policy_id
+                 inner join cinema_kiosk.member mb on rd.phone = mb.phone
+                 inner join cinema_kiosk.reservation_seat st on rd.id = st.reservation_id
+    </select>
+
+
 </mapper>

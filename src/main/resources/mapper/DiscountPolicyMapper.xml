@@ -23,4 +23,28 @@
         JOIN coupon C ON DP.id = C.policy_id WHERE coupon_num = #{couponNum}
     </select>
 
+    <select id="selectOneById" resultMap="discountVO">
+        select dp.id,
+               dp.activation,
+               dp.condition_type,
+               dp.discount_type,
+               dp.discount_value,
+               dp.end_at,
+               dp.policy_name,
+               dp.start_at
+        from cinema_kiosk.discount_policy dp
+        where id = #{no}
+    </select>
+
+    <select id="selectAll" resultMap="discountVO">
+        select dp.id,
+               dp.activation,
+               dp.condition_type,
+               dp.discount_type,
+               dp.discount_value,
+               dp.end_at,
+               dp.policy_name,
+               dp.start_at
+        from cinema_kiosk.discount_policy dp
+    </select>
 </mapper>

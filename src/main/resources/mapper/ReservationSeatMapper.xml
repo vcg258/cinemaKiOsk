@@ -12,4 +12,28 @@
             </foreach>
         ;
     </insert>
+
+    <resultMap id="seatListVO" type="com.example.cinemakiosk.vo.ReservationSeatVO" autoMapping="true">
+        <id property="id" column="id"/>
+        <result property="reservationDetailsId" column="reservation_id"/>
+    </resultMap>
+
+    <select id="selectAllById" resultMap="seatListVO">
+        select
+            st.id,
+            st.reservation_id,
+            st.seat_number
+        from cinema_kiosk.reservation_seat st
+        where reservation_id = #{no}
+    </select>
+
+    <select id="selectAllSeatByScheduleId" resultType="java.lang.String">
+        select rs.seat_number
+        from cinema_kiosk.schedule sc
+                 inner join cinema_kiosk.reservation_details rd on sc.id = rd.schedule_id
+                 inner join cinema_kiosk.reservation_seat rs on rd.id = rs.reservation_id
+        where sc.id = #{scheduleId};
+    </select>
+
+
 </mapper>
