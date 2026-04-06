@@ -26,4 +26,14 @@
         from cinema_kiosk.reservation_seat st
         where reservation_id = #{no}
     </select>
+
+    <select id="selectAllSeatByScheduleId" resultType="java.lang.String">
+        select rs.seat_number
+        from cinema_kiosk.schedule sc
+                 inner join cinema_kiosk.reservation_details rd on sc.id = rd.schedule_id
+                 inner join cinema_kiosk.reservation_seat rs on rd.id = rs.reservation_id
+        where sc.id = #{scheduleId};
+    </select>
+
+
 </mapper>
