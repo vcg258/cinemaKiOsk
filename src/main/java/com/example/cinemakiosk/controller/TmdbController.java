@@ -34,7 +34,7 @@ public class TmdbController {
     // 2. 영화 검색
     @Operation(summary = "영화 검색",
             description = "- 영화 제목으로 검색\n " +
-                    "- id, title, overview(description), poster_path 반환")
+                    "- id반환. 영화 상세에 활용")
     @GetMapping("/search")
     public ResponseEntity<List<TmdbMovieDTO>> searchMovies(@RequestParam String title) {
         log.info("Search movies by {}", title);
@@ -43,7 +43,7 @@ public class TmdbController {
 
     // 3. 영화 상세
     @Operation(summary = "영화 상세",
-            description = "- /search 에서 찾은 id로 검색\n - genre, runtime, director, description, actors 반환")
+            description = "- /search 에서 찾은 id로 검색\n - 영화 정보 반환")
     @GetMapping("/{tmdbId}")
     public ResponseEntity<MovieDTO> getMovieDetail(@PathVariable Long tmdbId) {
         log.info("Get movie: {}", tmdbId);

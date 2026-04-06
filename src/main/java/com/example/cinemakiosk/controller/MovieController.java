@@ -3,6 +3,7 @@ package com.example.cinemakiosk.controller;
 import com.example.cinemakiosk.dto.MovieDTO;
 import com.example.cinemakiosk.service.MovieService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.coobird.thumbnailator.Thumbnailator;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,11 +47,12 @@ public class MovieController {
 
     // 영화등록
     @Operation(summary = "영화등록",
-            description = "1. movieId = 0 지우기 (비우기)\n 2. image = 사진 안올렸다면 Send empty value 체크 해제\n" +
-                    "3. posterPath = tmdb/search 에서 찾은 posterPath 입력\n" +
-                    "- image, posterPath 둘다 업로드시 posterPath 이미지로 저장")
+            description = "1. application.properties에서 이미지 저장경로 변경\n 2. movieId = 0 지우기 (비우기)\n " +
+                    "3. image = 사진 안올렸다면 Send empty value 체크 해제\n" +
+                    "4. posterPath = tmdb/search 에서 찾은 posterPath 입력\n" +
+                    "- image, posterPath 둘다 업로드시 posterPath 이미지로 저장됨")
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> upload(@ModelAttribute MovieDTO movieDTO) {
+    public ResponseEntity<Void> upload(@Valid @ModelAttribute MovieDTO movieDTO) {
         log.info("upload post...");
         movieService.insertMovie(movieDTO);
         return ResponseEntity.ok().build();
@@ -152,21 +155,6 @@ public class MovieController {
             throw new RuntimeException("파일을 읽는 중 오류가 발생했습니다.", e);
         }
     }
-
-//
-//    // 키워드로 조회
-//    @GetMapping("/{keyWord}")
-//    public void readKeyWord(@PathVariable String keyWord, Model model) {
-//        log.info("keyWord: {}", keyWord);
-//
-//        model.addAttribute("movie", movieService.getMovie(keyWord));
-//    }
-
-
-
-    //영화 상태 관리
-    //영화 상태 변경 처리
-
 
 
 }

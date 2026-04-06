@@ -4,6 +4,7 @@ import com.example.cinemakiosk.domain.MovieEntity;
 import com.example.cinemakiosk.domain.enums.Rating;
 import com.example.cinemakiosk.vo.MovieVO;
 import lombok.*;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -16,14 +17,20 @@ import java.time.LocalDate;
 @ToString
 public class MovieDTO {
     private Long movieId;
+    @NotNull
     private String title;
+
     private String genre;
     private Rating rating;      // ALL / 12 / 15 / 19
+    @NotNull
     private Long runtime;
+
     private String director;
     private String actors;
     private String description;
+    @NotNull
     private LocalDate startAt;
+
     private LocalDate endAt;
     private LocalDate createAt;
     private MultipartFile image;

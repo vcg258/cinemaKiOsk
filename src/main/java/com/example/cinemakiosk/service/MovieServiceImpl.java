@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-
 @Service
 @RequiredArgsConstructor
 @Log4j2
@@ -49,6 +48,7 @@ public class MovieServiceImpl implements MovieService {
     public void insertMovie(MovieDTO movieDTO) {
         log.info("movieDTO: {} ", movieDTO);
 
+
         // 영화 정보 저장
         MovieEntity movieEntity = movieRepository.save(MovieDTO.toEntity(movieDTO));
         String filename = movieEntity.getMovieId() + ".jpg";  // movieId를 파일명으로
@@ -57,7 +57,7 @@ public class MovieServiceImpl implements MovieService {
         try {
             saveImageFromDTO(movieDTO, filename);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("이미지 저장에 실패했습니다: " + filename, e);
         }
     }
 
@@ -69,6 +69,7 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public void modify(MovieDTO movieDTO) {
 
+        // movieId 유효성 검사
         if (movieDTO.getMovieId() == null) {
             throw new IllegalArgumentException("movieId가 null입니다.");
         }
@@ -76,7 +77,6 @@ public class MovieServiceImpl implements MovieService {
         // 1. 기존 데이터 들고옴
         MovieEntity movieEntity = movieRepository.findById(movieDTO.getMovieId())
                 .orElseThrow(() -> new NoSuchElementException("movieId를 찾을 수 없습니다"));
-
 
         // 2. 전체 수정
         movieEntity.update(movieDTO);
@@ -89,33 +89,33 @@ public class MovieServiceImpl implements MovieService {
         if ((file1 != null && !file1.isEmpty()) || (file2 != null && !file2.isEmpty())) {
             String filename = movieDTO.getMovieId() + ".jpg";  // movieId로 파일명
 
-            // 기존 이미지 삭제
-            Path oldPath = Paths.get(uploadPath, filename);
-            Path oldThumbPath = Paths.get(uploadPath, "s_" + filename);
-            try {
-                Files.deleteIfExists(oldPath);
-                Files.deleteIfExists(oldThumbPath);
-            } catch (IOException e) {
-                log.warn("기존 이미지 삭제 실패");
-            }
+//            // 기존 이미지 삭제
+//            Path oldPath = Paths.get(uploadPath, filename);
+//            Path oldThumbPath = Paths.get(uploadPath, "s_" + filename);
+//            try {
+//                Files.deleteIfExists(oldPath);
+//                Files.deleteIfExists(oldThumbPath);
+//            } catch (IOException e) {
+//                log.warn("기존 이미지 삭제 실패");
+//            }
 
             // 영화 이미지 저장
             try {
                 saveImageFromDTO(movieDTO, filename);
             } catch (IOException e) {
-                throw new IllegalStateException("이미지 저장에 실패했습니다: " + filename);
+                throw new IllegalStateException("이미지 저장에 실패했습니다: " + filename, e);
             }
-
-
-
         }
     }
-    // 이미지 삭제 필터
+
+
+    // 이미지 저장 필터
     private void saveImageFromDTO(MovieDTO movieDTO, String filename) throws IOException {
         // TMDB로 등록한 경우
         if (movieDTO.getPosterPath() != null && movieDTO.getPosterPath().startsWith("https")) {
             byte[] imageBytes = restTemplate.getForObject(movieDTO.getPosterPath(), byte[].class);
             saveImage(imageBytes, filename);
+
             // 직접 이미지 업로드한 경우
         } else if (movieDTO.getImage() != null && !movieDTO.getImage().isEmpty()) {
             saveImage(movieDTO.getImage().getBytes(), filename);
@@ -124,23 +124,32 @@ public class MovieServiceImpl implements MovieService {
 
 
     // 이미지 저장
-    public void saveImage(byte[] imageBytes, String filename) throws IOException {
+    public void saveImage(byte[] imageBytes, String filename) {
         Path path = Paths.get(uploadPath, filename);
 
-        // 파일 저장
-        Files.write(path, imageBytes);
+        // 이미지 파일 저장
+        try {
+            Files.write(path, imageBytes);
+        } catch (IOException e) {
+            throw new IllegalStateException(" 파일 저장에 실패했습니다: " + filename, e);
+        }
 
         // 썸네일 생성
-        String contentType = Files.probeContentType(path);
+        String contentType = null;
+        try {
+            contentType = Files.probeContentType(path);
+        } catch (IOException e) {
+            throw new IllegalStateException("파일 타입 확인에 실패했습니다: " + filename, e);
+        }
         if (contentType != null && contentType.startsWith("image")) {
             File thumbnailFile = new File(uploadPath, "s_" + filename);
-            Thumbnailator.createThumbnail(path.toFile(), thumbnailFile, 200, 200);
-            log.info("thumbnailFile: {}", thumbnailFile);
+            try {
+                Thumbnailator.createThumbnail(path.toFile(), thumbnailFile, 200, 200);
+            } catch (IOException e) {
+                throw new IllegalStateException("썸네일 생성에 실패했습니다: " + filename, e);
+            }
         }
     }
-
-
-
 
 
     /**
@@ -153,18 +162,16 @@ public class MovieServiceImpl implements MovieService {
                 .orElseThrow(() -> new NoSuchElementException("movieId를 찾을 수 없습니다"));
         String filename = movieEntity.getMovieId() + ".jpg";  // movieId로 파일
 
-
         movieRepository.deleteById(movieId);
-
     }
-
-
 
 
     // 상세 조회
     @Override
     public MovieDTO getMovieById(long movieId) {
-        MovieEntity optionalMovieEntity = movieRepository.findById(movieId).orElseThrow();
+        // [추가] 메시지 추가
+        MovieEntity optionalMovieEntity = movieRepository.findById(movieId)
+                .orElseThrow(() -> new NoSuchElementException("movieId를 찾을 수 없습니다"));
         MovieDTO movieDTO = MovieEntity.toDTO(optionalMovieEntity);
         return movieDTO;
     }
@@ -173,8 +180,15 @@ public class MovieServiceImpl implements MovieService {
     // 제목으로 상세조회
     @Override
     public MovieDTO getMovieByTitle(String title) {
+        // [추가] 검색어 유효성 검사
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("title이 null입니다.");
+        }
+
         Optional<MovieEntity> optionalMovieEntity = movieRepository.findByTitle(title);
-        MovieEntity movieEntity = optionalMovieEntity.orElseThrow();
+        // [추가] 메시지 추가
+        MovieEntity movieEntity = optionalMovieEntity
+                .orElseThrow(() -> new NoSuchElementException("title을 찾을 수 없습니다: " + title));
         MovieDTO movieDTO = MovieEntity.toDTO(movieEntity);
         return movieDTO;
     }
@@ -188,13 +202,18 @@ public class MovieServiceImpl implements MovieService {
     public List<MovieDTO> getAllMovies() {
         List<MovieEntity> movieEntityList = movieRepository.findAll();
 
+        // [추가] 영화 목록이 없을 때
+        if (movieEntityList.isEmpty()) {
+            throw new NoSuchElementException("등록된 영화가 없습니다.");
+        }
+
         List<MovieDTO> movieDTOList = new ArrayList<>();
         for (MovieEntity movieEntity : movieEntityList) {
-
             movieDTOList.add(MovieEntity.toDTO(movieEntity));
         }
         return movieDTOList;
     }
+
 
     /**
      * 상영중(상영기간중)인 영화 조회
@@ -207,15 +226,18 @@ public class MovieServiceImpl implements MovieService {
 
         List<MovieDTO> movieDTOList = new ArrayList<>();
         for (MovieEntity movieEntity : movieEntityList) {
-
-
             if (!now.isBefore(movieEntity.getStartAt()) && !now.isAfter(movieEntity.getEndAt())) {
                 movieDTOList.add(MovieEntity.toDTO(movieEntity));
             }
         }
+
+        // [추가] 상영중인 영화가 없을 때
+        if (movieDTOList.isEmpty()) {
+            throw new NoSuchElementException("현재 상영중인 영화가 없습니다.");
+        }
+
         return movieDTOList;
     }
-
 
 
 
