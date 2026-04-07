@@ -156,7 +156,7 @@ public class ScheduleServiceImpl implements ScheduleService {
      * @return 해당하는 전체 영화 리스트
      */
     @Override
-    public List<ScheduleDTO> getScheduleListByMovie(Long movieId) {
+    public List<ScheduleDTO> getScheduleListByMovie(Long movieId) { // TODO 상영관 이름 가져와야함
         List<ScheduleEntity> entityList = scheduleRepository.findByMovieEntity_MovieId(movieId);
         return entityList.stream().map(ScheduleEntity::toDTO).toList();
     }
