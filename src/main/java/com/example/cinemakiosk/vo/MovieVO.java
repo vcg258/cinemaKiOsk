@@ -5,6 +5,7 @@ import com.example.cinemakiosk.dto.MovieDTO;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
@@ -21,7 +22,7 @@ public class MovieVO {
     private String actors;        // 주연 배우
     private String description;   // 줄거리
     private LocalDate startAt; // 상영 시작일
-    private LocalDate endAt;   // 상영 종료일
+    private LocalDateTime endAt;   // 상영 종료일
     private LocalDate createAt; // 등록일
 
     /**

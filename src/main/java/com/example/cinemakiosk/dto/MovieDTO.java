@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -31,7 +32,7 @@ public class MovieDTO {
     @NotNull
     private LocalDate startAt;
 
-    private LocalDate endAt;
+    private LocalDateTime endAt; // 오늘 날짜의 이후 시간에 더이상 상영 스케쥴이 없다면 표시하기 위해 LocalDateTime 으로 변경
     private LocalDate createAt;
     private MultipartFile image;
     private String posterPath;

@@ -55,7 +55,7 @@ public class MovieEntity{
     private LocalDate startAt;
 
     @Column(name = "end_at")
-    private LocalDate endAt;
+    private LocalDateTime endAt;
 
     @Column(name = "create_at", columnDefinition = "DATE DEFAULT NOW()")
     private LocalDate createAt;

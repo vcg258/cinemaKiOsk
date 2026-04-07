@@ -12,9 +12,6 @@ public interface MovieService {
     // 추가
     void insertMovie(MovieDTO movieDTO);
 
-    // 영화 이미지 추가
-    void saveImage(byte[] imageBytes, String filename) throws IOException;
-
     // 상세 조회
     MovieDTO getMovieById(long movieId);
 
@@ -27,6 +24,17 @@ public interface MovieService {
     // 현재 상영중인 영화 전체 조회
     List<MovieDTO> getScreeningPeriodAllMovies();
 
+    // 수정
+    void modify(MovieDTO movieDTO);
+
+    // 삭제
+    void remove(long movieId);
+
+    // 상영종료처리
+    void modifyEndAt(long movieId);
+
+//    // 영화 이미지 추가
+//    void saveImage(byte[] imageBytes, String filename) throws IOException;
 
 
 //
@@ -43,11 +51,6 @@ public interface MovieService {
 //    MovieResponseDTO<MovieDTO> getList(MovieRequestDTO movieRequestDTO);
 
 
-    // 수정
-    void modify(MovieDTO movieDTO);
-
-    // 삭제
-    void remove(long movieId);
 
 
 
