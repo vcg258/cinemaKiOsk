@@ -148,7 +148,7 @@ public class MovieServiceImpl implements MovieService {
      * @param movieId 영화 PK
      */
     @Override
-    public void remove(long movieId) {
+    public void remove(Long movieId) {
         MovieEntity movieEntity = movieRepository.findById(movieId)
                 .orElseThrow(() -> new NoSuchElementException("movieId를 찾을 수 없습니다"));
         String filename = movieEntity.getMovieId() + ".jpg";  // movieId로 파일
@@ -159,11 +159,9 @@ public class MovieServiceImpl implements MovieService {
     }
 
 
-
-
     // 상세 조회
     @Override
-    public MovieDTO getMovieById(long movieId) {
+    public MovieDTO getMovieById(Long movieId) {
         MovieEntity optionalMovieEntity = movieRepository.findById(movieId).orElseThrow();
         MovieDTO movieDTO = MovieEntity.toDTO(optionalMovieEntity);
         return movieDTO;
@@ -178,6 +176,8 @@ public class MovieServiceImpl implements MovieService {
         MovieDTO movieDTO = MovieEntity.toDTO(movieEntity);
         return movieDTO;
     }
+
+
 
 
     /**

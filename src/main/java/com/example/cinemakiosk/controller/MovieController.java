@@ -80,7 +80,11 @@ public class MovieController {
     }
 
 
-
+    @Operation(summary = "영화 상세 조회 (단일조회)")
+    @GetMapping("/{movieId}")
+    public ResponseEntity<MovieDTO> read(@PathVariable Long movieId) {
+        return ResponseEntity.ok(movieService.getMovieById(movieId));
+    }
 
 
     // 상영중인 영화 조회
@@ -94,9 +98,11 @@ public class MovieController {
         return ResponseEntity.ok(movieDTOList);
     }
 
+    // 단건 영화 조회
+
     // 전체 영화 조회
     @Operation(summary = "전체영화 조회 (관리자용)")
-    @GetMapping("/realAll")
+    @GetMapping("/readAll")
     public ResponseEntity<List<MovieDTO>> ManagerReadAll() {
         log.info("read get...");
         List<MovieDTO> movieDTOList = movieService.getAllMovies();
@@ -108,7 +114,7 @@ public class MovieController {
     // 영화 사진 반환
     @Operation(summary = "영화 사진 반환",
             description = "1. 영화 제목 입력시 영화 이미지 반환\n 2. 맨 앞에 s_ 붙일 시 썸네일 이미지 반환\n - 영화 제목이 중복일시 에러")
-    @GetMapping("/{titleName}")
+    @GetMapping("/{titleName}/image")
     public ResponseEntity<Resource> image(@PathVariable String titleName) {
         try {
             File directory = new File(uploadPath);

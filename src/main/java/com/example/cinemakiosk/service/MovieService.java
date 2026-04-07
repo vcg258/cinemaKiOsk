@@ -16,7 +16,7 @@ public interface MovieService {
     void saveImage(byte[] imageBytes, String filename) throws IOException;
 
     // 상세 조회
-    MovieDTO getMovieById(long movieId);
+    MovieDTO getMovieById(Long movieId);
 
     // 제목으로 상세 조회
     MovieDTO getMovieByTitle(String title);
@@ -47,7 +47,7 @@ public interface MovieService {
     void modify(MovieDTO movieDTO);
 
     // 삭제
-    void remove(long movieId);
+    void remove(Long movieId);
 
 
 
