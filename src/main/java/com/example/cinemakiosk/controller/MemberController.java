@@ -31,6 +31,12 @@ public class MemberController {
         return ResponseEntity.ok(memberService.getMembersAllLog(phone));
     }
 
+    @Operation(summary = "전체 포인트 내역 조회")
+    @GetMapping("/point-list")
+    public ResponseEntity<List<PointHistoryDTO>> getPointHistoryList(){
+        return ResponseEntity.ok(memberService.getPointHistoryAll());
+    }
+
     @Operation(summary = "맴버 단일 조회")
     @GetMapping("/{phone}")
     public ResponseEntity<MemberDTO> getMemberById(@PathVariable String phone){

@@ -23,4 +23,7 @@ public interface MemberService {
 
     // 회원 단일 조회
     MemberDTO getMember(String phone);
+
+    // 전체 포인트 조회
+    List<PointHistoryDTO> getPointHistoryAll();
 }

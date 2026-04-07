@@ -167,6 +167,16 @@ public class MemberServiceImpl implements MemberService{
     }
 
     /**
+     * 포인트 내역 전체 조회
+     * @return 전체 포인트내역이 담긴 리스트
+     */
+    @Override
+    public List<PointHistoryDTO> getPointHistoryAll() {
+        List<PointHistoryEntity> entity = pointHistoryRepository.findAll();
+        return entity.stream().map(PointHistoryEntity::toDTO).toList();
+    }
+
+    /**
      * 회원 단일 조회
      * @param phone 회원 PK
      * @return 지정 회원
