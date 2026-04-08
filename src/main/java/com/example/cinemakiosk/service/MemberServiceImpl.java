@@ -6,6 +6,7 @@ import com.example.cinemakiosk.domain.PointHistoryEntity;
 import com.example.cinemakiosk.domain.enums.Type;
 import com.example.cinemakiosk.dto.MemberDTO;
 import com.example.cinemakiosk.dto.PointHistoryDTO;
+import com.example.cinemakiosk.mapper.PointHistoryMapper;
 import com.example.cinemakiosk.repository.MemberRepository;
 import com.example.cinemakiosk.repository.PaymentDetailsRepository;
 import com.example.cinemakiosk.repository.PointHistoryRepository;
@@ -25,6 +26,7 @@ public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
     private final PointHistoryRepository pointHistoryRepository;
     private final PaymentDetailsRepository paymentDetailsRepository;
+    private final PointHistoryMapper pointHistoryMapper;
 
     /**
      * 신규 회원등록
@@ -172,8 +174,8 @@ public class MemberServiceImpl implements MemberService{
      */
     @Override
     public List<PointHistoryDTO> getPointHistoryAll() {
-        List<PointHistoryEntity> entity = pointHistoryRepository.findAll();
-        return entity.stream().map(PointHistoryEntity::toDTO).toList();
+        List<PointHistoryDTO> pointHistoryDTO = pointHistoryMapper.selectByMovieNameAll();
+        return pointHistoryDTO.stream().toList();
     }
 
     /**

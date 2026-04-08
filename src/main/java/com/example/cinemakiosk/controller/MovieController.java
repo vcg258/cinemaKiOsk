@@ -98,8 +98,6 @@ public class MovieController {
         return ResponseEntity.ok(movieDTOList);
     }
 
-    // 단건 영화 조회
-
     // 전체 영화 조회
     @Operation(summary = "전체영화 조회 (관리자용)")
     @GetMapping("/readAll")

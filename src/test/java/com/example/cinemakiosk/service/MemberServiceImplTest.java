@@ -74,4 +74,9 @@ class MemberServiceImplTest {
     void getMemberTest() {
         log.info(memberService.getMember("01012345234"));
     }
+
+    @Test
+    void getPointHistory() {
+        memberService.getPointHistoryAll().forEach(log::info);
+    }
 }
