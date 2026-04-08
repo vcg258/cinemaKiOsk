@@ -83,11 +83,11 @@ public class MovieServiceImpl implements MovieService {
         movieRepository.save(movieEntity);
 
         // 3. 새 이미지가 있을 때만 처리
-        MultipartFile file1 = movieDTO.getImage();
-        String file2 = movieDTO.getPosterPath();
-
-        if ((file1 != null && !file1.isEmpty()) || (file2 != null && !file2.isEmpty())) {
-            String filename = movieDTO.getMovieId() + ".jpg";  // movieId로 파일명
+//        MultipartFile file1 = movieDTO.getImage();
+//        String file2 = movieDTO.getPosterPath();
+//
+//        if ((file1 != null && !file1.isEmpty()) || (file2 != null && !file2.isEmpty())) {
+//            String filename = movieDTO.getMovieId() + ".jpg";  // movieId로 파일명
 
 //            // 기존 이미지 삭제
 //            Path oldPath = Paths.get(uploadPath, filename);
@@ -99,13 +99,12 @@ public class MovieServiceImpl implements MovieService {
 //                log.warn("기존 이미지 삭제 실패");
 //            }
 
-            // 영화 이미지 저장
+        // 영화 이미지 저장
 //            try {
 //                saveImageFromDTO(movieDTO, filename);
 //            } catch (IllegalStateException e) {
 //                throw e;
 //            }
-        }
     }
 
 
@@ -118,12 +117,9 @@ public class MovieServiceImpl implements MovieService {
     public void remove(long movieId) {
         MovieEntity movieEntity = movieRepository.findById(movieId)
                 .orElseThrow(() -> new NoSuchElementException("movieId를 찾을 수 없습니다"));
-        String filename = movieEntity.getMovieId() + ".jpg";  // movieId로 파일
 
         movieRepository.deleteById(movieId);
     }
-
-
 
 
     // 상세 조회
@@ -162,10 +158,12 @@ public class MovieServiceImpl implements MovieService {
     public List<MovieDTO> getAllMovies() {
         List<MovieEntity> movieEntityList = movieRepository.findAll();
 
-        // 영화 목록이 없을 때
-        if (movieEntityList.isEmpty()) {
-            throw new NoSuchElementException("등록된 영화가 없습니다.");
-        }
+//        // 영화 목록이 없을 때
+//        if (movieEntityList.isEmpty()) {
+//            throw new NoSuchElementException("등록된 영화가 없습니다.");
+//        }
+        // 그냥 빈 리스트 반환하게 둠
+
 
         List<MovieDTO> movieDTOList = new ArrayList<>();
         for (MovieEntity movieEntity : movieEntityList) {
@@ -177,25 +175,29 @@ public class MovieServiceImpl implements MovieService {
     /**
      * 상영종료처리
      * movieId를 입력하면, Schedule을 조회해 지나간 상영 시간중 가장 가까운 상영 시간을 end_at 시간으로 삼는다.
+     *
      * @param movieId
      */
     @Override
     public void modifyEndAt(long movieId) {
         MovieEntity movieEntity = movieRepository.findById(movieId)
-                        .orElseThrow(() -> new NoSuchElementException("movieId를 찾을 수 없습니다"));
+                .orElseThrow(() -> new NoSuchElementException("movieId를 찾을 수 없습니다"));
 
         // 현재시간
         LocalDateTime now = LocalDateTime.now();
 
         // movieId로 해당하는 스케쥴 리스트 가져오기
-        List<ScheduleEntity> ScheduleEntity = scheduleRepository.findByMovieEntity_MovieId(movieEntity.getMovieId());
-
+        List<ScheduleEntity> ScheduleEntityList = scheduleRepository.findByMovieEntity_MovieId(movieId);
+        if (ScheduleEntityList.isEmpty()) {
+            throw new NoSuchElementException("해당 영화에 스케쥴이 없습니다");
+        }
         // 지나간 상영 시간중 가장 가까운 상영 시간을 가져옴
-        LocalDateTime endAt = ScheduleEntity.stream()
+        LocalDateTime endAt = ScheduleEntityList.stream()
                 .map(s -> s.getEndAt())
                 .filter(dt -> !dt.isAfter(now))  // 미래 제외
                 .max(Comparator.naturalOrder())  // 가장 가까운 과거
                 .orElse(null);
+
 
         log.info(endAt);
 
@@ -203,7 +205,6 @@ public class MovieServiceImpl implements MovieService {
         movieRepository.save(movieEntity);
 
     }
-
 
 
     /**
@@ -220,20 +221,19 @@ public class MovieServiceImpl implements MovieService {
         List<MovieDTO> movieDTOList = new ArrayList<>();
         for (MovieEntity movieEntity : movieEntityList) {
             // movieId로 영화 상영 스케쥴 확인
-            for (ScheduleEntity scheduleEntity : scheduleRepository.findByMovieEntity_MovieId(movieEntity.getMovieId())) {
-                if (scheduleEntity.getStartAt().toLocalDate().isEqual(now) || scheduleEntity.getEndAt().toLocalDate().isEqual(now)) {
-                    // 오늘 날짜 스케쥴이 하나라도 있다면 추가
+
+            List<ScheduleEntity> byMovieEntityMovieId = scheduleRepository.findByMovieEntity_MovieId(movieEntity.getMovieId());
+
+            for (ScheduleEntity scheduleEntity : byMovieEntityMovieId) {
+                if (scheduleEntity.getStartAt().toLocalDate().isEqual(now) && scheduleEntity.isActivation()) {
+                    // 오늘 날짜에 해당하는 시작 스케쥴이 있고 활성화 상태라면 list에 추가
                     movieDTOList.add(MovieEntity.toDTO(movieEntity));
+                    break;
                 }
             }
         }
         return movieDTOList;
     }
-
-
-
-
-
 
 
 //
@@ -371,5 +371,5 @@ public class MovieServiceImpl implements MovieService {
 //        return null;
 //    }
 
-
 }
+

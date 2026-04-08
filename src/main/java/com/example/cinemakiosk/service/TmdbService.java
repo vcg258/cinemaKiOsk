@@ -20,7 +20,7 @@ public interface TmdbService {
     // runtime, genres
     MovieDTO searchMovieDetail(Long tmdbId);
 
-    // 이미지 url 다운로드
-    void downloadAndSavePoster(String posterPath, String title) throws IOException;
+//    // 이미지 url 다운로드
+//    void downloadAndSavePoster(String posterPath, String title) throws IOException;
 
 }

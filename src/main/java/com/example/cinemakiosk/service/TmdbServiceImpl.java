@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+
 @Log4j2
 @Service
 @RequiredArgsConstructor
@@ -35,7 +36,7 @@ public class TmdbServiceImpl implements TmdbService {
     private String uploadPath;
 
 
-    // 인기 영화 목록 (검색없을 시 기본값)
+    // 인기 영화 목록
     public List<TmdbMovieDTO> getPopularMovies(int page) {
         // 페이지 번호 유효성 검사
         if (page < 1) {
@@ -164,50 +165,50 @@ public class TmdbServiceImpl implements TmdbService {
 
 
     // 이미지 url 다운로드
-    public void downloadAndSavePoster(String posterPath, String title) {
-        // 입력값 유효성 검사
-        if (posterPath == null || posterPath.isBlank()) {
-            throw new IllegalArgumentException("포스터 경로가 없습니다.");
-        }
-        if (title == null || title.isBlank()) {
-            throw new IllegalArgumentException("영화 제목이 없습니다.");
-        }
-
-        String imageUrl = tmdbConfig.getImageUrl() + posterPath;
-
-        // URL에서 이미지 바이트 다운로드
-        byte[] imageBytes = restTemplate.getForObject(imageUrl, byte[].class);
-
-        // 다운로드 실패 시
-        if (imageBytes == null || imageBytes.length == 0) {
-            throw new IllegalStateException("포스터 이미지 다운로드에 실패했습니다: " + imageUrl);
-        }
-
-        // 영화 제목으로 파일명 설정 (특수문자 제거)
-        String filename = title.replaceAll("[\\\\/:*?\"<>|]", "").trim() + ".jpg";
-        Path path = Paths.get(uploadPath, filename);
-
-        // 이미지 파일 저장
-        try {
-            Files.write(path, imageBytes);
-        } catch (IOException e) {
-            throw new IllegalStateException("포스터 파일 저장에 실패했습니다: " + filename, e);
-        }
-
-        // 썸네일 생성
-        String contentType = null;
-        try {
-            contentType = Files.probeContentType(path);
-        } catch (IOException e) {
-            throw new IllegalStateException("파일 타입 확인에 실패했습니다: " + filename, e);
-        }
-        if (contentType != null && contentType.startsWith("image")) {
-            File thumbnailFile = new File(uploadPath, "s_" + filename);
-            try {
-                Thumbnailator.createThumbnail(path.toFile(), thumbnailFile, 200, 200);
-            } catch (IOException e) {
-                throw new IllegalStateException("썸네일 생성에 실패했습니다: " + filename, e);
-            }
-        }
-    }
+//    public void downloadAndSavePoster(String posterPath, String title) {
+//        // 입력값 유효성 검사
+//        if (posterPath == null || posterPath.isBlank()) {
+//            throw new IllegalArgumentException("포스터 경로가 없습니다.");
+//        }
+//        if (title == null || title.isBlank()) {
+//            throw new IllegalArgumentException("영화 제목이 없습니다.");
+//        }
+//
+//        String imageUrl = tmdbConfig.getImageUrl() + posterPath;
+//
+//        // URL에서 이미지 바이트 다운로드
+//        byte[] imageBytes = restTemplate.getForObject(imageUrl, byte[].class);
+//
+//        // 다운로드 실패 시
+//        if (imageBytes == null || imageBytes.length == 0) {
+//            throw new IllegalStateException("포스터 이미지 다운로드에 실패했습니다: " + imageUrl);
+//        }
+//
+//        // 영화 제목으로 파일명 설정 (특수문자 제거)
+//        String filename = title.replaceAll("[\\\\/:*?\"<>|]", "").trim() + ".jpg";
+//        Path path = Paths.get(uploadPath, filename);
+//
+//        // 이미지 파일 저장
+//        try {
+//            Files.write(path, imageBytes);
+//        } catch (IOException e) {
+//            throw new IllegalStateException("포스터 파일 저장에 실패했습니다: " + filename, e);
+//        }
+//
+//        // 썸네일 생성
+//        String contentType = null;
+//        try {
+//            contentType = Files.probeContentType(path);
+//        } catch (IOException e) {
+//            throw new IllegalStateException("파일 타입 확인에 실패했습니다: " + filename, e);
+//        }
+//        if (contentType != null && contentType.startsWith("image")) {
+//            File thumbnailFile = new File(uploadPath, "s_" + filename);
+//            try {
+//                Thumbnailator.createThumbnail(path.toFile(), thumbnailFile, 200, 200);
+//            } catch (IOException e) {
+//                throw new IllegalStateException("썸네일 생성에 실패했습니다: " + filename, e);
+//            }
+//        }
+//    }
 }
