@@ -71,7 +71,7 @@ public class TheaterController {
     }
 
     @Operation(summary = "좌석정책 수정")
-    @PutMapping("/seat-policy/")
+    @PatchMapping("/seat-policy")
     public ResponseEntity<Void> modifySeatPolicy(@RequestBody SeatPolicyDTO seatPolicyDTO) {
         theaterService.updateSeat(seatPolicyDTO);
         return ResponseEntity.ok().build();

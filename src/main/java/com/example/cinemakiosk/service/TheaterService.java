@@ -32,7 +32,7 @@ public interface TheaterService {
     // 좌석 정책 1개를 확인
     SeatPolicyDTO readSeat(Long no);
 
-    // 좌석 정책 수정
+    // 좌석 정책 가격 수정
     void updateSeat(SeatPolicyDTO seatPolicyDTO);
 
     // 좌석 정책 단일 삭제

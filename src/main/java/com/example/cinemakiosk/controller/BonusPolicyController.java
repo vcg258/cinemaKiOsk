@@ -38,13 +38,13 @@ public class BonusPolicyController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "할인정책 전체 조회")
+    @Operation(summary = "적림정책 전체 조회")
     @GetMapping("/list")
     public ResponseEntity<List<BonusPolicyDTO>> getBonusPolicies() {
         return ResponseEntity.ok(bonusPolicyService.getBonusPolicies());
     }
 
-    @Operation(summary = "할인정책 단일 조회")
+    @Operation(summary = "적립정책 단일 조회")
     @GetMapping("/{id}")
     public ResponseEntity<BonusPolicyDTO> getBonusPolicy(@PathVariable Long id) {
         return ResponseEntity.ok(bonusPolicyService.getBonusPolicy(id));

@@ -74,9 +74,8 @@ class TheaterServiceImplTest {
     @Test
     void updateSeat() {
         SeatPolicyDTO policyDTO = SeatPolicyDTO.builder()
-                .policyId(4L)
-                .name("수정")
-                .cost(1000L)
+                .name("일반")
+                .cost(100L)
                 .build();
 
         theaterService.updateSeat(policyDTO);
