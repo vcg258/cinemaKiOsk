@@ -9,6 +9,7 @@ import java.util.List;
 public interface TheaterMapper {
     //id로 상영관 정보를 1개 조회
     TheaterVO selectOneById(Long no);
+
     //상영관 정보를 전체 조회
     List<TheaterVO> selectAll();
 }

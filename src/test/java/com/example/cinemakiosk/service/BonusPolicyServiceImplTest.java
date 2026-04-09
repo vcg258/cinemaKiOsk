@@ -23,7 +23,7 @@ class BonusPolicyServiceImplTest {
                 .policyName("test")
                 .giveValue(5000L)
                 .startAt(LocalDateTime.now())
-                .finishedAt(LocalDateTime.now().plusDays(3))
+                .endAt(LocalDateTime.now().plusDays(3))
                 .activation(true)
                 .build();
         bonusService.createBonusPolicy(dto);

@@ -4,9 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.cinemakiosk.mapper.ReservationDetailsMapper">
 
-    <resultMap id="reservationVO" type="com.example.cinemakiosk.vo.ReservationDetailsVO">
+    <resultMap id="reservationVO" type="com.example.cinemakiosk.vo.ReservationDetailsVO" autoMapping="true">
         <id property="id" column="id"/>
-        <result property="reservationTime" column="create_at"/>
         <association property="schedule"
                      resultMap="com.example.cinemakiosk.mapper.ScheduleMapper.scheduleVO"
                      columnPrefix="sc_"
@@ -24,8 +23,9 @@
     <select id="selectOneById" resultMap="reservationVO">
 
         select rd.id,
-               rd.phone,
                rd.create_at,
+               rd.returned,
+               rd.phone,
                rd.schedule_id,
 
                sc.id             as sc_id,
@@ -34,25 +34,25 @@
                sc.start_at       as sc_start_at,
                sc.end_at         as sc_end_at,
 
-               mv.movie_id       AS sc_mv_movie_id,
-               mv.title          AS sc_mv_title,
-               mv.runtime        AS sc_mv_runtime,
-               mv.actors       AS sc_mv_actors,
-               mv.director     AS sc_mv_director,
-               mv.rating       AS sc_mv_rating,
-               mv.genre        AS sc_mv_genre,
-               mv.description  AS sc_mv_description,
-               mv.create_at    AS sc_mv_create_at,
-               mv.start_at     AS sc_mv_start_at,
-               mv.end_at       AS sc_mv_end_at,
+               mv.movie_id       as sc_mv_movie_id,
+               mv.title          as sc_mv_title,
+               mv.runtime        as sc_mv_runtime,
+               mv.actors         as sc_mv_actors,
+               mv.director       as sc_mv_director,
+               mv.rating         as sc_mv_rating,
+               mv.genre          as sc_mv_genre,
+               mv.description    as sc_mv_description,
+               mv.create_at      as sc_mv_create_at,
+               mv.start_at       as sc_mv_start_at,
+               mv.end_at         as sc_mv_end_at,
 
-               th.no             AS sc_th_no,
-               th.policy_id      AS sc_th_policy_id,
-               th.cleanup_time   AS sc_th_cleanup_time,
+               th.no             as sc_th_no,
+               th.policy_id      as sc_th_policy_id,
+               th.cleanup_time   as sc_th_cleanup_time,
 
-               sp.policy_id      AS sc_th_sp_policy_id,
-               sp.name           AS sc_th_sp_name,
-               sp.cost           AS sc_th_sp_cost,
+               sp.policy_id      as sc_th_sp_policy_id,
+               sp.name           as sc_th_sp_name,
+               sp.cost           as sc_th_sp_cost,
 
 
                mb.phone          as mb_phone,
@@ -77,8 +77,9 @@
 
     <select id="selectAll" resultMap="reservationVO">
         select rd.id,
-               rd.phone,
                rd.create_at,
+               rd.returned,
+               rd.phone,
                rd.schedule_id,
 
                sc.id             as sc_id,
@@ -87,25 +88,25 @@
                sc.start_at       as sc_start_at,
                sc.end_at         as sc_end_at,
 
-               mv.movie_id       AS sc_mv_movie_id,
-               mv.title          AS sc_mv_title,
-               mv.runtime        AS sc_mv_runtime,
-               mv.actors       AS sc_mv_actors,
-               mv.director     AS sc_mv_director,
-               mv.rating       AS sc_mv_rating,
-               mv.genre        AS sc_mv_genre,
-               mv.description  AS sc_mv_description,
-               mv.create_at    AS sc_mv_create_at,
-               mv.start_at     AS sc_mv_start_at,
-               mv.end_at       AS sc_mv_end_at,
+               mv.movie_id       as sc_mv_movie_id,
+               mv.title          as sc_mv_title,
+               mv.runtime        as sc_mv_runtime,
+               mv.actors         as sc_mv_actors,
+               mv.director       as sc_mv_director,
+               mv.rating         as sc_mv_rating,
+               mv.genre          as sc_mv_genre,
+               mv.description    as sc_mv_description,
+               mv.create_at      as sc_mv_create_at,
+               mv.start_at       as sc_mv_start_at,
+               mv.end_at         as sc_mv_end_at,
 
-               th.no             AS sc_th_no,
-               th.policy_id      AS sc_th_policy_id,
-               th.cleanup_time   AS sc_th_cleanup_time,
+               th.no             as sc_th_no,
+               th.policy_id      as sc_th_policy_id,
+               th.cleanup_time   as sc_th_cleanup_time,
 
-               sp.policy_id      AS sc_th_sp_policy_id,
-               sp.name           AS sc_th_sp_name,
-               sp.cost           AS sc_th_sp_cost,
+               sp.policy_id      as sc_th_sp_policy_id,
+               sp.name           as sc_th_sp_name,
+               sp.cost           as sc_th_sp_cost,
 
 
                mb.phone          as mb_phone,

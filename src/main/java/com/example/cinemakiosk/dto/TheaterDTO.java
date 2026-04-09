@@ -63,6 +63,7 @@ public class TheaterDTO {
         return TheaterVO.builder()
                 .no(theaterDTO.getNo())
                 .policyId(theaterDTO.getPolicyId())
+                .seatPolicy(SeatPolicyDTO.toVO(theaterDTO.getSeatPolicy()))
                 .cleanupTime(theaterDTO.getCleanupTime())
                 .build();
     }
