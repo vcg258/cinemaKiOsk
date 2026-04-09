@@ -32,7 +32,7 @@ public class BonusPolicyController {
     }
 
     @Operation(summary = "적립 정책 만료여부 (딸깍)")
-    @PatchMapping("finish-btn")
+    @PatchMapping("/finish-btn")
     public ResponseEntity<Void> finishBtn(@RequestBody ActivationRequest request) {
         bonusPolicyService.changeActivation(request);
         return ResponseEntity.noContent().build();
