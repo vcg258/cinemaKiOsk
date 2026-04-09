@@ -6,6 +6,7 @@
     <select id="checkScheduleOverlap" resultType="Integer">
         SELECT COUNT(*) FROM schedule
         WHERE no = #{no}
+        AND activation = true
         AND start_at &lt; #{endAt}
         AND end_at &gt; #{startAt}
     </select>
@@ -14,6 +15,7 @@
         FROM schedule
         WHERE no = #{no}
         AND id != #{scheduleId}
+        AND activation = true
         AND start_at &lt; #{endAt}
         AND end_at &gt; #{startAt}
     </select>

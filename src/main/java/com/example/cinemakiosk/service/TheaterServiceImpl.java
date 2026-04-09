@@ -86,7 +86,7 @@ public class TheaterServiceImpl implements TheaterService {
     public void updateCleanTime(TheaterRequest request) {
         List<TheaterEntity> theater = theaterRepository.findAllById(request.getIds());
         theater.forEach(theaterEntity -> {
-            if (theaterEntity.getSeatPolicyEntity().getPolicyId().equals(request.getChangeValue())) {
+            if (theaterEntity.getCleanupTime().equals(request.getChangeValue())) {
                 log.error("정리시간 동일 변경 X {}", theaterEntity);
                 return;
             }
