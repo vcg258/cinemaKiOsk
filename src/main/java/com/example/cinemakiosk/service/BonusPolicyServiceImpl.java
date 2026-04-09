@@ -28,7 +28,7 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
      * @param bonusPolicyDTO 활인정책 DTO
      */
     @Override
-    public void createBonusPolicy(BonusPolicyDTO bonusPolicyDTO) {
+    public BonusPolicyDTO createBonusPolicy(BonusPolicyDTO bonusPolicyDTO) {
         if (bonusPolicyRepository.existsByPolicyNameAndEndAtAfter(bonusPolicyDTO.getPolicyName(), LocalDateTime.now())) {
             throw new IllegalStateException("createBonusPolicy... 활성화된 정책중 이름이 중복됩니다 추가 / 수정 실패");
         }
@@ -38,11 +38,13 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
                 .giveValue(bonusPolicyDTO.getGiveValue())
                 .startAt(bonusPolicyDTO.getStartAt())
                 .endAt(bonusPolicyDTO.getEndAt())
-                .activation(bonusPolicyDTO.getActivation())
+                .activation(bonusPolicyDTO.isActivation())
                 .build();
 
         bonusPolicyRepository.save(BonusPolicyDTO.toEntity(dto));
         log.info("createBonusPolicy... 할인정책 추가/ 수정 성공 : {}", dto);
+
+        return dto;
     }
 
     /**
@@ -77,6 +79,16 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
             log.info("changeActivation... 만료여부 변경 : {}", bonusPolicyEntity);
         });
         bonusPolicyRepository.saveAll(bonusPolicyEntities);
+    }
+
+    /**
+     * 정립 정책 삭제
+     * @param id 삭제할 PK
+     */
+    @Override
+    public void deleteBonusPolicy(Long id) {
+        BonusPolicyEntity bonusPolicyEntity = bonusPolicyRepository.findById(id).orElseThrow();
+        bonusPolicyRepository.delete(bonusPolicyEntity);
     }
 
     /**

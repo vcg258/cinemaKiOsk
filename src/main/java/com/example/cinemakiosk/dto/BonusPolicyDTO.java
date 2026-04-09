@@ -2,6 +2,7 @@ package com.example.cinemakiosk.dto;
 
 import com.example.cinemakiosk.domain.BonusPolicyEntity;
 import com.example.cinemakiosk.vo.BonusPolicyVO;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,8 @@ public class BonusPolicyDTO {
     private Long giveValue;          // 적립 비율
     private LocalDateTime startAt;  //	시작일
     private LocalDateTime endAt;//	만료일
-    private Boolean activation;      // 활성화 여부(중요할까?)
+    @JsonProperty("activation")
+    private boolean activation;      // 활성화 여부(중요할까?)
 
     /**
      * DTO -> Entity
@@ -31,7 +33,7 @@ public class BonusPolicyDTO {
                 .giveValue(bonusPolicyDTO.getGiveValue())
                 .startAt(bonusPolicyDTO.getStartAt())
                 .endAt(bonusPolicyDTO.getEndAt())
-                .activation(bonusPolicyDTO.getActivation())
+                .activation(bonusPolicyDTO.isActivation())
                 .build();
     }
 
@@ -47,7 +49,7 @@ public class BonusPolicyDTO {
                 .giveValue(bonusPolicyDTO.getGiveValue())
                 .startAt(bonusPolicyDTO.getStartAt())
                 .endAt(bonusPolicyDTO.getEndAt())
-                .activation(bonusPolicyDTO.getActivation())
+                .activation(bonusPolicyDTO.isActivation())
                 .build();
     }
 }

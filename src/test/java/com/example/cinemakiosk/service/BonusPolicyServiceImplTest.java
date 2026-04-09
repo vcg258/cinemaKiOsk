@@ -42,6 +42,11 @@ class BonusPolicyServiceImplTest {
     }
 
     @Test
+    void deleteBonusPolicy() {
+        bonusService.deleteBonusPolicy(16L);
+    }
+
+    @Test
     void getBonusPolicies() {
         bonusService.getBonusPolicies().forEach(log::info);
     }

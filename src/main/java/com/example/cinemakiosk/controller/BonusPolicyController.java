@@ -19,9 +19,9 @@ public class BonusPolicyController {
 
     @Operation(summary = "적립 정책 추가 / 수정")
     @PostMapping
-    public ResponseEntity<Void> addBonusPolicy(BonusPolicyDTO bonusPolicyDTO) {
-        bonusPolicyService.createBonusPolicy(bonusPolicyDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<BonusPolicyDTO> addBonusPolicy(@RequestBody BonusPolicyDTO bonusPolicyDTO) {
+        BonusPolicyDTO dto = bonusPolicyService.createBonusPolicy(bonusPolicyDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @Operation(summary = "적립 정책 종료 (23시 59분으로 지정 활성화 여부 FALSE)")
@@ -35,6 +35,13 @@ public class BonusPolicyController {
     @PatchMapping("finish-btn")
     public ResponseEntity<Void> finishBtn(@RequestBody ActivationRequest request) {
         bonusPolicyService.changeActivation(request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "적립 정책 삭제")
+    @DeleteMapping
+    public ResponseEntity<Void> deleteBonusPolicy(@RequestParam Long id) {
+        bonusPolicyService.deleteBonusPolicy(id);
         return ResponseEntity.noContent().build();
     }
 
