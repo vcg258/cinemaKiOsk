@@ -122,7 +122,11 @@ public class MovieServiceImpl implements MovieService {
     }
 
 
-    // 상세 조회
+    /**
+     * 상세 조회
+     * @param movieId
+     * @return
+     */
     @Override
     public MovieDTO getMovieById(long movieId) {
         // 메시지 추가

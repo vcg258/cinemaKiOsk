@@ -65,6 +65,9 @@ public class MovieEntity{
     private List<ScheduleEntity> scheduleEntity;
 
 
+    @Column(name = "poster_path", length = 255)
+    private String posterPath;
+
     // 수정 메서드
     public void update(MovieDTO dto) {
         this.title = dto.getTitle();

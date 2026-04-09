@@ -1,10 +1,8 @@
 package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.config.TmdbConfig;
-import com.example.cinemakiosk.dto.MovieDTO;
-import com.example.cinemakiosk.dto.TmdbCreditsDTO;
-import com.example.cinemakiosk.dto.TmdbMovieDTO;
-import com.example.cinemakiosk.dto.TmdbSearchResponseDTO;
+import com.example.cinemakiosk.domain.enums.Rating;
+import com.example.cinemakiosk.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.coobird.thumbnailator.Thumbnailator;
@@ -160,6 +158,58 @@ public class TmdbServiceImpl implements TmdbService {
 
 
 
+
+
+    /**
+     * TMDB release_dates API로 한국(KR) 관람 등급 조회
+     * certification 값 → Rating enum 변환
+     *
+     * TMDB KR certification 규칙:
+     *   "All" / ""  → ALL (전체관람가)
+     *   "12"        → TWELVE (12세이상)
+     *   "15"        → FIFTEEN (15세이상)
+     *   "18" / "19" → NINETEEN (청소년관람불가)
+     *
+     * @param tmdbId TMDB 영화 ID
+     * @return Rating enum (조회 실패 시 ALL 기본값)
+     */
+    private Rating fetchKoreanRating(Long tmdbId) {
+        try {
+            String url = tmdbConfig.getBaseUrl() + "/movie/" + tmdbId
+                    + "/release_dates?api_key=" + tmdbConfig.getApiKey();
+
+            TmdbReleaseDatesDTO response = restTemplate.getForObject(url, TmdbReleaseDatesDTO.class);
+
+            if (response == null || response.getResults() == null) {
+                log.warn("fetchKoreanRating... release_dates 응답 없음, 기본값 ALL 사용");
+                return Rating.ALL;
+            }
+
+            // KR 항목 찾기
+            String certification = response.getResults().stream()
+                    .filter(r -> "KR".equals(r.getIso31661()))
+                    .flatMap(r -> r.getReleaseDates().stream())
+                    .map(TmdbReleaseDatesDTO.ReleaseDate::getCertification)
+                    .filter(c -> c != null && !c.isBlank())
+                    .findFirst()
+                    .orElse("");
+
+            log.info("fetchKoreanRating... KR certification='{}'", certification);
+
+            // certification → Rating enum 변환
+            return switch (certification) {
+                case "12"       -> Rating.TWELVE;
+                case "15"       -> Rating.FIFTEEN;
+                case "18", "19" -> Rating.NINETEEN;
+                default         -> Rating.ALL; // "All", "", 기타 → 전체관람가
+            };
+
+        } catch (Exception e) {
+            // 등급 조회 실패해도 상세 조회 자체는 성공해야 하므로 기본값 반환
+            log.warn("fetchKoreanRating... 등급 조회 실패, 기본값 ALL 사용: {}", e.getMessage());
+            return Rating.ALL;
+        }
+    }
 
 
 

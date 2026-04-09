@@ -57,6 +57,7 @@ public class MovieDTO {
                 .startAt(movieDTO.getStartAt())
                 .endAt(movieDTO.getEndAt())
                 .createAt(movieDTO.getCreateAt())
+                .posterPath(movieDTO.getPosterPath())    // 포스터 경로 저장
                 .build();
     }
     /**
