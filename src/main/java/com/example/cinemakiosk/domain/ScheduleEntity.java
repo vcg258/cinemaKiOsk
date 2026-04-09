@@ -34,7 +34,7 @@ public class ScheduleEntity {
     private LocalDateTime startAt; // 상영 시작 시간
     private LocalDateTime endAt; // 상영 종료 시간
 
-    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT true")
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean activation; // 활성화 여부 (유효 = True, 비활성화 = False)
 
     @OnDelete(action= OnDeleteAction.CASCADE)

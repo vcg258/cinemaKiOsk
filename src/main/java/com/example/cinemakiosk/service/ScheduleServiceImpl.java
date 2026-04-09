@@ -30,7 +30,7 @@ public class ScheduleServiceImpl implements ScheduleService {
      * @param scheduleDTO 스케줄 DTO
      */
     @Override
-    public void createSchedule(ScheduleDTO scheduleDTO) {
+    public ScheduleDTO createSchedule(ScheduleDTO scheduleDTO) {
 
         // 영화조회와 런타임을 가져오기 위함
         MovieEntity movieEntity = movieRepository.findById(scheduleDTO.getMovieId()).orElseThrow();
@@ -57,6 +57,15 @@ public class ScheduleServiceImpl implements ScheduleService {
         log.info("createSchedule... 스케줄 등록 목록: {}, 좌석 정책 번호: {}, 영화 번호: {}", entity,
                 entity.getTheaterEntity().getNo(),
                 entity.getMovieEntity().getMovieId());
+
+        return ScheduleDTO.builder()
+                .id(entity.getId())
+                .startAt(scheduleDTO.getStartAt())
+                .endAt(endAt.plusMinutes(theaterEntity.getCleanupTime()))
+                .no(scheduleDTO.getNo())
+                .movieId(scheduleDTO.getMovieId())
+                .activation(false)
+                .build();
     }
 
     /**
