@@ -1,6 +1,7 @@
 package com.example.cinemakiosk.vo;
 
 import com.example.cinemakiosk.dto.CouponDTO;
+import com.example.cinemakiosk.dto.DiscountPolicyDTO;
 import com.example.cinemakiosk.dto.PaymentDetailsDTO;
 import lombok.*;
 
@@ -11,6 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 public class CouponVO {
     private String couponNum; // 쿠폰 번호
+    private DiscountPolicyVO discountPolicy; // 할인 정책 인덱스 FK (JPA용도)
     private boolean status; // 사용여부 (사용가능 = true, 불가능 = false)
     private Long policyId; // 할인 정책 인덱스 FK
 
@@ -25,8 +27,9 @@ public class CouponVO {
 
         return CouponDTO.builder()
                 .couponNum(couponVO.getCouponNum())
-                .policyId(couponVO.getPolicyId())
+                .discountPolicy(DiscountPolicyVO.toDTO(couponVO.getDiscountPolicy()))
                 .status(couponVO.isStatus())
+                .policyId(couponVO.getPolicyId())
                 .build();
     }
 }

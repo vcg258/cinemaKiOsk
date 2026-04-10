@@ -1,7 +1,6 @@
 package com.example.cinemakiosk.dto;
 
 import com.example.cinemakiosk.domain.ReservationDetailsEntity;
-import com.example.cinemakiosk.domain.ReservationSeatEntity;
 import com.example.cinemakiosk.vo.ReservationDetailsVO;
 import com.example.cinemakiosk.vo.ReservationSeatVO;
 import lombok.*;
@@ -18,8 +17,9 @@ public class ReservationDetailsDTO {
     private String id;                     // 예매 고유번호
     private ScheduleDTO schedule;           //  스케쥴 정보
     private MemberDTO phone;                  //  회원 번호
-    private LocalDateTime reservationTime; //  예약 시간
     private List<ReservationSeatDTO> seats; //  예매한 좌석들의 정보
+    private boolean returned;
+    private LocalDateTime createAt; //예매 시간
 
     /**
      * DTO -> Entity
@@ -32,7 +32,8 @@ public class ReservationDetailsDTO {
                 .id(reservationDetailsDTO.getId())
                 .scheduleEntity(ScheduleDTO.toEntity(reservationDetailsDTO.getSchedule()))
                 .memberEntity(MemberDTO.toEntity(reservationDetailsDTO.getPhone()))
-                .createAt(reservationDetailsDTO.getReservationTime())
+                .returned(reservationDetailsDTO.isReturned())
+                .createAt(reservationDetailsDTO.getCreateAt())
                 .build();
     }
 
@@ -45,16 +46,19 @@ public class ReservationDetailsDTO {
         List<ReservationSeatDTO> reservationSeatDTOs = reservationDetailsDTO.getSeats();
         List<ReservationSeatVO> reservationSeatVOs = new ArrayList<>();
 
-        for (ReservationSeatDTO reservationSeatDTO : reservationSeatDTOs) {
-            reservationSeatVOs.add(ReservationSeatDTO.toVO(reservationSeatDTO));
+        if (reservationSeatDTOs != null) {
+            for (ReservationSeatDTO reservationSeatDTO : reservationSeatDTOs) {
+                reservationSeatVOs.add(ReservationSeatDTO.toVO(reservationSeatDTO));
+            }
         }
 
         return ReservationDetailsVO.builder()
                 .id(reservationDetailsDTO.getId())
                 .schedule(ScheduleDTO.toVO(reservationDetailsDTO.getSchedule()))
                 .phone(MemberDTO.toVO(reservationDetailsDTO.getPhone()))
-                .reservationTime(reservationDetailsDTO.getReservationTime())
                 .seats(reservationSeatVOs)
+                .returned(reservationDetailsDTO.isReturned())
+                .createAt(reservationDetailsDTO.getCreateAt())
                 .build();
     }
 
