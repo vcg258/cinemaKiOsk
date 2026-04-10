@@ -170,6 +170,10 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public void updateStatus(CouponDTO couponDTO) {
+        if (couponDTO.getCouponNum() == null) {
+            log.info("쿠폰을 사용하지 않음 Pass");
+            return;
+        }
         CouponEntity couponEntity = couponRepository.findById(couponDTO.getCouponNum()).orElseThrow();
         couponEntity.changeStatus(couponDTO.isStatus()); // 사용후 변경
         couponRepository.save(couponEntity);

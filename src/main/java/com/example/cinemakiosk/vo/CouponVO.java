@@ -14,6 +14,8 @@ public class CouponVO {
     private boolean status; // 사용여부 (사용가능 = true, 불가능 = false)
     private Long policyId; // 할인 정책 인덱스 FK
 
+    private DiscountPolicyVO discountPolicy; // resultMap
+
     /**
      * VO -> DTO
      * @param couponVO VO

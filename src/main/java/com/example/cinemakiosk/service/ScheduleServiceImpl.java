@@ -48,9 +48,8 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .endAt(endAt.plusMinutes(theaterEntity.getCleanupTime()))
                 .no(scheduleDTO.getNo())
                 .movieId(scheduleDTO.getMovieId())
-                .activation(false)
+                .activation(true)
                 .build();
-
         log.info("createSchedule... 상영관 정리시간(분) : {}", theaterEntity.getCleanupTime());
 
         ScheduleEntity entity = scheduleRepository.save(ScheduleDTO.toEntity(dto));
@@ -126,7 +125,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                 return;
             }
             if (scheduleEntity.isActivation() == request.isActivation()) {
-                log.error("만료여부 일치 변경 실패 : {} ", scheduleEntity);
+                log.error("만료여부 일치 변경 실패 : 현재 {}, 요청 {} ", scheduleEntity, request);
                 return;
             }
             scheduleEntity.changeActivation(request.isActivation());
