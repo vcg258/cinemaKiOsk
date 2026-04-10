@@ -20,9 +20,6 @@ public class ScheduleVO {
     private LocalDateTime endAt; // 상영 종료 시간
     private boolean activation; // 활성화 여부 (유효 = True, 비활성화 = False)
 
-    private MovieVO movie; // resultMap
-    private TheaterVO theater; // resultMap
-
     /**
      * VO -> DTO
      * @param scheduleVO

@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class TmdbCreditsDTO {
+public class TmdbCreditsDTO { // TODO 분리
     private List<CastDTO> cast;
     private List<CrewDTO> crew;
 

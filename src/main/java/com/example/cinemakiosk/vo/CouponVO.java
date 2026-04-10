@@ -12,11 +12,9 @@ import lombok.*;
 @AllArgsConstructor
 public class CouponVO {
     private String couponNum; // 쿠폰 번호
-    private DiscountPolicyVO discountPolicy; // 할인 정책 인덱스 FK (JPA용도)
+    private DiscountPolicyVO discountPolicy; // 할인 정책 인덱스 FK
     private boolean status; // 사용여부 (사용가능 = true, 불가능 = false)
     private Long policyId; // 할인 정책 인덱스 FK
-
-    private DiscountPolicyVO discountPolicy; // resultMap
 
     /**
      * VO -> DTO

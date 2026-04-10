@@ -14,8 +14,6 @@ public class TheaterVO {
     private Long policyId; // 좌석정책 FK
     private Long cleanupTime; // 정리시간(분)
 
-    private SeatPolicyVO seatPolicy; // resultMap
-
     /**
      * VO -> DTO
      * @param theaterVO
