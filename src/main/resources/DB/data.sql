@@ -6,6 +6,36 @@ values (1, 1, '관리자', '010-1234-5678', '0', null, now());
 -- JPA는 ENUM 이름(FIFTEEN 등)으로 생성하므로 실제 서비스 값(15 등)으로 ALTER
 ALTER TABLE movie MODIFY COLUMN rating ENUM('ALL', '12', '15', '19') NOT NULL;
 
+-- FK 인덱스 적용
+-- coupon
+CREATE INDEX IF NOT EXISTS idx_coupon_policy_id ON coupon(policy_id);
+
+-- theater
+CREATE INDEX IF NOT EXISTS idx_theater_policy_id ON theater(policy_id);
+
+-- schedule
+CREATE INDEX IF NOT EXISTS idx_schedule_no ON schedule(no);
+CREATE INDEX IF NOT EXISTS idx_schedule_movie_id ON schedule(movie_id);
+
+-- statistics
+CREATE INDEX IF NOT EXISTS idx_statistics_schedule_id ON statistics(schedule_id);
+
+-- reservation_details
+CREATE INDEX IF NOT EXISTS idx_reservation_details_schedule_id ON reservation_details(schedule_id);
+CREATE INDEX IF NOT EXISTS idx_reservation_details_phone ON reservation_details(phone);
+
+-- reservation_seat
+CREATE INDEX IF NOT EXISTS idx_reservation_seat_reservation_id ON reservation_seat(reservation_id);
+
+-- payment_details
+CREATE INDEX IF NOT EXISTS idx_payment_details_reservation_id ON payment_details(reservation_id);
+CREATE INDEX IF NOT EXISTS idx_payment_details_bonus_policy_id ON payment_details(bonus_policy_id);
+CREATE INDEX IF NOT EXISTS idx_payment_details_coupon_num ON payment_details(coupon_num);
+
+-- point_history
+CREATE INDEX IF NOT EXISTS idx_point_history_payment_id ON point_history(payment_id);
+CREATE INDEX IF NOT EXISTS idx_point_history_phone ON point_history(phone);
+
 
 -- 기초 데이터 입력 테스트
 insert ignore into seat_policy (policy_id, cost, name)

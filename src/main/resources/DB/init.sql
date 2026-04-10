@@ -109,10 +109,10 @@ CREATE TABLE IF NOT EXISTS `theater`
 CREATE TABLE IF NOT EXISTS `schedule`
 (
     `id`         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '스케줄 인덱스',
-    `no`         BIGINT UNSIGNED       NOT NULL COMMENT '상영관 번호 FK',
-    `movie_id`   BIGINT UNSIGNED       NOT NULL COMMENT '영화 번호 FK',
-    `start_at`   DATETIME              NULL COMMENT '상영 시작 시간', # NOT NULL? NULL?
-    `end_at`     DATETIME              NULL COMMENT '상영 종료 시간', # NOT NULL? NULL?
+    `no`         BIGINT UNSIGNED      NOT NULL COMMENT '상영관 번호 FK',
+    `movie_id`   BIGINT UNSIGNED      NOT NULL COMMENT '영화 번호 FK',
+    `start_at`   DATETIME             NULL COMMENT '상영 시작 시간', # NOT NULL? NULL?
+    `end_at`     DATETIME             NULL COMMENT '상영 종료 시간', # NOT NULL? NULL?
     `activation` BOOLEAN DEFAULT TRUE NULL COMMENT '스케줄 활성화 여부 (활성화=True, 만료=False)',
     CONSTRAINT `fk_schedule_theater_no` FOREIGN KEY (`no`) REFERENCES theater (`no`)
         ON DELETE CASCADE ON UPDATE CASCADE,
@@ -139,6 +139,7 @@ CREATE TABLE IF NOT EXISTS `reservation_details`
     `id`          VARCHAR(36) PRIMARY KEY COMMENT '예매 고유번호',
     `schedule_id` BIGINT UNSIGNED                    NOT NULL COMMENT '스케쥴 아이디 FK',
     `phone`       VARCHAR(20)                        NULL COMMENT '회원 번호 FK', # NOT NULL -> NULL 이유 : 비회원일 경우 NULL
+    `returned`    BOOLEAN  DEFAULT FALSE             NOT NULL COMMENT '',
     `create_at`   DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '예매 기준시',
     CONSTRAINT `fk_reservation_details_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES schedule (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,

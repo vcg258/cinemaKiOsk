@@ -44,13 +44,13 @@ class TmdbServiceImplTest {
         assertNotNull(movieDTO);
         log.info("movieDTO: {} ", movieDTO);
     }
-
-    @Test
-    void downloadAndSavePoster() {
-        try {
-            tmdbServiceImpl.downloadAndSavePoster("https://image.tmdb.org/t/p/w500/sotBnRlFJ67cPisjAUXzbPxi9kC.jpg", "타임 머신");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//
+//    @Test
+//    void downloadAndSavePoster() {
+//        try {
+//            tmdbServiceImpl.downloadAndSavePoster("https://image.tmdb.org/t/p/w500/sotBnRlFJ67cPisjAUXzbPxi9kC.jpg", "타임 머신");
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 }

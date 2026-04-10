@@ -68,7 +68,7 @@ class DiscountPolicyEntityServiceImplTest {
 
     @Test
     public void authCouponTest() {
-        boolean result = discountPolicyService.authCoupon("8930bc2b36dd");
+        boolean result = discountPolicyService.authCoupon("testCoupon02");
         log.info("result: {}", result);
     }
 

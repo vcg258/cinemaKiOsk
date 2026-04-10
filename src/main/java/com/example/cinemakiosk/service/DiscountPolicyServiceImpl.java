@@ -6,9 +6,12 @@ import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
 import com.example.cinemakiosk.dto.RequestDTO.CouponStatusRequest;
 import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
+import com.example.cinemakiosk.mapper.CouponMapper;
 import com.example.cinemakiosk.mapper.DiscountPolicyMapper;
 import com.example.cinemakiosk.repository.CouponRepository;
 import com.example.cinemakiosk.repository.DiscountPolicyRepository;
+import com.example.cinemakiosk.vo.CouponVO;
+import com.example.cinemakiosk.vo.DiscountPolicyVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -29,6 +32,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     private final DiscountPolicyMapper discountPolicyMapper;
     private final DiscountPolicyRepository discountPolicyRepository;
     private final CouponRepository couponRepository;
+    private final CouponMapper couponMapper;
 
     /**
      * 할인 정책 추가 / 수정
@@ -142,22 +146,22 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public boolean authCoupon(String couponNum) {
-        DiscountPolicyDTO discountPolicy = discountPolicyMapper.checkCoupon(couponNum);
+        CouponVO couponVO = couponMapper.checkCoupon(couponNum);
         // 정책이 없을 경우 (INNER JOIN을 하였기때문에 정책이 없다면 null)
-        if (discountPolicy == null) {
+        if (couponVO == null) {
             throw new NoSuchElementException("authCoupon... 정책이 없음");
         }
         // 정책이 비활성화 일 경우
-        if (!discountPolicy.isActivation()) {
+        if (!couponVO.getDiscountPolicy().isActivation()) {
             throw new IllegalStateException("authCoupon... 정책 비활성화");
         }
         // 할인 정책이 만료된 경우
         LocalDateTime now = LocalDateTime.now();
-        if (!(now.isBefore(discountPolicy.getEndAt()) && now.isAfter(discountPolicy.getStartAt()))) {
+        if (!(now.isBefore(couponVO.getDiscountPolicy().getEndAt()) && now.isAfter(couponVO.getDiscountPolicy().getStartAt()))) {
             throw new IllegalStateException("authCoupon...정책 만료");
         }
         CouponEntity coupon = couponRepository
-                .findByCouponNumAndDiscountPolicyEntityIdAndStatusTrue(couponNum, discountPolicy.getId()).orElse(null);
+                .findByCouponNumAndDiscountPolicyEntityIdAndStatusTrue(couponNum, couponVO.getDiscountPolicy().getId()).orElse(null);
         if (coupon == null) {
             throw new IllegalArgumentException("쿠폰 번호와 할인정책이 일치하고 사용여부가 true 인 녀셕 없음");
         }

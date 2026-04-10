@@ -31,4 +31,24 @@
 
         where cp.coupon_num = #{num}
     </select>
+
+    <resultMap id="CouponResultMap" type="com.example.cinemakiosk.vo.CouponVO">
+        <id property="couponNum" column="coupon_num"/>
+        <result property="policyId" column="policy_id"/>
+        <result property="status" column="status"/>
+        <association property="discountPolicy" javaType="com.example.cinemakiosk.vo.DiscountPolicyVO">
+            <id property="id" column="id"/>
+            <result property="activation" column="activation"/>
+            <result property="conditionType" column="condition_type"/>
+            <result property="discountType" column="discount_type"/>
+            <result property="discountValue" column="discount_value"/>
+            <result property="endAt" column="end_at"/>
+            <result property="policyName" column="policy_name"/>
+            <result property="startAt" column="start_at"/>
+        </association>
+    </resultMap>
+    <select id="checkCoupon" resultMap="CouponResultMap">
+        SELECT * FROM discount_policy DP
+                          JOIN coupon C ON DP.id = C.policy_id WHERE coupon_num = #{couponNum}
+    </select>
 </mapper>

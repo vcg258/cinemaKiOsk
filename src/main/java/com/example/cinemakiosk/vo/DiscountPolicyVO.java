@@ -24,7 +24,6 @@ public class DiscountPolicyVO {
     private LocalDateTime startAt; // 시작일
     private LocalDateTime endAt; // 만료일
     private boolean activation; // 활성화 여부
-    private List<CouponVO> coupons; // resultMap(collection)
 
     /**
      * VO -> DTO
