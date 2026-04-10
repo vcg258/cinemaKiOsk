@@ -191,3 +191,12 @@ CREATE TABLE IF NOT EXISTS `point_history`
     CONSTRAINT `fk_point_history_phone` FOREIGN KEY (`phone`) REFERENCES member (`phone`)
         ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT '포인트 내역';
+
+
+
+
+
+
+
+
+

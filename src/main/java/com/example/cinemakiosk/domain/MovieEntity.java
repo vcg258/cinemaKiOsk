@@ -55,7 +55,7 @@ public class MovieEntity{
     private LocalDate startAt;
 
     @Column(name = "end_at")
-    private LocalDate endAt;
+    private LocalDateTime endAt;
 
     @Column(name = "create_at", columnDefinition = "DATE DEFAULT NOW()")
     private LocalDate createAt;
@@ -64,6 +64,9 @@ public class MovieEntity{
     @OneToMany(mappedBy = "movieEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<ScheduleEntity> scheduleEntity;
 
+
+    @Column(name = "poster_path", length = 255)
+    private String posterPath;
 
     // 수정 메서드
     public void update(MovieDTO dto) {

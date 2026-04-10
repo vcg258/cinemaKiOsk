@@ -17,20 +17,20 @@ USE `cinema_kiosk`;
 -- ============================================================
 SET FOREIGN_KEY_CHECKS = 0;
 
--- TRUNCATE TABLE `admin`;                -- 최상위 (init.sql 기본 row 포함 전부 초기화)
--- TRUNCATE TABLE `bonus_policy`;
--- TRUNCATE TABLE `coupon`;               -- discount_policy 참조
--- TRUNCATE TABLE `discount_policy`;
--- TRUNCATE TABLE `member`;
--- TRUNCATE TABLE `movie`;
--- TRUNCATE TABLE `payment_details`;      -- reservation_details, bonus_policy, discount_policy 참조
--- TRUNCATE TABLE `point_history`;        -- 최하위 (payment_details, member 참조)
--- TRUNCATE TABLE `reservation_details`; -- schedule, member 참조
--- TRUNCATE TABLE `reservation_seat`;     -- reservation_details 참조
--- TRUNCATE TABLE `schedule`;             -- theater, movie 참조
--- TRUNCATE TABLE `seat_policy`;
--- TRUNCATE TABLE `statistics`;           -- schedule 참조
--- TRUNCATE TABLE `theater`;              -- seat_policy 참조
+TRUNCATE TABLE `admin`;                -- 최상위 (init.sql 기본 row 포함 전부 초기화)
+TRUNCATE TABLE `bonus_policy`;
+TRUNCATE TABLE `coupon`;               -- discount_policy 참조
+TRUNCATE TABLE `discount_policy`;
+TRUNCATE TABLE `member`;
+TRUNCATE TABLE `movie`;
+TRUNCATE TABLE `payment_details`;      -- reservation_details, bonus_policy, discount_policy 참조
+TRUNCATE TABLE `point_history`;        -- 최하위 (payment_details, member 참조)
+TRUNCATE TABLE `reservation_details`; -- schedule, member 참조
+TRUNCATE TABLE `reservation_seat`;     -- reservation_details 참조
+TRUNCATE TABLE `schedule`;             -- theater, movie 참조
+TRUNCATE TABLE `seat_policy`;
+TRUNCATE TABLE `statistics`;           -- schedule 참조
+TRUNCATE TABLE `theater`;              -- seat_policy 참조
 
 SET FOREIGN_KEY_CHECKS = 1;
 
