@@ -57,7 +57,9 @@ dependencies {
     // Source: https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
     implementation("io.jsonwebtoken:jjwt:0.12.6")
 
-
+    // JSON 변환 라이브러리
+    // https://mvnrepository.com/artifact/com.google.code.gson/gson
+    implementation 'com.google.code.gson:gson:2.10.1'
 
 }
 

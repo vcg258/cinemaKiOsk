@@ -30,7 +30,7 @@ public class AdminEntity{
     @Column(name = "name", nullable = false)
     private String name;          // 관리자 이름
 
-    @Column(name = "admin_phone")
+    @Column(name = "admin_phone", nullable = false, unique = true)
     private String adminPhone;    // 전화번호
 
     @Column(name = "level", nullable = false)

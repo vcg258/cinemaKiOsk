@@ -14,7 +14,7 @@ USE `cinema_kiosk`;
 CREATE TABLE IF NOT EXISTS `admin` # FK (X)
 (
     `admin_id`    BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '관리자 인덱스',
-    `login_id`    VARCHAR(30)        NOT NULL UNIQUE COMMENT '관리자 아이디',
+    `login_id`    VARCHAR(30) UNIQUE NOT NULL COMMENT '관리자 아이디',
     `password`    CHAR(60)           NOT NULL COMMENT '관리자 비밀번호',
     `name`        VARCHAR(50)        NOT NULL COMMENT '관리자 이름',
     `admin_phone` VARCHAR(20) UNIQUE NOT NULL COMMENT '전화번호',
@@ -78,14 +78,21 @@ CREATE TABLE IF NOT EXISTS `discount_policy` # FK (X)
 
 -- --------------------------------------------------------------------------------------------------------------------
 
-# CREATE TABLE IF NOT EXISTS `movie_images`
-# (
-#     `no`       BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '영화이미지 인덱스',
-#     `title_id` BIGINT UNSIGNED NOT NULL COMMENT '영화 제목 아이디',
-#     `poster`   VARCHAR(50)     NOT NULL COMMENT '영화 포스터',
-#     CONSTRAINT `fk_movie_title` FOREIGN KEY (`title_id`) REFERENCES movie (`movie_id`)
-#         ON DELETE CASCADE ON UPDATE CASCADE
-# ) COMMENT '영화 이미지';
+CREATE TABLE admin_role
+(
+    id        BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '권한 인덱스',
+    role_name VARCHAR(50) NOT NULL COMMENT 'ROLE_REFUND, ROLE_MOVIE_REG 등 시큐리티 권한 이름',
+    role_desc VARCHAR(100) COMMENT '권한 이름'
+) COMMENT '권한 종류 (12개 고정 데이터)';
+
+CREATE TABLE admin_role_map
+(
+    id       BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '인덱스 (결합키 안쓰기 위해 넣음)',
+    admin_id BIGINT UNSIGNED UNIQUE NOT NULL COMMENT '관리자 아이디',
+    role_id  BIGINT UNSIGNED UNIQUE NOT NULL COMMENT '권한 아이디',
+    CONSTRAINT `fk_admin_role_map_admin` FOREIGN KEY (admin_id) REFERENCES admin (admin_id),
+    CONSTRAINT `fk_admin_role_map_admin_role` FOREIGN KEY (role_id) REFERENCES admin_role (id)
+) COMMENT '관리자 계정의 권한 내역 (매핑 테이블)';
 
 CREATE TABLE IF NOT EXISTS `coupon`
 (
@@ -192,12 +199,3 @@ CREATE TABLE IF NOT EXISTS `point_history`
     CONSTRAINT `fk_point_history_phone` FOREIGN KEY (`phone`) REFERENCES member (`phone`)
         ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT '포인트 내역';
-
-
-
-
-
-
-
-
-

@@ -7,6 +7,7 @@ values (1, 1, '관리자', '010-1234-5678', '0', null, now());
 ALTER TABLE movie MODIFY COLUMN rating ENUM('ALL', '12', '15', '19') NOT NULL;
 
 -- FK 인덱스 적용
+
 -- coupon
 CREATE INDEX IF NOT EXISTS idx_coupon_policy_id ON coupon(policy_id);
 
