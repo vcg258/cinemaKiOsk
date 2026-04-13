@@ -1,4 +1,4 @@
-package com.example.cinemakiosk.domain;
+package com.example.cinemakiosk.domain.adminDomain;
 
 import com.example.cinemakiosk.dto.AdminDTO;
 import jakarta.persistence.*;

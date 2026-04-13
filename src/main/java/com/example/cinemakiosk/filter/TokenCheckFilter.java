@@ -29,7 +29,7 @@ public class TokenCheckFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         // 시작경로가 /api/admin/ 아닐 경우 Pass
-        if (!path.startsWith("/api/admin/")) {
+        if (!path.startsWith("/api/admin/") || path.startsWith("/api/admin/login")) {
             filterChain.doFilter(request, response);
             return;
         }

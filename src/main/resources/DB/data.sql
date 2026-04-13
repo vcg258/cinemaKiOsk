@@ -3,8 +3,9 @@
 ALTER TABLE movie MODIFY COLUMN rating ENUM('ALL', '12', '15', '19') NOT NULL;
 
 -- 초기 데이터
+-- 총관리자(admin) 비밀번호 1234
 INSERT IGNORE INTO admin (login_id, password, name, admin_phone, level, UUID, create_at)
-values (1, 1, '관리자', '010-1234-5678', '0', null, now());
+values ('admin', '$2a$10$b0wSz0F5vuSpu5nZFdao1.vMfsXNgS6UTMCIs.g/NNWqaChn.IIju', '관리자', '010-1234-5678', '0', null, now());
 
 -- 운영 권한 (일반 관리자 부여 가능) - 7개
 INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_REFUND', '환불 처리');

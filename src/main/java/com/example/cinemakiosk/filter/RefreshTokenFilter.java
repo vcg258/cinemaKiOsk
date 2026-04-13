@@ -78,15 +78,15 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
         log.info("gap: {}", gapTime);
 
         // AccessToken 재발급 할 아이디 지정
-        String adminId = (String) refreshClaims.get("adminId");
+        String loginId = (String) refreshClaims.get("loginId");
 
-        String accessTokenValue = jwtUtil.generateToken(Map.of("adminId", adminId), 1);
+        String accessTokenValue = jwtUtil.generateToken(Map.of("loginId", loginId), 1);
         String refreshTokenValue = tokens.get("refreshToken");
 
         // RefreshToken이 3일도 안남았으면 재발급
         if (gapTime < (1000* 60* 60* 24 * 3)) {
             log.info("new Refresh Token required... ");
-            refreshTokenValue = jwtUtil.generateToken(Map.of("adminId", adminId), 30);
+            refreshTokenValue = jwtUtil.generateToken(Map.of("loginId", loginId), 30);
         }
 
         log.info("Refresh Token result....................");

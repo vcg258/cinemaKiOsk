@@ -38,7 +38,7 @@ public class APILoginFilter extends AbstractAuthenticationProcessingFilter {
         // 미인증 토큰 생성
         UsernamePasswordAuthenticationToken authenticationToken
                 = new UsernamePasswordAuthenticationToken(
-                jsonDate.get("adminId"),
+                jsonDate.get("loginId"),
                 jsonDate.get("password"));
         // 인증 매니저 한테 검증을 의뢰
         return getAuthenticationManager().authenticate(authenticationToken);
