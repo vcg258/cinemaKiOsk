@@ -1,13 +1,28 @@
--- 초기 데이터
-INSERT IGNORE INTO admin (login_id, password, name, admin_phone, level, UUID, create_at)
-values (1, 1, '관리자', '010-1234-5678', '0', null, now());
-
 -- JPA가 생성한 movie.rating ENUM을 DB 기준값으로 변경
 -- JPA는 ENUM 이름(FIFTEEN 등)으로 생성하므로 실제 서비스 값(15 등)으로 ALTER
 ALTER TABLE movie MODIFY COLUMN rating ENUM('ALL', '12', '15', '19') NOT NULL;
 
--- FK 인덱스 적용
+-- 초기 데이터
+INSERT IGNORE INTO admin (login_id, password, name, admin_phone, level, UUID, create_at)
+values (1, 1, '관리자', '010-1234-5678', '0', null, now());
 
+-- 운영 권한 (일반 관리자 부여 가능) - 7개
+INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_REFUND', '환불 처리');
+INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_MOVIE_LIST', '영화 목록 조회');
+INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_MOVIE_REGISTER', '영화 등록');
+INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_MOVIE_EDIT', '영화 수정');
+INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_MOVIE_DELETE', '영화 삭제');
+INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_THEATER_LIST', '상영관 조회');
+INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_THEATER_EDIT', '상영관 수정');
+
+-- 최고 관리자 전용 권한 - 5개
+INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_POLICY_LIST', '정책 조회');
+INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_POLICY_EDIT', '정책 수정');
+INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_STATISTICS', '통계 조회');
+INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_MEMBER_MANAGEMENT', '회원 정보 관리');
+INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_ADMIN_MANAGEMENT', '계정 및 권한 관리');
+
+-- FK 인덱스 적용
 -- coupon
 CREATE INDEX IF NOT EXISTS idx_coupon_policy_id ON coupon(policy_id);
 

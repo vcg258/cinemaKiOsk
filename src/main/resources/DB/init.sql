@@ -81,8 +81,8 @@ CREATE TABLE IF NOT EXISTS `discount_policy` # FK (X)
 CREATE TABLE admin_role
 (
     id        BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '권한 인덱스',
-    role_name VARCHAR(50) NOT NULL COMMENT 'ROLE_REFUND, ROLE_MOVIE_REG 등 시큐리티 권한 이름',
-    role_desc VARCHAR(100) COMMENT '권한 이름'
+    role_name VARCHAR(40) UNIQUE NOT NULL COMMENT 'ROLE_REFUND, ROLE_MOVIE_REG 등 시큐리티 권한 이름',
+    role_desc VARCHAR(30) UNIQUE COMMENT '권한 이름'
 ) COMMENT '권한 종류 (12개 고정 데이터)';
 
 CREATE TABLE admin_role_map

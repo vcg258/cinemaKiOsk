@@ -3,6 +3,8 @@ package com.example.cinemakiosk.domain;
 import com.example.cinemakiosk.dto.AdminDTO;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -18,7 +20,7 @@ public class AdminEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "admin_id")
+    @Column(name = "admin_id", columnDefinition = "BIGINT UNSIGNED")
     private Long adminId;         // 관리자 인덱스 (PK)
 
     @Column(name = "login_id", nullable = false, unique = true)
@@ -42,6 +44,10 @@ public class AdminEntity{
     @CreatedDate
     @Column(nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
     private LocalDateTime createAt; // 계정 생성 일자
+
+    @OnDelete(action= OnDeleteAction.CASCADE)
+    @OneToOne(mappedBy = "adminEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private AdminRoleMapEntity adminRoleMapEntity; // 관리자 아이디 FK
 
 
     /**
