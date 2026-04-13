@@ -8,10 +8,11 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
-@ToString
+@ToString (exclude = "adminRoleMapEntity")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -46,8 +47,8 @@ public class AdminEntity{
     private LocalDateTime createAt; // 계정 생성 일자
 
     @OnDelete(action= OnDeleteAction.CASCADE)
-    @OneToOne(mappedBy = "adminEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
-    private AdminRoleMapEntity adminRoleMapEntity; // 관리자 아이디 FK
+    @OneToMany(mappedBy = "adminEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private List<AdminRoleMapEntity> adminRoleMapEntity; // 관리자 아이디 FK
 
 
     /**

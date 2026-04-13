@@ -5,10 +5,12 @@ import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.List;
+
 @Getter
 @Builder
 @Entity
-@ToString
+@ToString (exclude = "adminRoleMapEntity")
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "admin_role")
@@ -24,6 +26,6 @@ public class AdminRoleEntity {
     private String roleDesc; // 권한 이름 (뷰에서 보여줄 이름)
 
     @OnDelete(action= OnDeleteAction.CASCADE)
-    @OneToOne(mappedBy = "adminRoleEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
-    private AdminRoleMapEntity adminRoleMapEntity; // 권한 아이디 FK
+    @OneToMany(mappedBy = "adminRoleEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private List<AdminRoleMapEntity> adminRoleMapEntity; // 권한 아이디 FK
 }

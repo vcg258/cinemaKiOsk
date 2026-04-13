@@ -88,8 +88,9 @@ CREATE TABLE admin_role
 CREATE TABLE admin_role_map
 (
     id       BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '인덱스 (결합키 안쓰기 위해 넣음)',
-    admin_id BIGINT UNSIGNED UNIQUE NOT NULL COMMENT '관리자 아이디',
-    role_id  BIGINT UNSIGNED UNIQUE NOT NULL COMMENT '권한 아이디',
+    admin_id BIGINT UNIQUE NOT NULL COMMENT '관리자 아이디',
+    role_id  BIGINT UNIQUE NOT NULL COMMENT '권한 아이디',
+    CONSTRAINT `uq_admin_role_map` UNIQUE (admin_id, role_id),  -- 복합 UNIQUE
     CONSTRAINT `fk_admin_role_map_admin` FOREIGN KEY (admin_id) REFERENCES admin (admin_id),
     CONSTRAINT `fk_admin_role_map_admin_role` FOREIGN KEY (role_id) REFERENCES admin_role (id)
 ) COMMENT '관리자 계정의 권한 내역 (매핑 테이블)';
