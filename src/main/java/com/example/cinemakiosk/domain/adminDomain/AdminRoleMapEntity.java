@@ -1,5 +1,7 @@
 package com.example.cinemakiosk.domain.adminDomain;
 
+import com.example.cinemakiosk.dto.AdminDTO.AdminRoleDTO;
+import com.example.cinemakiosk.dto.AdminDTO.AdminRoleMapDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,4 +24,14 @@ public class AdminRoleMapEntity {
     @JoinColumn(name = "role_id", nullable = false, foreignKey = @ForeignKey(name = "fk_admin_role_map_admin_role"))
     private AdminRoleEntity adminRoleEntity; // 권한 아이디 FK
 
+
+    public static AdminRoleMapDTO toDTO(AdminRoleMapEntity adminRoleMapEntity) {
+
+        return AdminRoleMapDTO.builder()
+                .id(adminRoleMapEntity.getId())
+                .adminId(adminRoleMapEntity.getAdminEntity().getAdminId())
+                .roleId(adminRoleMapEntity.getAdminRoleEntity().getId())
+                .build();
+    }
 }
+

@@ -27,7 +27,6 @@ public class JwtUtil {
 
     // 토큰 생성 TODO (엑세스, 리프레시 기간 정할 예정)
     public String generateToken(Map<String, Object> valueMap, int days) {
-        int time = days * 24 * 60; // TODO 1일로 기준을 잡음 테스트할때 변경
 
         return Jwts.builder()
                 .header()
@@ -35,7 +34,7 @@ public class JwtUtil {
                     .and()
                 .claims(valueMap) // PayLoad (사용자의 데이터가 들어감)
                 .issuedAt(Date.from(ZonedDateTime.now().toInstant())) // 어디 나라인지 표시하기때문에 사용함 (사실 굳이긴해)
-                .expiration(Date.from(ZonedDateTime.now().plusDays(time).toInstant()))
+                .expiration(Date.from(ZonedDateTime.now().plusDays(days).toInstant()))
                 .signWith(getSigningKey()) // "alg", "HS256"를 자동으러 넣어주기때문에 수동으로 안넣음
                 .compact(); // 위 모든 설정 합치고 JWT 문자열로 만듬
     }

@@ -3,14 +3,14 @@ package com.example.cinemakiosk.config;
 import com.example.cinemakiosk.filter.APILoginFilter;
 import com.example.cinemakiosk.filter.RefreshTokenFilter;
 import com.example.cinemakiosk.filter.TokenCheckFilter;
-import com.example.cinemakiosk.service.AdminDetailsService;
+import com.example.cinemakiosk.handler.APILoginSuccessHandler;
+import com.example.cinemakiosk.service.AdminService.AdminDetailsService;
 import com.example.cinemakiosk.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -54,15 +54,16 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").authenticated() // 경로가 /api/admin/ 으로 시작한 API는 JWT 토큰 필요
                         .anyRequest().permitAll()) // 일단 전체 허용
                 .addFilterBefore(apiLoginFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class) // APILogin 필터 추가
-                .addFilterBefore(tokenCheckFilter(), UsernamePasswordAuthenticationFilter.class); // AccessToken 필터 추가
-//                .addFilterBefore(refreshTokenFilter(), UsernamePasswordAuthenticationFilter.class); // RefreshToken 필터 추가
+                .addFilterBefore(tokenCheckFilter(), UsernamePasswordAuthenticationFilter.class) // AccessToken 필터 추가
+                .addFilterBefore(refreshTokenFilter(), tokenCheckFilter().getClass()); // RefreshToken 필터 추가
         return http.build();
     }
 
 
     public APILoginFilter apiLoginFilter(AuthenticationManager authenticationManager) throws Exception {
         APILoginFilter filter = new APILoginFilter("/api/admin/login");
-        filter.setAuthenticationManager(authenticationManager);
+        filter.setAuthenticationManager(authenticationManager); // 매니저 등록
+        filter.setAuthenticationSuccessHandler(new APILoginSuccessHandler(jwtUtil)); // 성공 핸들러 등록
         return filter;
     }
 
@@ -72,9 +73,10 @@ public class SecurityConfig {
         return filter;
     }
 
-
-//    @Bean
-//    public RefreshTokenFilter refreshTokenFilter() {}
+    @Bean
+    public RefreshTokenFilter refreshTokenFilter() {
+        return new RefreshTokenFilter("/api/admin/refresh", jwtUtil);
+    }
 
     // BCrypt (암호화)
     @Bean

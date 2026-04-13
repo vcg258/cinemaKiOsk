@@ -32,7 +32,7 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         // 요청경로가 refreshPath가 아님 스킵
-        if (path.startsWith(refreshPath)) {
+        if (!path.startsWith(refreshPath)) {
             log.info("skip Refreshing token...");
             filterChain.doFilter(request, response);
             return;
@@ -83,8 +83,8 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
         String accessTokenValue = jwtUtil.generateToken(Map.of("loginId", loginId), 1);
         String refreshTokenValue = tokens.get("refreshToken");
 
-        // RefreshToken이 3일도 안남았으면 재발급
-        if (gapTime < (1000* 60* 60* 24 * 3)) {
+        // TODO RefreshToken이 3일도 안남았으면 재발급
+        if (gapTime < (1000 * 60 * 60 * 24 * 3)) {
             log.info("new Refresh Token required... ");
             refreshTokenValue = jwtUtil.generateToken(Map.of("loginId", loginId), 30);
         }

@@ -21,7 +21,15 @@ public class APILoginFilter extends AbstractAuthenticationProcessingFilter {
         super(defaultFilterProcessesUrl);
     }
 
-    // API 로그인을 위한 필터
+    /**
+     * API 로그인을 위한 필터
+     * @param request 요청 값
+     * @param response 응답 값
+     * @return 시큐리티 매니저에게 줄 로그인을 시도한 API JSON 데이터
+     * @throws AuthenticationException 인증 예외
+     * @throws IOException 값 예외
+     * @throws ServletException 예외
+     */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
         log.info("Login attemptAuthentication()...");

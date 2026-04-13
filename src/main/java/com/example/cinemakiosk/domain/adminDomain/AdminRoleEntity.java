@@ -1,5 +1,6 @@
 package com.example.cinemakiosk.domain.adminDomain;
 
+import com.example.cinemakiosk.dto.AdminDTO.AdminRoleDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -28,4 +29,13 @@ public class AdminRoleEntity {
     @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "adminRoleEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<AdminRoleMapEntity> adminRoleMapEntity; // 권한 아이디 FK
+
+
+    public static AdminRoleDTO toDTO(AdminRoleEntity adminRoleEntity) {
+        return AdminRoleDTO.builder()
+                .id(adminRoleEntity.getId())
+                .roleName(adminRoleEntity.getRoleName())
+                .roleDesc(adminRoleEntity.getRoleDesc())
+                .build();
+    }
 }

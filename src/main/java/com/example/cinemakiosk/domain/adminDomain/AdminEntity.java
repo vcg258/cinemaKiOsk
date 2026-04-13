@@ -1,6 +1,6 @@
 package com.example.cinemakiosk.domain.adminDomain;
 
-import com.example.cinemakiosk.dto.AdminDTO;
+import com.example.cinemakiosk.dto.AdminDTO.AdminDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;

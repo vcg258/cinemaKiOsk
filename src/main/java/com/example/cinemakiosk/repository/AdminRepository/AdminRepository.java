@@ -1,4 +1,4 @@
-package com.example.cinemakiosk.repository;
+package com.example.cinemakiosk.repository.AdminRepository;
 
 import com.example.cinemakiosk.domain.adminDomain.AdminEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

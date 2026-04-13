@@ -1,8 +1,8 @@
-package com.example.cinemakiosk.service;
+package com.example.cinemakiosk.service.AdminService;
 
 import com.example.cinemakiosk.domain.adminDomain.AdminEntity;
 import com.example.cinemakiosk.domain.adminDomain.AdminRoleMapEntity;
-import com.example.cinemakiosk.repository.AdminRepository;
+import com.example.cinemakiosk.repository.AdminRepository.AdminRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

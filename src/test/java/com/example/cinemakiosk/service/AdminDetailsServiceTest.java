@@ -15,7 +15,7 @@ class AdminDetailsServiceTest {
 
     @Test
     public void encodeTest(){
-        String encodedPassword = passwordEncoder.encode("1234");
+        String encodedPassword = passwordEncoder.encode("2222");
         log.info("encodedPassword: {}", encodedPassword);
     }
 

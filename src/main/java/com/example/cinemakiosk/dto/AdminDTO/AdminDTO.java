@@ -1,4 +1,4 @@
-package com.example.cinemakiosk.dto;
+package com.example.cinemakiosk.dto.AdminDTO;
 
 import com.example.cinemakiosk.domain.adminDomain.AdminEntity;
 import com.example.cinemakiosk.vo.AdminVO;
