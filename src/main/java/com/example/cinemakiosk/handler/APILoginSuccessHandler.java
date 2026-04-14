@@ -9,9 +9,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Log4j2
@@ -36,8 +38,17 @@ public class APILoginSuccessHandler implements AuthenticationSuccessHandler {
         log.info("AccessToken: {}", accessToken);
         log.info("RefreshToken: {}", refreshToken);
 
+        // 권한 꺼내기
+        List<GrantedAuthority> authorities = (List<GrantedAuthority>) authentication.getAuthorities();
+        GrantedAuthority authority = authorities.get(0);
+        String role = authority.getAuthority();
+
         // 성공했을 경우 Map에 AccessToken과 RefreshToken 묶음
-        Map<String, Object> keyMap = Map.of("accessToken", accessToken, "refreshToken", refreshToken);
+        Map<String, Object> keyMap = Map.of(
+                "accessToken", accessToken,
+                "refreshToken", refreshToken,
+                "role", role
+        );
         log.info("Map : {}", keyMap);
 
         // 토큰이 담긴 Map을 JSON으로 변환

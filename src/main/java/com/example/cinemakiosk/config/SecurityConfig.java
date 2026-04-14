@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -26,7 +27,6 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final AdminDetailsService adminDetailsService;
 
-    // TODO AuthenticationManagerBuilder, AdminDetailsService + Entity 추가해야함 (미완)
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -46,6 +46,7 @@ public class SecurityConfig {
         http.authenticationManager(authenticationManager);
 
         http
+                .cors(Customizer.withDefaults()) // 시큐리티 CORS 허용
                 .csrf(csrf -> csrf.disable()) // JWT를 이용하기 때문에 CSRF 비활성화
                 .sessionManagement(session ->
                         // STATELESS = 세션 아예 사용안함, ALWAYS = 항상 세션 생성, IF_REQUIRED = 필요할때만 생성 기본값, NEVER = 직접 안만듬 대신 있으면 사용

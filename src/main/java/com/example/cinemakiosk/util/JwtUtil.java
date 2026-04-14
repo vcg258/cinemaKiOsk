@@ -25,7 +25,7 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8));
     }
 
-    // 토큰 생성 TODO (엑세스, 리프레시 기간 정할 예정)
+    // 토큰 생성
     public String generateToken(Map<String, Object> valueMap, int days) {
 
         return Jwts.builder()

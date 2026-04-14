@@ -6,6 +6,7 @@ ALTER TABLE movie MODIFY COLUMN rating ENUM('ALL', '12', '15', '19') NOT NULL;
 -- 총관리자(admin) 비밀번호 1234
 INSERT IGNORE INTO admin (login_id, password, name, admin_phone, level, UUID, create_at)
 values ('admin', '$2a$10$b0wSz0F5vuSpu5nZFdao1.vMfsXNgS6UTMCIs.g/NNWqaChn.IIju', '관리자', '010-1234-5678', 0, null, now());
+
 -- 직원1 비밀번호 비밀번호 1111
 INSERT IGNORE INTO admin (login_id, password, name, admin_phone, level, UUID, create_at)
 VALUES ('staff01', '$2a$10$hOcZ/CS62ll2L6LJuRDKkepyjE4ldp9l3Dwz3LSY7rBI54/MKjZ8m', '직원1', '010-1111-2222', 1, null, now());

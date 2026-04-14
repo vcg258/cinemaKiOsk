@@ -28,6 +28,12 @@ public class CustomerController {
         return ResponseEntity.ok(scheduleService.getScheduleList());
     }
 
+    @Operation(summary = "지정 영화에 해당하는 전체 스케줄 조회")
+    @GetMapping("/schedule/{id}/movie")
+    public ResponseEntity<List<ScheduleDTO>> getScheduleByMovie(@PathVariable Long id){
+        return ResponseEntity.ok(scheduleService.getScheduleListByMovie(id));
+    }
+
     @Operation(summary = "좌석정책 전체 조회")
     @GetMapping("/seat-policy/list")
     public ResponseEntity<List<SeatPolicyDTO>> getAllSeatPolicies() {
@@ -38,11 +44,5 @@ public class CustomerController {
     @GetMapping("/theater/list")
     public ResponseEntity<List<TheaterDTO>> getAllTheater() {
         return ResponseEntity.ok(theaterService.getTheaterAll());
-    }
-
-    @Operation(summary = "지정 영화에 해당하는 전체 스케줄 조회")
-    @GetMapping("{id}/movie")
-    public ResponseEntity<List<ScheduleDTO>> getScheduleByMovie(@PathVariable Long id){
-        return ResponseEntity.ok(scheduleService.getScheduleListByMovie(id));
     }
 }
