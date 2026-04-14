@@ -3,19 +3,22 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.cinemakiosk.mapper.AdminMapper">
+    <resultMap id="AdminByAdminRoleName" type="com.example.cinemakiosk.vo.AdminVO">
+        <id property="adminId" column="admin_Id"/>
+        <result property="adminPhone" column="admin_phone"/>
+        <result property="createAt" column="create_at"/>
+        <result property="level" column="level"/>
+        <result property="loginId" column="login_id"/>
+        <result property="name" column="name"/>
+        <result property="password" column="password"/>
+        <collection property="permissions" ofType="String">
+            <result column="role_name"/>
+        </collection>
+    </resultMap>
 
-    <!-- uuid 갱신 (자동 로그인 토큰) -->
-    <update id="updateUuid" parameterType="map">
-        UPDATE admin
-        SET uuid = #{uuid}
-        WHERE admin_id = #{adminId}
-    </update>
-
-    <!-- uuid 삭제 (로그아웃) -->
-    <update id="clearUuid" parameterType="long">
-        UPDATE admin
-        SET uuid = NULL
-        WHERE admin_id = #{adminId}
-    </update>
-
+    <select id="selectAdminByAdminRole" resultMap="AdminByAdminRoleName">
+        SELECT * FROM admin A
+        LEFT OUTER JOIN admin_role_map ARM ON A.admin_id = ARM.admin_id
+        LEFT JOIN admin_role ON ARM.role_id = admin_role.id
+    </select>
 </mapper>

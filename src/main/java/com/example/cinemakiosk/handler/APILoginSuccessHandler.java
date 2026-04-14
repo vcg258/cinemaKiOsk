@@ -13,6 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,8 +41,10 @@ public class APILoginSuccessHandler implements AuthenticationSuccessHandler {
 
         // 권한 꺼내기
         List<GrantedAuthority> authorities = (List<GrantedAuthority>) authentication.getAuthorities();
-        GrantedAuthority authority = authorities.get(0);
-        String role = authority.getAuthority();
+        List<String> role = new ArrayList<>();
+        for (GrantedAuthority grantedAuthority : authorities) {
+            role.add(grantedAuthority.getAuthority());
+        }
 
         // 성공했을 경우 Map에 AccessToken과 RefreshToken 묶음
         Map<String, Object> keyMap = Map.of(

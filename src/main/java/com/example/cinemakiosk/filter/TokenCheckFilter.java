@@ -12,9 +12,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Log4j2
@@ -29,7 +33,7 @@ public class TokenCheckFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         // 시작경로가 /api/admin/ 아닐 경우 Pass
-        if (!path.startsWith("/api/admin/") || path.startsWith("/api/admin/login")) {
+        if (!path.startsWith("/api/admin/") || path.startsWith("/api/admin/login") || path.startsWith("/api/admin/refresh")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -40,7 +44,22 @@ public class TokenCheckFilter extends OncePerRequestFilter {
 
         // 유효한 AccessToken이 맞다면 통과 아니면 예외
         try {
-            validateAccessToken(request);
+            // 요청한 토큰이 검증된 애라면 Map에 담음
+            Map<String, Object> claim = validateAccessToken(request);
+
+            // Map에 담긴 로그인아이디 지정
+            String loginId = (String) claim.get("loginId");
+
+            // 인증된 사용자의 Id와 Pw를 담은 신분증 역할
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                    loginId,
+                    null,
+                    List.of(new SimpleGrantedAuthority("ROLE_MASTER"))
+            );
+
+            // 토큰과 auth가 있다면 인증을 모두 통과한 사용자 이므로 시큐리티에 등록
+            SecurityContextHolder.getContext().setAuthentication(auth);
+
             filterChain.doFilter(request, response);
         } catch (AccessTokenException accessTokenException) {
             accessTokenException.sendResponseError(response);

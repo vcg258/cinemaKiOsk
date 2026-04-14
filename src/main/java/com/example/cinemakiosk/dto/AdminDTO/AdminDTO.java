@@ -5,6 +5,7 @@ import com.example.cinemakiosk.vo.AdminVO;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,16 +14,16 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 public class AdminDTO {
-
-    private Long adminId;
-    private String loginId;
+    private Long adminId; // 관리자 인덱스
+    private String loginId; // 로그인 아이디
     private String password;    // 로그인 요청 시 사용, 응답 시엔 null로 두면 됨
-    private String name;
-    private String adminPhone;
+    private String name; // 관리자 이름
+    private String adminPhone; // 관리자 전화번호
     private boolean level;      // false: 마스터, true: 알바
     private String uuid;          // 자동 로그인 토큰
-    private LocalDateTime createAt;
+    private LocalDateTime createAt; // 생성일
 
+    private List<String> permissions; // 관리자 권한이 담긴 리스트 (resultMap)
 
     /**
      * DTO -> Entity
@@ -57,6 +58,7 @@ public class AdminDTO {
                 .level(adminDTO.isLevel())
                 .uuid(adminDTO.getUuid())
                 .createAt(adminDTO.getCreateAt())
+                .permissions(adminDTO.getPermissions())
                 .build();
     }
 }

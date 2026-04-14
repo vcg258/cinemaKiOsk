@@ -3,6 +3,7 @@ package com.example.cinemakiosk.controller;
 import com.example.cinemakiosk.dto.AdminDTO.AdminDTO;
 import com.example.cinemakiosk.dto.AdminDTO.AdminRoleDTO;
 import com.example.cinemakiosk.dto.AdminDTO.AdminRoleMapDTO;
+import com.example.cinemakiosk.dto.RequestDTO.AdminRoleMapRequest;
 import com.example.cinemakiosk.service.AdminService.AdminRoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ import java.util.List;
 public class AdminController {
     private final AdminRoleService adminRoleService;
 
-    @Operation(summary = "전체 직원 조회")
+    @Operation(summary = "전체 직원 및 해당 권한 조회")
     @GetMapping("/list")
     public ResponseEntity<List<AdminDTO>> getAllAdmin() {
         return ResponseEntity.ok(adminRoleService.getAdmins());
@@ -36,18 +37,11 @@ public class AdminController {
         return ResponseEntity.ok(adminRoleService.getAdminRoleMaps(loginId));
     }
 
-    @Operation(summary = "지정 관리자 권한 부여")
-    @PostMapping("/role/add")
-    public ResponseEntity<Void> addRole(@RequestBody AdminRoleMapDTO adminRoleMapDTO) {
-        adminRoleService.addRole(adminRoleMapDTO);
+    @Operation(summary = "지정 관리자 권한 부여 및 제거")
+    @PostMapping("/role")
+    public ResponseEntity<Void> addRole(@RequestBody AdminRoleMapRequest adminRoleMapRequest) {
+        adminRoleService.addRole(adminRoleMapRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    @Operation(summary = "지정 관리자 권한 제거")
-    @DeleteMapping("/role/del")
-    public ResponseEntity<Void> deleteRole(@RequestBody AdminRoleMapDTO adminRoleMapDTO) {
-        adminRoleService.deleteRole(adminRoleMapDTO);
-        return ResponseEntity.noContent().build();
     }
 
 }

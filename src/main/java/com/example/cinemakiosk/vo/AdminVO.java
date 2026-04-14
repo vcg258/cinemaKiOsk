@@ -4,6 +4,7 @@ import com.example.cinemakiosk.dto.AdminDTO.AdminDTO;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -22,6 +23,8 @@ public class AdminVO {
     private String uuid;          // 자동 로그인 토큰
     private LocalDateTime createAt;
 
+    private List<String> permissions; // 관리자 권한이 담긴 리스트 (resultMap)
+
     /**
      * VO -> DTO
      * @param adminVO
@@ -37,6 +40,7 @@ public class AdminVO {
                 .level(adminVO.isLevel())
                 .uuid(adminVO.getUuid())
                 .createAt(adminVO.getCreateAt())
+                .permissions(adminVO.getPermissions())
                 .build();
     }
 }

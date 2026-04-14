@@ -6,9 +6,12 @@ import com.example.cinemakiosk.domain.adminDomain.AdminRoleMapEntity;
 import com.example.cinemakiosk.dto.AdminDTO.AdminDTO;
 import com.example.cinemakiosk.dto.AdminDTO.AdminRoleDTO;
 import com.example.cinemakiosk.dto.AdminDTO.AdminRoleMapDTO;
+import com.example.cinemakiosk.dto.RequestDTO.AdminRoleMapRequest;
+import com.example.cinemakiosk.mapper.AdminMapper;
 import com.example.cinemakiosk.repository.AdminRepository.AdminRepository;
 import com.example.cinemakiosk.repository.AdminRepository.AdminRoleMapRepository;
 import com.example.cinemakiosk.repository.AdminRepository.AdminRoleRepository;
+import com.example.cinemakiosk.vo.AdminVO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -21,17 +24,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminRoleServiceImpl implements AdminRoleService {
     private final AdminRepository adminRepository;
+    private final AdminMapper adminMapper;
     private final AdminRoleRepository adminRoleRepository;
     private final AdminRoleMapRepository adminRoleMapRepository;
 
     /**
-     * 전체 직원 조회
+     * 전체 직원 조회 (직원의 해당 권한까지 조회)
      * @return 전체 직원 리스트
      */
     @Override
     public List<AdminDTO> getAdmins() {
-        List<AdminEntity> adminEntities = adminRepository.findAll();
-        return adminEntities.stream().map(AdminEntity::toDTO).toList();
+        List<AdminVO> vo = adminMapper.selectAdminByAdminRole();
+        return vo.stream().map(AdminVO::toDTO).toList();
     }
 
     /**
@@ -56,39 +60,31 @@ public class AdminRoleServiceImpl implements AdminRoleService {
     }
 
     /**
-     * 직원에게 권한 부여
-     * @param adminRoleMapDTO 권한 매핑 DTO
+     * 직원에게 권한 부여 (초기화 기능이 있기때문에 따로 삭제 기능 구현안함)
+     * @param adminRoleMapRequest 권한 매핑 DTO
      */
     @Override
-    public void addRole(AdminRoleMapDTO adminRoleMapDTO) {
-        AdminEntity staff = adminRepository.findById(adminRoleMapDTO.getAdminId()).orElseThrow(
+    @Transactional
+    public void addRole(AdminRoleMapRequest adminRoleMapRequest) {
+        // 일단 해당 직원의 정책 모두 초기화
+        adminRoleMapRepository.deleteAllByAdminId(adminRoleMapRequest.getAdminId());
+
+        AdminEntity staff = adminRepository.findById(adminRoleMapRequest.getAdminId()).orElseThrow(
                 () -> new RuntimeException("직원을 찾을 수 없습니다.")
         );
-        AdminRoleEntity role = adminRoleRepository.findById(adminRoleMapDTO.getRoleId()).orElseThrow(
-                () -> new RuntimeException("해당하는 정책이 없습니다.")
-        );
 
-        AdminRoleMapEntity adminRoleMapEntity = AdminRoleMapEntity.builder()
-                .adminEntity(staff)
-                .adminRoleEntity(role)
-                .build();
-        adminRoleMapRepository.save(adminRoleMapEntity);
-        log.info("권한 부여 : {}, {}", adminRoleMapEntity.getAdminEntity().getLoginId(),
-                adminRoleMapEntity.getAdminRoleEntity().getRoleName());
-    }
-
-    /**
-     * 직원 권한 제거
-     * @param adminRoleMapDTO 권한 매핑 DTO
-     */
-    @Transactional
-    @Override
-    public void deleteRole(AdminRoleMapDTO adminRoleMapDTO) {
-        AdminRoleMapEntity map = adminRoleMapRepository.deleteAdminRoleMapEntityByAdminEntity_AdminIdAndAdminRoleEntity_Id(
-                adminRoleMapDTO.getAdminId(),
-                adminRoleMapDTO.getRoleId()
-        );
-
-        log.info("제거 권한 {}, {}", map.getAdminEntity().getLoginId(), map.getAdminRoleEntity().getRoleName());
+        for (Long roleId : adminRoleMapRequest.getRoles()) {
+            if (!adminRoleRepository.existsById(roleId)) {
+                log.error("추가할 권한은 존재하지 않는 권한임 PASS");
+                return;
+            }
+            AdminRoleMapEntity adminRoleMapEntity = AdminRoleMapEntity.builder()
+                    .adminEntity(staff)
+                    .adminRoleEntity(adminRoleRepository.getReferenceById(roleId))
+                    .build();
+            adminRoleMapRepository.save(adminRoleMapEntity);
+            log.info("권한 부여 : {}, {}", adminRoleMapEntity.getAdminEntity().getLoginId(),
+                    adminRoleMapEntity.getAdminRoleEntity().getRoleName());
+        }
     }
 }
