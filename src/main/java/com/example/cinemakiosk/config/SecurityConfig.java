@@ -53,7 +53,7 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션을 사용안함 (JWT 로컬스토리지에 저장, 쿠키로 저장 할 수도 있긴함)
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/api/admin/**").authenticated() // 경로가 /api/admin/ 으로 시작한 API는 JWT 토큰 필요
-                        .anyRequest().permitAll()) // 일단 전체 허용
+                        .anyRequest().permitAll()) // TODO ROLE_??? 로 API를 막을 수 있지만 현재 DB로 권한을 이미 검증 하고있기때문에 모두 허용
                 .addFilterBefore(apiLoginFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class) // APILogin 필터 추가
                 .addFilterBefore(tokenCheckFilter(), UsernamePasswordAuthenticationFilter.class) // AccessToken 필터 추가
                 .addFilterBefore(refreshTokenFilter(), tokenCheckFilter().getClass()); // RefreshToken 필터 추가

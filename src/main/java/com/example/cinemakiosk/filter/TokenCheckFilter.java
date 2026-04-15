@@ -49,12 +49,16 @@ public class TokenCheckFilter extends OncePerRequestFilter {
 
             // Map에 담긴 로그인아이디 지정
             String loginId = (String) claim.get("loginId");
+            boolean level = (boolean) claim.get("level");
+            log.info("loginId: {}, level: {}", loginId, level);
+
+            String role = level ? "ROLE_STAFF" : "ROLE_MASTER";
 
             // 인증된 사용자의 Id와 Pw를 담은 신분증 역할
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                     loginId,
                     null,
-                    List.of(new SimpleGrantedAuthority("ROLE_MASTER"))
+                    List.of(new SimpleGrantedAuthority(role))
             );
 
             // 토큰과 auth가 있다면 인증을 모두 통과한 사용자 이므로 시큐리티에 등록

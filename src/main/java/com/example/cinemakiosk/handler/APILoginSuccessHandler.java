@@ -1,5 +1,7 @@
 package com.example.cinemakiosk.handler;
 
+import com.example.cinemakiosk.service.AdminService.AdminDetails;
+import com.example.cinemakiosk.service.AdminService.AdminDetailsService;
 import com.example.cinemakiosk.util.JwtUtil;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
@@ -29,8 +31,15 @@ public class APILoginSuccessHandler implements AuthenticationSuccessHandler {
         log.info(authentication);
         log.info("성공 핸들러 사용자 이름 :  {}", authentication.getName());
 
+        // 성공한 AdminUserDetails 에서 가져옴 (아이디, 비밀번호, 권한Level)을 가져오기 위함
+        AdminDetails adminDetails = (AdminDetails) authentication.getPrincipal();
+        boolean level = adminDetails.isLevel();
+
         // JWT 토큰에 담을 아이디
-        Map<String, Object> claim = Map.of("loginId", authentication.getName());
+        Map<String, Object> claim = Map.of(
+                "loginId", authentication.getName(),
+                "level", level
+        );
 
         // TODO AccessToken 유효기간 설정
         String accessToken = jwtUtil.generateToken(claim, 1);
@@ -50,6 +59,7 @@ public class APILoginSuccessHandler implements AuthenticationSuccessHandler {
         Map<String, Object> keyMap = Map.of(
                 "accessToken", accessToken,
                 "refreshToken", refreshToken,
+                "level", level,
                 "role", role
         );
         log.info("Map : {}", keyMap);

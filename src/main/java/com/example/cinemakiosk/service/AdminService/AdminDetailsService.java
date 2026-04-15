@@ -47,9 +47,10 @@ public class AdminDetailsService implements UserDetailsService {
             }
         }
 
-        return new User(
+        return new AdminDetails(
                 admin.getLoginId(),
                 admin.getPassword(),
+                admin.isLevel(),
                 authorities
         );
     }
