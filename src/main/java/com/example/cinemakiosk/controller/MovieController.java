@@ -116,6 +116,8 @@ public class MovieController {
 
 
 
+
+
 //
 //    // 영화 사진 반환
 //    @Operation(summary = "영화 사진 반환",

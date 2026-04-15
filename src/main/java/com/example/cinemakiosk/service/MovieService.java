@@ -1,6 +1,8 @@
 package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.dto.MovieDTO;
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 
 public interface MovieService {
@@ -27,6 +29,9 @@ public interface MovieService {
 
     // 상영종료처리
     void modifyEndAt(long movieId);
+
+    // 페이징
+    Page<MovieDTO> getMoviePage(int page);
 
 //    // 영화 이미지 추가
 //    void saveImage(byte[] imageBytes, String filename) throws IOException;

@@ -1,17 +1,17 @@
 package com.example.cinemakiosk.controller;
 
+import com.example.cinemakiosk.dto.PointHistoryDTO;
 import com.example.cinemakiosk.dto.ScheduleDTO;
 import com.example.cinemakiosk.dto.SeatPolicyDTO;
 import com.example.cinemakiosk.dto.TheaterDTO;
+import com.example.cinemakiosk.service.DiscountPolicyService;
+import com.example.cinemakiosk.service.MemberService;
 import com.example.cinemakiosk.service.ScheduleService;
 import com.example.cinemakiosk.service.TheaterService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,6 +21,8 @@ import java.util.List;
 public class CustomerController {
     private final ScheduleService scheduleService;
     private final TheaterService theaterService;
+    private final DiscountPolicyService discountPolicyService;
+    private final MemberService memberService;
 
     @Operation(summary = "스케줄 전체 조회")
     @GetMapping("/schedule/list")
@@ -44,5 +46,18 @@ public class CustomerController {
     @GetMapping("/theater/list")
     public ResponseEntity<List<TheaterDTO>> getAllTheater() {
         return ResponseEntity.ok(theaterService.getTheaterAll());
+    }
+
+    @Operation(summary = "회원 포인트 사용 적립")
+    @PostMapping("/member/point")
+    public ResponseEntity<Void> pointHistoryUse(@RequestBody PointHistoryDTO pointHistoryDTO) {
+        memberService.pointHistoryCreate(pointHistoryDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "쿠폰 검증")
+    @PostMapping("/coupon/auth")
+    public ResponseEntity<Boolean> authCoupon(@RequestParam String couponNum) {
+        return ResponseEntity.ok(discountPolicyService.authCoupon(couponNum));
     }
 }

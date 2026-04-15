@@ -1,7 +1,9 @@
 package com.example.cinemakiosk.service;
 
+import com.example.cinemakiosk.dto.MovieDTO;
 import com.example.cinemakiosk.dto.ReservationDetailsDTO;
 import com.example.cinemakiosk.dto.ReservationSeatDTO;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -23,6 +25,9 @@ public interface ReservationService {
 
     //유효기간 지난 예매 삭제
     public void delete(Long no);
+
+    // 페이징
+    Page<ReservationDetailsDTO> getReservationDetailsPage(int page);
 
 
 }

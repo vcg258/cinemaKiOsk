@@ -39,8 +39,8 @@ public interface DiscountPolicyService {
     // 페이징 처리 (로그까지 전체 조회)
     Page<DiscountPolicyDTO> getDiscountPolicyPage(int page);
 
-    // 쿠폰 전체 조회
-    List<CouponDTO> getCouponAll();
+    // 쿠폰 전체 조회 (페이징)
+    Page<CouponDTO> getCouponAll(int page);
 
     // 쿠폰 단일 조회
     CouponDTO getCoupon(String couponNum);

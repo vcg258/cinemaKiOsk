@@ -100,7 +100,7 @@ class DiscountPolicyEntityServiceImplTest {
 
     @Test
     public void getCouponAllTest() {
-        discountPolicyService.getCouponAll().forEach(log::info);
+        discountPolicyService.getCouponAll(1).forEach(log::info);
     }
 
     @Test

@@ -216,13 +216,14 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     }
 
     /**
-     * 쿠폰 전체 조회
+     * 쿠폰 전체 조회 (페이징)
      * @return 전체 쿠폰을 담은 리스트
      */
     @Override
-    public List<CouponDTO> getCouponAll() {
-        List<CouponEntity> entityList = couponRepository.findAll();
-        return entityList.stream().map(CouponEntity::toDTO).toList();
+    public Page<CouponDTO> getCouponAll(int page) {
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("status").descending());
+        Page<CouponEntity> entityList = couponRepository.findAll(pageable);
+        return entityList.map(CouponEntity::toDTO);
     }
 
     /**

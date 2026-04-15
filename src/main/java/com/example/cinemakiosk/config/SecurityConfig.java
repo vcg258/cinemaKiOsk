@@ -60,7 +60,12 @@ public class SecurityConfig {
         return http.build();
     }
 
-
+    /**
+     * api 로그인 검증 필터 (필터 통과 -> 성공 핸들러)
+     * @param authenticationManager 시큐리티 검증 매니저
+     * @return 검증된 정보
+     * @throws Exception 예외
+     */
     public APILoginFilter apiLoginFilter(AuthenticationManager authenticationManager) throws Exception {
         APILoginFilter filter = new APILoginFilter("/api/admin/login");
         filter.setAuthenticationManager(authenticationManager); // 매니저 등록
@@ -68,12 +73,20 @@ public class SecurityConfig {
         return filter;
     }
 
+    /**
+     * AccessToken, RefreshToken 검증 필터
+     * @return 사용자가 검증이 됐다면 Token 발급
+     */
     @Bean
     public TokenCheckFilter tokenCheckFilter() {
         TokenCheckFilter filter = new TokenCheckFilter(jwtUtil);
         return filter;
     }
 
+    /**
+     * RefreshToken 재발급 필터
+     * @return RefreshToken
+     */
     @Bean
     public RefreshTokenFilter refreshTokenFilter() {
         return new RefreshTokenFilter("/api/admin/refresh", jwtUtil);

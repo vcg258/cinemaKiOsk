@@ -5,6 +5,7 @@ import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
 import com.example.cinemakiosk.service.BonusPolicyService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,5 +56,11 @@ public class BonusPolicyController {
     @GetMapping("/{id}")
     public ResponseEntity<BonusPolicyDTO> getBonusPolicy(@PathVariable Long id) {
         return ResponseEntity.ok(bonusPolicyService.getBonusPolicy(id));
+    }
+
+    @Operation(summary = "적립 전체 로그 (페이징 처리 size=10 고정)")
+    @GetMapping("/log")
+    public ResponseEntity<Page<BonusPolicyDTO>> getBonusPolicies(@RequestParam(defaultValue = "1") int page) {
+        return ResponseEntity.ok(bonusPolicyService.getBonusPolicyPage(page));
     }
 }

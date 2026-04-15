@@ -1,10 +1,17 @@
 package com.example.cinemakiosk.service;
 
+import com.example.cinemakiosk.domain.MemberEntity;
+import com.example.cinemakiosk.domain.PaymentDetailsEntity;
+import com.example.cinemakiosk.dto.MemberDTO;
 import com.example.cinemakiosk.dto.PaymentDetailsDTO;
 import com.example.cinemakiosk.mapper.PaymentDetailsMapper;
 import com.example.cinemakiosk.repository.PaymentDetailsRepository;
 import com.example.cinemakiosk.vo.PaymentDetailsVO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -55,5 +62,17 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService{
     public void cancel(String uuid) {
 //        paymentDetailsRepository.deleteById(uuid);
         //특정 값만 찾아와서 해당 값에서 환불로 바꾸면 될건데... 응답이 어떻게 오는지 알아야함.
+    }
+
+    /**
+     * 10페이지씩 페이징 처리 (로그형식 전체)
+     * @param page 몇번째 페이지 부터 정할 변수
+     * @return 페이징 결과 1페이지 일경우 1 ~ 10번 까지
+     */
+    @Override
+    public Page<PaymentDetailsDTO> getPaymentDetailsPage(int page) {
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("id").descending());
+        Page<PaymentDetailsEntity> entityPage = paymentDetailsRepository.findAll(pageable);
+        return entityPage.map(PaymentDetailsEntity::toDTO);
     }
 }

@@ -1,6 +1,8 @@
 package com.example.cinemakiosk.service;
 
+import com.example.cinemakiosk.domain.MemberEntity;
 import com.example.cinemakiosk.domain.ReservationDetailsEntity;
+import com.example.cinemakiosk.dto.MemberDTO;
 import com.example.cinemakiosk.dto.ReservationDetailsDTO;
 import com.example.cinemakiosk.dto.ReservationSeatDTO;
 import com.example.cinemakiosk.mapper.ReservationDetailsMapper;
@@ -10,6 +12,10 @@ import com.example.cinemakiosk.repository.ReservationSeatRepository;
 import com.example.cinemakiosk.vo.ReservationDetailsVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -84,5 +90,17 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public void delete(Long no){
         reservationDetailsRepository.deleteById(no);
+    }
+
+    /**
+     * 10페이지씩 페이징 처리 (로그형식 전체)
+     * @param page 몇번째 페이지 부터 정할 변수
+     * @return 페이징 결과 1페이지 일경우 1 ~ 10번 까지
+     */
+    @Override
+    public Page<ReservationDetailsDTO> getReservationDetailsPage(int page) {
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("id").descending());
+        Page<ReservationDetailsEntity> entityPage = reservationDetailsRepository.findAll(pageable);
+        return entityPage.map(ReservationDetailsEntity::toDTO);
     }
 }

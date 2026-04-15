@@ -23,6 +23,7 @@ public class AdminDetailsService implements UserDetailsService {
     private final AdminRepository adminRepository;
 
     /**
+     * 관리자 아이디와 비밀번호를 검증 하는 메서드
      * @param loginId 관리자아이디
      * @return 존재한다면 관리자 아이디와 비밀번호 반환
      * @throws UsernameNotFoundException 없으면 예외 던지기

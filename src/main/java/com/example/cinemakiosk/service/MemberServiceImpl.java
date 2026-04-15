@@ -1,18 +1,20 @@
 package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.domain.MemberEntity;
-import com.example.cinemakiosk.domain.PaymentDetailsEntity;
 import com.example.cinemakiosk.domain.PointHistoryEntity;
 import com.example.cinemakiosk.domain.enums.Type;
 import com.example.cinemakiosk.dto.MemberDTO;
 import com.example.cinemakiosk.dto.PointHistoryDTO;
 import com.example.cinemakiosk.mapper.PointHistoryMapper;
 import com.example.cinemakiosk.repository.MemberRepository;
-import com.example.cinemakiosk.repository.PaymentDetailsRepository;
 import com.example.cinemakiosk.repository.PointHistoryRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -25,7 +27,6 @@ import java.util.NoSuchElementException;
 public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
     private final PointHistoryRepository pointHistoryRepository;
-    private final PaymentDetailsRepository paymentDetailsRepository;
     private final PointHistoryMapper pointHistoryMapper;
 
     /**
@@ -148,13 +149,14 @@ public class MemberServiceImpl implements MemberService{
     }
 
     /**
-     * 회원 전체 조회
+     * 회원 전체 조회 (페이징
      * @return 회원 전체를 담은 리스트
      */
     @Override
-    public List<MemberDTO> getMembersAll() {
-        List<MemberEntity> entityList = memberRepository.findAll();
-        return entityList.stream().map(MemberEntity::toDTO).toList();
+    public Page<MemberDTO> getMembersAll(int page) {
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("createAt").descending());
+        Page<MemberEntity> entityPage = memberRepository.findAll(pageable);
+        return entityPage.map(MemberEntity::toDTO);
     }
 
     /**

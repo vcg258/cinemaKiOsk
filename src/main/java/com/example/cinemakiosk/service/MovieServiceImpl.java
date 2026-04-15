@@ -1,13 +1,19 @@
 package com.example.cinemakiosk.service;
 
+import com.example.cinemakiosk.domain.MemberEntity;
 import com.example.cinemakiosk.domain.MovieEntity;
 import com.example.cinemakiosk.domain.ScheduleEntity;
+import com.example.cinemakiosk.dto.MemberDTO;
 import com.example.cinemakiosk.dto.MovieDTO;
 import com.example.cinemakiosk.repository.MovieRepository;
 import com.example.cinemakiosk.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -210,6 +216,18 @@ public class MovieServiceImpl implements MovieService {
             }
         }
         return movieDTOList;
+    }
+
+    /**
+     * 10페이지씩 페이징 처리 (로그형식 전체)
+     * @param page 몇번째 페이지 부터 정할 변수
+     * @return 페이징 결과 1페이지 일경우 1 ~ 10번 까지
+     */
+    @Override
+    public Page<MovieDTO> getMoviePage(int page) {
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("movieId").descending());
+        Page<MovieEntity> entityPage = movieRepository.findAll(pageable);
+        return entityPage.map(MovieEntity::toDTO);
     }
 
 

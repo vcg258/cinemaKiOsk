@@ -31,11 +31,11 @@ public class APILoginSuccessHandler implements AuthenticationSuccessHandler {
         log.info(authentication);
         log.info("성공 핸들러 사용자 이름 :  {}", authentication.getName());
 
-        // 성공한 AdminUserDetails 에서 가져옴 (아이디, 비밀번호, 권한Level)을 가져오기 위함
+        // 성공한 유저의 데이터를 AdminUserDetails 에서 가져옴 (아이디, 비밀번호, Level)을 가져오기 위함
         AdminDetails adminDetails = (AdminDetails) authentication.getPrincipal();
         boolean level = adminDetails.isLevel();
 
-        // JWT 토큰에 담을 아이디
+        // JWT 토큰에 담을 아이디와 권한 레벨
         Map<String, Object> claim = Map.of(
                 "loginId", authentication.getName(),
                 "level", level
@@ -48,14 +48,14 @@ public class APILoginSuccessHandler implements AuthenticationSuccessHandler {
         log.info("AccessToken: {}", accessToken);
         log.info("RefreshToken: {}", refreshToken);
 
-        // 권한 꺼내기
+        // 권한 꺼내기 (여러권한이 있기 때문에 List로 받음)
         List<GrantedAuthority> authorities = (List<GrantedAuthority>) authentication.getAuthorities();
         List<String> role = new ArrayList<>();
         for (GrantedAuthority grantedAuthority : authorities) {
             role.add(grantedAuthority.getAuthority());
         }
 
-        // 성공했을 경우 Map에 AccessToken과 RefreshToken 묶음
+        // Map에 AccessToken과 RefreshToken, level, role를 묶음 (성공한 사용자의 권한과 토큰을 클라이언트에 주기위함)
         Map<String, Object> keyMap = Map.of(
                 "accessToken", accessToken,
                 "refreshToken", refreshToken,

@@ -20,19 +20,27 @@ public class JwtUtil {
     @Value("${jwt.cinema.scret.key}")
     private String key;
 
-    // 서명키 변환 (내부에서만 사용하도록 분리함)
+    /**
+     * 서명키 변환 (내부에서만 사용하도록 분리함)
+     * @return 스크릿키 서명키로 변환한 값
+     */
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8));
     }
 
-    // 토큰 생성
+    /**
+     * 토큰 생성 메서드
+     * @param valueMap PayLoad 사용자의 데이터가 들어감
+     * @param days 만료일 (days = 1을 24시간으로 잡음)
+     * @return AccessToken, RefreshToken
+     */
     public String generateToken(Map<String, Object> valueMap, int days) {
 
         return Jwts.builder()
                 .header()
                     .type("JWT")
                     .and()
-                .claims(valueMap) // PayLoad (사용자의 데이터가 들어감)
+                .claims(valueMap)
                 .issuedAt(Date.from(ZonedDateTime.now().toInstant())) // 어디 나라인지 표시하기때문에 사용함 (사실 굳이긴해)
                 .expiration(Date.from(ZonedDateTime.now().plusDays(days).toInstant()))
                 .signWith(getSigningKey()) // "alg", "HS256"를 자동으로 넣어주기때문에 수동으로 안넣음
