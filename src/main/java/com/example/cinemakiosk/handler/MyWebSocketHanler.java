@@ -74,7 +74,7 @@ public class MyWebSocketHanler extends TextWebSocketHandler {
     private void sendInitialState(WebSocketSession session, Long scheduleId, String myId) throws Exception {
         Map<String, Object> initData = new HashMap<>();
         initData.put("type", "INIT_STATE");
-        initData.put("reserved", reservationService.readAllSeatByScheduleId(scheduleId));
+//        initData.put("reserved", reservationService.readAllSeatByScheduleId(scheduleId));
 
         List<String> occupiedInfo = seatOccupancyMap.entrySet().stream()
                 .filter(entry -> entry.getKey().startsWith(scheduleId + ":"))

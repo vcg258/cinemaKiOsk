@@ -41,6 +41,9 @@ public class PaymentDetailsEntity {
     @Column(nullable = false)
     private LocalDateTime createAt;    // 결제 시간
 
+    @Column(name = "payment_key", nullable = false, length = 100)
+    private String paymentKey;    // 환불을 위한 키
+
     @Column(columnDefinition = "BIGINT UNSIGNED DEFAULT 0")
     private Long usePoint;         // 사용 포인트 기본값 0
 

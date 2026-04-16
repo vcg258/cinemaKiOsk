@@ -139,11 +139,11 @@ public class MemberServiceImpl implements MemberService{
                 .build();
         log.info("pointHistoryCancel... 환불후 추가할 포인트 내역 : {}", dto);
 
-//        PointHistoryEntity pointHistoryEntity = pointHistoryRepository.save(PointHistoryDTO.toEntity(dto)); // 포인트 내역 추가
-//        log.info("pointHistoryCancel... 포인트 추가내용 : {}", pointHistoryEntity);
+        PointHistoryEntity pointHistoryEntity = pointHistoryRepository.save(PointHistoryDTO.toEntity(dto)); // 포인트 내역 추가
+        log.info("pointHistoryCancel... 포인트 추가내용 : {}", pointHistoryEntity);
 
         member.changePoint(amountPoint);
-//        memberRepository.save(member); // 회원 포인트 업데이트
+        memberRepository.save(member); // 회원 포인트 업데이트
     }
 
     /**

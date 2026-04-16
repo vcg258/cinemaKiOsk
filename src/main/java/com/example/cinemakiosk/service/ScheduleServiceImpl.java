@@ -9,6 +9,7 @@ import com.example.cinemakiosk.mapper.ScheduleMapper;
 import com.example.cinemakiosk.repository.MovieRepository;
 import com.example.cinemakiosk.repository.ScheduleRepository;
 import com.example.cinemakiosk.repository.TheaterRepository;
+import com.example.cinemakiosk.vo.ScheduleVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -178,5 +179,11 @@ public class ScheduleServiceImpl implements ScheduleService {
     public ScheduleDTO getSchedule(Long id) {
         ScheduleEntity schedule = scheduleRepository.findById(id).orElseThrow();
         return ScheduleEntity.toDTO(schedule);
+    }
+
+    @Override
+    public ScheduleDTO getScheduleDTO(Long no) {
+        ScheduleVO scheduleVO = scheduleMapper.selectOneById(no);
+        return ScheduleVO.toDTO(scheduleVO);
     }
 }

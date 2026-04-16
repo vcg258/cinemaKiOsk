@@ -26,4 +26,6 @@ public interface ScheduleService {
 
     // 스케줄 하나 조회
     ScheduleDTO getSchedule(Long id);
+
+    ScheduleDTO getScheduleDTO(Long no);
 }
