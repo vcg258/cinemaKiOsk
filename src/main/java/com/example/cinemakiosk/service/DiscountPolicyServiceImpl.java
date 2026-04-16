@@ -14,10 +14,7 @@ import com.example.cinemakiosk.vo.CouponVO;
 import com.example.cinemakiosk.vo.DiscountPolicyVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -221,9 +218,12 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public Page<CouponDTO> getCouponAll(int page) {
+        int offset = (page - 1) * 10;
+        long count = couponRepository.count();
+        List<CouponVO> couponVO = couponMapper.selectAllCouponByDiscount(offset);
         Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("status").descending());
-        Page<CouponEntity> entityList = couponRepository.findAll(pageable);
-        return entityList.map(CouponEntity::toDTO);
+        log.info("{}번 ~ {}번", offset + 1, offset + 10);
+        return new PageImpl<>(couponVO.stream().map(CouponVO::toDTO).toList(), pageable, count);
     }
 
     /**

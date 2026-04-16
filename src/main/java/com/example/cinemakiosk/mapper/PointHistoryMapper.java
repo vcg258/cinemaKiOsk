@@ -8,8 +8,8 @@ import java.util.List;
 
 @Mapper
 public interface PointHistoryMapper {
-    // 포인트 적립이 된 영화명까지 포함
-    List<PointHistoryDTO> selectByMovieNameAll();
+    // 포인트 적립이 된 영화명까지 포함 (페이징)
+    List<PointHistoryVO> selectByMovieNameAll(int page);
 
     // 포인트 환불을 위한 메서드 (거래내역까지 조회)
     PointHistoryVO selectByPayment(String paymentId);

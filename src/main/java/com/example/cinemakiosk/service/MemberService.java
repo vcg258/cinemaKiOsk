@@ -25,6 +25,6 @@ public interface MemberService {
     // 회원 단일 조회
     MemberDTO getMember(String phone);
 
-    // 전체 포인트 조회 TODO Mapper로 페이징처리 해야함 어휴
-    List<PointHistoryDTO> getPointHistoryAll();
+    // 전체 포인트 조회 (페이징)
+    Page<PointHistoryDTO> getPointHistoryAll(int page);
 }

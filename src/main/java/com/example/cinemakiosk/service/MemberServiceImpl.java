@@ -8,13 +8,11 @@ import com.example.cinemakiosk.dto.PointHistoryDTO;
 import com.example.cinemakiosk.mapper.PointHistoryMapper;
 import com.example.cinemakiosk.repository.MemberRepository;
 import com.example.cinemakiosk.repository.PointHistoryRepository;
+import com.example.cinemakiosk.vo.PointHistoryVO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -149,7 +147,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     /**
-     * 회원 전체 조회 (페이징
+     * 회원 전체 조회 (페이징)
      * @return 회원 전체를 담은 리스트
      */
     @Override
@@ -171,13 +169,17 @@ public class MemberServiceImpl implements MemberService{
     }
 
     /**
-     * 포인트 내역 전체 조회
+     * 포인트 내역 전체 조회 (페이징 처리)
      * @return 전체 포인트내역이 담긴 리스트
      */
     @Override
-    public List<PointHistoryDTO> getPointHistoryAll() {
-        List<PointHistoryDTO> pointHistoryDTO = pointHistoryMapper.selectByMovieNameAll();
-        return pointHistoryDTO.stream().toList();
+    public Page<PointHistoryDTO> getPointHistoryAll(int page) {
+        int offset = (page - 1) * 10;
+        long count = memberRepository.count();
+        List<PointHistoryVO> pointHistoryVO = pointHistoryMapper.selectByMovieNameAll(offset);
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("pointId").descending());
+        log.info("{}번 ~ {}번", offset + 1, offset + 10);
+        return new PageImpl<>(pointHistoryVO.stream().map(PointHistoryVO::toDTO).toList(), pageable, count);
     }
 
     /**

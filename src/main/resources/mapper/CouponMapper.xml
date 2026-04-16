@@ -51,4 +51,23 @@
         SELECT * FROM discount_policy DP
                           JOIN coupon C ON DP.id = C.policy_id WHERE coupon_num = #{couponNum}
     </select>
+
+    <resultMap id="couponByDiscountPolicy" type="com.example.cinemakiosk.vo.CouponVO">
+        <id property="couponNum" column="coupon_num"/>
+        <result property="status" column="status"/>
+        <result property="policyId" column="policy_id"/>
+        <association property="discountPolicy" javaType="com.example.cinemakiosk.vo.DiscountPolicyVO">
+            <id property="id" column="id"/>
+            <result property="startAt" column="start_at"/>
+            <result property="endAt" column="end_at"/>
+            <result property="policyName" column="policy_name"/>
+        </association>
+    </resultMap>
+
+    <select id="selectAllCouponByDiscount" resultMap="couponByDiscountPolicy">
+        SELECT C.*, DP.start_at, DP.end_at, DP.policy_name, DP.condition_type FROM coupon C
+        LEFT JOIN discount_policy DP ON C.policy_id = DP.id
+        WHERE DP.condition_type = 'COUPON'
+        LIMIT 10 OFFSET #{page};
+    </select>
 </mapper>

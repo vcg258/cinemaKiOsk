@@ -77,6 +77,6 @@ class MemberServiceImplTest {
 
     @Test
     void getPointHistory() {
-        memberService.getPointHistoryAll().forEach(log::info);
+        memberService.getPointHistoryAll(1).forEach(log::info);
     }
 }
