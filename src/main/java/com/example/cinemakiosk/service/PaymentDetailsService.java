@@ -1,9 +1,6 @@
 package com.example.cinemakiosk.service;
 
-import com.example.cinemakiosk.dto.MovieDTO;
 import com.example.cinemakiosk.dto.PaymentDetailsDTO;
-import com.example.cinemakiosk.dto.ReservationDetailsDTO;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -20,9 +17,4 @@ public interface PaymentDetailsService {
     //결제 내역 변경
     public void update(PaymentDetailsDTO paymentDetailsDTO);
 
-    //환불 진행.
-    public void cancel(String uuid);
-
-    // 페이징
-    Page<PaymentDetailsDTO> getPaymentDetailsPage(int page);
 }
