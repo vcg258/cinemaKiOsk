@@ -97,7 +97,7 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
      */
     @Override
     public List<BonusPolicyDTO> getBonusPolicies() {
-        List<BonusPolicyEntity> policyEntities = bonusPolicyRepository.findAll();
+        List<BonusPolicyEntity> policyEntities = bonusPolicyRepository.findAllByEndAtAfter(LocalDateTime.now());
         return policyEntities.stream().map(BonusPolicyEntity::toDTO).toList();
     }
 

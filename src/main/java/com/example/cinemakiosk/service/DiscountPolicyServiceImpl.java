@@ -58,12 +58,12 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     }
 
     /**
-     * 할인 정책 전체 조회
+     * 할인 정책 전체 조회 (오늘을 포함한 이후 정책만)
      * @return 할인정책 전채 리스트
      */
     @Override
     public List<DiscountPolicyDTO> getDiscountPolicies() {
-        List<DiscountPolicyEntity> discountPolicies = discountPolicyRepository.findAll();
+        List<DiscountPolicyEntity> discountPolicies = discountPolicyRepository.findAllByEndAtAfter(LocalDateTime.now());
         return discountPolicies.stream().map(DiscountPolicyEntity::toDTO).toList();
     }
 
@@ -201,7 +201,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     }
 
     /**
-     * 10페이지씩 페이징 처리 (로그 포함 전체 조회)
+     * 할인 정책 10페이지씩 페이징 처리 (로그 포함 전체 조회)
      * @param page 몇번째 페이지 부터 가져올건지 정하는 변수
      * @return 페이징 결과 1페이지 일경우 1 ~ 10번 까지
      */

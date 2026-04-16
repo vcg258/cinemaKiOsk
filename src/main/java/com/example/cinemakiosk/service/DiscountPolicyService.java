@@ -12,7 +12,7 @@ public interface DiscountPolicyService {
     // 할인 정책 추가 / 수정
     void createDiscountPolicy(DiscountPolicyDTO discountPolicyDTO);
 
-    // 할인 전체 조회
+    // 오늘 포함 시작일 종료일 사이에 있는 할인 전체 조회
     List<DiscountPolicyDTO> getDiscountPolicies();
 
     // 할인 단일 조회 (?)
@@ -36,7 +36,7 @@ public interface DiscountPolicyService {
     // 여러건 지정후 상태 사용여부 업데이트
     void updateStatusCoupons(CouponStatusRequest request);
 
-    // 페이징 처리 (로그까지 전체 조회)
+    // 할인정책 페이징 처리 (로그까지 전체 조회)
     Page<DiscountPolicyDTO> getDiscountPolicyPage(int page);
 
     // 쿠폰 전체 조회 (페이징)
