@@ -40,6 +40,15 @@ public class TheaterServiceImpl implements TheaterService {
     }
 
     /**
+     * 상영관 삭제
+     * @param no 삭제할 상영관 PK
+     */
+    @Override
+    public void removeTheater(Long no) {
+        theaterRepository.deleteById(no);
+    }
+
+    /**
      * 상영관 전체 조회
      * @return 상영관 전체를 담은 리스트
      */

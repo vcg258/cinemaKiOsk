@@ -11,6 +11,9 @@ public interface TheaterService {
     // 상영관 등록 (대공사를 할 수 도있으니까 일단 넣어놔봄)
     void createTheater(TheaterDTO theaterDTO);
 
+    // 상영관 삭제 (등록이 있으면 삭제도 필요할거같아서 넣음)
+    void removeTheater(Long no);
+
     // 상영관 전체 조회
     List<TheaterDTO> getTheaterAll();
 
