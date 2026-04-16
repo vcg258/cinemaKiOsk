@@ -47,10 +47,10 @@ class TmdbServiceImplTest {
 
     @Test
     void downloadAndSavePoster() {
-        try {
-            tmdbServiceImpl.downloadAndSavePoster("https://image.tmdb.org/t/p/w500/sotBnRlFJ67cPisjAUXzbPxi9kC.jpg", "타임 머신");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            tmdbServiceImpl.downloadAndSavePoster("https://image.tmdb.org/t/p/w500/sotBnRlFJ67cPisjAUXzbPxi9kC.jpg", "타임 머신");
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 }

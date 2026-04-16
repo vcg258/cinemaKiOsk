@@ -83,4 +83,10 @@ public class TheaterController {
         theaterService.deleteSeat(no);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "상영관 내용 객체타입 변수 확인")
+    @GetMapping("/theater/dtoAll")
+    public ResponseEntity<List<TheaterDTO>> getDTOAllTheater(){
+        return ResponseEntity.ok( theaterService.getTheaterDTOAll());
+    }
 }

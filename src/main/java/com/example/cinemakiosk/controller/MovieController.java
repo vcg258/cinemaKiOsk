@@ -109,7 +109,7 @@ public class MovieController {
     // 단일 영화 조회 (고객 상세 페이지용)
     @Operation(summary = "단일 영화 조회", description = "movieId로 단일 영화 정보 조회")
     @GetMapping("/{movieId}/readOne")
-    public ResponseEntity<MovieDTO> getMovieById(@PathVariable Long id) {
+    public ResponseEntity<MovieDTO> getMovieById(@PathVariable("movieId") Long id) {
         log.info("getMovieById get... id={}", id);
         return ResponseEntity.ok(movieService.getMovieById(id));
     }

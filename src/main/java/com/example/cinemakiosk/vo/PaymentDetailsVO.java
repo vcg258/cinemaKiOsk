@@ -22,6 +22,7 @@ public class PaymentDetailsVO {
     private LocalDateTime createAt;              // 결제 시간
     private Long usePoint;                   // 사용 포인트 기본값 0
     private Status status;                   // ENUM ('PAY','RETURN','FAIL'), 결제 완료, 환불, 실패
+    private String paymentKey;
 
     /**
      * VO -> DTO
@@ -32,13 +33,14 @@ public class PaymentDetailsVO {
 
         return PaymentDetailsDTO.builder()
                 .id(paymentDetailsVO.getId())
-                .reservation(paymentDetailsVO.getCouponNum() == null ? null : ReservationDetailsVO.toDTO(paymentDetailsVO.getReservation()))
-                .bonusPolicy(paymentDetailsVO.getCouponNum() == null ? null : BonusPolicyVO.toDTO(paymentDetailsVO.getBonusPolicy()))
+                .reservation(ReservationDetailsVO.toDTO(paymentDetailsVO.getReservation()))
+                .bonusPolicy(BonusPolicyVO.toDTO(paymentDetailsVO.getBonusPolicy()))
                 .couponNum(paymentDetailsVO.getCouponNum() == null ? null : CouponVO.toDTO(paymentDetailsVO.getCouponNum()))
                 .cost(paymentDetailsVO.getCost())
                 .createAt(paymentDetailsVO.getCreateAt())
                 .usePoint(paymentDetailsVO.getUsePoint())
                 .status(paymentDetailsVO.getStatus())
+                .paymentKey(paymentDetailsVO.getPaymentKey())
                 .build();
     }
 }

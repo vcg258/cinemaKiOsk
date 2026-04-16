@@ -6,10 +6,7 @@ import com.example.cinemakiosk.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -42,4 +39,11 @@ public class MemberController {
     public ResponseEntity<MemberDTO> getMemberById(@PathVariable String phone){
         return ResponseEntity.ok(memberService.getMember(phone));
     }
+
+    @PostMapping("/{phone}")
+    public ResponseEntity<MemberDTO> postMemberById(@PathVariable String phone){
+        memberService.createMember(new MemberDTO(phone,0,null));
+        return ResponseEntity.ok(memberService.getMember(phone));
+    }
+
 }

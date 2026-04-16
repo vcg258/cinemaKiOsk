@@ -12,5 +12,5 @@ public interface PointHistoryMapper {
     List<PointHistoryDTO> selectByMovieNameAll();
 
     // 포인트 환불을 위한 메서드 (거래내역까지 조회)
-    PointHistoryVO selectByPayment(String paymentId);
+    List<PointHistoryVO> selectByPayment(String paymentId);
 }

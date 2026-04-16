@@ -30,6 +30,7 @@
                pm.bonus_policy_id,
                pm.coupon_num,
                pm.reservation_id,
+               pm.payment_key,
 
                bp.id             as bp_id,
                bp.activation     as bp_activation,

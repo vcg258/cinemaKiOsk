@@ -18,6 +18,4 @@ public interface PaymentDetailsService {
     //결제 내역 변경
     public void update(PaymentDetailsDTO paymentDetailsDTO);
 
-    //환불 진행.
-    public void cancel(String uuid);
 }
