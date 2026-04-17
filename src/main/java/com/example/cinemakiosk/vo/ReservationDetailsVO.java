@@ -24,6 +24,8 @@ public class ReservationDetailsVO {
     private ScheduleVO schedule;           //  스케쥴 정보
     private MemberVO phone;                  //  회원 번호
     private LocalDateTime reservationTime; //  예약 시간
+    private boolean returned;
+    private LocalDateTime createAt; //예매 시간
     private List<ReservationSeatVO> seats; //  예매한 좌석들의 정보
 
     /**

@@ -25,6 +25,8 @@ public class PointHistoryDTO {
     private Integer amountPoint; // 사용할 포인트
     private LocalDateTime createAt; // 포인트 변경일
 
+    private String title;
+
     /**
      * DTO -> Entity
      * @param pointHistoryDTO
