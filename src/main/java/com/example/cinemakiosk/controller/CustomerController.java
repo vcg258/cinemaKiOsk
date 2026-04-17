@@ -34,14 +34,16 @@ public class CustomerController {
 
     @Operation(summary = "스케줄 전체 조회")
     @GetMapping("/schedule/list")
-    public ResponseEntity<List<ScheduleDTO>> getScheduleList(){
+    public ResponseEntity<List<ScheduleDTO>> getScheduleList() {
         return ResponseEntity.ok(scheduleService.getScheduleList());
     }
+
     @Operation(summary = "스케줄 객체 전체 조회")
     @GetMapping("/schedule/DTOlist")
-    public ResponseEntity<List<ScheduleDTO>> getScheduleDTOList(){
+    public ResponseEntity<List<ScheduleDTO>> getScheduleDTOList() {
         return ResponseEntity.ok(scheduleService.getScheduleDTOList());
     }
+
     @Operation(summary = "지정 영화에 해당하는 전체 스케줄 조회")
     @GetMapping("/schedule/{id}/movie")
     public ResponseEntity<List<ScheduleDTO>> getScheduleByMovie(@PathVariable Long id){
@@ -56,14 +58,14 @@ public class CustomerController {
         List<MovieDTO> movieDTOList = movieService.getScreeningPeriodAllMovies();
         log.info("movieDTOList: {}", movieDTOList);
         return ResponseEntity.ok(movieDTOList);
-        }
+    }
     // 단일 영화 조회 (고객 상세 페이지용)
     @Operation(summary = "단일 영화 조회", description = "movieId로 단일 영화 정보 조회")
     @GetMapping("/{movieId}/readOne")
     public ResponseEntity<MovieDTO> getMovieById(@PathVariable Long movieId) {
         log.info("getMovieById get... id={}", movieId);
         return ResponseEntity.ok(movieService.getMovieById(movieId));
-        }
+    }
     @PostMapping("/member/{phone}")
     public ResponseEntity<MemberDTO> postMemberById(@PathVariable String phone){
         memberService.createMember(new MemberDTO(phone,0,null));
