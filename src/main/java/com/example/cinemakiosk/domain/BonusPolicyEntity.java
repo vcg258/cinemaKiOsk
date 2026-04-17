@@ -34,7 +34,7 @@ public class BonusPolicyEntity{
     private LocalDateTime endAt;//	만료일
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private Boolean activation;      // 활성화 여부(중요할까?)
+    private boolean activation;      // 활성화 여부(중요할까?)
 
     @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "bonusPolicyEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
@@ -71,7 +71,7 @@ public class BonusPolicyEntity{
                 .giveValue(bonusPolicyEntity.getGiveValue())
                 .startAt(bonusPolicyEntity.getStartAt())
                 .endAt(bonusPolicyEntity.getEndAt())
-                .activation(bonusPolicyEntity.getActivation())
+                .activation(bonusPolicyEntity.isActivation())
                 .build();
     }
 }
