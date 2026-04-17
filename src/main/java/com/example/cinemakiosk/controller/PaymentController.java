@@ -239,42 +239,42 @@ public class PaymentController {
         String paymentId = requestData.get("paymentId").asText();
 
         //환불처리
-//        refundService.refund(paymentId);
+        refundService.refund(paymentId);
 //     //todo : 바로위 환불처리 로직 검증 끝나면 아래 주석 전부 해제하면 완성임.
-        // 1. URL 설정
-        String url = "https://api.tosspayments.com/v1/payments/" + paymentKey + "/cancel";
-
-        // 2. 헤더 설정 (Authorization & Content-Type)
-        HttpHeaders headers = new HttpHeaders();
-        // Authorization: Basic {Base64 인코딩된 시크릿키}
-
-        String secretKey = "test_sk_Ba5PzR0ArnOZp4xwZ16N8vmYnNeD";// 1. 테스트 시크릿 키
-        String encodedKey = Base64.getEncoder().encodeToString((secretKey + ":").getBytes()); // 2. 키 뒤에 콜론(:)을 더하고 Base64로 변환
-
-        headers.set("Authorization", "Basic " + encodedKey);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        // 3. 바디(데이터) 설정
-        Map<String, String> map = new HashMap<>();
-        map.put("cancelReason", "구매자가 취소를 원함");
-
-        HttpEntity<Map<String, String>> entity = new HttpEntity<>(map, headers);
-
-        // 4. API 호출 및 응답 받기
-        try {
-            ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
-
-            if (response.getStatusCode() == HttpStatus.OK) {
-                System.out.println("취소 성공: " + response.getBody());
-
-                //환불처리
-                refundService.refund(paymentId);
-
-            }
-        } catch (Exception e) {
-            System.err.println("취소 실패: " + e.getMessage());
-        }
-
+//        // 1. URL 설정
+//        String url = "https://api.tosspayments.com/v1/payments/" + paymentKey + "/cancel";
+//
+//        // 2. 헤더 설정 (Authorization & Content-Type)
+//        HttpHeaders headers = new HttpHeaders();
+//        // Authorization: Basic {Base64 인코딩된 시크릿키}
+//
+//        String secretKey = "test_sk_Ba5PzR0ArnOZp4xwZ16N8vmYnNeD";// 1. 테스트 시크릿 키
+//        String encodedKey = Base64.getEncoder().encodeToString((secretKey + ":").getBytes()); // 2. 키 뒤에 콜론(:)을 더하고 Base64로 변환
+//
+//        headers.set("Authorization", "Basic " + encodedKey);
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//
+//        // 3. 바디(데이터) 설정
+//        Map<String, String> map = new HashMap<>();
+//        map.put("cancelReason", "구매자가 취소를 원함");
+//
+//        HttpEntity<Map<String, String>> entity = new HttpEntity<>(map, headers);
+//
+//        // 4. API 호출 및 응답 받기
+//        try {
+//            ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+//
+//            if (response.getStatusCode() == HttpStatus.OK) {
+//                System.out.println("취소 성공: " + response.getBody());
+//
+//                //환불처리
+//                refundService.refund(paymentId);
+//
+//            }
+//        } catch (Exception e) {
+//            System.err.println("취소 실패: " + e.getMessage());
+//        }
+//
         return null; //todo : 결과를 웹으로 보내주면 완성.
     }
 }

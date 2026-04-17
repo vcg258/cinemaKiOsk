@@ -5,6 +5,7 @@ import com.example.cinemakiosk.dto.PaymentDetailsDTO;
 import com.example.cinemakiosk.dto.PointHistoryDTO;
 import com.example.cinemakiosk.mapper.PointHistoryMapper;
 import com.example.cinemakiosk.vo.PointHistoryVO;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class RefundService {
      * 환불
      * @param reservationId 환불할 내역
      */
+    @Transactional
     public void refund(String reservationId){
         // 지정 결제 내역 조회
         PaymentDetailsDTO paymentDetailsOne = paymentDetailsService.read(reservationId);
@@ -44,8 +46,6 @@ public class RefundService {
         } else {
             log.info("쿠폰 미사용");
         }
-
-        // TODO 통계 데이터 업데이트
 
 
     }

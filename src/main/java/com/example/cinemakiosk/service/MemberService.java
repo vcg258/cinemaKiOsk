@@ -27,4 +27,7 @@ public interface MemberService {
 
     // 전체 포인트 조회 (페이징)
     Page<PointHistoryDTO> getPointHistoryAll(int page);
+
+    //회원 포인트 변경
+    void updateMember(MemberDTO memberDTO);
 }

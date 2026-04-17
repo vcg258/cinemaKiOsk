@@ -15,6 +15,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
@@ -179,6 +180,20 @@ public class ScheduleServiceImpl implements ScheduleService {
     public ScheduleDTO getSchedule(Long id) {
         ScheduleEntity schedule = scheduleRepository.findById(id).orElseThrow();
         return ScheduleEntity.toDTO(schedule);
+    }
+
+
+    @Override
+    public List<ScheduleDTO> getScheduleDTOList() {
+        List<ScheduleVO> scheduleVOS = scheduleMapper.selectAll();
+        List<ScheduleDTO> scheduleDTOS = new ArrayList<>();
+
+        for (ScheduleVO scheduleVO : scheduleVOS){
+            scheduleDTOS.add(ScheduleVO.toDTO(scheduleVO));
+        }
+        log.info("반환받은 스케쥴 정보 : {}",scheduleDTOS);
+
+        return scheduleDTOS;
     }
 
     @Override

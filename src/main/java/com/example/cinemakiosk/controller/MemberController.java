@@ -40,4 +40,11 @@ public class MemberController {
     public ResponseEntity<MemberDTO> getMemberById(@PathVariable String phone){
         return ResponseEntity.ok(memberService.getMember(phone));
     }
+
+    @PostMapping("/{phone}")
+    public ResponseEntity<MemberDTO> postMemberById(@PathVariable String phone){
+        memberService.createMember(new MemberDTO(phone,0,null));
+        return ResponseEntity.ok(memberService.getMember(phone));
+    }
+
 }

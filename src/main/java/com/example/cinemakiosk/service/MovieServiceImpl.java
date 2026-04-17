@@ -199,6 +199,7 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public List<MovieDTO> getScreeningPeriodAllMovies() {
         List<MovieEntity> movieEntityList = movieRepository.findAll();
+        log.info(movieEntityList);
         LocalDate now = LocalDate.now();
 
         List<MovieDTO> movieDTOList = new ArrayList<>();

@@ -70,6 +70,7 @@ public class PaymentDetailsEntity {
                 .createAt(paymentDetailsEntity.getCreateAt())
                 .usePoint(paymentDetailsEntity.getUsePoint())
                 .status(paymentDetailsEntity.getStatus())
+                .paymentKey(paymentDetailsEntity.getPaymentKey())
                 .build();
     }
     
