@@ -68,9 +68,7 @@ public class ScheduleDTO {
     public static ScheduleVO toVO(ScheduleDTO scheduleDTO) {
         return ScheduleVO.builder()
                 .id(scheduleDTO.getId())
-                .theater(TheaterDTO.toVO(scheduleDTO.getTheater()))
                 .no(scheduleDTO.getNo())
-                .movie(MovieDTO.toVO(scheduleDTO.getMovie()))
                 .movieId(scheduleDTO.getMovieId())
                 .startAt(scheduleDTO.getStartAt())
                 .endAt(scheduleDTO.getEndAt())

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ScheduleService {
     // 스케줄 등록
-    ScheduleDTO createSchedule(ScheduleDTO scheduleDTO);
+    void createSchedule(ScheduleDTO scheduleDTO);
 
     // 스케줄 수정
     void updateSchedule(ScheduleDTO scheduleDTO);

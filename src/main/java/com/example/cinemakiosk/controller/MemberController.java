@@ -40,5 +40,4 @@ public class MemberController {
     public ResponseEntity<MemberDTO> getMemberById(@PathVariable String phone){
         return ResponseEntity.ok(memberService.getMember(phone));
     }
-
 }

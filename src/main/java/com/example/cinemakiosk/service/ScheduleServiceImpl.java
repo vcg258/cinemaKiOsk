@@ -32,7 +32,7 @@ public class ScheduleServiceImpl implements ScheduleService {
      * @param scheduleDTO 스케줄 DTO
      */
     @Override
-    public ScheduleDTO createSchedule(ScheduleDTO scheduleDTO) {
+    public void createSchedule(ScheduleDTO scheduleDTO) {
 
         // 영화조회와 런타임을 가져오기 위함
         MovieEntity movieEntity = movieRepository.findById(scheduleDTO.getMovieId()).orElseThrow();
@@ -50,23 +50,15 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .endAt(endAt.plusMinutes(theaterEntity.getCleanupTime()))
                 .no(scheduleDTO.getNo())
                 .movieId(scheduleDTO.getMovieId())
-                .activation(true)
+                .activation(false)
                 .build();
+
         log.info("createSchedule... 상영관 정리시간(분) : {}", theaterEntity.getCleanupTime());
 
         ScheduleEntity entity = scheduleRepository.save(ScheduleDTO.toEntity(dto));
         log.info("createSchedule... 스케줄 등록 목록: {}, 좌석 정책 번호: {}, 영화 번호: {}", entity,
                 entity.getTheaterEntity().getNo(),
                 entity.getMovieEntity().getMovieId());
-
-        return ScheduleDTO.builder()
-                .id(entity.getId())
-                .startAt(scheduleDTO.getStartAt())
-                .endAt(endAt.plusMinutes(theaterEntity.getCleanupTime()))
-                .no(scheduleDTO.getNo())
-                .movieId(scheduleDTO.getMovieId())
-                .activation(false)
-                .build();
     }
 
     /**
@@ -127,7 +119,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                 return;
             }
             if (scheduleEntity.isActivation() == request.isActivation()) {
-                log.error("만료여부 일치 변경 실패 : 현재 {}, 요청 {} ", scheduleEntity, request);
+                log.error("만료여부 일치 변경 실패 : {} ", scheduleEntity);
                 return;
             }
             scheduleEntity.changeActivation(request.isActivation());

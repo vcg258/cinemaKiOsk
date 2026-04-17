@@ -22,10 +22,9 @@ import java.util.List;
 public class DiscountPolicyController {
     private final DiscountPolicyService discountPolicyService;
 
-    @Operation(summary = "할인정책 등록 / 수정")
+    @Operation(summary = "할인정책 등록")
     @PostMapping
     public ResponseEntity<Void> addDiscountPolicies(@RequestBody DiscountPolicyDTO discountPolicyDTO) {
-        log.info("discountPolicyDTO : {}", discountPolicyDTO);
         discountPolicyService.createDiscountPolicy(discountPolicyDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build(); // 생성
     }

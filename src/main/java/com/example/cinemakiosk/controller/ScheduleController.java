@@ -19,9 +19,9 @@ public class ScheduleController {
 
     @Operation(summary = "스케줄 등록")
     @PostMapping
-    public ResponseEntity<ScheduleDTO> addSchedule(@RequestBody ScheduleDTO scheduleDTO){
-        ScheduleDTO dto = scheduleService.createSchedule(scheduleDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+    public ResponseEntity<Void> addSchedule(@RequestBody ScheduleDTO scheduleDTO){
+        scheduleService.createSchedule(scheduleDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @Operation(summary = "스케줄 수정", description = "id, endAt, activation은 X")

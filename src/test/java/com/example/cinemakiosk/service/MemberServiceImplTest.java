@@ -62,7 +62,7 @@ class MemberServiceImplTest {
 
     @Test
     void getMembersAllTest() {
-        memberService.getMembersAll(1).forEach(log::info);
+        memberService.getMembersAll().forEach(log::info);
     }
 
     @Test

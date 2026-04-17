@@ -21,9 +21,8 @@ public class StatisticsEntity {
     @Column(name = "id")
     private Long statisticsId;             // 통계 고유번호 (PK)
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "schedule_id", nullable = false, foreignKey = @ForeignKey(name = "fk_statistics_schedule_id"))
-    private ScheduleEntity scheduleEntity;     // 스케쥴 아이디 (FK)
+    @Column(name = "schedule_id", nullable = false)
+    private Long scheduleId;     // 스케쥴 아이디 (FK)
 
     @Column(name = "day", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -46,7 +45,7 @@ public class StatisticsEntity {
     public static StatisticsDTO toDTO(StatisticsEntity statisticsEntity){
         return StatisticsDTO.builder()
                 .id(statisticsEntity.getStatisticsId())
-                .schedule(ScheduleEntity.toDTO(statisticsEntity.getScheduleEntity()))
+                .scheduleId(statisticsEntity.getScheduleId())
                 .day(statisticsEntity.getDay())
                 .revenue(statisticsEntity.getRevenue())
                 .customerCount(statisticsEntity.getCustomerCount())
