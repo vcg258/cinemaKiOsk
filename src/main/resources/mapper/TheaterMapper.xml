@@ -31,4 +31,6 @@
                  inner join cinema_kiosk.seat_policy sp
                             on th.policy_id = sp.policy_id
     </select>
+
+
 </mapper>

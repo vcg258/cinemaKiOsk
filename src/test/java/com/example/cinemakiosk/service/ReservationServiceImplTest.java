@@ -75,7 +75,7 @@ class ReservationServiceImplTest {
         ReservationDetailsDTO reservationDetailsDTO = ReservationDetailsDTO.builder()
                 .schedule(scheduleDTO)
                 .phone(memberDTO)
-                .createAt(LocalDateTime.now())
+                .reservationTime(LocalDateTime.now())
                 .seats(list)
                 .build();
 

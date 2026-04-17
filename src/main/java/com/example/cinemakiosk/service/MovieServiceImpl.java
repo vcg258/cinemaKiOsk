@@ -2,16 +2,29 @@ package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.domain.MovieEntity;
 import com.example.cinemakiosk.domain.ScheduleEntity;
+import com.example.cinemakiosk.domain.enums.Rating;
 import com.example.cinemakiosk.dto.MovieDTO;
+import com.example.cinemakiosk.dto.MovieRequestDTO;
+import com.example.cinemakiosk.dto.MovieResponseDTO;
+import com.example.cinemakiosk.dto.ScheduleDTO;
 import com.example.cinemakiosk.repository.MovieRepository;
 import com.example.cinemakiosk.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.log4j.Log4j2;
+import net.coobird.thumbnailator.Thumbnailator;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -31,11 +44,13 @@ public class MovieServiceImpl implements MovieService {
 
     /**
      * 영화 등록
+     *
      * @param movieDTO 영화 정보
      */
     @Override
     public void insertMovie(MovieDTO movieDTO) {
         log.info("movieDTO: {} ", movieDTO);
+
 
         // 영화 정보 저장
         MovieEntity movieEntity = movieRepository.save(MovieDTO.toEntity(movieDTO));
@@ -48,6 +63,7 @@ public class MovieServiceImpl implements MovieService {
 
     /**
      * 영화 수정
+     *
      * @param movieDTO
      */
     @Override
@@ -72,18 +88,18 @@ public class MovieServiceImpl implements MovieService {
 //
 //        if ((file1 != null && !file1.isEmpty()) || (file2 != null && !file2.isEmpty())) {
 //            String filename = movieDTO.getMovieId() + ".jpg";  // movieId로 파일명
-
-//            // 기존 이미지 삭제
-//            Path oldPath = Paths.get(uploadPath, filename);
-//            Path oldThumbPath = Paths.get(uploadPath, "s_" + filename);
-//            try {
-//                Files.deleteIfExists(oldPath);
-//                Files.deleteIfExists(oldThumbPath);
-//            } catch (IOException e) {
-//                log.warn("기존 이미지 삭제 실패");
-//            }
-
-        // 영화 이미지 저장
+//
+////            // 기존 이미지 삭제
+////           Path oldPath = Paths.get(uploadPath, filename);
+////            Path oldThumbPath = Paths.get(uploadPath, "s_" + filename);
+////            try {
+////                Files.deleteIfExists(oldPath);
+////                Files.deleteIfExists(oldThumbPath);
+////            } catch (IOException e) {
+////                log.warn("기존 이미지 삭제 실패");
+////            }
+//
+//        // 영화 이미지 저장
 //            try {
 //                saveImageFromDTO(movieDTO, filename);
 //            } catch (IllegalStateException e) {
@@ -94,6 +110,7 @@ public class MovieServiceImpl implements MovieService {
 
     /**
      * 영화 삭제
+     *
      * @param movieId 영화 PK
      */
     @Override
@@ -111,7 +128,7 @@ public class MovieServiceImpl implements MovieService {
      * @return
      */
     @Override
-    public MovieDTO getMovieById(Long movieId) {
+    public MovieDTO getMovieById(long movieId) {
         // 메시지 추가
         MovieEntity optionalMovieEntity = movieRepository.findById(movieId)
                 .orElseThrow(() -> new NoSuchElementException("movieId를 찾을 수 없습니다"));
@@ -128,7 +145,7 @@ public class MovieServiceImpl implements MovieService {
         }
 
         Optional<MovieEntity> optionalMovieEntity = movieRepository.findByTitle(title);
-
+        //
         MovieEntity movieEntity = optionalMovieEntity
                 .orElseThrow(() -> new NoSuchElementException("title을 찾을 수 없습니다: " + title));
         MovieDTO movieDTO = MovieEntity.toDTO(movieEntity);
@@ -138,11 +155,19 @@ public class MovieServiceImpl implements MovieService {
 
     /**
      * 전체 영화 조회
+     *
      * @return 현재 db에 저장된 모든 영화
      */
     @Override
     public List<MovieDTO> getAllMovies() {
         List<MovieEntity> movieEntityList = movieRepository.findAll();
+
+//        // 영화 목록이 없을 때
+//        if (movieEntityList.isEmpty()) {
+//            throw new NoSuchElementException("등록된 영화가 없습니다.");
+//        }
+        // 그냥 빈 리스트 반환하게 둠
+
 
         List<MovieDTO> movieDTOList = new ArrayList<>();
         for (MovieEntity movieEntity : movieEntityList) {
@@ -154,6 +179,7 @@ public class MovieServiceImpl implements MovieService {
     /**
      * 상영종료처리
      * movieId를 입력하면, Schedule을 조회해 지나간 상영 시간중 가장 가까운 상영 시간을 end_at 시간으로 삼는다.
+     *
      * @param movieId
      */
     @Override
@@ -194,6 +220,7 @@ public class MovieServiceImpl implements MovieService {
     public List<MovieDTO> getScreeningPeriodAllMovies() {
         List<MovieEntity> movieEntityList = movieRepository.findAll();
         LocalDate now = LocalDate.now();
+
 
         List<MovieDTO> movieDTOList = new ArrayList<>();
         for (MovieEntity movieEntity : movieEntityList) {

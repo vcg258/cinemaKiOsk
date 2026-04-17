@@ -33,11 +33,7 @@ VALUES (1, '연기자 목록', current_timestamp, '설명임', '감독', date_ad
        (5, '연기자 목록', current_timestamp, '설명임', '감독', date_add(current_date, interval 5 day), '드라마', 'ALL', 200,
         date_sub(current_date, interval 2 day), '실험용 영화 제목5'),
        (6, '연기자 목록', current_timestamp, '설명임', '감독', date_add(current_date, interval 6 day), '애니', 'ALL', 200,
-        date_sub(current_date, interval 1 day), '실험용 영화 제목6'),
-       (7, '연기자 목록', current_timestamp, '설명임', '감독', date_add(current_date, interval 14 day), '애니', 'ALL', 200,
-        date_add(current_date, interval 7 day), '실험용 영화 제목7'),
-       (8, '연기자 목록', current_timestamp, '설명임', '감독', date_add(current_date, interval 15 day), '애니', 'ALL', 200,
-        date_add(current_date, interval 8 day), '실험용 영화 제목8');
+        date_sub(current_date, interval 1 day), '실험용 영화 제목6');
 
 
 -- 스케쥴 등록. 해당 매커니즘은 타이밍을 설정 하면 해당 영화의 상영일에 맞춰서 전부 추가되는 형식.
@@ -77,13 +73,13 @@ insert ignore into bonus_policy (id, activation, end_at, give_value, policy_name
 VALUES (1, 1, date_add(current_timestamp, interval 100 day), 5, '기본', current_timestamp),
        (2, 1, date_add(current_timestamp, interval 100 day), 20, 'VIP', current_timestamp);
 
-insert ignore into reservation_details (id, phone, schedule_id, returned)
-VALUES (1,  '010-1234-5678', 1,0),
-       (2,  '010-1234-5678', 2,0),
-       (3,  '010-1234-5678', 3,0),
-       (4,  '010-1234-5678', 1,0),
-       (5,  '010-1234-5678', 2,0),
-       (6,  '010-1234-5678', 3,0);
+insert ignore into reservation_details (id, create_at, phone, schedule_id)
+VALUES (1, current_timestamp, '010-1234-5678', 1),
+       (2, current_timestamp, '010-1234-5678', 2),
+       (3, current_timestamp, '010-1234-5678', 3),
+       (4, current_timestamp, '010-1234-5678', 1),
+       (5, current_timestamp, '010-1234-5678', 2),
+       (6, current_timestamp, '010-1234-5678', 3);
 
 
 insert ignore into reservation_seat (id, seat_number, reservation_id)

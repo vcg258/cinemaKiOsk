@@ -34,9 +34,11 @@ public class SeatPolicyEntity {
 
     /**
      * 좌석정책 업데이트를 위한 도메인 메서드
+     * @param name 수정 이름
      * @param cost 수정 비용
      */
-    public void updateSeatPolicy(Long cost) {
+    public void updateSeatPolicy(String name, Long cost) {
+        this.name = name;
         this.cost = cost;
     }
 

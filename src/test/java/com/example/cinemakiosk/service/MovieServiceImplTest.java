@@ -29,7 +29,7 @@ class MovieServiceImplTest {
                 .actors("일반인1")
                 .createAt(LocalDate.now())
                 .startAt(LocalDate.now())
-                .endAt(LocalDate.now())
+                .endAt(LocalDateTime.now())
                 .description("일반인의 일반적인 일상")
                 .title("아이언맨3")
                 .director("일반적인 감독")

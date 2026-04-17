@@ -51,9 +51,9 @@ public class PaymentDetailsDTO {
     public static PaymentDetailsVO toVO(PaymentDetailsDTO paymentDetailsDTO){
         return PaymentDetailsVO.builder()
                 .id(paymentDetailsDTO.getId())
-                .reservation(paymentDetailsDTO.getReservation() == null ? null : ReservationDetailsDTO.toVO(paymentDetailsDTO.getReservation()))
-                .bonusPolicy(paymentDetailsDTO.getBonusPolicy() == null ? null : BonusPolicyDTO.toVO(paymentDetailsDTO.getBonusPolicy()))
-                .couponNum(paymentDetailsDTO.getCouponNum() == null ? null : CouponDTO.toVO(paymentDetailsDTO.getCouponNum()))
+                .reservation(ReservationDetailsDTO.toVO(paymentDetailsDTO.getReservation()))
+                .bonusPolicy(BonusPolicyDTO.toVO(paymentDetailsDTO.getBonusPolicy()))
+                .couponNum(CouponDTO.toVO(paymentDetailsDTO.getCouponNum()))
                 .cost(paymentDetailsDTO.getCost())
                 .createAt(paymentDetailsDTO.getCreateAt())
                 .usePoint(paymentDetailsDTO.getUsePoint())

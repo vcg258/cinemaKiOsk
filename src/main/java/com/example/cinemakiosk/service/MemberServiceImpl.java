@@ -6,7 +6,6 @@ import com.example.cinemakiosk.domain.PointHistoryEntity;
 import com.example.cinemakiosk.domain.enums.Type;
 import com.example.cinemakiosk.dto.MemberDTO;
 import com.example.cinemakiosk.dto.PointHistoryDTO;
-import com.example.cinemakiosk.mapper.PointHistoryMapper;
 import com.example.cinemakiosk.repository.MemberRepository;
 import com.example.cinemakiosk.repository.PaymentDetailsRepository;
 import com.example.cinemakiosk.repository.PointHistoryRepository;
@@ -26,7 +25,6 @@ public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
     private final PointHistoryRepository pointHistoryRepository;
     private final PaymentDetailsRepository paymentDetailsRepository;
-    private final PointHistoryMapper pointHistoryMapper;
 
     /**
      * 신규 회원등록
@@ -81,8 +79,8 @@ public class MemberServiceImpl implements MemberService{
 
         log.info("pointHistoryCreate... 포인트 업데이트 내역 추가 : {}", dto);
 
-        PointHistoryEntity pointHistory = pointHistoryRepository.save(PointHistoryDTO.toEntity(dto)); // 포인트 내역 추가
-        log.info("pointHistoryCreate... 포인트 업데이트 내역 : {}", pointHistory);
+//        PointHistoryEntity pointHistory = pointHistoryRepository.save(PointHistoryDTO.toEntity(dto)); // 포인트 내역 추가
+//        log.info("pointHistoryCreate... 포인트 업데이트 내역 : {}", pointHistory);
 
         member.changePoint(amount);
 //        memberRepository.save(member); // 회원 잔여포인트 업데이트
@@ -166,16 +164,6 @@ public class MemberServiceImpl implements MemberService{
     public List<PointHistoryDTO> getMembersAllLog(String phone) {
         List<PointHistoryEntity> entity = pointHistoryRepository.findByMemberEntity_Phone(phone);
         return entity.stream().map(PointHistoryEntity::toDTO).toList();
-    }
-
-    /**
-     * 포인트 내역 전체 조회
-     * @return 전체 포인트내역이 담긴 리스트
-     */
-    @Override
-    public List<PointHistoryDTO> getPointHistoryAll() {
-        List<PointHistoryDTO> pointHistoryDTO = pointHistoryMapper.selectByMovieNameAll();
-        return pointHistoryDTO.stream().toList();
     }
 
     /**
