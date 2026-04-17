@@ -49,10 +49,11 @@ public class CustomerController {
     public ResponseEntity<List<ScheduleDTO>> getScheduleByMovie(@PathVariable Long id){
         return ResponseEntity.ok(scheduleService.getScheduleListByMovie(id));
     }
+
     // 상영중인 영화 조회
     @Operation(summary = "오늘날짜에 스케쥴이 있는 영화 조회 (고객용)",
             description = "- 스케쥴을 조회해 영화정보를 불러오므로 영화정보의 start_at과 end_at은 노상관" )
-    @GetMapping("/all")
+    @GetMapping("/movie/all")
     public ResponseEntity<List<MovieDTO>> readAll() {
         log.info("screening_period get...");
         List<MovieDTO> movieDTOList = movieService.getScreeningPeriodAllMovies();

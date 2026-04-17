@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -97,7 +98,9 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
      */
     @Override
     public List<BonusPolicyDTO> getBonusPolicies() {
-        List<BonusPolicyEntity> policyEntities = bonusPolicyRepository.findAllByEndAtAfter(LocalDateTime.now());
+        // 오늘 00:00:00 기준
+        LocalDateTime todayStart = LocalDate.now().atStartOfDay();
+        List<BonusPolicyEntity> policyEntities = bonusPolicyRepository.findAllByEndAtAfter(todayStart);
         return policyEntities.stream().map(BonusPolicyEntity::toDTO).toList();
     }
 

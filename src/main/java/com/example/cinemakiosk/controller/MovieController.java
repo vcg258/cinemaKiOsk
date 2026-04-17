@@ -33,7 +33,7 @@ import java.util.UUID;
 @Log4j2
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/movie")
+@RequestMapping("/api/admin/movie")
 public class MovieController {
 
 
@@ -52,7 +52,7 @@ public class MovieController {
                     "4. image = 사진 안올렸다면 Send empty value 체크 해제\n" +
                     "5. posterPath = tmdb/search 에서 찾은 posterPath 입력\n" +
                     "- image, posterPath 둘다 업로드시 posterPath 이미지로 저장됨")
-    @PostMapping(value = "/admin/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> upload(@Valid @ModelAttribute MovieDTO movieDTO) {
         log.info("upload post...");
         movieService.insertMovie(movieDTO);
@@ -64,7 +64,7 @@ public class MovieController {
     // 영화수정
     @Operation(summary = "영화수정",
             description = "- 수정할 영화의 movieId 입력\n - 이외는 영화등록과 동일")
-    @PatchMapping(value = "/admin/modify", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/modify", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> modify(@ModelAttribute MovieDTO movieDTO) {
         log.info("Modify post...");
         movieService.modify(movieDTO);
@@ -77,7 +77,7 @@ public class MovieController {
     @Operation(summary = "영화 상영종료 처리",
             description = "1. 상영종료처리할 영화의 movieId 입력\n " +
                     "2. Schedule을 조회해 지나간 상영 시간중 가장 가까운 상영 시간을 end_at 시간으로 저장")
-    @PatchMapping("/admin/{movieId}/end")
+    @PatchMapping("/{movieId}/end")
     public ResponseEntity<Void> modifyEndAt(@PathVariable Long movieId) {
         log.info("modifyEndAt post...");
         log.info("modifyEndAt movieId = " + movieId);
@@ -101,7 +101,7 @@ public class MovieController {
 
     // 전체 영화 조회
     @Operation(summary = "전체영화 조회 (관리자용)")
-    @GetMapping("/admin/admin/readAll")
+    @GetMapping("/readAll")
     public ResponseEntity<List<MovieDTO>> ManagerReadAll() {
         log.info("read get...");
         List<MovieDTO> movieDTOList = movieService.getAllMovies();
@@ -115,7 +115,7 @@ public class MovieController {
     // 영화삭제
     @Operation(summary = "영화삭제",
             description = "삭제할 영화의 movieId 입력")
-    @DeleteMapping("/admin/remove")
+    @DeleteMapping("/remove")
     public ResponseEntity<Void> remove(@RequestParam Long movieId) {
         log.info("Remove post...");
         movieService.remove(movieId);

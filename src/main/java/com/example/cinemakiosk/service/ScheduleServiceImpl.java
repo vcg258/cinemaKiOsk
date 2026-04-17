@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .endAt(endAt.plusMinutes(theaterEntity.getCleanupTime()))
                 .no(scheduleDTO.getNo())
                 .movieId(scheduleDTO.getMovieId())
-                .activation(false)
+                .activation(true)
                 .build();
 
         log.info("createSchedule... 상영관 정리시간(분) : {}", theaterEntity.getCleanupTime());
@@ -148,7 +149,9 @@ public class ScheduleServiceImpl implements ScheduleService {
      */
     @Override
     public List<ScheduleDTO> getScheduleList() {
-        List<ScheduleEntity> entityList = scheduleRepository.findAllByEndAtAfter(LocalDateTime.now());
+        // 오늘 00:00:00 기준
+        LocalDateTime todayStart = LocalDate.now().atStartOfDay();
+        List<ScheduleEntity> entityList = scheduleRepository.findAllByEndAtAfter(todayStart);
         return entityList.stream().map(ScheduleEntity::toDTO).toList();
     }
 

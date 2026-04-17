@@ -17,6 +17,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -63,7 +64,9 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public List<DiscountPolicyDTO> getDiscountPolicies() {
-        List<DiscountPolicyEntity> discountPolicies = discountPolicyRepository.findAllByEndAtAfter(LocalDateTime.now());
+        // 오늘 00:00:00 기준
+        LocalDateTime todayStart = LocalDate.now().atStartOfDay();
+        List<DiscountPolicyEntity> discountPolicies = discountPolicyRepository.findAllByEndAtAfter(todayStart);
         return discountPolicies.stream().map(DiscountPolicyEntity::toDTO).toList();
     }
 
