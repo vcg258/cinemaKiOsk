@@ -61,7 +61,7 @@ public class MemberServiceImpl implements MemberService{
         }
 
         // 잔여포인트 보다 사용금액이 더 많으면 예외처리
-        if (pointHistoryDTO.getAmountPoint() > member.getPoint()) {
+        if (pointHistoryDTO.getType() == Type.USE && pointHistoryDTO.getAmountPoint() > member.getPoint()) {
             throw new IllegalStateException("포인트 부족");
         }
 

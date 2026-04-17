@@ -54,6 +54,10 @@ public class PaymentDetailsEntity {
     @OneToMany(mappedBy = "paymentDetailsEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private  List<PointHistoryEntity> pointHistoryEntity;
 
+    public void changeStatus(Status status) {
+        this.status = status;
+    }
+
     /**
      * Entity -> DTO
      * @param paymentDetailsEntity

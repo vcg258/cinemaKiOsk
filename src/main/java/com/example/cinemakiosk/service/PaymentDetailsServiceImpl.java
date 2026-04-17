@@ -1,9 +1,13 @@
 package com.example.cinemakiosk.service;
 
+import com.example.cinemakiosk.domain.PaymentDetailsEntity;
+import com.example.cinemakiosk.domain.enums.Status;
 import com.example.cinemakiosk.dto.PaymentDetailsDTO;
+import com.example.cinemakiosk.dto.ReservationDetailsDTO;
 import com.example.cinemakiosk.mapper.PaymentDetailsMapper;
 import com.example.cinemakiosk.repository.PaymentDetailsRepository;
 import com.example.cinemakiosk.vo.PaymentDetailsVO;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -47,8 +51,12 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService{
 
     //결제 내역 변경
     @Override
-    public void update(PaymentDetailsDTO paymentDetailsDTO) {
-        paymentDetailsRepository.save(PaymentDetailsDTO.toEntity(paymentDetailsDTO));
+    @Transactional
+    public void updateToReturn(PaymentDetailsDTO paymentDetailsDTO) {
+        PaymentDetailsEntity entity = paymentDetailsRepository.findById(paymentDetailsDTO.getId()).orElseThrow();
+        entity.changeStatus(Status.RETURN);
+        entity.getReservationDetailsEntity().changeReturned(true);
+        paymentDetailsRepository.save(entity);
     }
 
 }

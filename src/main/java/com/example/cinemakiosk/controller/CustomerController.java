@@ -1,9 +1,6 @@
 package com.example.cinemakiosk.controller;
 
-import com.example.cinemakiosk.dto.PointHistoryDTO;
-import com.example.cinemakiosk.dto.ScheduleDTO;
-import com.example.cinemakiosk.dto.SeatPolicyDTO;
-import com.example.cinemakiosk.dto.TheaterDTO;
+import com.example.cinemakiosk.dto.*;
 import com.example.cinemakiosk.service.DiscountPolicyService;
 import com.example.cinemakiosk.service.MemberService;
 import com.example.cinemakiosk.service.ScheduleService;
@@ -30,6 +27,12 @@ public class CustomerController {
         return ResponseEntity.ok(scheduleService.getScheduleList());
     }
 
+    @Operation(summary = "스케줄 객체 전체 조회")
+    @GetMapping("/schedule/DTOlist")
+    public ResponseEntity<List<ScheduleDTO>> getScheduleDTOList(){
+        return ResponseEntity.ok(scheduleService.getScheduleDTOList());
+    }
+
     @Operation(summary = "지정 영화에 해당하는 전체 스케줄 조회")
     @GetMapping("/schedule/{id}/movie")
     public ResponseEntity<List<ScheduleDTO>> getScheduleByMovie(@PathVariable Long id){
@@ -46,6 +49,24 @@ public class CustomerController {
     @GetMapping("/theater/list")
     public ResponseEntity<List<TheaterDTO>> getAllTheater() {
         return ResponseEntity.ok(theaterService.getTheaterAll());
+    }
+
+    @Operation(summary = "상영관 내용 객체타입 변수 확인")
+    @GetMapping("/theater/dtoAll")
+    public ResponseEntity<List<TheaterDTO>> getDTOAllTheater(){
+        return ResponseEntity.ok( theaterService.getTheaterDTOAll());
+    }
+
+    @Operation(summary = "맴버 단일 조회")
+    @GetMapping("/member/{phone}")
+    public ResponseEntity<MemberDTO> getMemberById(@PathVariable String phone){
+        return ResponseEntity.ok(memberService.getMember(phone));
+    }
+
+    @PostMapping("/member/{phone}")
+    public ResponseEntity<MemberDTO> postMemberById(@PathVariable String phone){
+        memberService.createMember(new MemberDTO(phone,0,null));
+        return ResponseEntity.ok(memberService.getMember(phone));
     }
 
     @Operation(summary = "회원 포인트 사용 적립")

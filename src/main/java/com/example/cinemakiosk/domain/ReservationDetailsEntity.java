@@ -47,6 +47,11 @@ public class ReservationDetailsEntity{
     @OneToMany(mappedBy = "reservationDetailsEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<PaymentDetailsEntity> paymentDetailsEntity;
 
+
+    public void changeReturned(boolean returned) {
+        this.returned = returned;
+    }
+
     /**
      * Entity -> DTO
      * @param reservationDetailsEntity

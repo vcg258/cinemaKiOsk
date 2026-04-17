@@ -1,5 +1,6 @@
 package com.example.cinemakiosk.service;
 
+import com.example.cinemakiosk.domain.enums.Status;
 import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.PaymentDetailsDTO;
 import com.example.cinemakiosk.dto.PointHistoryDTO;
@@ -29,11 +30,13 @@ public class RefundService {
     public void refund(String reservationId){
         // 지정 결제 내역 조회
         PaymentDetailsDTO paymentDetailsOne = paymentDetailsService.read(reservationId);
+        paymentDetailsService.updateToReturn(paymentDetailsOne);
 
         // 포인트 복구
         List<PointHistoryVO> pointHistoryVO = pointHistoryMapper.selectByPayment(paymentDetailsOne.getId());
         for (PointHistoryVO pointHistoryVO1 : pointHistoryVO) {
             memberService.pointHistoryCancel(PointHistoryVO.toDTO(pointHistoryVO1)); // 들어갈 값 PointHistoryDTO
+            log.info("포인트 복구 : {}", pointHistoryVO1);
         }
 
         // 쿠폰 복구

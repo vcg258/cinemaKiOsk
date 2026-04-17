@@ -64,7 +64,8 @@ public class ScheduleController {
     }
 
     @Operation(summary = "스케줄 객체 전체 조회")
-    @GetMapping("/DTOlist")
+    @GetMapping("/schedule/DTOlist")
     public ResponseEntity<List<ScheduleDTO>> getScheduleDTOList(){
         return ResponseEntity.ok(scheduleService.getScheduleDTOList());
-    }}
+    }
+}
