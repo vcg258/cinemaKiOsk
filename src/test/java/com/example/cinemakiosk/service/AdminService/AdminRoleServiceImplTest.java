@@ -1,5 +1,6 @@
 package com.example.cinemakiosk.service.AdminService;
 
+import com.example.cinemakiosk.dto.AdminDTO.AdminDTO;
 import com.example.cinemakiosk.dto.AdminDTO.AdminRoleMapDTO;
 import com.example.cinemakiosk.dto.RequestDTO.AdminRoleMapRequest;
 import com.example.cinemakiosk.repository.AdminRepository.AdminRoleMapRepository;
@@ -27,6 +28,11 @@ class AdminRoleServiceImplTest {
     }
 
     @Test
+    void getAdmin() {
+        log.info(adminRoleService.getAdmin("admin"));
+    }
+
+    @Test
     void getRoles() {
         adminRoleService.getRoles().forEach(log::info);
     }
@@ -36,12 +42,16 @@ class AdminRoleServiceImplTest {
         adminRoleService.getAdminRoleMaps(2L).forEach(log::info);
     }
 
-
     @Test
     void addRole() {
         AdminRoleMapRequest dto = new AdminRoleMapRequest();
         dto.setAdminId(2L);
         dto.setRoles(List.of(1L, 2L, 30L));
         adminRoleService.addRole(dto);
+    }
+
+    @Test
+    void rememberUUID() {
+        adminRoleService.rememberMe("admin");
     }
 }

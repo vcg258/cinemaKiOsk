@@ -145,7 +145,9 @@ public class PaymentController {
         ScheduleDTO schedule = scheduleService.getScheduleDTO(scheduleIdValue);
         MemberDTO member = memberService.getMember(phone);
         BonusPolicyDTO bonusPolicy = bonusPolicyService.getBonusPolicy(bonusPolicyId);
-        CouponDTO couponNum = discountPolicyService.getCoupon(requestData.path("couponNum").asText(""));
+        String couponNum = requestData.path("couponNum").asText("");
+        // null 예외처리
+        CouponDTO couponStr = couponNum.isEmpty() ? null : discountPolicyService.getCoupon(couponNum);
         log.error("경계3");
 
         // 1. 예매 등록
@@ -169,7 +171,7 @@ public class PaymentController {
                 .id(orderId)
                 .reservation(reservationDetailsDTO)
                 .bonusPolicy(bonusPolicy)
-//                .couponNum(couponNum)
+                .couponNum(couponStr)
                 .couponNum(null)
                 .cost(amount)
                 .createAt(LocalDateTime.now())
@@ -207,6 +209,7 @@ public class PaymentController {
         log.error("경계11");
         // 멤버 실제 포인트 업데이트
         log.info("멤버 확인 : {}",member);
+//        TODO 이미 서비스 로직에 존재함 제거예정(?)
 //        member.setPoint(member.getPoint() - (int) usePoint + earnPoint);
         log.info("변경 멤버 확인 : {}", member);
 

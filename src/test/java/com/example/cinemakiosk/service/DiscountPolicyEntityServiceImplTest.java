@@ -63,7 +63,7 @@ class DiscountPolicyEntityServiceImplTest {
 
     @Test
     public void createCouponNumTest() {
-        discountPolicyService.createCouponNum(2L);
+        discountPolicyService.createCouponNum(2L, 20);
     }
 
     @Test

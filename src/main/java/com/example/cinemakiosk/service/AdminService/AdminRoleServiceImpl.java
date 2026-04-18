@@ -18,6 +18,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Log4j2
 @Service
@@ -37,6 +38,29 @@ public class AdminRoleServiceImpl implements AdminRoleService {
         List<AdminVO> vo = adminMapper.selectAdminByAdminRole();
         return vo.stream().map(AdminVO::toDTO).toList();
     }
+
+    /**
+     * 지정 관리자 조회
+     * @param loginId 관리자 아이다
+     * @return 지정 관리자
+     */
+    @Override
+    public AdminDTO getAdmin(String loginId) {
+        AdminEntity admin = adminRepository.findByLoginId(loginId).orElseThrow();
+        return AdminEntity.toDTO(admin);
+    }
+
+    /**
+     * UUID에 해당하는 관리자 조회
+     * @param uuid UUID
+     * @return 해당 UUID에 해당하는 관리자
+     */
+    @Override
+    public AdminDTO getAdminByRememberMe(String uuid) {
+        AdminEntity entity = adminRepository.findByUuid(uuid);
+        return AdminEntity.toDTO(entity);
+    }
+
 
     /**
      * 권한 전체 조회
@@ -86,5 +110,28 @@ public class AdminRoleServiceImpl implements AdminRoleService {
             log.info("권한 부여 : {}, {}", adminRoleMapEntity.getAdminEntity().getLoginId(),
                     adminRoleMapEntity.getAdminRoleEntity().getRoleName());
         }
+    }
+
+    /**
+     * 자동로그인 UUID
+     * @param loginId 자동로그인 한 아이디
+     */
+    @Override
+    public void rememberMe(String loginId) {
+        AdminEntity adminEntity = adminRepository.findByLoginId(loginId).orElseThrow();
+        adminEntity.changeUUID();
+        log.info(adminEntity);
+        adminRepository.save(adminEntity);
+    }
+
+    /**
+     * 로그아웃 UUID Null 처리
+     * @param loginId 로그아웃 할 사용자 아이디
+     */
+    @Override
+    public void logout(String loginId) {
+        AdminEntity adminEntity = adminRepository.findByLoginId(loginId).orElseThrow();
+        adminEntity.changeUUIDNull();
+        adminRepository.save(adminEntity);
     }
 }

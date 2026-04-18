@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -50,6 +51,14 @@ public class AdminEntity{
     @OneToMany(mappedBy = "adminEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<AdminRoleMapEntity> adminRoleMapEntity; // 관리자 아이디 FK
 
+
+    public void changeUUID() {
+        this.uuid = UUID.randomUUID().toString();
+    }
+
+    public void changeUUIDNull() {
+        this.uuid = null;
+    }
 
     /**
      * Entity -> DTO

@@ -49,7 +49,5 @@ public class RefundService {
         } else {
             log.info("쿠폰 미사용");
         }
-
-
     }
 }

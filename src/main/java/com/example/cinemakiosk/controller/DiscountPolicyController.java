@@ -57,8 +57,8 @@ public class DiscountPolicyController {
 
     @Operation(summary = "지정 정책에 쿠폰 발행")
     @PostMapping("/coupon/{policyId}")
-    public ResponseEntity<Void> addCoupon(@PathVariable Long policyId) { // TODO 따로 DTO를 넣자는 의견이 있음 일단 보류
-        discountPolicyService.createCouponNum(policyId);
+    public ResponseEntity<Void> addCoupon(@PathVariable Long policyId, @RequestParam(defaultValue = "1") int count) { // TODO 따로 DTO를 넣자는 의견이 있음 일단 보류
+        discountPolicyService.createCouponNum(policyId, count);
         return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 생성
     }
 

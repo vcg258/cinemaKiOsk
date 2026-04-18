@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -121,22 +122,26 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      * @param policyId 정책 번호 FK
      */
     @Override
-    public void createCouponNum(Long policyId) {
+    public void createCouponNum(Long policyId, int count) {
         DiscountPolicyEntity policy = discountPolicyRepository.findById(policyId).orElseThrow();
         if (!policy.getId().equals(policyId)) {
             throw new IllegalArgumentException("지정한 할인정책이 없음 발행 X");
         }
 
-        String couponNum = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
-        CouponDTO couponDTO = CouponDTO.builder()
-                .couponNum(couponNum)
-                .policyId(policyId)
-                .status(true) // 사용 가능
-                .build();
+        // 여러 쿠폰을 발급 할 수 있게 수정
+        List<CouponEntity> coupons = new ArrayList<>();
+        for (int i = 1; i <= count; i++) {
+            String couponNum = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
+            CouponDTO couponDTO = CouponDTO.builder()
+                    .couponNum(couponNum)
+                    .policyId(policyId)
+                    .status(true) // 사용 가능
+                    .build();
 
-        log.info("couponDTO: {}", couponDTO);
-        CouponEntity couponEntity = CouponDTO.toEntity(couponDTO);
-        couponRepository.save(couponEntity);
+            log.info("couponDTO: {}", couponDTO);
+            coupons.add(CouponDTO.toEntity(couponDTO));
+        }
+        couponRepository.saveAll(coupons); // 리스트에 담아서 한번에 추가
     }
 
     /**

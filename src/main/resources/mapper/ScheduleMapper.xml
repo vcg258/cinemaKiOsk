@@ -37,6 +37,7 @@
                s.no,
                s.start_at,
                s.end_at,
+               s.activation,
 
                mv.movie_id     AS mv_movie_id,
                mv.title        AS mv_title,
@@ -71,6 +72,7 @@
                sc.no,
                sc.start_at,
                sc.end_at,
+               sc.activation,
 
                mv.movie_id     AS mv_movie_id,
                mv.title        AS mv_title,
