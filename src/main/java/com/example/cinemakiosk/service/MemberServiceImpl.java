@@ -60,7 +60,7 @@ public class MemberServiceImpl implements MemberService{
             throw new NoSuchElementException("등록된 회원 정보가 존재하지 않습니다");
         }
 
-        // 잔여포인트 보다 사용금액이 더 많으면 예외처리
+        // 타입이 사용이고 잔여포인트 보다 사용금액이 더 많으면 예외처리
         if (pointHistoryDTO.getType() == Type.USE && pointHistoryDTO.getAmountPoint() > member.getPoint()) {
             throw new IllegalStateException("포인트 부족");
         }

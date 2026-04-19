@@ -28,7 +28,7 @@ public interface DiscountPolicyService {
     void createCouponNum(Long policyId, int count);
 
     // 쿠폰 사용 검증 (정책 기간, 사용여부, 정책에 해당하는 쿠폰)
-    boolean authCoupon(String couponNum);
+    CouponDTO authCoupon(String couponNum);
 
     // 쿠폰을 사용함으로써 사용여부 업데이트 및 환불로 인한 복구
     void updateStatus(CouponDTO couponDTO);

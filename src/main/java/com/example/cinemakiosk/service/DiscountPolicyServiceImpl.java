@@ -150,7 +150,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      * @return 사용 검증 통과면 true, 아니면 false
      */
     @Override
-    public boolean authCoupon(String couponNum) {
+    public CouponDTO authCoupon(String couponNum) {
         CouponVO couponVO = couponMapper.checkCoupon(couponNum);
         // 정책이 없을 경우 (INNER JOIN을 하였기때문에 정책이 없다면 null)
         if (couponVO == null) {
@@ -170,7 +170,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
         if (coupon == null) {
             throw new IllegalArgumentException("쿠폰 번호와 할인정책이 일치하고 사용여부가 true 인 녀셕 없음");
         }
-        return true; // 위 조건문 다 통과 사용가능
+        return CouponVO.toDTO(couponVO); // 위 조건문 다 통과 사용가능
     }
 
     /**

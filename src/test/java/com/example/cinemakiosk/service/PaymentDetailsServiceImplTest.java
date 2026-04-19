@@ -12,6 +12,11 @@ class PaymentDetailsServiceImplTest {
     @Autowired private PaymentDetailsService paymentDetailsService;
 
     @Test
+    void selectAll() {
+        paymentDetailsService.readAll(1).forEach(log::info);
+    }
+
+    @Test
     void updateToReturn() {
         PaymentDetailsDTO read = paymentDetailsService.read("33d0138a-b948-41e7-8c97-3dc043b18fa0");
         paymentDetailsService.updateToReturn(read);

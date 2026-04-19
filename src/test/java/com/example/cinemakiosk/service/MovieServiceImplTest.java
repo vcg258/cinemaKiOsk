@@ -16,7 +16,7 @@ import java.util.List;
 class MovieServiceImplTest {
 
     @Autowired
-    private MovieServiceImpl moviceService;
+    private MovieServiceImpl movieService;
 
 
     // 추가
@@ -36,36 +36,41 @@ class MovieServiceImplTest {
                 .runtime(120L)
                 .build();
         log.info(movieDTO.getRating());
-        moviceService.insertMovie(movieDTO);
+        movieService.insertMovie(movieDTO);
     }
 
     // 상세조회
     @Test
     void getMovieById() {
-        MovieDTO movieDTO = moviceService.getMovieById(26L);
+        MovieDTO movieDTO = movieService.getMovieById(26L);
         log.info(movieDTO);
     }
 
     // 제목으로 상세조회
     @Test
     void getMovieByTitle() {
-        MovieDTO movieDTO = moviceService.getMovieByTitle("아이언맨3");
+        MovieDTO movieDTO = movieService.getMovieByTitle("아이언맨3");
         log.info(movieDTO);
     }
 
     // 전체 조회
     @Test
     void getAllMovies() {
-        List<MovieDTO> movieDTOList = moviceService.getAllMovies();
+        List<MovieDTO> movieDTOList = movieService.getAllMovies();
         for (MovieDTO movieDTO : movieDTOList) {
             log.info(movieDTO);
         }
     }
 
+    @Test
+    void getAllMoviesActivation() {
+        movieService.getScreeningPeriodAllMovies().forEach(log::info);
+    }
+
 //    // 키워드로 조회
 //    @Test
 //    void getMovie() {
-//        List<MovieDTO> movieDTOList = moviceService.getMovie("특별");
+//        List<MovieDTO> movieDTOList = movieService.getMovie("특별");
 //        for (MovieDTO movieDTO : movieDTOList) {
 //            log.info(movieDTO);
 //        }
@@ -74,7 +79,7 @@ class MovieServiceImplTest {
 //    // 장르로 조회
 //    @Test
 //    void findByGenre() {
-//        List<MovieDTO> movieDTOList = moviceService.findByGenre("wpwp");
+//        List<MovieDTO> movieDTOList = movieService.findByGenre("wpwp");
 //        for (MovieDTO movieDTO : movieDTOList) {
 //            log.info(movieDTO);
 //        }
@@ -83,7 +88,7 @@ class MovieServiceImplTest {
 //    // 수정
 //    @Test
 //    void modify() {
-//        moviceService.modify();
+//        movieService.modify();
 //    }
 
     // 삭제

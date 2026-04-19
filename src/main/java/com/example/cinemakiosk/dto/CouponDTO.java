@@ -17,9 +17,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CouponDTO {
     private String couponNum; // 쿠폰 번호
-    private DiscountPolicyDTO discountPolicy; // 할인 정책 인덱스 FK (JPA용도)
+    private DiscountPolicyDTO discountPolicy; // 할인 정책 인덱스 FK
     private boolean status; // 사용여부 (사용가능 = true, 불가능 = false)
-    private Long policyId; // 할인 정책 인덱스 FK (Mapper)
+    private Long policyId; // 할인 정책 인덱스
 
     /**
      * DTO -> Entity

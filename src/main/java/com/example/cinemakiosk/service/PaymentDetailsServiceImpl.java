@@ -10,6 +10,7 @@ import com.example.cinemakiosk.vo.PaymentDetailsVO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -39,14 +40,17 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService{
 
     //결제 내역 전체조회
     @Override
-    public List<PaymentDetailsDTO> readAll() {
+    public Page<PaymentDetailsDTO> readAll(int page) {
+        int offset = (page - 1) * 10;
+        long count = paymentDetailsRepository.count();
         List<PaymentDetailsDTO> paymentDetailsDTOS = new ArrayList<>();
-        List<PaymentDetailsVO> paymentDetailsVOS = paymentDetailsMapper.selectAll();
+        List<PaymentDetailsVO> paymentDetailsVOS = paymentDetailsMapper.selectAll(offset);
         for (PaymentDetailsVO paymentDetailsVO : paymentDetailsVOS){
             paymentDetailsDTOS.add(PaymentDetailsVO.toDTO(paymentDetailsVO));
         }
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("createAt").descending());
 
-        return paymentDetailsDTOS;
+        return new PageImpl<>(paymentDetailsDTOS, pageable, count);
     }
 
     //결제 내역 변경

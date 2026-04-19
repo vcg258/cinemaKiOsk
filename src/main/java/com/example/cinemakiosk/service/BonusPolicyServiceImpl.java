@@ -100,7 +100,7 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
     public List<BonusPolicyDTO> getBonusPolicies() {
         // 오늘 00:00:00 기준
         LocalDateTime todayStart = LocalDate.now().atStartOfDay();
-        List<BonusPolicyEntity> policyEntities = bonusPolicyRepository.findAllByEndAtAfter(todayStart);
+        List<BonusPolicyEntity> policyEntities = bonusPolicyRepository.findAllBonusPolicy(todayStart);
         return policyEntities.stream().map(BonusPolicyEntity::toDTO).toList();
     }
 

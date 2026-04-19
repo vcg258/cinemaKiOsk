@@ -8,9 +8,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -25,7 +27,7 @@ import java.util.*;
 @Log4j2
 @RestController // @Controller + @ResponseBody 합쳐진 것
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/payment")
+@RequestMapping(value = "/api")
 public class PaymentController {
 
     private final ObjectMapper objectMapper; // 스프링이 자동으로 주입해주는 JSON 변환기
@@ -43,7 +45,7 @@ public class PaymentController {
      * @return
      * @throws Exception
      */
-    @PostMapping(value = "/confirm")
+    @PostMapping(value = "/payment/confirm")
     public ResponseEntity<JsonNode> confirmPayment(@RequestBody String jsonBody) throws Exception {
         log.info("결제 컨펌 로직 시작");
         log.info("jsonBody : {}",jsonBody);
@@ -61,7 +63,7 @@ public class PaymentController {
         int statusCode = 200;
 
 
-        if (PAY_TYPE_CARD.equalsIgnoreCase(payType)) {
+        if (PAY_TYPE_CARD.equalsIgnoreCase(payType) && amount > 0) { // 할인후 금액이 0보다 클경우만 (전액 포인트할인이 적용될 경우를 생각함)
             log.error("경계2");
             // 1. 토스 결제 승인 로직
             String paymentKey = requestData.get("paymentKey").asText();
@@ -78,7 +80,7 @@ public class PaymentController {
             ObjectNode successNode = objectMapper.createObjectNode();
             successNode.put("status", "DONE");
             successNode.put("orderId", orderId);
-            successNode.put("method", "POINT");
+            successNode.put("method", "POINT"); // TODO 쿠폰 + 포인트 전액할인도 POINT(?) FREE(?)
             responseResult = successNode;
         }
         log.error("경계4");
@@ -145,9 +147,9 @@ public class PaymentController {
         ScheduleDTO schedule = scheduleService.getScheduleDTO(scheduleIdValue);
         MemberDTO member = memberService.getMember(phone);
         BonusPolicyDTO bonusPolicy = bonusPolicyService.getBonusPolicy(bonusPolicyId);
-        String couponNum = requestData.path("couponNum").asText("");
-        // null 예외처리
-        CouponDTO couponStr = couponNum.isEmpty() ? null : discountPolicyService.getCoupon(couponNum);
+        String couponStr = requestData.path("couponNum").asText("");
+        // TODO 쿠폰 null 예외처리
+        CouponDTO couponNum = couponStr.isEmpty() ? null : discountPolicyService.getCoupon(couponStr);
         log.error("경계3");
 
         // 1. 예매 등록
@@ -171,8 +173,7 @@ public class PaymentController {
                 .id(orderId)
                 .reservation(reservationDetailsDTO)
                 .bonusPolicy(bonusPolicy)
-                .couponNum(couponStr)
-                .couponNum(null)
+                .couponNum(couponNum)
                 .cost(amount)
                 .createAt(LocalDateTime.now())
                 .usePoint(usePoint)
@@ -182,6 +183,16 @@ public class PaymentController {
         log.error("경계7");
         paymentDetailsService.create(payment);
         log.error("경계8");
+
+        // 쿠폰을 사용할 경우 사용여부 변경
+        if (couponNum != null) {
+            CouponDTO dto = CouponDTO.builder()
+                    .couponNum(couponNum.getCouponNum())
+                    .status(false)
+                    .build();
+            discountPolicyService.updateStatus(dto);
+            log.info("지정 쿠폰 : {}", dto);
+        }
 
         // 3. 포인트 처리
         int earnPoint = (int) (amount * bonusPolicy.getGiveValue() / 100);
@@ -211,7 +222,7 @@ public class PaymentController {
         log.info("멤버 확인 : {}",member);
 //        TODO 이미 서비스 로직에 존재함 제거예정(?)
 //        member.setPoint(member.getPoint() - (int) usePoint + earnPoint);
-        log.info("변경 멤버 확인 : {}", member);
+//        log.info("변경 멤버 확인 : {}", member);
 
 
         log.info("DB 저장 및 포인트 갱신 완료: 주문번호 {}", orderId);
@@ -222,7 +233,7 @@ public class PaymentController {
      * @param no
      * @return
      */
-    @GetMapping("/read/{uuid}")
+    @GetMapping("/admin/payment/read/{uuid}")
     public ResponseEntity<PaymentDetailsDTO> readOne(@PathVariable("uuid") String no){
         log.info("찾으려는 uuid : {}", no);
         PaymentDetailsDTO paymentDetailsDTO = paymentDetailsService.read(no);
@@ -230,19 +241,28 @@ public class PaymentController {
         return ResponseEntity.ok(paymentDetailsDTO);
     }
 
-    @PostMapping("/refund")
+    @PostMapping("/admin/payment/refund")
     public ResponseEntity<Void> refund(@RequestBody String jsonBody) throws JsonProcessingException {
         //1. payment값이 필요함
         //2. 결제 내역 정보가 필요함
         log.info("jsonBody : {}",jsonBody);
 
-        RestTemplate restTemplate = new RestTemplate();
 
         log.error("경계");
         // 1. 파싱 (Jackson 사용)
         JsonNode requestData = objectMapper.readTree(jsonBody);
-        String paymentKey = requestData.get("paymentKey").asText();
+        String paymentKey = requestData.get("paymentKey").asText(); // TODO NPE 위험 get -> path
         String paymentId = requestData.get("paymentId").asText();
+
+        // TODO 환불금액이 0원일 경우 호출X 결제내역, 예매내역, 포인트만 복구
+        if (paymentKey == null || paymentKey.isBlank()) {
+            log.info("환불할 금액 0원 이므로 토스 호출 하지않음: {}", paymentId);
+            refundService.refund(paymentId);
+            return ResponseEntity.ok().build();
+        }
+
+
+        RestTemplate restTemplate = new RestTemplate();
 
         //환불처리
         // 1. URL 설정
@@ -282,4 +302,11 @@ public class PaymentController {
 
         return ResponseEntity.ok().build();
     }
+
+    @Operation(summary = "결제 내역 모두 조회 (페이징)")
+    @GetMapping("/admin/payment/list")
+    public ResponseEntity<Page<PaymentDetailsDTO>> readAllPayment(int page) {
+        return ResponseEntity.ok(paymentDetailsService.readAll(page));
+    }
+
 }

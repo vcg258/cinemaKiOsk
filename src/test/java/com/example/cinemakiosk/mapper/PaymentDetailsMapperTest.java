@@ -24,7 +24,7 @@ class PaymentDetailsMapperTest {
 
     @Test
     public void selectAll(){
-        List<PaymentDetailsVO> paymentDetailsVOS = paymentDetailsMapper.selectAll();
+        List<PaymentDetailsVO> paymentDetailsVOS = paymentDetailsMapper.selectAll(1);
         log.info(paymentDetailsVOS);
     }
 
