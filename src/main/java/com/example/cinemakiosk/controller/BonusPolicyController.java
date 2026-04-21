@@ -18,12 +18,12 @@ import java.util.List;
 public class BonusPolicyController {
     private final BonusPolicyService bonusPolicyService;
 
-//    @Operation(summary = "적립 정책 추가 / 수정")
-//    @PostMapping
-//    public ResponseEntity<BonusPolicyDTO> addBonusPolicy(@RequestBody BonusPolicyDTO bonusPolicyDTO) {
-//        BonusPolicyDTO dto = bonusPolicyService.createBonusPolicy(bonusPolicyDTO);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
-//    }
+    @Operation(summary = "적립 정책 추가 / 수정")
+    @PostMapping
+    public ResponseEntity<BonusPolicyDTO> addBonusPolicy(@RequestBody BonusPolicyDTO bonusPolicyDTO) {
+        BonusPolicyDTO dto = bonusPolicyService.createBonusPolicy(bonusPolicyDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+    }
 
     @Operation(summary = "적립 정책 종료 (23시 59분으로 지정 활성화 여부 FALSE)")
     @PatchMapping("/{id}/finish")
@@ -39,12 +39,12 @@ public class BonusPolicyController {
         return ResponseEntity.noContent().build();
     }
 
-//    @Operation(summary = "적립 정책 삭제")
-//    @DeleteMapping
-//    public ResponseEntity<Void> deleteBonusPolicy(@RequestParam Long id) {
-//        bonusPolicyService.deleteBonusPolicy(id);
-//        return ResponseEntity.noContent().build();
-//    }
+    @Operation(summary = "적립 정책 삭제")
+    @DeleteMapping
+    public ResponseEntity<Void> deleteBonusPolicy(@RequestParam Long id) {
+        bonusPolicyService.deleteBonusPolicy(id);
+        return ResponseEntity.noContent().build();
+    }
 
     @Operation(summary = "적림정책 전체 조회")
     @GetMapping("/list")

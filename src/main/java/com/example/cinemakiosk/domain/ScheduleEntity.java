@@ -99,6 +99,7 @@ public class ScheduleEntity {
                 .movieId(scheduleEntity.getMovieEntity().getMovieId())
                 .startAt(scheduleEntity.getStartAt())
                 .endAt(scheduleEntity.getEndAt())
+                .activation(scheduleEntity.isActivation())
                 .build();
     }
 }

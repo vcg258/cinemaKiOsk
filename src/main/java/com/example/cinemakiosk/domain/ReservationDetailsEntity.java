@@ -32,6 +32,9 @@ public class ReservationDetailsEntity{
     @JoinColumn(name = "phone", foreignKey = @ForeignKey(name = "fk_reservation_details_schedule_id"))
     private MemberEntity memberEntity;                  //  회원 번호 FK
 
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean returned;
+
     @CreatedDate
     @Column(nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
     private LocalDateTime createAt; //  예약 시간
@@ -43,8 +46,6 @@ public class ReservationDetailsEntity{
     @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "reservationDetailsEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<PaymentDetailsEntity> paymentDetailsEntity;
-
-    private boolean returned;
 
     public void changeReturned(boolean returned) {
         this.returned = returned;

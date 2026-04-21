@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class StatisticsDTO {
 
     private Long id;
-    private Long scheduleId;
+    private ScheduleDTO schedule;
     private Days day;
     private Long revenue;
     private Long customerCount;
@@ -30,7 +30,7 @@ public class StatisticsDTO {
     public static StatisticsEntity toEntity(StatisticsDTO statisticsDTO){
         return StatisticsEntity.builder()
                 .statisticsId(statisticsDTO.getId())
-                .scheduleId(statisticsDTO.getScheduleId())
+                .scheduleEntity(ScheduleDTO.toEntity(statisticsDTO.getSchedule()))
                 .day(statisticsDTO.getDay())
                 .revenue(statisticsDTO.getRevenue())
                 .customerCount(statisticsDTO.getCustomerCount())
@@ -46,7 +46,7 @@ public class StatisticsDTO {
     public static StatisticsVO toVO(StatisticsDTO statisticsDTO){
         return StatisticsVO.builder()
                 .id(statisticsDTO.getId())
-                .scheduleId(statisticsDTO.getScheduleId())
+                .schedule(ScheduleDTO.toVO(statisticsDTO.getSchedule()))
                 .day(statisticsDTO.getDay())
                 .revenue(statisticsDTO.getRevenue())
                 .customerCount(statisticsDTO.getCustomerCount())

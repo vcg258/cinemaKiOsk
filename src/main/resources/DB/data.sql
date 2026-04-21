@@ -209,21 +209,21 @@ VALUES (1,1, 'AGE', 'WON', 2000, date_add(current_timestamp, interval 200 day), 
        (3,1, 'JOB', 'RATIO', 20, date_add(current_timestamp, interval 200 day), '직업 할인', current_timestamp),
        (4,1, 'TIME', 'RATIO', 10, date_add(current_timestamp, interval 200 day), '조조심야 할인', current_timestamp);
 
-insert ignore into coupon(coupon_num, policy_id)
-VALUES ('testCoupon01', 2),
-       ('testCoupon02', 2),
-       ('testCoupon03', 2),
-       ('testCoupon04', 2),
-       ('testCoupon05', 2),
-       ('testCoupon06', 2),
-       ('testCoupon07', 2),
-       ('testCoupon08', 2),
-       ('testCoupon09', 2),
-       ('testCoupon10', 2),
-       ('testCoupon11', 2),
-       ('ageDiscount0', 1),
-       ('jobDiscount0', 3),
-       ('timeDiscount', 4);
+insert ignore into coupon(coupon_num, policy_id, status)
+VALUES ('testCoupon01', 2, true),
+       ('testCoupon02', 2, true),
+       ('testCoupon03', 2, true),
+       ('testCoupon04', 2, true),
+       ('testCoupon05', 2, true),
+       ('testCoupon06', 2, true),
+       ('testCoupon07', 2, true),
+       ('testCoupon08', 2, true),
+       ('testCoupon09', 2, true),
+       ('testCoupon10', 2, true),
+       ('testCoupon11', 2, true),
+       ('ageDiscount0', 1, true),
+       ('jobDiscount0', 3, true),
+       ('timeDiscount', 4, false);
 
 insert ignore into bonus_policy (id, activation, end_at, give_value, policy_name, start_at)
 VALUES (1, 1, date_add(current_timestamp, interval 100 day), 5, '기본', current_timestamp),

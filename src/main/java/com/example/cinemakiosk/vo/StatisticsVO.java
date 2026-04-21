@@ -16,22 +16,22 @@ import java.time.LocalDate;
 public class StatisticsVO {
 
     private Long id;
-    private Long scheduleId;
+    private ScheduleVO schedule;
     private Days day;          // 요일
     private Long revenue;        // 수익
     private Long customerCount;  // 관람객 수
     private LocalDate date;  // 날짜
+    private Long scheduleId;
 
     /**
      * VO -> DTO
-     *
      * @param statisticsVO
      * @return
      */
     public static StatisticsDTO toDTO(StatisticsVO statisticsVO) {
         return StatisticsDTO.builder()
                 .id(statisticsVO.getId())
-                .scheduleId(statisticsVO.getScheduleId())
+                .schedule(ScheduleVO.toDTO(statisticsVO.getSchedule()))
                 .day(statisticsVO.getDay())
                 .revenue(statisticsVO.getRevenue())
                 .customerCount(statisticsVO.getCustomerCount())
