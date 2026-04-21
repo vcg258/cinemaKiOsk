@@ -44,7 +44,7 @@ class TmdbServiceImplTest {
         assertNotNull(movieDTO);
         log.info("movieDTO: {} ", movieDTO);
     }
-
+//
 //    @Test
 //    void downloadAndSavePoster() {
 //        try {

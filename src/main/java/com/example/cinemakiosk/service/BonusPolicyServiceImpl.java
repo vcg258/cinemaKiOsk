@@ -82,9 +82,14 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
         bonusPolicyRepository.saveAll(bonusPolicyEntities);
     }
 
+    /**
+     * 정립 정책 삭제
+     * @param id 삭제할 PK
+     */
     @Override
     public void deleteBonusPolicy(Long id) {
-
+        BonusPolicyEntity bonusPolicyEntity = bonusPolicyRepository.findById(id).orElseThrow();
+        bonusPolicyRepository.delete(bonusPolicyEntity);
     }
 
     /**

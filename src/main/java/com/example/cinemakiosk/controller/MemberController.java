@@ -31,7 +31,7 @@ public class MemberController {
 
     @Operation(summary = "전체 포인트 내역 조회 (페이징)")
     @GetMapping("/point-list")
-    public ResponseEntity<Page<PointHistoryDTO>> getPointHistoryList(@RequestParam(defaultValue = "1") int page){
+    public ResponseEntity<Page<PointHistoryDTO>> getPointHistoryList(int page){
         return ResponseEntity.ok(memberService.getPointHistoryAll(page));
     }
 

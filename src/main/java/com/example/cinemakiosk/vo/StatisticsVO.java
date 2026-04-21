@@ -25,6 +25,7 @@ public class StatisticsVO {
 
     /**
      * VO -> DTO
+     *
      * @param statisticsVO
      * @return
      */

@@ -25,7 +25,6 @@ public class SeatPolicyVO {
      * @return DTO
      */
     public static SeatPolicyDTO toDTO(SeatPolicyVO seatPolicyVO){
-        if (seatPolicyVO == null) return null;
 
         return SeatPolicyDTO.builder()
                 .policyId(seatPolicyVO.getPolicyId())

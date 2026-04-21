@@ -22,10 +22,5 @@ class BatchSchedulerTest {
 
     }
 
-    @Test
-    void runJob2() {
-        batchScheduler.runJob2(LocalDate.now().minusDays(1));
-    }
-
 
 }

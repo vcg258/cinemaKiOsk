@@ -51,7 +51,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .endAt(endAt.plusMinutes(theaterEntity.getCleanupTime()))
                 .no(scheduleDTO.getNo())
                 .movieId(scheduleDTO.getMovieId())
-                .activation(false)
+                .activation(true)
                 .build();
 
         log.info("createSchedule... 상영관 정리시간(분) : {}", theaterEntity.getCleanupTime());

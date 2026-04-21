@@ -19,7 +19,8 @@ public class ReservationDetailsDTO {
     private MemberDTO phone;                  //  회원 번호
     private List<ReservationSeatDTO> seats; //  예매한 좌석들의 정보
     private boolean returned;
-    private LocalDateTime createAt; // 예매 시간
+    private LocalDateTime reservationTime; //  예약 시간
+    private LocalDateTime createAt; //예매 시간
 
     /**
      * DTO -> Entity

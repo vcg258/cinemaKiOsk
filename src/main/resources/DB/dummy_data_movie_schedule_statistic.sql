@@ -132,19 +132,3 @@ DELIMITER ;
 
 -- 실행
 CALL mega_dummy_gen();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -54,15 +54,19 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
     }
 
 
-    //결제 내역 전체조회 (페이징)
+    //결제 내역 전체조회
     @Override
     public Page<PaymentDetailsDTO> readAll(int page) {
         int offset = (page - 1) * 10;
         long count = paymentDetailsRepository.count();
-        List<PaymentDetailsVO> paymentDetailsVOS = paymentDetailsMapper.selectSummary(offset);
+        List<PaymentDetailsDTO> paymentDetailsDTOS = new ArrayList<>();
+        List<PaymentDetailsVO> paymentDetailsVOS = paymentDetailsMapper.selectAll(offset);
+        for (PaymentDetailsVO paymentDetailsVO : paymentDetailsVOS) {
+            paymentDetailsDTOS.add(PaymentDetailsVO.toDTO(paymentDetailsVO));
+        }
         Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("createAt").descending());
 
-        return new PageImpl<>(paymentDetailsVOS.stream().map(PaymentDetailsVO::toDTO).toList(), pageable, count);
+        return new PageImpl<>(paymentDetailsDTOS, pageable, count);
     }
 
     //결제 내역 변경

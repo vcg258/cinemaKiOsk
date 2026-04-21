@@ -101,7 +101,8 @@ CREATE TABLE IF NOT EXISTS `member_cleanup_log`
     `phone`      VARCHAR(20) COMMENT '회원 번호',
     `point`      INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '포인트',
     `create_at`  DATETIME     NOT NULL COMMENT '생성일',
-    `deleted_at` DATETIME              DEFAULT CURRENT_TIMESTAMP COMMENT '삭제일'
+    `deleted_at` DATETIME              DEFAULT CURRENT_TIMESTAMP COMMENT '삭제일',
+    CONSTRAINT `fk_member_cleanup_log_member_phone` FOREIGN KEY (phone) REFERENCES member (phone)
 ) COMMENT 'batch용 회원 삭제 저장소';
 
 CREATE TABLE IF NOT EXISTS `coupon`

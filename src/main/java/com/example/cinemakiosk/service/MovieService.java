@@ -1,11 +1,6 @@
 package com.example.cinemakiosk.service;
 
-import com.example.cinemakiosk.domain.enums.Rating;
 import com.example.cinemakiosk.dto.MovieDTO;
-import com.example.cinemakiosk.dto.MovieRequestDTO;
-import com.example.cinemakiosk.dto.MovieResponseDTO;
-
-import java.io.IOException;
 import org.springframework.data.domain.Page;
 
 import com.example.cinemakiosk.dto.MovieRequestDTO;

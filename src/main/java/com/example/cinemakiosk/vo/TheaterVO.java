@@ -20,7 +20,6 @@ public class TheaterVO {
      * @return DTO
      */
     public static TheaterDTO toDTO(TheaterVO theaterVO){
-        if (theaterVO == null) return null;
 
         return TheaterDTO.builder()
                 .no(theaterVO.getNo())
