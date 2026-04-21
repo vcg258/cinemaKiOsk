@@ -1,6 +1,7 @@
 package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.dto.PaymentDetailsDTO;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -18,4 +19,9 @@ public interface PaymentDetailsService {
     //결제 내역 변경
     void updateToReturn(PaymentDetailsDTO paymentDetailsDTO);
 
+    //예매 내용을 저장
+    void savePaymentInfo(JsonNode requestData, long amount);
+
+    //토스 결제 확인 로직
+    JsonNode confirmTossPayment(String orderId, long amount, String paymentKey) throws Exception;
 }
