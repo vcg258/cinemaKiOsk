@@ -31,16 +31,12 @@ import java.util.*;
 public class PaymentController {
 
     private final ObjectMapper objectMapper; // 스프링이 자동으로 주입해주는 JSON 변환기
-    private final ReservationService reservationService; //확정된 예매 등록을 위해서 작성
     private final PaymentDetailsService paymentDetailsService; //결제 내역 등록을 위해서 작성.
-    private final MemberService memberService; //포인트 관리를 위해서 작성.
-    private final BonusPolicyService bonusPolicyService; //보너스 적립 비율 확인을 위해 사용
-    private final ScheduleService scheduleService; // 스케쥴 정보를 그냥 받아오는게 빠를듯.
-    private final DiscountPolicyService discountPolicyService;
     private final RefundService refundService;
 
     /**
      * 결제를 확정짓는 메서드
+     *
      * @param jsonBody
      * @return
      * @throws Exception
@@ -48,7 +44,7 @@ public class PaymentController {
     @PostMapping(value = "/payment/confirm")
     public ResponseEntity<JsonNode> confirmPayment(@RequestBody String jsonBody) throws Exception {
         log.info("결제 컨펌 로직 시작");
-        log.info("jsonBody : {}",jsonBody);
+        log.info("jsonBody : {}", jsonBody);
 
         // 1. 파싱 (Jackson 사용)
         JsonNode requestData = objectMapper.readTree(jsonBody);
@@ -67,7 +63,7 @@ public class PaymentController {
             log.error("경계2");
             // 1. 토스 결제 승인 로직
             String paymentKey = requestData.get("paymentKey").asText();
-            responseResult = confirmTossPayment(orderId, amount, paymentKey);
+            responseResult = paymentDetailsService.confirmTossPayment(orderId, amount, paymentKey);
 
             // 토스 응답이 200이 아니면 실패 처리 (예외 던지거나 에러 리턴)
             if (responseResult.has("code") && !responseResult.has("status")) {
@@ -86,155 +82,20 @@ public class PaymentController {
         log.error("경계4");
 
         // 3. 공통 DB 저장 로직 실행
-        savePaymentInfo(requestData, amount);
+        paymentDetailsService.savePaymentInfo(requestData, amount);
 
         log.error("경계5");
         return ResponseEntity.status(statusCode).body(responseResult);
     }
 
     /**
-     * 토스 API 승인 요청 메서드
-     */
-    private JsonNode confirmTossPayment(String orderId, long amount, String paymentKey) throws Exception {
-        String widgetSecretKey = "test_sk_Ba5PzR0ArnOZp4xwZ16N8vmYnNeD";
-        String authorizations = "Basic " + Base64.getEncoder().encodeToString((widgetSecretKey + ":").getBytes(StandardCharsets.UTF_8));
-
-        URL url = new URL("https://api.tosspayments.com/v1/payments/confirm");
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestProperty("Authorization", authorizations);
-        connection.setRequestProperty("Content-Type", "application/json");
-        connection.setRequestMethod("POST");
-        connection.setDoOutput(true);
-
-        ObjectNode obj = objectMapper.createObjectNode();
-        obj.put("orderId", orderId);
-        obj.put("amount", amount);
-        obj.put("paymentKey", paymentKey);
-
-        try (OutputStream os = connection.getOutputStream()) {
-            os.write(obj.toString().getBytes(StandardCharsets.UTF_8));
-        }
-
-        int code = connection.getResponseCode();
-        try (InputStream is = (code == 200) ? connection.getInputStream() : connection.getErrorStream()) {
-            return objectMapper.readTree(is);
-        }
-    }
-
-    /**
-     * DB 저장 공통 로직 (Reservation, Payment, Point History)
-     */
-    @Transactional
-    protected void savePaymentInfo(JsonNode requestData, long amount) throws Exception {
-        log.info("데이터 저장 로직 시작.");
-        String orderId = requestData.get("orderId").asText();
-        String phone = requestData.get("phone").asText();
-        String paymentKey = requestData.get("paymentKey").asText();
-        long bonusPolicyId = requestData.get("bonusPolicyId").asLong();
-        long usePoint = requestData.get("usePoint").asLong();
-        Long scheduleIdValue = requestData.path("scheduleId").path("scheduleId").asLong();
-        log.error("경계1");
-        // 좌석 정보 파싱
-        List<ReservationSeatDTO> seats = new ArrayList<>();
-
-        JsonNode seatsNode = requestData.get("seats");
-        if (seatsNode != null && seatsNode.isArray()) {
-            for (JsonNode seat : seatsNode) {
-                seats.add(ReservationSeatDTO.builder().seatNumber(seat.asText()).build());
-            }
-        }
-        log.error("경계2 {}", seats);
-        ScheduleDTO schedule = scheduleService.getScheduleDTO(scheduleIdValue);
-        MemberDTO member = memberService.getMember(phone);
-        BonusPolicyDTO bonusPolicy = bonusPolicyService.getBonusPolicy(bonusPolicyId);
-        String couponStr = requestData.path("couponNum").asText("");
-        // TODO 쿠폰 null 예외처리
-        CouponDTO couponNum = couponStr.isEmpty() ? null : discountPolicyService.getCoupon(couponStr);
-        log.error("경계3");
-
-        // 1. 예매 등록
-        ReservationDetailsDTO reservation = ReservationDetailsDTO.builder()
-                .id(orderId)
-                .schedule(schedule)
-                .phone(member)
-                .seats(seats)
-                .returned(false)
-                .createAt(LocalDateTime.now())
-                .build();
-
-        log.error("경계4");
-        reservationService.create(reservation);
-        log.error("경계5");
-        ReservationDetailsDTO reservationDetailsDTO = reservationService.read(orderId);
-
-        log.error("경계6");
-        // 2. 결제 상세 등록
-        PaymentDetailsDTO payment = PaymentDetailsDTO.builder()
-                .id(orderId)
-                .reservation(reservationDetailsDTO)
-                .bonusPolicy(bonusPolicy)
-                .couponNum(couponNum)
-                .cost(amount)
-                .createAt(LocalDateTime.now())
-                .usePoint(usePoint)
-                .status(Status.PAY)
-                .paymentKey(paymentKey)
-                .build();
-        log.error("경계7");
-        paymentDetailsService.create(payment);
-        log.error("경계8");
-
-        // 쿠폰을 사용할 경우 사용여부 변경
-        if (couponNum != null) {
-            CouponDTO dto = CouponDTO.builder()
-                    .couponNum(couponNum.getCouponNum())
-                    .status(false)
-                    .build();
-            discountPolicyService.updateStatus(dto);
-            log.info("지정 쿠폰 : {}", dto);
-        }
-
-        // 3. 포인트 처리
-        int earnPoint = (int) (amount * bonusPolicy.getGiveValue() / 100);
-
-        log.error("경계9");
-        // 사용 내역 - 통과
-        if (usePoint > 0) {
-            memberService.pointHistoryCreate(PointHistoryDTO.builder()
-                    .paymentId(orderId).phone(phone).type(Type.USE).amountPoint((int) usePoint)
-                    .createAt(LocalDateTime.now()).title("영화 예매 포인트 사용")
-                    .build());
-            log.info("Point log");
-        }
-
-        log.error("경계10");
-        // 적립 내역 - 걸림
-        if (earnPoint > 0) {
-            memberService.pointHistoryCreate(PointHistoryDTO.builder()
-                    .paymentId(orderId).phone(phone).type(Type.EARN).amountPoint(earnPoint)
-                    .createAt(LocalDateTime.now()).title("영화 예매 포인트 적립")
-                    .build());
-            log.info("Point Earn {}", earnPoint);
-
-        }
-        log.error("경계11");
-        // 멤버 실제 포인트 업데이트
-        log.info("멤버 확인 : {}",member);
-//        TODO 이미 서비스 로직에 존재함 제거예정(?)
-//        member.setPoint(member.getPoint() - (int) usePoint + earnPoint);
-//        log.info("변경 멤버 확인 : {}", member);
-
-
-        log.info("DB 저장 및 포인트 갱신 완료: 주문번호 {}", orderId);
-    }
-
-    /**
      * 조회를 위한 값
+     *
      * @param no
      * @return
      */
     @GetMapping("/admin/payment/read/{uuid}")
-    public ResponseEntity<PaymentDetailsDTO> readOne(@PathVariable("uuid") String no){
+    public ResponseEntity<PaymentDetailsDTO> readOne(@PathVariable("uuid") String no) {
         log.info("찾으려는 uuid : {}", no);
         PaymentDetailsDTO paymentDetailsDTO = paymentDetailsService.read(no);
         log.info("조회된 결제 내역 : {}", paymentDetailsDTO);
@@ -245,7 +106,7 @@ public class PaymentController {
     public ResponseEntity<Void> refund(@RequestBody String jsonBody) throws JsonProcessingException {
         //1. payment값이 필요함
         //2. 결제 내역 정보가 필요함
-        log.info("jsonBody : {}",jsonBody);
+        log.info("jsonBody : {}", jsonBody);
 
 
         log.error("경계");
