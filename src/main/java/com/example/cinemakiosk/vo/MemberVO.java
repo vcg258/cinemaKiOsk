@@ -25,6 +25,8 @@ public class MemberVO {
      * @return
      */
     public static MemberDTO toDTO(MemberVO memberVO){
+        if (memberVO == null) return null;
+
         return MemberDTO.builder()
                 .phone(memberVO.getPhone())
                 .point(memberVO.getPoint())

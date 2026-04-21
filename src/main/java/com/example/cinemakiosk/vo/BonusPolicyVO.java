@@ -25,6 +25,8 @@ public class BonusPolicyVO {
      * @return DTO
      */
     public static BonusPolicyDTO toDTO(BonusPolicyVO bonusPolicyVO){
+        if (bonusPolicyVO == null) return null;
+
         return BonusPolicyDTO.builder()
                 .id(bonusPolicyVO.getId())
                 .policyName(bonusPolicyVO.getPolicyName())

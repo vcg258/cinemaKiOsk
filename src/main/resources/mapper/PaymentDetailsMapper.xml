@@ -193,6 +193,27 @@
                  inner join cinema_kiosk.seat_policy sp on th.policy_id = sp.policy_id
                  inner join cinema_kiosk.member mb on rd.phone = mb.phone
                  inner join cinema_kiosk.reservation_seat st on rd.id = st.reservation_id
-        LIMIT 10 OFFSET #{page}
+    </select>
+
+    <select id="selectSummary" resultMap="paymentVO">
+        SELECT
+            pm.id,
+            pm.cost,
+            pm.status,
+            pm.create_at,
+            pm.reservation_id,
+
+            rd.id             as rd_id,
+            rd.phone          as rd_phone,
+
+            mv.title          as rd_sc_mv_title
+
+        FROM cinema_kiosk.payment_details pm
+                 INNER JOIN cinema_kiosk.reservation_details rd ON pm.reservation_id = rd.id
+                 INNER JOIN cinema_kiosk.schedule sc ON rd.schedule_id = sc.id
+                 INNER JOIN cinema_kiosk.movie mv ON sc.movie_id = mv.movie_id
+
+        ORDER BY pm.create_at DESC
+        LIMIT 10 OFFSET #{offset}
     </select>
 </mapper>
