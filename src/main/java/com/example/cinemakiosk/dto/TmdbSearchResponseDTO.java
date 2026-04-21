@@ -10,3 +10,4 @@ import java.util.List;
 public class TmdbSearchResponseDTO {
     private List<TmdbMovieDTO> results;
 }
+

@@ -104,6 +104,7 @@ public class MovieEntity{
                 .startAt(movieEntity.getStartAt())
                 .endAt(movieEntity.getEndAt())
                 .createAt(movieEntity.getCreateAt())
+                .posterPath(movieEntity.posterPath)
                 .build();
     }
 }

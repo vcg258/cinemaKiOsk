@@ -27,11 +27,11 @@ public class RefundService {
         PaymentDetailsDTO paymentDetailsOne = paymentDetailsService.read(reservationId);
 
         // TODO 1. 예매/결제 내역 상태 변경 (PAY -> RETURN)
-
-
-        // 2. 포인트 복구
-        PointHistoryVO pointHistoryVO = pointHistoryMapper.selectByPayment(paymentDetailsOne.getId());
-        memberService.pointHistoryCancel(PointHistoryVO.toDTO(pointHistoryVO)); // 들어갈 값 PointHistoryDTO
+//
+//
+//        // 2. 포인트 복구
+//        PointHistoryVO pointHistoryVO = pointHistoryMapper.selectByPayment(paymentDetailsOne.getId());
+//        memberService.pointHistoryCancel(PointHistoryVO.toDTO(pointHistoryVO)); // 들어갈 값 PointHistoryDTO
 
         // 3. 쿠폰 복구
         if (paymentDetailsOne.getCouponNum() != null) {

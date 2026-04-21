@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@ToString (exclude = {"theaterEntity", "reservationDetailsEntity", "movieEntity", "statisticsEntity"})
+@ToString (exclude = {"theaterEntity", "reservationDetailsEntity", "movieEntity"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -34,16 +34,20 @@ public class ScheduleEntity {
     private LocalDateTime startAt; // 상영 시작 시간
     private LocalDateTime endAt; // 상영 종료 시간
 
-    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean activation; // 활성화 여부 (유효 = True, 비활성화 = False)
 
     @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "scheduleEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<ReservationDetailsEntity> reservationDetailsEntity;
 
-    @OnDelete(action= OnDeleteAction.CASCADE)
-    @OneToOne(mappedBy = "scheduleEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
-    private StatisticsEntity statisticsEntity; //1:1 이쪽이 부모요소이므로 아이디만 받기
+
+//    Statistics에서 jdbctemplate이용해 자체적으로 데이터를 넘겨주므로 불필요
+//    @OnDelete(action= OnDeleteAction.CASCADE)
+//    @OneToOne(mappedBy = "scheduleEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
+//    private StatisticsEntity statisticsEntity; //1:1 이쪽이 부모요소이므로 아이디만 받기
+
+
 
     /**
      * 스케줄 활성화 여부 변경
@@ -95,7 +99,6 @@ public class ScheduleEntity {
                 .movieId(scheduleEntity.getMovieEntity().getMovieId())
                 .startAt(scheduleEntity.getStartAt())
                 .endAt(scheduleEntity.getEndAt())
-                .activation(scheduleEntity.isActivation())
                 .build();
     }
 }

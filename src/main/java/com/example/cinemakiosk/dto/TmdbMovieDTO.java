@@ -22,7 +22,7 @@ public class TmdbMovieDTO {
 
     @Getter
     @Setter
-    public static class GenreDTO { // TODO 분리
+    public static class GenreDTO {
         private String name;
     }
 }

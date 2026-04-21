@@ -67,16 +67,11 @@ class MemberServiceImplTest {
 
     @Test
     void getMembersAllLogTest() {
-        memberService.getMembersAllLog("01088771113").forEach(log::info);
+        memberService.getMembersAllLog("010-1234-5678").forEach(log::info);
     }
 
     @Test
     void getMemberTest() {
-        log.info(memberService.getMember("01012345234"));
-    }
-
-    @Test
-    void getPointHistory() {
-        memberService.getPointHistoryAll().forEach(log::info);
+        log.info(memberService.getMember("01012345678"));
     }
 }

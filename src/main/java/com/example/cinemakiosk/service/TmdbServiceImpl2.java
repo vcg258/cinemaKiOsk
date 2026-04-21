@@ -2,7 +2,7 @@
 //
 //import com.example.cinemakiosk.config.TmdbConfig;
 //import com.example.cinemakiosk.dto.MovieDTO;
-//import com.example.cinemakiosk.dto.TmdbCreditsDTO;
+//import com.example.cinemakiosk.dto.TmdbCredits.TmdbCreditsDTO;
 //import com.example.cinemakiosk.dto.TmdbMovieDTO;
 //import com.example.cinemakiosk.dto.TmdbSearchResponseDTO;
 //import lombok.RequiredArgsConstructor;

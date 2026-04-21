@@ -23,7 +23,7 @@ import java.util.List;
  * KR iso_3166_1 항목에서 certification 값을 추출하여 Rating enum으로 변환
  */
 @Data
-public class TmdbReleaseDatesDTO { // TODO 분리
+public class TmdbReleaseDatesDTO {
 
     /** 국가별 등급 정보 목록 */
     private List<CountryRelease> results;

@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class StatisticsVO {
 
     private Long id;
-    private ScheduleVO schedule;
+    private Long scheduleId;
     private Days day;          // 요일
     private Long revenue;        // 수익
     private Long customerCount;  // 관람객 수
@@ -31,7 +31,7 @@ public class StatisticsVO {
     public static StatisticsDTO toDTO(StatisticsVO statisticsVO) {
         return StatisticsDTO.builder()
                 .id(statisticsVO.getId())
-                .schedule(ScheduleVO.toDTO(statisticsVO.getSchedule()))
+                .scheduleId(statisticsVO.getScheduleId())
                 .day(statisticsVO.getDay())
                 .revenue(statisticsVO.getRevenue())
                 .customerCount(statisticsVO.getCustomerCount())

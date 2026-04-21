@@ -1,6 +1,10 @@
 -- 초기 데이터
 INSERT IGNORE INTO admin (login_id, password, name, admin_phone, level, UUID, create_at)
-values (1, 1, '관리자', '010-1234-5678', '0', null, now());
+values (1, 1, '관리자', '010-9991-5678', '0', null, now());
+-- 스케쥴이 실행될때마다 실행됨
+
+
+
 
 -- JPA가 생성한 movie.rating ENUM을 DB 기준값으로 변경
 -- JPA는 ENUM 이름(FIFTEEN 등)으로 생성하므로 실제 서비스 값(15 등)으로 ALTER
@@ -33,11 +37,7 @@ VALUES (1, '연기자 목록', current_timestamp, '설명임', '감독', date_ad
        (5, '연기자 목록', current_timestamp, '설명임', '감독', date_add(current_date, interval 5 day), '드라마', 'ALL', 200,
         date_sub(current_date, interval 2 day), '실험용 영화 제목5'),
        (6, '연기자 목록', current_timestamp, '설명임', '감독', date_add(current_date, interval 6 day), '애니', 'ALL', 200,
-        date_sub(current_date, interval 1 day), '실험용 영화 제목6'),
-       (7, '연기자 목록', current_timestamp, '설명임', '감독', date_add(current_date, interval 14 day), '애니', 'ALL', 200,
-        date_add(current_date, interval 7 day), '실험용 영화 제목7'),
-       (8, '연기자 목록', current_timestamp, '설명임', '감독', date_add(current_date, interval 15 day), '애니', 'ALL', 200,
-        date_add(current_date, interval 8 day), '실험용 영화 제목8');
+        date_sub(current_date, interval 1 day), '실험용 영화 제목6');
 
 
 -- 스케쥴 등록. 해당 매커니즘은 타이밍을 설정 하면 해당 영화의 상영일에 맞춰서 전부 추가되는 형식.
@@ -48,7 +48,7 @@ VALUES (1, CURRENT_TIMESTAMP, date_add(current_timestamp, interval 200 minute), 
 
 -- member 등록
 insert ignore into member (phone, create_at, point)
-    VALUE ('010-1234-5678', current_timestamp, 0);
+    VALUE ('01012345678', current_timestamp, 22222);
 
 insert ignore into discount_policy(id,activation, condition_type, discount_type, discount_value, end_at, policy_name,
                                    start_at)
@@ -77,13 +77,13 @@ insert ignore into bonus_policy (id, activation, end_at, give_value, policy_name
 VALUES (1, 1, date_add(current_timestamp, interval 100 day), 5, '기본', current_timestamp),
        (2, 1, date_add(current_timestamp, interval 100 day), 20, 'VIP', current_timestamp);
 
-insert ignore into reservation_details (id, phone, schedule_id, returned)
-VALUES (1,  '010-1234-5678', 1,0),
-       (2,  '010-1234-5678', 2,0),
-       (3,  '010-1234-5678', 3,0),
-       (4,  '010-1234-5678', 1,0),
-       (5,  '010-1234-5678', 2,0),
-       (6,  '010-1234-5678', 3,0);
+insert ignore into reservation_details (id, create_at, phone, schedule_id)
+VALUES (1, current_timestamp, '01012345678', 1),
+       (2, current_timestamp, '01012345678', 2),
+       (3, current_timestamp, '01012345678', 3),
+       (4, current_timestamp, '01012345678', 1),
+       (5, current_timestamp, '01012345678', 2),
+       (6, current_timestamp, '01012345678', 3);
 
 
 insert ignore into reservation_seat (id, seat_number, reservation_id)
@@ -121,9 +121,9 @@ values ('11111111-1111-1111-1111-111111111111', 50000, 'PAY', current_timestamp,
        ('66666666-6666-6666-6666-666666666666', 50000, 'PAY', current_timestamp, 0, 1, null, 6);
 
 insert ignore into point_history (point_id, amount_point, create_at, type, phone, payment_id)
-values (1, 200, current_timestamp, 'EARN', '010-1234-5678', '11111111-1111-1111-1111-111111111111'),
-       (2, 200, current_timestamp, 'EARN', '010-1234-5678', '22222222-2222-2222-2222-222222222222'),
-       (3, 200, current_timestamp, 'EARN', '010-1234-5678', '33333333-3333-3333-3333-333333333333'),
-       (4, 200, current_timestamp, 'EARN', '010-1234-5678', '44444444-4444-4444-4444-444444444444'),
-       (5, 200, current_timestamp, 'EARN', '010-1234-5678', '55555555-5555-5555-5555-555555555555'),
-       (6, 200, current_timestamp, 'EARN', '010-1234-5678', '66666666-6666-6666-6666-666666666666');
+values (1, 200, '2022-06-04 12:00:00', 'EARN', '01012345678', '11111111-1111-1111-1111-111111111111'),
+       (2, 200, '2021-06-04 12:00:00', 'EARN', '01012345678', '22222222-2222-2222-2222-222222222222'),
+       (3, 200, '2020-06-04 12:00:00', 'EARN', '01012345678', '33333333-3333-3333-3333-333333333333'),
+       (4, 200, '2023-06-04 12:00:00', 'EARN', '01012345678', '44444444-4444-4444-4444-444444444444'),
+       (5, 200, '2024-06-04 12:00:00', 'EARN', '01012345678', '55555555-5555-5555-5555-555555555555'),
+       (6, 200, '2025-06-04 12:00:00', 'EARN', '01012345678', '66666666-6666-6666-6666-666666666666');

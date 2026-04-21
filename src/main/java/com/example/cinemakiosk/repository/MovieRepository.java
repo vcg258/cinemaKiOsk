@@ -12,11 +12,5 @@ import java.util.Optional;
 @Repository
     public interface MovieRepository extends JpaRepository<MovieEntity, Long> {
 
-        List<MovieEntity> findByTitleContaining(String keyword);
-
-        List<MovieEntity> findByRating(Rating rating);
-
-        List<MovieEntity> findByGenre(String genre);
-
         Optional<MovieEntity> findByTitle(String title);
 }

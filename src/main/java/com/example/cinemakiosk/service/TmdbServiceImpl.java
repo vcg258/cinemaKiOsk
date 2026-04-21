@@ -3,20 +3,15 @@ package com.example.cinemakiosk.service;
 import com.example.cinemakiosk.config.TmdbConfig;
 import com.example.cinemakiosk.domain.enums.Rating;
 import com.example.cinemakiosk.dto.*;
+import com.example.cinemakiosk.dto.TmdbCredits.CrewDTO;
+import com.example.cinemakiosk.dto.TmdbCredits.CastDTO;
+import com.example.cinemakiosk.dto.TmdbCredits.TmdbCreditsDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import net.coobird.thumbnailator.Thumbnailator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -123,14 +118,14 @@ public class TmdbServiceImpl implements TmdbService {
         // 감독 추출
         String director = credits.getCrew().stream()
                 .filter(c -> "Director".equals(c.getJob()))
-                .map(TmdbCreditsDTO.CrewDTO::getName)
+                .map(CrewDTO::getName)
                 .findFirst()
                 .orElse("");
 
         // 배우 상위 5명 가져오기
         String actors = credits.getCast().stream()
                 .limit(5)
-                .map(TmdbCreditsDTO.CastDTO::getName)
+                .map(CastDTO::getName)
                 .collect(Collectors.joining(", "));
 
         // 장르들 가져오기
@@ -140,6 +135,10 @@ public class TmdbServiceImpl implements TmdbService {
 
         // 포스터 다운로드 및 저장
 //        downloadAndSavePoster(detail.getPosterPath(), detail.getTitle());
+
+        // 한국 관람 등급 조회 (/movie/{id}/release_dates)
+        Rating rating = fetchKoreanRating(tmdbId);
+        log.info("searchMovieDetail... KR rating={}", rating);
 
         String posterFullUrl = detail.getPosterPath() != null
                 ? tmdbConfig.getImageUrl() + detail.getPosterPath()
@@ -153,6 +152,7 @@ public class TmdbServiceImpl implements TmdbService {
                 .director(director)
                 .actors(actors)
                 .posterPath(posterFullUrl)
+                .rating(rating)
                 .build();
     }
 

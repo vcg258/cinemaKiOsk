@@ -16,7 +16,7 @@ public class BonusPolicyVO {
     private Long giveValue;          // 적립 비율
     private LocalDateTime startAt;  //	시작일
     private LocalDateTime endAt;//	만료일
-    private boolean activation;      // 활성화 여부(중요할까?)
+    private Boolean activation;      // 활성화 여부(중요할까?)
 
 
     /**
@@ -31,7 +31,7 @@ public class BonusPolicyVO {
                 .giveValue(bonusPolicyVO.getGiveValue())
                 .startAt(bonusPolicyVO.getStartAt())
                 .endAt(bonusPolicyVO.getEndAt())
-                .activation(bonusPolicyVO.isActivation())
+                .activation(bonusPolicyVO.getActivation())
                 .build();
     }
 }

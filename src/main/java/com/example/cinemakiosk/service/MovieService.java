@@ -1,6 +1,11 @@
 package com.example.cinemakiosk.service;
 
+import com.example.cinemakiosk.domain.enums.Rating;
 import com.example.cinemakiosk.dto.MovieDTO;
+import com.example.cinemakiosk.dto.MovieRequestDTO;
+import com.example.cinemakiosk.dto.MovieResponseDTO;
+
+import java.io.IOException;
 import java.util.List;
 
 public interface MovieService {
@@ -8,7 +13,7 @@ public interface MovieService {
     void insertMovie(MovieDTO movieDTO);
 
     // 상세 조회
-    MovieDTO getMovieById(Long movieId);
+    MovieDTO getMovieById(long movieId);
 
     // 제목으로 상세 조회
     MovieDTO getMovieByTitle(String title);

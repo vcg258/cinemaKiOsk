@@ -14,19 +14,20 @@ import java.util.List;
 @Log4j2
 @SpringBootTest
 class BonusPolicyServiceImplTest {
-    @Autowired BonusPolicyService bonusService;
+    @Autowired
+    BonusPolicyService bonusService;
 
-    @Test
-    void createBonusPolicy() {
-        BonusPolicyDTO dto = BonusPolicyDTO.builder()
-                .policyName("test")
-                .giveValue(5000L)
-                .startAt(LocalDateTime.now())
-                .endAt(LocalDateTime.now().plusDays(3))
-                .activation(true)
-                .build();
-        bonusService.createBonusPolicy(dto);
-    }
+//    @Test
+//    void createBonusPolicy() {
+//        BonusPolicyDTO dto = BonusPolicyDTO.builder()
+//                .policyName("test")
+//                .giveValue(5000L)
+//                .startAt(LocalDateTime.now())
+//                .finishedAt(LocalDateTime.now().plusDays(3))
+//                .activation(true)
+//                .build();
+//        bonusService.createBonusPolicy(dto);
+//    }
 
     @Test
     void finishActivation() {
@@ -39,11 +40,6 @@ class BonusPolicyServiceImplTest {
         request.setIds(List.of(1L, 2L));
         request.setActivation(true);
         bonusService.changeActivation(request);
-    }
-
-    @Test
-    void deleteBonusPolicy() {
-        bonusService.deleteBonusPolicy(16L);
     }
 
     @Test

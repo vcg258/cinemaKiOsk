@@ -86,7 +86,7 @@ public class TheaterServiceImpl implements TheaterService {
     public void updateCleanTime(TheaterRequest request) {
         List<TheaterEntity> theater = theaterRepository.findAllById(request.getIds());
         theater.forEach(theaterEntity -> {
-            if (theaterEntity.getCleanupTime().equals(request.getChangeValue())) {
+            if (theaterEntity.getSeatPolicyEntity().getPolicyId().equals(request.getChangeValue())) {
                 log.error("정리시간 동일 변경 X {}", theaterEntity);
                 return;
             }
@@ -155,19 +155,13 @@ public class TheaterServiceImpl implements TheaterService {
     }
 
     /**
-     * 좌석 정책 가격 수정
+     * 좌석 정책 수정
      * @param seatPolicyDTO 좌석정책 DTO
      */
     @Override
     public void updateSeat(SeatPolicyDTO seatPolicyDTO) {
-        if (seatPolicyDTO.getCost() == null) {
-            throw new IllegalArgumentException("변경할 가격을 넣어주세요.");
-        }
-        if (seatPolicyDTO.getCost() < 0) {
-            throw new IllegalArgumentException("음수로 바꿀 수 없습니다.");
-        }
-        SeatPolicyEntity policy = seatPolicyRepository.findByName(seatPolicyDTO.getName());
-        policy.updateSeatPolicy(seatPolicyDTO.getCost());
+        SeatPolicyEntity policy = seatPolicyRepository.findById(seatPolicyDTO.getPolicyId()).orElseThrow();
+        policy.updateSeatPolicy(seatPolicyDTO.getName(), seatPolicyDTO.getCost());
 
         SeatPolicyEntity seatPolicy = seatPolicyRepository.save(policy);
         log.info("updateSeat... 수정사항 적용 : {}" , seatPolicy);

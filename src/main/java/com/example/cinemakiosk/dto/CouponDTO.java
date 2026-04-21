@@ -58,7 +58,6 @@ public class CouponDTO {
 
         return CouponVO.builder()
                 .couponNum(couponDTO.getCouponNum())
-                .discountPolicy(DiscountPolicyDTO.toVO(couponDTO.getDiscountPolicy()))
                 .policyId(couponDTO.getPolicyId())
                 .status(couponDTO.isStatus())
                 .build();
