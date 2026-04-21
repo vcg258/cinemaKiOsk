@@ -1,15 +1,8 @@
 package com.example.cinemakiosk.service;
 
-import com.example.cinemakiosk.domain.MemberEntity;
 import com.example.cinemakiosk.domain.MovieEntity;
 import com.example.cinemakiosk.domain.ScheduleEntity;
-import com.example.cinemakiosk.domain.enums.Rating;
-import com.example.cinemakiosk.dto.MemberDTO;
-import com.example.cinemakiosk.domain.enums.Rating;
 import com.example.cinemakiosk.dto.MovieDTO;
-import com.example.cinemakiosk.dto.MovieRequestDTO;
-import com.example.cinemakiosk.dto.MovieResponseDTO;
-import com.example.cinemakiosk.dto.ScheduleDTO;
 import com.example.cinemakiosk.repository.MovieRepository;
 import com.example.cinemakiosk.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,20 +12,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import net.coobird.thumbnailator.Thumbnailator;
-import net.coobird.thumbnailator.Thumbnailator;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
