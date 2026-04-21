@@ -5,8 +5,6 @@ import com.example.cinemakiosk.dto.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Builder
@@ -22,6 +20,7 @@ public class PaymentDetailsVO {
     private LocalDateTime createAt;              // 결제 시간
     private Long usePoint;                   // 사용 포인트 기본값 0
     private Status status;                   // ENUM ('PAY','RETURN','FAIL'), 결제 완료, 환불, 실패
+    private String paymentKey;
 
     /**
      * VO -> DTO
@@ -34,11 +33,12 @@ public class PaymentDetailsVO {
                 .id(paymentDetailsVO.getId())
                 .reservation(ReservationDetailsVO.toDTO(paymentDetailsVO.getReservation()))
                 .bonusPolicy(BonusPolicyVO.toDTO(paymentDetailsVO.getBonusPolicy()))
-                .couponNum(CouponVO.toDTO(paymentDetailsVO.getCouponNum()))
+                .couponNum(paymentDetailsVO.getCouponNum() == null ? null : CouponVO.toDTO(paymentDetailsVO.getCouponNum()))
                 .cost(paymentDetailsVO.getCost())
                 .createAt(paymentDetailsVO.getCreateAt())
                 .usePoint(paymentDetailsVO.getUsePoint())
                 .status(paymentDetailsVO.getStatus())
+                .paymentKey(paymentDetailsVO.getPaymentKey())
                 .build();
     }
 }

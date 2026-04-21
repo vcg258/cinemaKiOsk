@@ -84,7 +84,7 @@ class ReservationServiceImplTest {
 
     @Test
     public void selectOne(){
-        ReservationDetailsDTO read = reservationService.read(3L);
+        ReservationDetailsDTO read = reservationService.read("3");
         log.info(read);
     }
 }

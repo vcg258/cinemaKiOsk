@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
      * @param bonusPolicyDTO 활인정책 DTO
      */
     @Override
-    public void createBonusPolicy(BonusPolicyDTO bonusPolicyDTO) {
+    public BonusPolicyDTO createBonusPolicy(BonusPolicyDTO bonusPolicyDTO) {
         if (bonusPolicyRepository.existsByPolicyNameAndEndAtAfter(bonusPolicyDTO.getPolicyName(), LocalDateTime.now())) {
             throw new IllegalStateException("createBonusPolicy... 활성화된 정책중 이름이 중복됩니다 추가 / 수정 실패");
         }
@@ -38,11 +39,13 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
                 .giveValue(bonusPolicyDTO.getGiveValue())
                 .startAt(bonusPolicyDTO.getStartAt())
                 .endAt(bonusPolicyDTO.getEndAt())
-                .activation(bonusPolicyDTO.getActivation())
+                .activation(bonusPolicyDTO.isActivation())
                 .build();
 
         bonusPolicyRepository.save(BonusPolicyDTO.toEntity(dto));
         log.info("createBonusPolicy... 할인정책 추가/ 수정 성공 : {}", dto);
+
+        return dto;
     }
 
     /**
@@ -52,7 +55,7 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
     @Override
     public void finishActivation(Long id) { // TODO batch 사용으로 만료시간이 되면 자동 비활성화로 변경 해야함
         BonusPolicyEntity bonusPolicyEntity = bonusPolicyRepository.findById(id).orElseThrow();
-        if (LocalDateTime.now().isAfter(bonusPolicyEntity.getEndAt()) || !bonusPolicyEntity.getActivation()) {
+        if (LocalDateTime.now().isAfter(bonusPolicyEntity.getEndAt()) || !bonusPolicyEntity.isActivation()) {
             throw new IllegalStateException("적립정책이 이미 비활성화임 종료 지정 불가능");
         }
 
@@ -69,7 +72,7 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
     public void changeActivation(ActivationRequest request) {
         List<BonusPolicyEntity> bonusPolicyEntities = bonusPolicyRepository.findAllById(request.getIds());
         bonusPolicyEntities.forEach(bonusPolicyEntity -> {
-            if (bonusPolicyEntity.getActivation() == request.isActivation()) {
+            if (bonusPolicyEntity.isActivation() == request.isActivation()) {
                 log.warn("이미 같은 상태값 변경 안됨 {}", bonusPolicyEntity);
                 return;
             }
@@ -79,13 +82,20 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
         bonusPolicyRepository.saveAll(bonusPolicyEntities);
     }
 
+    @Override
+    public void deleteBonusPolicy(Long id) {
+
+    }
+
     /**
      * 적립정책 전체 조회
      * @return 전체 적립정책을 담은 리스트
      */
     @Override
     public List<BonusPolicyDTO> getBonusPolicies() {
-        List<BonusPolicyEntity> policyEntities = bonusPolicyRepository.findAll();
+        // 오늘 00:00:00 기준
+        LocalDateTime todayStart = LocalDate.now().atStartOfDay();
+        List<BonusPolicyEntity> policyEntities = bonusPolicyRepository.findAllBonusPolicy(todayStart);
         return policyEntities.stream().map(BonusPolicyEntity::toDTO).toList();
     }
 

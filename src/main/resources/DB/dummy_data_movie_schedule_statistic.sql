@@ -1,6 +1,6 @@
 USE `cinema_kiosk`;
 
--- 영화 20개와 4월달에서 랜덤 날짜 schedule 100개 생성, reservation_details, payment_details 생성
+-- 영화 20개와 4월달에서 랜덤 날짜 스케쥴 100개 생성
 
 
 -- 1. 외래 키 체크 해제

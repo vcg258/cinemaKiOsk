@@ -18,13 +18,13 @@ class PaymentDetailsMapperTest {
 
     @Test
     public void selectOne(){
-        PaymentDetailsVO paymentDetailsVO = paymentDetailsMapper.selectOneById("11111111-1111-1111-1111-111111111111");
+        PaymentDetailsVO paymentDetailsVO = paymentDetailsMapper.selectOneById("0a01b715-f176-48d0-9f15-be80055b2bf6");
         log.info(paymentDetailsVO);
     }
 
     @Test
     public void selectAll(){
-        List<PaymentDetailsVO> paymentDetailsVOS = paymentDetailsMapper.selectAll();
+        List<PaymentDetailsVO> paymentDetailsVOS = paymentDetailsMapper.selectAll(1);
         log.info(paymentDetailsVOS);
     }
 

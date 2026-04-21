@@ -6,7 +6,6 @@
 
     <resultMap id="paymentVO" type="com.example.cinemakiosk.vo.PaymentDetailsVO" autoMapping="true">
         <id property="id" column="id"/>
-        <result property="createAt" column="create_at"/>
         <association property="bonusPolicy"
                      resultMap="com.example.cinemakiosk.mapper.BonusPolicyMapper.bonusVO"
                      columnPrefix="bp_"
@@ -21,17 +20,80 @@
         />
     </resultMap>
 
+
     <select id="selectOneById" resultMap="paymentVO">
         select pm.id,
                pm.cost,
                pm.status,
-               pm.create_at,  pm.use_point,
+               pm.create_at,
+               pm.use_point,
                pm.bonus_policy_id,
                pm.coupon_num,
                pm.reservation_id,
+               pm.payment_key,
+
+               bp.id             as bp_id,
+               bp.activation     as bp_activation,
+               bp.end_at         as bp_end_at,
+               bp.give_value     as bp_give_value,
+               bp.policy_name    as bp_policy_name,
+               bp.start_at       as bp_start_at,
+
+               cp.coupon_num     as cp_coupon_num,
+               cp.status         as cp_status,
+               cp.policy_id      as cp_policy_id,
+
+               dp.id             as cp_dp_id,
+               dp.activation     as cp_dp_activation,
+               dp.condition_type as cp_dp_condition_type,
+               dp.discount_type  as cp_dp_discount_type,
+               dp.discount_value as cp_dp_discount_value,
+               dp.end_at         as cp_dp_end_at,
+               dp.policy_name    as cp_dp_policy_name,
+               dp.start_at       as cp_dp_start_at,
+
+
+               rd.id             as rd_id,
+               rd.phone          as rd_phone,
+               rd.create_at      as rd_create_at,
+               rd.schedule_id    as rd_schedule_id,
+
+               sc.id             as rd_sc_id,
+               sc.movie_id       as rd_sc_movie_id,
+               sc.no             as rd_sc_no,
+               sc.start_at       as rd_sc_start_at,
+               sc.end_at         as rd_sc_end_at,
+
+               mv.movie_id       as rd_sc_mv_movie_id,
+               mv.title          as rd_sc_mv_title,
+               mv.runtime        as rd_sc_mv_runtime,
+               mv.actors         as rd_sc_mv_actors,
+               mv.director       as rd_sc_mv_director,
+               mv.rating         as rd_sc_mv_rating,
+               mv.genre          as rd_sc_mv_genre,
+               mv.description    as rd_sc_mv_description,
+               mv.create_at      as rd_sc_mv_create_at,
+               mv.start_at       as rd_sc_mv_start_at,
+               mv.end_at         as rd_sc_mv_end_at,
+
+               th.no             as rd_sc_th_no,
+               th.policy_id      as rd_sc_th_policy_id,
+               th.cleanup_time   as rd_sc_th_cleanup_time,
+
+               sp.policy_id      as rd_sc_th_sp_policy_id,
+               sp.name           as rd_sc_th_sp_name,
+               sp.cost           as rd_sc_th_sp_cost,
+
+
+               mb.phone          as rd_mb_phone,
+               mb.create_at      as rd_mb_create_at,
+               mb.point          as rd_mb_point,
+
+
                st.id             as rd_st_id,
                st.reservation_id as rd_st_reservation_id,
                st.seat_number    as rd_st_seat_number
+
         from cinema_kiosk.payment_details pm
                  left join cinema_kiosk.bonus_policy bp on bp.id = pm.bonus_policy_id
                  left join cinema_kiosk.coupon cp on cp.coupon_num = pm.coupon_num
@@ -43,8 +105,10 @@
                  inner join cinema_kiosk.seat_policy sp on th.policy_id = sp.policy_id
                  inner join cinema_kiosk.member mb on rd.phone = mb.phone
                  inner join cinema_kiosk.reservation_seat st on rd.id = st.reservation_id
+
         where pm.id = #{uuid}
     </select>
+
     <select id="selectAll" resultMap="paymentVO">
         select pm.id,
                pm.cost,
@@ -75,10 +139,12 @@
                dp.policy_name    as cp_dp_policy_name,
                dp.start_at       as cp_dp_start_at,
 
+
                rd.id             as rd_id,
                rd.phone          as rd_phone,
                rd.create_at      as rd_create_at,
                rd.schedule_id    as rd_schedule_id,
+               rd.returned       as rd_returned,
 
                sc.id             as rd_sc_id,
                sc.movie_id       as rd_sc_movie_id,
@@ -89,6 +155,14 @@
                mv.movie_id       as rd_sc_mv_movie_id,
                mv.title          as rd_sc_mv_title,
                mv.runtime        as rd_sc_mv_runtime,
+               mv.actors         as rd_sc_mv_actors,
+               mv.director       as rd_sc_mv_director,
+               mv.rating         as rd_sc_mv_rating,
+               mv.genre          as rd_sc_mv_genre,
+               mv.description    as rd_sc_mv_description,
+               mv.create_at      as rd_sc_mv_create_at,
+               mv.start_at       as rd_sc_mv_start_at,
+               mv.end_at         as rd_sc_mv_end_at,
 
                th.no             as rd_sc_th_no,
                th.policy_id      as rd_sc_th_policy_id,
@@ -98,23 +172,27 @@
                sp.name           as rd_sc_th_sp_name,
                sp.cost           as rd_sc_th_sp_cost,
 
+
                mb.phone          as rd_mb_phone,
                mb.create_at      as rd_mb_create_at,
                mb.point          as rd_mb_point,
 
+
                st.id             as rd_st_id,
                st.reservation_id as rd_st_reservation_id,
                st.seat_number    as rd_st_seat_number
+
         from cinema_kiosk.payment_details pm
                  left join cinema_kiosk.bonus_policy bp on bp.id = pm.bonus_policy_id
                  left join cinema_kiosk.coupon cp on cp.coupon_num = pm.coupon_num
                  left join cinema_kiosk.discount_policy dp on cp.policy_id = dp.id
-                 left join cinema_kiosk.reservation_details rd on rd.id = pm.reservation_id
-                 left join cinema_kiosk.schedule sc on rd.schedule_id = sc.id
-                 left join cinema_kiosk.movie mv on sc.movie_id = mv.movie_id
-                 left join cinema_kiosk.theater th on sc.no = th.no
-                 left join cinema_kiosk.seat_policy sp on th.policy_id = sp.policy_id
-                 left join cinema_kiosk.member mb on rd.phone = mb.phone
-                 left join cinema_kiosk.reservation_seat st on rd.id = st.reservation_id
+                 inner join cinema_kiosk.reservation_details rd on rd.id = pm.reservation_id
+                 inner join cinema_kiosk.schedule sc on rd.schedule_id = sc.id
+                 inner join cinema_kiosk.movie mv on sc.movie_id = mv.movie_id
+                 inner join cinema_kiosk.theater th on sc.no = th.no
+                 inner join cinema_kiosk.seat_policy sp on th.policy_id = sp.policy_id
+                 inner join cinema_kiosk.member mb on rd.phone = mb.phone
+                 inner join cinema_kiosk.reservation_seat st on rd.id = st.reservation_id
+        LIMIT 10 OFFSET #{page}
     </select>
 </mapper>

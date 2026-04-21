@@ -13,10 +13,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ScheduleDTO {
     private Long id; // 스케줄 인덱스
-    @JsonIgnore
     private TheaterDTO theater; // 상영관 정보 FK (JPA 전용)
     private Long no; // 상영관 FK
-    @JsonIgnore
     private MovieDTO movie; // 영화 번호 FK (JPA 전용)
     private Long movieId; // 영화관 FK
     private LocalDateTime startAt; // 상영 시작 시간

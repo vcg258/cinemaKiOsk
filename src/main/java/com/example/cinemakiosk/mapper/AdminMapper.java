@@ -1,22 +1,12 @@
 package com.example.cinemakiosk.mapper;
 
+import com.example.cinemakiosk.vo.AdminVO;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 @Mapper
 public interface AdminMapper {
-    /**
-     * 자동로그인 UUID를 등록하는 기능
-     * @param adminId
-     * @param uuid
-     * @return
-     */
-    int updateUuid(@Param("adminId") Long adminId, @Param("uuid") String uuid);
-
-    /**
-     * 자동로그인 UUID를 제거하는 기능
-     * @param adminId
-     * @return
-     */
-    int clearUuid(@Param("adminId") Long adminId);
+    // 전체 관리자조회 및 관리자에 해당하는 권한 모두 조회
+    List<AdminVO> selectAdminByAdminRole();
 }

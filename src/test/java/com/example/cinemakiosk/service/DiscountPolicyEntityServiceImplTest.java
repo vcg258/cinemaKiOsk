@@ -63,12 +63,12 @@ class DiscountPolicyEntityServiceImplTest {
 
     @Test
     public void createCouponNumTest() {
-        discountPolicyService.createCouponNum(2L);
+        discountPolicyService.createCouponNum(2L, 20);
     }
 
     @Test
     public void authCouponTest() {
-        boolean result = discountPolicyService.authCoupon("8930bc2b36dd");
+        CouponDTO result = discountPolicyService.authCoupon("testCoupon02");
         log.info("result: {}", result);
     }
 
@@ -100,7 +100,7 @@ class DiscountPolicyEntityServiceImplTest {
 
     @Test
     public void getCouponAllTest() {
-        discountPolicyService.getCouponAll().forEach(log::info);
+        discountPolicyService.getCouponAll(1).forEach(log::info);
     }
 
     @Test

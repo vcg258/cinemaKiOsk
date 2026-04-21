@@ -9,10 +9,12 @@ import com.example.cinemakiosk.mapper.SeatPolicyMapper;
 import com.example.cinemakiosk.mapper.TheaterMapper;
 import com.example.cinemakiosk.repository.SeatPolicyRepository;
 import com.example.cinemakiosk.repository.TheaterRepository;
+import com.example.cinemakiosk.vo.TheaterVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
@@ -37,6 +39,15 @@ public class TheaterServiceImpl implements TheaterService {
 
         theaterRepository.save(TheaterDTO.toEntity(dto));
         log.info("createTheater... 등록완료 {}", dto);
+    }
+
+    /**
+     * 상영관 삭제
+     * @param no 삭제할 상영관 PK
+     */
+    @Override
+    public void removeTheater(Long no) {
+        theaterRepository.deleteById(no);
     }
 
     /**
@@ -177,5 +188,17 @@ public class TheaterServiceImpl implements TheaterService {
             throw new IllegalStateException("현재 사용중인 좌석정책 삭제 불가");
         }
         seatPolicyRepository.deleteById(policyId);
+    }
+
+    @Override
+    public List<TheaterDTO> getTheaterDTOAll() {
+        List<TheaterVO> theaterVOS = theaterMapper.selectAll();
+        List<TheaterDTO> theaterDTOS = new ArrayList<>();
+        for (TheaterVO theaterVO : theaterVOS){
+            theaterDTOS.add(TheaterVO.toDTO(theaterVO));
+        }
+        log.info("반환된 mapper DTO 객체 : {}", theaterDTOS);
+
+        return theaterDTOS;
     }
 }

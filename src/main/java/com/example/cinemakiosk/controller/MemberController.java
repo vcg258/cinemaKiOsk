@@ -5,11 +5,9 @@ import com.example.cinemakiosk.dto.PointHistoryDTO;
 import com.example.cinemakiosk.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,14 +19,20 @@ public class MemberController {
 
     @Operation(summary = "맴버 전체 조회")
     @GetMapping("/list")
-    public ResponseEntity<List<MemberDTO>> getMemberList(){
-        return ResponseEntity.ok(memberService.getMembersAll());
+    public ResponseEntity<Page<MemberDTO>> getMemberList(@RequestParam(defaultValue = "1") int page){
+        return ResponseEntity.ok(memberService.getMembersAll(page));
     }
 
     @Operation(summary = "지정 회원 전체 포인트 내역")
     @GetMapping("/{phone}/point-list")
     public ResponseEntity<List<PointHistoryDTO>> getPointHistoryList(@PathVariable String phone){
         return ResponseEntity.ok(memberService.getMembersAllLog(phone));
+    }
+
+    @Operation(summary = "전체 포인트 내역 조회 (페이징)")
+    @GetMapping("/point-list")
+    public ResponseEntity<Page<PointHistoryDTO>> getPointHistoryList(int page){
+        return ResponseEntity.ok(memberService.getPointHistoryAll(page));
     }
 
     @Operation(summary = "맴버 단일 조회")

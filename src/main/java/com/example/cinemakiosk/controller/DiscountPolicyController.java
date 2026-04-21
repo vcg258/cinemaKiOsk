@@ -1,5 +1,6 @@
 package com.example.cinemakiosk.controller;
 
+import com.example.cinemakiosk.dto.BonusPolicyDTO;
 import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
 import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
@@ -7,6 +8,7 @@ import com.example.cinemakiosk.service.DiscountPolicyService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,26 +57,26 @@ public class DiscountPolicyController {
 
     @Operation(summary = "지정 정책에 쿠폰 발행")
     @PostMapping("/coupon/{policyId}")
-    public ResponseEntity<Void> addCoupon(@PathVariable Long policyId) { // TODO 따로 DTO를 넣자는 의견이 있음 일단 보류
-        discountPolicyService.createCouponNum(policyId);
+    public ResponseEntity<Void> addCoupon(@PathVariable Long policyId, @RequestParam(defaultValue = "1") int count) { // TODO 따로 DTO를 넣자는 의견이 있음 일단 보류
+        discountPolicyService.createCouponNum(policyId, count);
         return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 생성
     }
 
-    @Operation(summary = "쿠폰 검증")
-    @PostMapping("/coupon/auth")
-    public ResponseEntity<Boolean> authCoupon(@RequestParam String couponNum) {
-        return ResponseEntity.ok(discountPolicyService.authCoupon(couponNum));
-    }
-
-    @Operation(summary = "쿠폰 전체 조회")
+    @Operation(summary = "쿠폰 전체 조회 (폐이징 처리)")
     @GetMapping("/coupon/list")
-    public ResponseEntity<List<CouponDTO>> getCoupons() {
-        return ResponseEntity.ok(discountPolicyService.getCouponAll());
+    public ResponseEntity<Page<CouponDTO>> getCoupons(@RequestParam Integer page) {
+        return ResponseEntity.ok(discountPolicyService.getCouponAll(page));
     }
 
     @Operation(summary = "지정 쿠폰 조회")
     @GetMapping("/coupon/{couponNum}")
     public ResponseEntity<CouponDTO> getCoupon(@PathVariable String couponNum) {
         return ResponseEntity.ok(discountPolicyService.getCoupon(couponNum));
+    }
+
+    @Operation(summary = "할인정책 (페이징 처리 size=10 고정)")
+    @GetMapping("/log")
+    public ResponseEntity<Page<DiscountPolicyDTO>> getBonusPolicies(@RequestParam(defaultValue = "1") int page) {
+        return ResponseEntity.ok(discountPolicyService.getDiscountPolicyPage(page));
     }
 }

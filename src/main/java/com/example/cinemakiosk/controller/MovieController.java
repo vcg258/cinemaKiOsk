@@ -33,7 +33,7 @@ import java.util.UUID;
 @Log4j2
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/movie")
+@RequestMapping("/api/admin/movie")
 public class MovieController {
 
 

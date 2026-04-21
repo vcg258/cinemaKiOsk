@@ -1,17 +1,18 @@
 package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.domain.MemberEntity;
-import com.example.cinemakiosk.domain.PaymentDetailsEntity;
 import com.example.cinemakiosk.domain.PointHistoryEntity;
 import com.example.cinemakiosk.domain.enums.Type;
 import com.example.cinemakiosk.dto.MemberDTO;
 import com.example.cinemakiosk.dto.PointHistoryDTO;
+import com.example.cinemakiosk.mapper.PointHistoryMapper;
 import com.example.cinemakiosk.repository.MemberRepository;
-import com.example.cinemakiosk.repository.PaymentDetailsRepository;
 import com.example.cinemakiosk.repository.PointHistoryRepository;
+import com.example.cinemakiosk.vo.PointHistoryVO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,7 +25,7 @@ import java.util.NoSuchElementException;
 public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
     private final PointHistoryRepository pointHistoryRepository;
-    private final PaymentDetailsRepository paymentDetailsRepository;
+    private final PointHistoryMapper pointHistoryMapper;
 
     /**
      * 신규 회원등록
@@ -59,8 +60,8 @@ public class MemberServiceImpl implements MemberService{
             throw new NoSuchElementException("등록된 회원 정보가 존재하지 않습니다");
         }
 
-        // 잔여포인트 보다 사용금액이 더 많으면 예외처리
-        if (pointHistoryDTO.getAmountPoint() > member.getPoint()) {
+        // 타입이 사용이고 잔여포인트 보다 사용금액이 더 많으면 예외처리
+        if (pointHistoryDTO.getType() == Type.USE && pointHistoryDTO.getAmountPoint() > member.getPoint()) {
             throw new IllegalStateException("포인트 부족");
         }
 
@@ -79,8 +80,8 @@ public class MemberServiceImpl implements MemberService{
 
         log.info("pointHistoryCreate... 포인트 업데이트 내역 추가 : {}", dto);
 
-//        PointHistoryEntity pointHistory = pointHistoryRepository.save(PointHistoryDTO.toEntity(dto)); // 포인트 내역 추가
-//        log.info("pointHistoryCreate... 포인트 업데이트 내역 : {}", pointHistory);
+        PointHistoryEntity pointHistory = pointHistoryRepository.save(PointHistoryDTO.toEntity(dto)); // 포인트 내역 추가
+        log.info("pointHistoryCreate... 포인트 업데이트 내역 : {}", pointHistory);
 
         member.changePoint(amount);
 //        memberRepository.save(member); // 회원 잔여포인트 업데이트
@@ -138,21 +139,22 @@ public class MemberServiceImpl implements MemberService{
                 .build();
         log.info("pointHistoryCancel... 환불후 추가할 포인트 내역 : {}", dto);
 
-//        PointHistoryEntity pointHistoryEntity = pointHistoryRepository.save(PointHistoryDTO.toEntity(dto)); // 포인트 내역 추가
-//        log.info("pointHistoryCancel... 포인트 추가내용 : {}", pointHistoryEntity);
+        PointHistoryEntity pointHistoryEntity = pointHistoryRepository.save(PointHistoryDTO.toEntity(dto)); // 포인트 내역 추가
+        log.info("pointHistoryCancel... 포인트 추가내용 : {}", pointHistoryEntity);
 
         member.changePoint(amountPoint);
-//        memberRepository.save(member); // 회원 포인트 업데이트
+        memberRepository.save(member); // 회원 포인트 업데이트
     }
 
     /**
-     * 회원 전체 조회
+     * 회원 전체 조회 (페이징)
      * @return 회원 전체를 담은 리스트
      */
     @Override
-    public List<MemberDTO> getMembersAll() {
-        List<MemberEntity> entityList = memberRepository.findAll();
-        return entityList.stream().map(MemberEntity::toDTO).toList();
+    public Page<MemberDTO> getMembersAll(int page) {
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("createAt").descending());
+        Page<MemberEntity> entityPage = memberRepository.findAll(pageable);
+        return entityPage.map(MemberEntity::toDTO);
     }
 
     /**
@@ -167,6 +169,20 @@ public class MemberServiceImpl implements MemberService{
     }
 
     /**
+     * 포인트 내역 전체 조회 (페이징 처리)
+     * @return 전체 포인트내역이 담긴 리스트
+     */
+    @Override
+    public Page<PointHistoryDTO> getPointHistoryAll(int page) {
+        int offset = (page - 1) * 10;
+        long count = memberRepository.count();
+        List<PointHistoryVO> pointHistoryVO = pointHistoryMapper.selectByMovieNameAll(offset);
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("pointId").descending());
+        log.info("{}번 ~ {}번", offset + 1, offset + 10);
+        return new PageImpl<>(pointHistoryVO.stream().map(PointHistoryVO::toDTO).toList(), pageable, count);
+    }
+
+    /**
      * 회원 단일 조회
      * @param phone 회원 PK
      * @return 지정 회원
@@ -175,5 +191,15 @@ public class MemberServiceImpl implements MemberService{
     public MemberDTO getMember(String phone) {
         MemberEntity entity = memberRepository.findById(phone).orElseThrow();
         return MemberEntity.toDTO(entity);
+    }
+
+    /**
+     * 회원 포인트 갱신하는 기능
+     * @param memberDTO
+     */
+    @Override
+    public void updateMember(MemberDTO memberDTO) {
+        MemberEntity entity = MemberDTO.toEntity(memberDTO);
+        memberRepository.save(entity);
     }
 }

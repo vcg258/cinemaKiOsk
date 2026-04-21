@@ -62,4 +62,10 @@ public class ScheduleController {
     public ResponseEntity<ScheduleDTO> getScheduleById(@PathVariable Long id){
         return ResponseEntity.ok(scheduleService.getSchedule(id));
     }
+
+    @Operation(summary = "스케줄 객체 전체 조회")
+    @GetMapping("/schedule/DTOlist")
+    public ResponseEntity<List<ScheduleDTO>> getScheduleDTOList(){
+        return ResponseEntity.ok(scheduleService.getScheduleDTOList());
+    }
 }

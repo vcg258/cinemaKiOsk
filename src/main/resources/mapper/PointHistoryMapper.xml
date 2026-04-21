@@ -3,5 +3,40 @@
         PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.cinemakiosk.mapper.PointHistoryMapper">
+    <resultMap id="getPointHistoryByMovieTitle" type="com.example.cinemakiosk.vo.PointHistoryVO">
+        <id property="pointId" column="point_id"/>
+        <result property="amountPoint" column="amount_point"/>
+        <result property="createAt" column="create_at"/>
+        <result property="type" column="type"/>
+        <result property="phone" column="phone"/>
+        <result property="paymentId" column="payment_id"/>
+        <result property="title" column="title"/>
+    </resultMap>
 
+    <select id="selectByMovieNameAll" resultMap="getPointHistoryByMovieTitle">
+        SELECT * FROM point_history PH
+        JOIN payment_details PD ON PH.payment_id = PD.id
+        JOIN reservation_details RD ON PD.reservation_id = RD.id
+        JOIN schedule S ON RD.schedule_id = S.id
+        JOIN movie ON S.movie_id = movie.movie_id
+        LIMIT 10 OFFSET #{page}
+    </select>
+
+    <resultMap id="PointHistoryByPaymentRefund" type="com.example.cinemakiosk.vo.PointHistoryVO">
+        <id property="pointId" column="point_id"/>
+        <result property="amountPoint" column="amount_point"/>
+        <result property="createAt" column="create_at"/>
+        <result property="type" column="type"/>
+        <result property="phone" column="phone"/>
+        <result property="paymentId" column="payment_id"/>
+        <association property="member" resultMap="com.example.cinemakiosk.mapper.MemberMapper.MemberVO"/>
+    </resultMap>
+
+    <select id="selectByPayment" resultMap="PointHistoryByPaymentRefund">
+        SELECT * FROM point_history PH
+        JOIN payment_details PD ON PH.payment_id = PD.id
+        JOIN reservation_details RD ON PD.reservation_id = RD.id
+        JOIN member M ON RD.phone = M.phone
+        WHERE payment_id = #{paymentId}
+    </select>
 </mapper>

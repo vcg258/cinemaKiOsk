@@ -2,9 +2,11 @@ package com.example.cinemakiosk.mapper;
 
 import com.example.cinemakiosk.vo.ReservationDetailsVO;
 import com.example.cinemakiosk.vo.ReservationSeatVO;
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface ReservationSeatMapper {

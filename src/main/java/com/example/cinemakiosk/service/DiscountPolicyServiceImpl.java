@@ -6,18 +6,20 @@ import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
 import com.example.cinemakiosk.dto.RequestDTO.CouponStatusRequest;
 import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
+import com.example.cinemakiosk.mapper.CouponMapper;
 import com.example.cinemakiosk.mapper.DiscountPolicyMapper;
 import com.example.cinemakiosk.repository.CouponRepository;
 import com.example.cinemakiosk.repository.DiscountPolicyRepository;
+import com.example.cinemakiosk.vo.CouponVO;
+import com.example.cinemakiosk.vo.DiscountPolicyVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -29,6 +31,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     private final DiscountPolicyMapper discountPolicyMapper;
     private final DiscountPolicyRepository discountPolicyRepository;
     private final CouponRepository couponRepository;
+    private final CouponMapper couponMapper;
 
     /**
      * 할인 정책 추가 / 수정
@@ -57,12 +60,14 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     }
 
     /**
-     * 할인 정책 전체 조회
+     * 할인 정책 전체 조회 (오늘을 포함한 이후 정책만)
      * @return 할인정책 전채 리스트
      */
     @Override
     public List<DiscountPolicyDTO> getDiscountPolicies() {
-        List<DiscountPolicyEntity> discountPolicies = discountPolicyRepository.findAll();
+        // 오늘 00:00:00 기준
+        LocalDateTime todayStart = LocalDate.now().atStartOfDay();
+        List<DiscountPolicyEntity> discountPolicies = discountPolicyRepository.findAllByEndAtAfter(todayStart);
         return discountPolicies.stream().map(DiscountPolicyEntity::toDTO).toList();
     }
 
@@ -117,22 +122,26 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      * @param policyId 정책 번호 FK
      */
     @Override
-    public void createCouponNum(Long policyId) {
+    public void createCouponNum(Long policyId, int count) {
         DiscountPolicyEntity policy = discountPolicyRepository.findById(policyId).orElseThrow();
         if (!policy.getId().equals(policyId)) {
             throw new IllegalArgumentException("지정한 할인정책이 없음 발행 X");
         }
 
-        String couponNum = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
-        CouponDTO couponDTO = CouponDTO.builder()
-                .couponNum(couponNum)
-                .policyId(policyId)
-                .status(true) // 사용 가능
-                .build();
+        // 여러 쿠폰을 발급 할 수 있게 수정
+        List<CouponEntity> coupons = new ArrayList<>();
+        for (int i = 1; i <= count; i++) {
+            String couponNum = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
+            CouponDTO couponDTO = CouponDTO.builder()
+                    .couponNum(couponNum)
+                    .policyId(policyId)
+                    .status(true) // 사용 가능
+                    .build();
 
-        log.info("couponDTO: {}", couponDTO);
-        CouponEntity couponEntity = CouponDTO.toEntity(couponDTO);
-        couponRepository.save(couponEntity);
+            log.info("couponDTO: {}", couponDTO);
+            coupons.add(CouponDTO.toEntity(couponDTO));
+        }
+        couponRepository.saveAll(coupons); // 리스트에 담아서 한번에 추가
     }
 
     /**
@@ -141,27 +150,27 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      * @return 사용 검증 통과면 true, 아니면 false
      */
     @Override
-    public boolean authCoupon(String couponNum) {
-        DiscountPolicyDTO discountPolicy = discountPolicyMapper.checkCoupon(couponNum);
+    public CouponDTO authCoupon(String couponNum) {
+        CouponVO couponVO = couponMapper.checkCoupon(couponNum);
         // 정책이 없을 경우 (INNER JOIN을 하였기때문에 정책이 없다면 null)
-        if (discountPolicy == null) {
+        if (couponVO == null) {
             throw new NoSuchElementException("authCoupon... 정책이 없음");
         }
         // 정책이 비활성화 일 경우
-        if (!discountPolicy.isActivation()) {
+        if (!couponVO.getDiscountPolicy().isActivation()) {
             throw new IllegalStateException("authCoupon... 정책 비활성화");
         }
         // 할인 정책이 만료된 경우
         LocalDateTime now = LocalDateTime.now();
-        if (!(now.isBefore(discountPolicy.getEndAt()) && now.isAfter(discountPolicy.getStartAt()))) {
+        if (!(now.isBefore(couponVO.getDiscountPolicy().getEndAt()) && now.isAfter(couponVO.getDiscountPolicy().getStartAt()))) {
             throw new IllegalStateException("authCoupon...정책 만료");
         }
         CouponEntity coupon = couponRepository
-                .findByCouponNumAndDiscountPolicyEntityIdAndStatusTrue(couponNum, discountPolicy.getId()).orElse(null);
+                .findByCouponNumAndDiscountPolicyEntityIdAndStatusTrue(couponNum, couponVO.getDiscountPolicy().getId()).orElse(null);
         if (coupon == null) {
             throw new IllegalArgumentException("쿠폰 번호와 할인정책이 일치하고 사용여부가 true 인 녀셕 없음");
         }
-        return true; // 위 조건문 다 통과 사용가능
+        return CouponVO.toDTO(couponVO); // 위 조건문 다 통과 사용가능
     }
 
     /**
@@ -196,7 +205,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     }
 
     /**
-     * 10페이지씩 페이징 처리 (로그 포함 전체 조회)
+     * 할인 정책 10페이지씩 페이징 처리 (로그 포함 전체 조회)
      * @param page 몇번째 페이지 부터 가져올건지 정하는 변수
      * @return 페이징 결과 1페이지 일경우 1 ~ 10번 까지
      */
@@ -208,13 +217,17 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     }
 
     /**
-     * 쿠폰 전체 조회
+     * 쿠폰 전체 조회 (페이징)
      * @return 전체 쿠폰을 담은 리스트
      */
     @Override
-    public List<CouponDTO> getCouponAll() {
-        List<CouponEntity> entityList = couponRepository.findAll();
-        return entityList.stream().map(CouponEntity::toDTO).toList();
+    public Page<CouponDTO> getCouponAll(int page) {
+        int offset = (page - 1) * 10;
+        long count = couponRepository.count();
+        List<CouponVO> couponVO = couponMapper.selectAllCouponByDiscount(offset);
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("status").descending());
+        log.info("{}번 ~ {}번", offset + 1, offset + 10);
+        return new PageImpl<>(couponVO.stream().map(CouponVO::toDTO).toList(), pageable, count);
     }
 
     /**

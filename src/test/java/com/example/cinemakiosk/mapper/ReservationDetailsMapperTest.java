@@ -18,7 +18,7 @@ class ReservationDetailsMapperTest {
 
     @Test
     public void selectOne(){
-        ReservationDetailsVO reservationDetailsVO = reservationDetailsMapper.selectOneById(1L);
+        ReservationDetailsVO reservationDetailsVO = reservationDetailsMapper.selectOneById("1");
         log.info(reservationDetailsVO);
     }
     @Test

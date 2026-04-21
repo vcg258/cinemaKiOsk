@@ -6,6 +6,12 @@ import com.example.cinemakiosk.dto.MovieRequestDTO;
 import com.example.cinemakiosk.dto.MovieResponseDTO;
 
 import java.io.IOException;
+import org.springframework.data.domain.Page;
+
+import com.example.cinemakiosk.dto.MovieRequestDTO;
+import com.example.cinemakiosk.dto.MovieResponseDTO;
+
+import java.io.IOException;
 import java.util.List;
 
 public interface MovieService {
@@ -13,7 +19,7 @@ public interface MovieService {
     void insertMovie(MovieDTO movieDTO);
 
     // 상세 조회
-    MovieDTO getMovieById(long movieId);
+    MovieDTO getMovieById(Long movieId);
 
     // 제목으로 상세 조회
     MovieDTO getMovieByTitle(String title);
@@ -32,6 +38,9 @@ public interface MovieService {
 
     // 상영종료처리
     void modifyEndAt(long movieId);
+
+    // 페이징
+    Page<MovieDTO> getMoviePage(int page);
 
 //    // 영화 이미지 추가
 //    void saveImage(byte[] imageBytes, String filename) throws IOException;

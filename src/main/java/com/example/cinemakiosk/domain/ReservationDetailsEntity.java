@@ -44,6 +44,12 @@ public class ReservationDetailsEntity{
     @OneToMany(mappedBy = "reservationDetailsEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<PaymentDetailsEntity> paymentDetailsEntity;
 
+    private boolean returned;
+
+    public void changeReturned(boolean returned) {
+        this.returned = returned;
+    }
+
     /**
      * Entity -> DTO
      * @param reservationDetailsEntity
@@ -54,7 +60,7 @@ public class ReservationDetailsEntity{
                 .id(reservationDetailsEntity.getId())
                 .schedule(ScheduleEntity.toDTO(reservationDetailsEntity.getScheduleEntity()))
                 .phone(MemberEntity.toDTO(reservationDetailsEntity.getMemberEntity()))
-                .reservationTime(reservationDetailsEntity.getCreateAt())
+                .createAt(reservationDetailsEntity.getCreateAt())
                 .build();
     }
 

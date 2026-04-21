@@ -1,15 +1,22 @@
 package com.example.cinemakiosk.service;
 
+import com.example.cinemakiosk.domain.PaymentDetailsEntity;
+import com.example.cinemakiosk.domain.enums.Status;
 import com.example.cinemakiosk.dto.PaymentDetailsDTO;
+import com.example.cinemakiosk.dto.ReservationDetailsDTO;
 import com.example.cinemakiosk.mapper.PaymentDetailsMapper;
 import com.example.cinemakiosk.repository.PaymentDetailsRepository;
 import com.example.cinemakiosk.vo.PaymentDetailsVO;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class PaymentDetailsServiceImpl implements PaymentDetailsService{
@@ -33,27 +40,27 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService{
 
     //결제 내역 전체조회
     @Override
-    public List<PaymentDetailsDTO> readAll() {
+    public Page<PaymentDetailsDTO> readAll(int page) {
+        int offset = (page - 1) * 10;
+        long count = paymentDetailsRepository.count();
         List<PaymentDetailsDTO> paymentDetailsDTOS = new ArrayList<>();
-        List<PaymentDetailsVO> paymentDetailsVOS = paymentDetailsMapper.selectAll();
+        List<PaymentDetailsVO> paymentDetailsVOS = paymentDetailsMapper.selectAll(offset);
         for (PaymentDetailsVO paymentDetailsVO : paymentDetailsVOS){
             paymentDetailsDTOS.add(PaymentDetailsVO.toDTO(paymentDetailsVO));
         }
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("createAt").descending());
 
-        return paymentDetailsDTOS;
+        return new PageImpl<>(paymentDetailsDTOS, pageable, count);
     }
 
     //결제 내역 변경
     @Override
-    public void update(PaymentDetailsDTO paymentDetailsDTO) {
-        paymentDetailsRepository.save(PaymentDetailsDTO.toEntity(paymentDetailsDTO));
+    @Transactional
+    public void updateToReturn(PaymentDetailsDTO paymentDetailsDTO) {
+        PaymentDetailsEntity entity = paymentDetailsRepository.findById(paymentDetailsDTO.getId()).orElseThrow();
+        entity.changeStatus(Status.RETURN);
+        entity.getReservationDetailsEntity().changeReturned(true);
+        paymentDetailsRepository.save(entity);
     }
 
-
-    //환불 진행. >> 이거 방법 다르게 찾기
-    @Override
-    public void cancel(String uuid) {
-//        paymentDetailsRepository.deleteById(uuid);
-        //특정 값만 찾아와서 해당 값에서 환불로 바꾸면 될건데... 응답이 어떻게 오는지 알아야함.
-    }
 }

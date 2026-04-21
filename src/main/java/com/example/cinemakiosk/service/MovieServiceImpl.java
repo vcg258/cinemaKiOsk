@@ -1,7 +1,10 @@
 package com.example.cinemakiosk.service;
 
+import com.example.cinemakiosk.domain.MemberEntity;
 import com.example.cinemakiosk.domain.MovieEntity;
 import com.example.cinemakiosk.domain.ScheduleEntity;
+import com.example.cinemakiosk.domain.enums.Rating;
+import com.example.cinemakiosk.dto.MemberDTO;
 import com.example.cinemakiosk.domain.enums.Rating;
 import com.example.cinemakiosk.dto.MovieDTO;
 import com.example.cinemakiosk.dto.MovieRequestDTO;
@@ -12,6 +15,11 @@ import com.example.cinemakiosk.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import net.coobird.thumbnailator.Thumbnailator;
 import net.coobird.thumbnailator.Thumbnailator;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -44,13 +52,11 @@ public class MovieServiceImpl implements MovieService {
 
     /**
      * 영화 등록
-     *
      * @param movieDTO 영화 정보
      */
     @Override
     public void insertMovie(MovieDTO movieDTO) {
         log.info("movieDTO: {} ", movieDTO);
-
 
         // 영화 정보 저장
         MovieEntity movieEntity = movieRepository.save(MovieDTO.toEntity(movieDTO));
@@ -63,7 +69,6 @@ public class MovieServiceImpl implements MovieService {
 
     /**
      * 영화 수정
-     *
      * @param movieDTO
      */
     @Override
@@ -88,18 +93,18 @@ public class MovieServiceImpl implements MovieService {
 //
 //        if ((file1 != null && !file1.isEmpty()) || (file2 != null && !file2.isEmpty())) {
 //            String filename = movieDTO.getMovieId() + ".jpg";  // movieId로 파일명
-//
-////            // 기존 이미지 삭제
-////           Path oldPath = Paths.get(uploadPath, filename);
-////            Path oldThumbPath = Paths.get(uploadPath, "s_" + filename);
-////            try {
-////                Files.deleteIfExists(oldPath);
-////                Files.deleteIfExists(oldThumbPath);
-////            } catch (IOException e) {
-////                log.warn("기존 이미지 삭제 실패");
-////            }
-//
-//        // 영화 이미지 저장
+
+//            // 기존 이미지 삭제
+//            Path oldPath = Paths.get(uploadPath, filename);
+//            Path oldThumbPath = Paths.get(uploadPath, "s_" + filename);
+//            try {
+//                Files.deleteIfExists(oldPath);
+//                Files.deleteIfExists(oldThumbPath);
+//            } catch (IOException e) {
+//                log.warn("기존 이미지 삭제 실패");
+//            }
+
+        // 영화 이미지 저장
 //            try {
 //                saveImageFromDTO(movieDTO, filename);
 //            } catch (IllegalStateException e) {
@@ -110,7 +115,6 @@ public class MovieServiceImpl implements MovieService {
 
     /**
      * 영화 삭제
-     *
      * @param movieId 영화 PK
      */
     @Override
@@ -128,7 +132,7 @@ public class MovieServiceImpl implements MovieService {
      * @return
      */
     @Override
-    public MovieDTO getMovieById(long movieId) {
+    public MovieDTO getMovieById(Long movieId) {
         // 메시지 추가
         MovieEntity optionalMovieEntity = movieRepository.findById(movieId)
                 .orElseThrow(() -> new NoSuchElementException("movieId를 찾을 수 없습니다"));
@@ -145,7 +149,7 @@ public class MovieServiceImpl implements MovieService {
         }
 
         Optional<MovieEntity> optionalMovieEntity = movieRepository.findByTitle(title);
-        //
+
         MovieEntity movieEntity = optionalMovieEntity
                 .orElseThrow(() -> new NoSuchElementException("title을 찾을 수 없습니다: " + title));
         MovieDTO movieDTO = MovieEntity.toDTO(movieEntity);
@@ -155,7 +159,6 @@ public class MovieServiceImpl implements MovieService {
 
     /**
      * 전체 영화 조회
-     *
      * @return 현재 db에 저장된 모든 영화
      */
     @Override
@@ -179,7 +182,6 @@ public class MovieServiceImpl implements MovieService {
     /**
      * 상영종료처리
      * movieId를 입력하면, Schedule을 조회해 지나간 상영 시간중 가장 가까운 상영 시간을 end_at 시간으로 삼는다.
-     *
      * @param movieId
      */
     @Override
@@ -219,8 +221,8 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public List<MovieDTO> getScreeningPeriodAllMovies() {
         List<MovieEntity> movieEntityList = movieRepository.findAll();
+        log.info(movieEntityList);
         LocalDate now = LocalDate.now();
-
 
         List<MovieDTO> movieDTOList = new ArrayList<>();
         for (MovieEntity movieEntity : movieEntityList) {
@@ -237,6 +239,18 @@ public class MovieServiceImpl implements MovieService {
             }
         }
         return movieDTOList;
+    }
+
+    /**
+     * 10페이지씩 페이징 처리 (로그형식 전체)
+     * @param page 몇번째 페이지 부터 정할 변수
+     * @return 페이징 결과 1페이지 일경우 1 ~ 10번 까지
+     */
+    @Override
+    public Page<MovieDTO> getMoviePage(int page) {
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("movieId").descending());
+        Page<MovieEntity> entityPage = movieRepository.findAll(pageable);
+        return entityPage.map(MovieEntity::toDTO);
     }
 
 

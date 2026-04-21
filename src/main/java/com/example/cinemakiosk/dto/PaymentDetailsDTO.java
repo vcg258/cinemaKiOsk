@@ -1,5 +1,6 @@
 package com.example.cinemakiosk.dto;
 
+import com.example.cinemakiosk.domain.CouponEntity;
 import com.example.cinemakiosk.domain.PaymentDetailsEntity;
 import com.example.cinemakiosk.domain.enums.Status;
 import com.example.cinemakiosk.domain.PointHistoryEntity;
@@ -24,6 +25,7 @@ public class PaymentDetailsDTO {
     private LocalDateTime createAt;              // 결제 시간
     private Long usePoint;                   // 사용 포인트 기본값 0
     private Status status;                   // ENUM ('PAY','RETURN','FAIL'), 결제 완료, 환불, 실패
+    private String paymentKey;
 
     /**
      * DTO -> Entity
@@ -31,15 +33,21 @@ public class PaymentDetailsDTO {
      * @return Entity
      */
     public static PaymentDetailsEntity toEntity(PaymentDetailsDTO paymentDetailsDTO){
+        CouponEntity couponEntity = null;
+        if (paymentDetailsDTO.couponNum != null){
+            couponEntity = CouponDTO.toEntity(paymentDetailsDTO.getCouponNum());
+        }
+
         return PaymentDetailsEntity.builder()
                 .id(paymentDetailsDTO.getId())
                 .reservationDetailsEntity(ReservationDetailsDTO.toEntity(paymentDetailsDTO.getReservation()))
                 .bonusPolicyEntity(BonusPolicyDTO.toEntity(paymentDetailsDTO.getBonusPolicy()))
-                .couponEntity(CouponDTO.toEntity(paymentDetailsDTO.getCouponNum()))
+                .couponEntity(couponEntity)
                 .cost(paymentDetailsDTO.getCost())
                 .createAt(paymentDetailsDTO.getCreateAt())
                 .usePoint(paymentDetailsDTO.getUsePoint())
                 .status(paymentDetailsDTO.getStatus())
+                .paymentKey(paymentDetailsDTO.getPaymentKey())
                 .build();
     }
 
@@ -58,6 +66,7 @@ public class PaymentDetailsDTO {
                 .createAt(paymentDetailsDTO.getCreateAt())
                 .usePoint(paymentDetailsDTO.getUsePoint())
                 .status(paymentDetailsDTO.getStatus())
+                .paymentKey(paymentDetailsDTO.getPaymentKey())
                 .build();
     }
 
