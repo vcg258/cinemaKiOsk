@@ -10,8 +10,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -29,19 +31,30 @@ public class TmdbServiceImpl implements TmdbService {
     private String uploadPath;
 
 
-    // 인기 영화 목록
+//    private final String baseUrl = "tmdbConfig.getBaseUrl()";
+
+    // 인기 영화 목록 수정
     public List<TmdbMovieDTO> getPopularMovies(int page) {
         // 페이지 번호 유효성 검사
         if (page < 1) {
             throw new IllegalArgumentException("페이지 번호는 1 이상이어야 합니다: " + page);
         }
+        // 1. RestClient 초기화
+        RestClient restClient = RestClient.builder()
+                .baseUrl(tmdbConfig.getBaseUrl())
+                .build();
 
-        String url = tmdbConfig.getBaseUrl() + "/movie/popular"
-                + "?api_key=" + tmdbConfig.getApiKey()
-                + "&language=ko-KR"
-                + "&page=" + page;
+        // 2. API 호출
+        TmdbSearchResponseDTO response = restClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/movie/popular")
+                        .queryParam("api_key", tmdbConfig.getApiKey())
+                        .queryParam("language", "ko-KR")
+                        .queryParam("page", page)
+                        .build())
+                .retrieve()
+                .body(TmdbSearchResponseDTO.class);
 
-        TmdbSearchResponseDTO response = restTemplate.getForObject(url, TmdbSearchResponseDTO.class);
 
         // API 응답 없을 때
         if (response == null || response.getResults() == null) {
@@ -64,12 +77,22 @@ public class TmdbServiceImpl implements TmdbService {
             throw new IllegalArgumentException("제대로된 검색어를 입력해주세요.");
         }
 
-        String url = tmdbConfig.getBaseUrl() + "/search/movie"
-                + "?api_key=" + tmdbConfig.getApiKey()
-                + "&query=" + title
-                + "&language=ko-KR";
+        // 1. RestClient 초기화
+        RestClient restClient = RestClient.builder()
+                .baseUrl(tmdbConfig.getBaseUrl())
+                .build();
 
-        TmdbSearchResponseDTO response = restTemplate.getForObject(url, TmdbSearchResponseDTO.class);
+        // 2. API 호출
+        TmdbSearchResponseDTO response = restClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/search/movie")
+                        .queryParam("api_key", tmdbConfig.getApiKey())
+                        .queryParam("query", title)
+                        .queryParam("language", "ko-KR")
+                        .build())
+                .retrieve()
+                .body(TmdbSearchResponseDTO.class);
+
 
         // API 응답 없을 때
         if (response == null || response.getResults() == null) {
@@ -78,7 +101,7 @@ public class TmdbServiceImpl implements TmdbService {
 
         // poster_path에 imageUrl 붙여주기
         for (TmdbMovieDTO movieDTO : response.getResults()) {
-            log.info("moviePosterPath: " + movieDTO.getPosterPath());
+            log.info("moviePosterPath: {}", movieDTO.getPosterPath());
             movieDTO.setPosterPath(tmdbConfig.getImageUrl() + movieDTO.getPosterPath());
         }
 
@@ -94,21 +117,56 @@ public class TmdbServiceImpl implements TmdbService {
         }
 
         // 상세조회
-        String url = tmdbConfig.getBaseUrl() + "/movie/" + tmdbId
-                + "?api_key=" + tmdbConfig.getApiKey()
-                + "&language=ko-KR";
-        TmdbMovieDTO detail = restTemplate.getForObject(url, TmdbMovieDTO.class);
+//        String url = tmdbConfig.getBaseUrl() + "/movie/" + tmdbId
+//                + "?api_key=" + tmdbConfig.getApiKey()
+//                + "&language=ko-KR";
+//        TmdbMovieDTO detail = restTemplate.getForObject(url, TmdbMovieDTO.class);
+
+
+
+        // 1. RestClient 초기화
+        RestClient restClient = RestClient.builder()
+                .baseUrl(tmdbConfig.getBaseUrl())
+                .build();
+
+        // 2. API 호출
+        TmdbMovieDTO detail = restClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/movie/" + tmdbId)
+                        .queryParam("api_key", tmdbConfig.getApiKey())
+                        .queryParam("language", "ko-KR")
+                        .build())
+                .retrieve()
+                .body(TmdbMovieDTO.class);
+
 
         // 영화 정보 없을 때
         if (detail == null) {
             throw new NoSuchElementException("해당 영화를 찾을 수 없습니다. tmdbId=" + tmdbId);
         }
 
+
+
+
         // 상세조회(배우, 감독)
-        String creditsUrl = tmdbConfig.getBaseUrl() + "/movie/" + tmdbId
-                + "/credits?api_key=" + tmdbConfig.getApiKey()
-                + "&language=ko-KR";
-        TmdbCreditsDTO credits = restTemplate.getForObject(creditsUrl, TmdbCreditsDTO.class);
+//        String creditsUrl = tmdbConfig.getBaseUrl() + "/movie/" + tmdbId
+//                + "/credits?api_key=" + tmdbConfig.getApiKey()
+//                + "&language=ko-KR";
+//        TmdbCreditsDTO credits = restTemplate.getForObject(creditsUrl, TmdbCreditsDTO.class);
+
+        TmdbCreditsDTO credits = restClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/movie/" + tmdbId + "/credits")
+                        .queryParam("api_key", tmdbConfig.getApiKey())
+                        .queryParam("language", "ko-KR")
+                        .build())
+                .retrieve()
+                .body(TmdbCreditsDTO.class);
+
+
+
+
+
 
         // 크레딧 정보 없을 때
         if (credits == null) {
@@ -164,7 +222,6 @@ public class TmdbServiceImpl implements TmdbService {
      * TMDB release_dates API로 한국(KR) 관람 등급 조회
      * certification 값 → Rating enum 변환
      *
-     * TMDB KR certification 규칙:
      *   "All" / ""  → ALL (전체관람가)
      *   "12"        → TWELVE (12세이상)
      *   "15"        → FIFTEEN (15세이상)
@@ -175,10 +232,30 @@ public class TmdbServiceImpl implements TmdbService {
      */
     private Rating fetchKoreanRating(Long tmdbId) {
         try {
-            String url = tmdbConfig.getBaseUrl() + "/movie/" + tmdbId
-                    + "/release_dates?api_key=" + tmdbConfig.getApiKey();
+//            String url = tmdbConfig.getBaseUrl() + "/movie/" + tmdbId
+//                    + "/release_dates?api_key=" + tmdbConfig.getApiKey();
+//
+//            TmdbReleaseDatesDTO response = restTemplate.getForObject(url, TmdbReleaseDatesDTO.class);
 
-            TmdbReleaseDatesDTO response = restTemplate.getForObject(url, TmdbReleaseDatesDTO.class);
+            // 1. RestClient 초기화
+            RestClient restClient = RestClient.builder()
+                    .baseUrl(tmdbConfig.getBaseUrl())
+                    .build();
+
+            // 2. API 호출
+            TmdbReleaseDatesDTO response = restClient.get()
+                    .uri(uriBuilder -> {
+                        URI uri = uriBuilder
+                                .path("/movie/" + tmdbId + "/release_dates")
+                                .queryParam("api_key", tmdbConfig.getApiKey())
+                                .build();
+                        log.info("uri: {}", uri);
+                        return uriBuilder.build();
+                    })
+                    .retrieve()
+                    .body(TmdbReleaseDatesDTO.class);
+
+
 
             if (response == null || response.getResults() == null) {
                 log.warn("fetchKoreanRating... release_dates 응답 없음, 기본값 ALL 사용");
