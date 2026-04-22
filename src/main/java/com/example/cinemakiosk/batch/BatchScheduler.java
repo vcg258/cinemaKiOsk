@@ -66,7 +66,7 @@ public class BatchScheduler {
         }
     }
 
-    @Scheduled(cron = "0 0 4 * * *")
+    @Scheduled(cron = "0 23 16 * * *")
     public void runMemberCleanupJob() throws Exception {
         log.info("MemberCleanup 실행 요청");
         try {

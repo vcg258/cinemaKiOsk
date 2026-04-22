@@ -17,7 +17,7 @@ import java.util.Map;
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.cinema.scret.key}")
+    @Value("${jwt.cinema.secret.key}")
     private String key;
 
     /**
