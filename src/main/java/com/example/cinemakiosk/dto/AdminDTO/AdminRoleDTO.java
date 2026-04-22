@@ -8,7 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdminRoleDTO {
-    private Long id; // 인덱스
-    private String roleName; // 권한이름
-    private String roleDesc; // 권한이름, 설명 둘중하나(뷰에서 보여줄것)
+    private Long id;        // 인덱스 (권한 저장 시 숫자 ID로 전송됨)
+    private String roleName;  // Spring Security 권한 키 (예: ROLE_REFUND)
+    private String roleDesc;  // 뷰에서 보여줄 권한 설명
+    private String groupName; // 프론트 사이드바 섹션 그룹명 (예: 영화 관리)
 }

@@ -16,20 +16,36 @@ INSERT IGNORE INTO admin (login_id, password, name, admin_phone, level, UUID, cr
 VALUES ('staff02', '$2a$10$hJyoakWqW5R2Fn0VB5xC8.ksNIn7P8gi4dsCM3km8cSIckiw9Ocbe', '직원2', '010-3333-4444', 1, null, now());
 
 -- 운영 권한 (일반 관리자 부여 가능) - 7개
-INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_REFUND', '환불 처리');
-INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_MOVIE_LIST', '영화 목록 조회');
-INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_MOVIE_REGISTER', '영화 등록');
-INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_MOVIE_EDIT', '영화 수정');
-INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_MOVIE_DELETE', '영화 삭제');
-INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_THEATER_LIST', '상영관 조회');
-INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_THEATER_EDIT', '상영관 수정');
+-- ON DUPLICATE KEY UPDATE: 이미 행이 존재해도 role_desc/group_name이 갱신됨
+INSERT INTO admin_role (role_name, role_desc, group_name) VALUES ('ROLE_REFUND',            '환불 처리',    '정책/환불')
+    ON DUPLICATE KEY UPDATE role_desc = VALUES(role_desc), group_name = VALUES(group_name);
+INSERT INTO admin_role (role_name, role_desc, group_name) VALUES ('ROLE_MOVIE_LIST',        '영화 목록',    '영화 관리')
+    ON DUPLICATE KEY UPDATE role_desc = VALUES(role_desc), group_name = VALUES(group_name);
+-- 영화 등록: 영화 등록 페이지 접근 + 등록 버튼
+INSERT INTO admin_role (role_name, role_desc, group_name) VALUES ('ROLE_MOVIE_REGISTER',    '영화 등록',    '영화 관리')
+    ON DUPLICATE KEY UPDATE role_desc = VALUES(role_desc), group_name = VALUES(group_name);
+-- 영화 편집: 영화 목록에서 수정·삭제 버튼
+INSERT INTO admin_role (role_name, role_desc, group_name) VALUES ('ROLE_MOVIE_EDIT',        '영화 편집',    '영화 관리')
+    ON DUPLICATE KEY UPDATE role_desc = VALUES(role_desc), group_name = VALUES(group_name);
+-- 상영 관리: 스케줄 등록·수정·만료 처리
+INSERT INTO admin_role (role_name, role_desc, group_name) VALUES ('ROLE_MOVIE_DELETE',      '상영 관리',    '영화 관리')
+    ON DUPLICATE KEY UPDATE role_desc = VALUES(role_desc), group_name = VALUES(group_name);
+INSERT INTO admin_role (role_name, role_desc, group_name) VALUES ('ROLE_THEATER_LIST',      '좌석 목록',    '상영관/좌석')
+    ON DUPLICATE KEY UPDATE role_desc = VALUES(role_desc), group_name = VALUES(group_name);
+INSERT INTO admin_role (role_name, role_desc, group_name) VALUES ('ROLE_THEATER_EDIT',      '상영관 편집',  '상영관/좌석')
+    ON DUPLICATE KEY UPDATE role_desc = VALUES(role_desc), group_name = VALUES(group_name);
 
 -- 최고 관리자 전용 권한 - 5개
-INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_POLICY_LIST', '정책 조회');
-INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_POLICY_EDIT', '정책 수정');
-INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_STATISTICS', '통계 조회');
-INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_MEMBER_MANAGEMENT', '회원 정보 관리');
-INSERT IGNORE INTO admin_role (role_name, role_desc) VALUES ('ROLE_ADMIN_MANAGEMENT', '계정 및 권한 관리');
+INSERT INTO admin_role (role_name, role_desc, group_name) VALUES ('ROLE_POLICY_LIST',       '정책 목록',       '정책/환불')
+    ON DUPLICATE KEY UPDATE role_desc = VALUES(role_desc), group_name = VALUES(group_name);
+INSERT INTO admin_role (role_name, role_desc, group_name) VALUES ('ROLE_POLICY_EDIT',       '정책 편집',       '정책/환불')
+    ON DUPLICATE KEY UPDATE role_desc = VALUES(role_desc), group_name = VALUES(group_name);
+INSERT INTO admin_role (role_name, role_desc, group_name) VALUES ('ROLE_STATISTICS',        '대시보드',        '통계')
+    ON DUPLICATE KEY UPDATE role_desc = VALUES(role_desc), group_name = VALUES(group_name);
+INSERT INTO admin_role (role_name, role_desc, group_name) VALUES ('ROLE_MEMBER_MANAGEMENT', '회원 정보 관리',  '회원/계정 관리')
+    ON DUPLICATE KEY UPDATE role_desc = VALUES(role_desc), group_name = VALUES(group_name);
+INSERT INTO admin_role (role_name, role_desc, group_name) VALUES ('ROLE_ADMIN_MANAGEMENT',  '계정 및 권한',    '회원/계정 관리')
+    ON DUPLICATE KEY UPDATE role_desc = VALUES(role_desc), group_name = VALUES(group_name);
 
 -- FK 인덱스 적용
 -- coupon
