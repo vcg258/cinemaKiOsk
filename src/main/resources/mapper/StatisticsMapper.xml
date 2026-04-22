@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.cinemakiosk.mapper.StatisticsMapper">
+    <select id="getStatistics" resultType="com.example.cinemakiosk.vo.StatisticsVO">
+        SELECT
+        <choose>
+            <when test='type == "YEAR"'> STR_TO_DATE(DATE_FORMAT(S.date, '%Y-01-01'), '%Y-%m-%d') </when>
+            <when test='type == "MONTH"'> STR_TO_DATE(DATE_FORMAT(S.date, '%Y-%m-01'), '%Y-%m-%d') </when>
+            <when test='type == "HOUR"'> NULL </when>
+            <otherwise> S.date </otherwise>
+        </choose> AS date,
+
+        <if test='type == "DAY"'> S.day AS day, </if>
+
+        <choose>
+            <when test='type == "MOVIE"'> M.title </when>
+            <when test='type == "HOUR"'> DATE_FORMAT(SC.start_at, '%H시') </when>
+            <otherwise> NULL </otherwise>
+        </choose> AS title,
+
+        SUM(S.revenue) AS revenue,
+        SUM(S.customer_count) AS customerCount
+        FROM statistics S
+        JOIN schedule SC ON S.schedule_id = SC.id
+        <if test='type == "MOVIE"'>
+            JOIN movie M ON SC.movie_id = M.movie_id
+        </if>
+        WHERE S.date BETWEEN #{startDate} AND #{endDate}
+
+        GROUP BY
+        <choose>
+            <when test='type == "YEAR"'> DATE_FORMAT(S.date, '%Y') </when>
+            <when test='type == "MONTH"'> DATE_FORMAT(S.date, '%Y-%m') </when>
+            <when test='type == "MOVIE"'> M.title </when>
+            <when test='type == "HOUR"'> DATE_FORMAT(SC.start_at, '%H') </when>
+            <otherwise> S.date </otherwise>
+        </choose>
+
+        ORDER BY
+        <choose>
+            <when test='type == "HOUR"'> title ASC </when> <otherwise> date ASC </otherwise>
+        </choose>
+    </select>
+</mapper>

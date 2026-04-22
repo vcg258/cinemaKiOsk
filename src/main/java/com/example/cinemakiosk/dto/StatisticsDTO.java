@@ -21,6 +21,7 @@ public class StatisticsDTO {
     private Long revenue;
     private Long customerCount;
     private LocalDate date;     // 통계 기준 일시
+    private String title; // 시간대별, 영화별 통계때 사용 (공용)
 
     /**
      * DTO -> Entity
@@ -51,6 +52,7 @@ public class StatisticsDTO {
                 .revenue(statisticsDTO.getRevenue())
                 .customerCount(statisticsDTO.getCustomerCount())
                 .date(statisticsDTO.getDate())
+                .title(statisticsDTO.getTitle())
                 .build();
     }
 }

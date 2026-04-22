@@ -22,10 +22,10 @@ public class StatisticsVO {
     private Long customerCount;  // 관람객 수
     private LocalDate date;  // 날짜
     private Long scheduleId;
+    private String title; // 시간대별, 영화별 통계때 사용 (공용)
 
     /**
      * VO -> DTO
-     *
      * @param statisticsVO
      * @return
      */
@@ -37,6 +37,7 @@ public class StatisticsVO {
                 .revenue(statisticsVO.getRevenue())
                 .customerCount(statisticsVO.getCustomerCount())
                 .date(statisticsVO.getDate())
+                .title(statisticsVO.getTitle())
                 .build();
     }
 }

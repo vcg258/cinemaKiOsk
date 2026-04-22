@@ -26,6 +26,7 @@ public class ScheduleVO {
      * @return DTO
      */
     public static ScheduleDTO toDTO(ScheduleVO scheduleVO) {
+        if (scheduleVO == null) return null;
 
         return ScheduleDTO.builder()
                 .id(scheduleVO.getId())
