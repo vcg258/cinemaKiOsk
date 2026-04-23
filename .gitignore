@@ -2,6 +2,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=intellij,java,gradle
 
 # Environment variables
+.env
 .env.*
 
 ### Intellij ###
