@@ -83,19 +83,17 @@ public class BatchScheduler {
 
 
 
-
     // 수동실행을 위한 메서드. 테스트코드에서 사용
-    public void runJob2(LocalDate date) {
+    public void runJob2() {
 
         JobParameters jobParameters = new JobParametersBuilder()
-                .addString("targetDate", date.toString())
                 .addLong("timestamp", System.currentTimeMillis())
                 .toJobParameters();
         try {
             jobLauncher.run(memberCleanupJob, jobParameters);
-            jobLauncher.run(statisticsJob, jobParameters);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 }
+

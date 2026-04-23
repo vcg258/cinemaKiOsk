@@ -1,7 +1,7 @@
 package com.example.cinemakiosk.batch;
 
 
-import com.example.cinemakiosk.repository.batch.StatisticsRepository;
+import com.example.cinemakiosk.repository.StatisticsRepository;
 import com.example.cinemakiosk.vo.StatisticsVO;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -37,17 +37,16 @@ public class StatisticConfig {
     @Bean
     public Job statisticsJob() {
         return new JobBuilder("statisticsJob", jobRepository)
-                .start(cleanupStep())   // 1. 삭제
-                .next(generateStep())   // 2. 삽입
+                .start(generateStep())   // 1. 삽입
                 .build();
     }
 
-    @Bean
-    public Step cleanupStep() {
-        return new StepBuilder("cleanupStep", jobRepository)
-                .tasklet(cleanupTasklet(), transactionManager)
-                .build();
-    }
+//    @Bean
+//    public Step cleanupStep() {
+//        return new StepBuilder("cleanupStep", jobRepository)
+//                .tasklet(cleanupTasklet(), transactionManager)
+//                .build();
+//    }
 
     @Bean
     public Step generateStep() {
@@ -57,30 +56,30 @@ public class StatisticConfig {
     }
 
 
-    @Bean
-    @StepScope
-    public Tasklet cleanupTasklet() {
-        return new Tasklet() {
-            @Override
-            @Nullable
-            public RepeatStatus execute(StepContribution contribution,
-                                        ChunkContext chunkContext) throws Exception {
-
-                // jobParameters에서 전달되는 날짜 targetDate를 가져옴
-                String targetDateStr = chunkContext.getStepContext()
-                        .getJobParameters()
-                        .get("targetDate")
-                        .toString();
-                LocalDate targetDate = LocalDate.parse(targetDateStr);
-
-                // targetDate에 해당하는 통계 삭제
-                statisticsRepository.deleteStatsByDate(targetDate);
-                log.info("StatisticsBatch 기존 데이터 삭제 완료 (date={})", targetDate);
-
-                return RepeatStatus.FINISHED;
-            }
-        };
-    }
+//    @Bean
+//    @StepScope
+//    public Tasklet cleanupTasklet() { // 삭제 로직 (폐기)
+//        return new Tasklet() {
+//            @Override
+//            @Nullable
+//            public RepeatStatus execute(StepContribution contribution,
+//                                        ChunkContext chunkContext) throws Exception {
+//
+//                // jobParameters에서 전달되는 날짜 targetDate를 가져옴
+//                String targetDateStr = chunkContext.getStepContext()
+//                        .getJobParameters()
+//                        .get("targetDate")
+//                        .toString();
+//                LocalDate targetDate = LocalDate.parse(targetDateStr);
+//
+//                // targetDate에 해당하는 통계 삭제
+//                statisticsRepository.deleteStatsByDate(targetDate);
+//                log.info("StatisticsBatch 기존 데이터 삭제 완료 (date={})", targetDate);
+//
+//                return RepeatStatus.FINISHED;
+//            }
+//        };
+//    }
 
     @Bean
     @StepScope

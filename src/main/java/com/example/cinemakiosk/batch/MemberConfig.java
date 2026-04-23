@@ -1,6 +1,7 @@
 package com.example.cinemakiosk.batch;
 
 
+import com.example.cinemakiosk.batch.MemberCleanupWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.batch.core.Job;
@@ -40,11 +41,13 @@ public class MemberConfig {
         return new StepBuilder("memberCleanupStep", jobRepository)
                 .<String, String>chunk(100, transactionManager) // 100건씩 처리
                 .reader(inactiveMemberReader())
-                .processor(inactiveMemberProcessor())
+//                .processor(inactiveMemberProcessor())
                 .writer(memberCleanupWriter)
                 .build();
     }
 
+
+    // read
     @Bean
     public JdbcCursorItemReader<String> inactiveMemberReader() {
         return new JdbcCursorItemReaderBuilder<String>()
@@ -53,7 +56,8 @@ public class MemberConfig {
                 .sql("""
                     SELECT m.phone
                 FROM member m
-                WHERE NOT EXISTS (
+                WHERE m.create_at <= NOW() - INTERVAL 2 YEAR
+                AND NOT EXISTS (
                     SELECT 1
                     FROM point_history p
                     WHERE p.phone = m.phone
@@ -64,11 +68,12 @@ public class MemberConfig {
                 .build();
     }
 
-    @Bean
-    public ItemProcessor<String, String> inactiveMemberProcessor() {
-        return phone -> {
-            log.info("MemberCleanup 삭제 대상 phone: {}", phone);
-            return phone;
-        };
-    }
+    // process
+//    @Bean
+//    public ItemProcessor<String, String> inactiveMemberProcessor() {
+//        return phone -> {
+//            log.info("MemberCleanup 삭제 대상 phone: {}", phone);
+//            return phone;
+//        };
+//    }
 }

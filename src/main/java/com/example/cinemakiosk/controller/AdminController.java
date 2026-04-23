@@ -13,6 +13,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@Log4j2
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
@@ -56,6 +58,7 @@ public class AdminController {
     @Operation(summary = "자동 로그인")
     @PostMapping("/remember_me")
     public ResponseEntity<Void> rememberMe(String loginId, HttpServletResponse response) {
+        log.info("자동로그인 메서드 진입 쿠키 생성");
         // UUID 추가
         adminRoleService.rememberMe(loginId);
 
@@ -71,7 +74,7 @@ public class AdminController {
     @Operation(summary = "자동 로그인 검증")
     @PostMapping("/remember_me/auth")
     public ResponseEntity<String> rememberMeAuth(HttpServletRequest request) {
-
+        log.info("자동로그인 검증 진입");
         // 쿠키가 없을 경우
         if (request.getCookies() == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 401
