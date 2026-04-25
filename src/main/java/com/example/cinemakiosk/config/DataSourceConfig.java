@@ -19,7 +19,7 @@ import java.util.Properties;
 public class DataSourceConfig {
     // 데이터 베이스 설정
     @Primary
-    @Bean(name = "mariaDb")
+    @Bean(name = "mariaDB")
     @ConfigurationProperties(prefix = "spring.datasource")
     public DataSource mariaDB() {
         return DataSourceBuilder.create().build();
@@ -40,7 +40,7 @@ public class DataSourceConfig {
     @Primary
     @Bean(name = "entityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
-            @Qualifier("mariaDb") DataSource dataSource) {
+            @Qualifier("mariaDB") DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
         em.setPackagesToScan("com.example.cinemakiosk");
@@ -49,7 +49,7 @@ public class DataSourceConfig {
         em.setJpaVendorAdapter(vendorAdapter);
 
         Properties props = new Properties();
-        props.put("hibernate.dialect", "org.hibernate.dialect.MariaDbDialect");
+        props.put("hibernate.dialect", "org.hibernate.dialect.MariaDBDialect");
         props.put("hibernate.hbm2ddl.auto", "update");
         props.put("hibernate.physical_naming_strategy",
                 "org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy");
