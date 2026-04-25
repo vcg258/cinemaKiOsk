@@ -44,7 +44,7 @@ public class AdminEntity{
     private String uuid;          // 자동 로그인 토큰
 
     @CreatedDate
-    @Column(nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
+    @Column(name = "create_at", nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
     private LocalDateTime createAt; // 계정 생성 일자
 
     @OnDelete(action= OnDeleteAction.CASCADE)

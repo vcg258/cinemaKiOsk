@@ -1,0 +1,39 @@
+body {
+    font-family: '맑은 고딕', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+}
+
+pre {
+    background-color: #f4f4f4;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 5px;
+    font-family: "Courier New", Courier, monospace;
+    white-space: pre-wrap; /* 줄 바꿈을 처리하여 긴 JSON도 화면에 맞게 표시 */
+    word-wrap: break-word;
+}
+
+.speakerPulse {
+    animation: speakerPulseAnimation 0.8s infinite;
+}
+
+@keyframes speakerPulseAnimation {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(0.7);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.overlay-container canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: auto;
+    z-index: 10;
+}

@@ -38,8 +38,8 @@ public class MovieController {
 
 
     // 이미지 저장 경로 (반환에서 사용)
-    @Value("${my.upload.path}")
-    private String uploadPath;
+//    @Value("${my.upload.path}")
+//    private String uploadPath;
 
     private final MovieService movieService;
 

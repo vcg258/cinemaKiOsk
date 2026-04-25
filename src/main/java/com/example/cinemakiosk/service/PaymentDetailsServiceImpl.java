@@ -64,7 +64,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
         for (PaymentDetailsVO paymentDetailsVO : paymentDetailsVOS) {
             paymentDetailsDTOS.add(PaymentDetailsVO.toDTO(paymentDetailsVO));
         }
-        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("createAt").descending());
+        Pageable pageable = PageRequest.of(page - 1, 10);
 
         return new PageImpl<>(paymentDetailsDTOS, pageable, count);
     }
