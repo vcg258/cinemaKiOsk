@@ -69,8 +69,6 @@ public class TokenCheckFilter extends OncePerRequestFilter {
             accessTokenException.sendResponseError(response);
         }
 
-        // TODO filterChain.doFilter(request, response);
-
     }
 
     // AccessToken 검증

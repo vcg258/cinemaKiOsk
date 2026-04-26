@@ -76,7 +76,7 @@ public class PaymentController {
             ObjectNode successNode = objectMapper.createObjectNode();
             successNode.put("status", "DONE");
             successNode.put("orderId", orderId);
-            successNode.put("method", "POINT"); // TODO 쿠폰 + 포인트 전액할인도 POINT(?) FREE(?)
+            successNode.put("method", "POINT");
             responseResult = successNode;
         }
         log.error("경계4");
@@ -112,10 +112,9 @@ public class PaymentController {
         log.error("경계");
         // 1. 파싱 (Jackson 사용)
         JsonNode requestData = objectMapper.readTree(jsonBody);
-        String paymentKey = requestData.get("paymentKey").asText(); // TODO NPE 위험 get -> path
+        String paymentKey = requestData.get("paymentKey").asText();
         String paymentId = requestData.get("paymentId").asText();
 
-        // TODO 환불금액이 0원일 경우 호출X 결제내역, 예매내역, 포인트만 복구
         if (paymentKey == null || paymentKey.isBlank()) {
             log.info("환불할 금액 0원 이므로 토스 호출 하지않음: {}", paymentId);
             refundService.refund(paymentId);
