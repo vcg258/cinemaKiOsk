@@ -1,8 +1,8 @@
 package com.example.cinemakiosk.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -19,16 +19,27 @@ import java.util.Properties;
 public class DataSourceConfig {
     // 데이터 베이스 설정
     @Primary
-    @Bean(name = "mariaDB")
+    @Bean
     @ConfigurationProperties(prefix = "spring.datasource")
-    public DataSource mariaDB() {
-        return DataSourceBuilder.create().build();
+    public DataSourceProperties mariaProperties() {
+        return new DataSourceProperties();
+    }
+
+    @Primary
+    @Bean(name = "mariaDB")
+    public DataSource mariaDataSource() {
+        return mariaProperties().initializeDataSourceBuilder().build();
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "app.datasource")
+    public DataSourceProperties postgresSqlProperties() {
+        return new DataSourceProperties();
     }
 
     @Bean(name = "postgresSql")
-    @ConfigurationProperties(prefix = "app.datasource")
-    public DataSource postgresSql() {
-        return DataSourceBuilder.create().build();
+    public DataSource postgresSqlDataSource() {
+        return postgresSqlProperties().initializeDataSourceBuilder().build();
     }
 
     @Bean(name = "pgJdbcTemplate")
@@ -53,6 +64,8 @@ public class DataSourceConfig {
         props.put("hibernate.hbm2ddl.auto", "update");
         props.put("hibernate.physical_naming_strategy",
                 "org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy");
+        props.put("hibernate.format_sql", "true");
+        props.put("hibernate.show_sql", "true");
         em.setJpaProperties(props);
 
         return em;
