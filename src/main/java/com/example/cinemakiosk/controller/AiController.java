@@ -31,7 +31,7 @@ public class AiController {
         return ResponseEntity.ok(result);
     }
 
-    @Operation(summary = "Json -> ETL PGVector ADD")
+    @Operation(summary = "Json -> ETL PGVector ADD", description = "Service Test Code -> TEST URL = https://jsonplaceholder.typicode.com/posts")
     @PostMapping("/json")
     public ResponseEntity<String> textJson(@RequestParam String url) throws MalformedURLException {
         String result = etlService.etlFromJson(url);

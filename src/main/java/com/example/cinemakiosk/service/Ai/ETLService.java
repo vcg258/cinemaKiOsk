@@ -33,7 +33,7 @@ public class ETLService {
 
     // TODO 직원 메뉴얼이면 HTML추출까지는 필요없어보여서 file과 json만 넣음
     /**
-     * 업로드 파일 텍스트 추출 -> 변환 -> 적재 메소드
+     * 업로드 파일 텍스트 추출 -> 변환 -> 적재
      * @param title 제목
      * @param author 작성자
      * @param file 업로드 파일
@@ -70,6 +70,12 @@ public class ETLService {
         return "올린 문서 추출-변환-적재 완료";
     }
 
+    /**
+     * JSON URL 추출 -> 변환 -> 적재
+     * @param url JSON URL
+     * @return ETL 완료 멘트(?)
+     * @throws MalformedURLException 잘못된 JSON URL 예외
+     */
     public String etlFromJson(String url) throws MalformedURLException {
         Resource resource = new UrlResource(url);
 
@@ -78,6 +84,7 @@ public class ETLService {
                     @Override
                     public Map<String, Object> generate(Map<String, Object> jsonMap) {
                         return Map.of(
+                                // JSON 테스트 용
 //                                "title", jsonMap.getOrDefault("title", "제목없음"),
 //                                "author", jsonMap.getOrDefault("userId", "미상").toString(),
                                 "title", jsonMap.get("title"),
@@ -139,7 +146,7 @@ public class ETLService {
         // 토큰 기준으로 분할한 리스트로 변환
         transformedDocuments = tokenTextSplitter.apply(documents);
 
-//        // 청크마다 키워드 5개 추출 -> 메타데이터 추가 (일단 주석 토큰이 좀 그럼; 10청크 -> 50개 추출)
+//        // 청크마다 키워드 5개 추출 -> 메타데이터 추가 (일단 주석 -> 토큰이 좀 그럼; 10청크 -> 50개 추출)
 //        KeywordMetadataEnricher keywordMetadataEnricher = new KeywordMetadataEnricher(chatModel, 5);
 //        // 청크마다 키워드 메타데이터가 추가된 리스트 변환
 //        transformedDocuments = keywordMetadataEnricher.apply(transformedDocuments);
