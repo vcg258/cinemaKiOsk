@@ -1,9 +1,9 @@
 package com.example.cinemakiosk.service;
 
-import com.example.cinemakiosk.dto.MovieDTO;
-import com.example.cinemakiosk.dto.TmdbMovieDTO;
 
-import java.io.IOException;
+import com.example.cinemakiosk.dto.MovieDTO;
+import com.example.cinemakiosk.dto.Tmdb.TmdbMovieDTO.TmdbMovieDTO;
+
 import java.util.List;
 
 public interface TmdbService {

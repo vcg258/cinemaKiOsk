@@ -1,4 +1,4 @@
-package com.example.cinemakiosk.dto.TmdbCredits;
+package com.example.cinemakiosk.dto.Tmdb.TmdbCredits;
 
 import lombok.Getter;
 import lombok.Setter;

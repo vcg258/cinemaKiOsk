@@ -1,4 +1,4 @@
-package com.example.cinemakiosk.dto;
+package com.example.cinemakiosk.dto.Tmdb.TmdbMovieDTO;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -20,9 +20,5 @@ public class TmdbMovieDTO {
     @JsonProperty("poster_path")
     private String posterPath;
 
-    @Getter
-    @Setter
-    public static class GenreDTO {
-        private String name;
-    }
+
 }

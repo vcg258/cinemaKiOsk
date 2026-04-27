@@ -2,9 +2,8 @@ package com.example.cinemakiosk.controller;
 
 
 import com.example.cinemakiosk.dto.MovieDTO;
-import com.example.cinemakiosk.dto.TmdbMovieDTO;
+import com.example.cinemakiosk.dto.Tmdb.TmdbMovieDTO.TmdbMovieDTO;
 import com.example.cinemakiosk.service.TmdbService;
-import com.example.cinemakiosk.service.TmdbServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -48,6 +47,6 @@ public class TmdbController {
     public ResponseEntity<MovieDTO> getMovieDetail(@PathVariable Long tmdbId) {
         log.info("Get movie: {}", tmdbId);
         return ResponseEntity.ok(tmdbService.searchMovieDetail(tmdbId));
-
     }
+
 }

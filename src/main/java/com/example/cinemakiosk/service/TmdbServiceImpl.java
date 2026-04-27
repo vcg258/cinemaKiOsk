@@ -1,11 +1,17 @@
 package com.example.cinemakiosk.service;
 
+
 import com.example.cinemakiosk.config.TmdbConfig;
 import com.example.cinemakiosk.domain.enums.Rating;
-import com.example.cinemakiosk.dto.*;
-import com.example.cinemakiosk.dto.TmdbCredits.CrewDTO;
-import com.example.cinemakiosk.dto.TmdbCredits.CastDTO;
-import com.example.cinemakiosk.dto.TmdbCredits.TmdbCreditsDTO;
+import com.example.cinemakiosk.dto.MovieDTO;
+import com.example.cinemakiosk.dto.Tmdb.TmdbCredits.CastDTO;
+import com.example.cinemakiosk.dto.Tmdb.TmdbCredits.CrewDTO;
+import com.example.cinemakiosk.dto.Tmdb.TmdbCredits.TmdbCreditsDTO;
+import com.example.cinemakiosk.dto.Tmdb.TmdbMovieDTO.GenreDTO;
+import com.example.cinemakiosk.dto.Tmdb.TmdbMovieDTO.TmdbMovieDTO;
+import com.example.cinemakiosk.dto.Tmdb.TmdbReleaseDatesDTO.ReleaseDate;
+import com.example.cinemakiosk.dto.Tmdb.TmdbReleaseDatesDTO.TmdbReleaseDatesDTO;
+import com.example.cinemakiosk.dto.Tmdb.TmdbSearchResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,10 +37,19 @@ public class TmdbServiceImpl implements TmdbService {
     private String uploadPath;
 
 
-//    private final String baseUrl = "tmdbConfig.getBaseUrl()";
+    private final String baseUrl = "tmdbConfig.getBaseUrl()";
+
+
+
+
+
+
+
+
 
     // 인기 영화 목록 수정
     public List<TmdbMovieDTO> getPopularMovies(int page) {
+
         // 페이지 번호 유효성 검사
         if (page < 1) {
             throw new IllegalArgumentException("페이지 번호는 1 이상이어야 합니다: " + page);
@@ -101,7 +116,7 @@ public class TmdbServiceImpl implements TmdbService {
 
         // poster_path에 imageUrl 붙여주기
         for (TmdbMovieDTO movieDTO : response.getResults()) {
-            log.info("moviePosterPath: {}", movieDTO.getPosterPath());
+            log.info("moviePosterPath: " + movieDTO.getPosterPath());
             movieDTO.setPosterPath(tmdbConfig.getImageUrl() + movieDTO.getPosterPath());
         }
 
@@ -121,8 +136,6 @@ public class TmdbServiceImpl implements TmdbService {
 //                + "?api_key=" + tmdbConfig.getApiKey()
 //                + "&language=ko-KR";
 //        TmdbMovieDTO detail = restTemplate.getForObject(url, TmdbMovieDTO.class);
-
-
 
         // 1. RestClient 초기화
         RestClient restClient = RestClient.builder()
@@ -144,8 +157,6 @@ public class TmdbServiceImpl implements TmdbService {
         if (detail == null) {
             throw new NoSuchElementException("해당 영화를 찾을 수 없습니다. tmdbId=" + tmdbId);
         }
-
-
 
 
         // 상세조회(배우, 감독)
@@ -188,7 +199,7 @@ public class TmdbServiceImpl implements TmdbService {
 
         // 장르들 가져오기
         String genre = detail.getGenres().stream()
-                .map(TmdbMovieDTO.GenreDTO::getName)
+                .map(GenreDTO::getName)
                 .collect(Collectors.joining(", "));
 
         // 포스터 다운로드 및 저장
@@ -247,7 +258,7 @@ public class TmdbServiceImpl implements TmdbService {
                     .uri(uriBuilder -> {
                         URI uri = uriBuilder
                                 .path("/movie/" + tmdbId + "/release_dates")
-                                .queryParam("api_key", tmdbConfig.getApiKey())
+                                .queryParam("api_key=", tmdbConfig.getApiKey())
                                 .build();
                         log.info("uri: {}", uri);
                         return uriBuilder.build();
@@ -266,7 +277,7 @@ public class TmdbServiceImpl implements TmdbService {
             String certification = response.getResults().stream()
                     .filter(r -> "KR".equals(r.getIso31661()))
                     .flatMap(r -> r.getReleaseDates().stream())
-                    .map(TmdbReleaseDatesDTO.ReleaseDate::getCertification)
+                    .map(ReleaseDate::getCertification)
                     .filter(c -> c != null && !c.isBlank())
                     .findFirst()
                     .orElse("");

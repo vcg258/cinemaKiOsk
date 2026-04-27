@@ -1,5 +1,6 @@
-package com.example.cinemakiosk.dto;
+package com.example.cinemakiosk.dto.Tmdb;
 
+import com.example.cinemakiosk.dto.Tmdb.TmdbMovieDTO.TmdbMovieDTO;
 import lombok.Getter;
 import lombok.Setter;
 
