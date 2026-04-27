@@ -43,7 +43,7 @@ public class ETLService {
     public String etlFromFile (String title, String author, MultipartFile file) throws IOException {
         List<Document> documents = extractFromFile(file);
         if (documents == null) {
-            throw new IOException(".txt, .pdf, .doc, .docx 파일 중에 하나를 올려주세요.");
+            throw new IOException(".txt, .json, .pdf, .doc, .docx 파일 중에 하나를 올려주세요.");
         }
         log.info("추출된 documents 수 : {}", documents);
 
@@ -84,11 +84,10 @@ public class ETLService {
                     @Override
                     public Map<String, Object> generate(Map<String, Object> jsonMap) {
                         return Map.of(
-                                // JSON 테스트 용
-//                                "title", jsonMap.getOrDefault("title", "제목없음"),
+                                // JSON 테스트 용 (url테스트할때는 author -> userId 주석, 주석해제)
 //                                "author", jsonMap.getOrDefault("userId", "미상").toString(),
-                                "title", jsonMap.get("title"),
-                                "author", jsonMap.get("author"),
+                                "title", jsonMap.getOrDefault("title", "제목없음"),
+                                "author", jsonMap.getOrDefault("author", "미상"),
                                 "url", url
                         );
                     }
@@ -129,6 +128,19 @@ public class ETLService {
         } else if (file.getContentType().contains("wordprocessingml")) {
             DocumentReader documentReader = new TikaDocumentReader(resource);
             documents = documentReader.read();
+        } else if (file.getContentType().equals("application/json")) {
+            JsonReader jsonReader = new JsonReader(resource,
+                    new JsonMetadataGenerator() {
+                        @Override
+                        public Map<String, Object> generate(Map<String, Object> jsonMap) {
+                            return Map.of(
+                                    "title", jsonMap.getOrDefault("title", "제목없음"),
+                                    "author", jsonMap.getOrDefault("author", "미상"),
+                                    "source", file.getOriginalFilename()
+                            );
+                        }
+                    });
+            documents = jsonReader.read();
         }
         return documents;
     }
