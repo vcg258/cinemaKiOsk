@@ -115,8 +115,8 @@ IF @s_count = 2 THEN
 END IF;
 
                     -- 결제 상세 (실제 통계에 잡힐 데이터)
-INSERT INTO `payment_details` (`id`, `reservation_id`, `cost`, `create_at`, `status`)
-VALUES (pay_id, res_id, (@s_count * 12000), DATE_SUB(@start, INTERVAL 5 MINUTE), 'PAY');
+INSERT INTO `payment_details` (`id`, `reservation_id`, `cost`, `create_at`, `payment_key`, `status`)
+VALUES (pay_id, res_id, (@s_count * 12000), DATE_SUB(@start, INTERVAL 5 MINUTE), 'Card', 'PAY');
 
 SET k = k + 1;
 END WHILE;
