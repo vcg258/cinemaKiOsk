@@ -1,4 +1,4 @@
-package com.example.cinemakiosk.dto.AdminDTO;
+package com.example.cinemakiosk.dto.adminDTO;
 
 import lombok.*;
 

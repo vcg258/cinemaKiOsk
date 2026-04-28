@@ -1,7 +1,6 @@
-package com.example.cinemakiosk.domain.adminDomain;
+package com.example.cinemakiosk.domain.admindomain;
 
-import com.example.cinemakiosk.dto.AdminDTO.AdminRoleDTO;
-import com.example.cinemakiosk.dto.AdminDTO.AdminRoleMapDTO;
+import com.example.cinemakiosk.dto.adminDTO.AdminRoleMapDTO;
 import jakarta.persistence.*;
 import lombok.*;
 

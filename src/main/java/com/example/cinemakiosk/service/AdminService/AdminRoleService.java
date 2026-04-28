@@ -1,9 +1,9 @@
 package com.example.cinemakiosk.service.AdminService;
 
-import com.example.cinemakiosk.dto.AdminDTO.AdminDTO;
-import com.example.cinemakiosk.dto.AdminDTO.AdminRoleDTO;
-import com.example.cinemakiosk.dto.AdminDTO.AdminRoleMapDTO;
-import com.example.cinemakiosk.dto.RequestDTO.AdminRoleMapRequest;
+import com.example.cinemakiosk.dto.adminDTO.AdminDTO;
+import com.example.cinemakiosk.dto.adminDTO.AdminRoleDTO;
+import com.example.cinemakiosk.dto.adminDTO.AdminRoleMapDTO;
+import com.example.cinemakiosk.dto.requestDTO.AdminRoleMapRequest;
 
 import java.util.List;
 

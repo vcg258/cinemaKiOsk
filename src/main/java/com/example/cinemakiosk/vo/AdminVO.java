@@ -1,6 +1,6 @@
 package com.example.cinemakiosk.vo;
 
-import com.example.cinemakiosk.dto.AdminDTO.AdminDTO;
+import com.example.cinemakiosk.dto.adminDTO.AdminDTO;
 import lombok.*;
 
 import java.time.LocalDateTime;

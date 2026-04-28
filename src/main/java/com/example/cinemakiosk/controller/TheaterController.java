@@ -1,6 +1,6 @@
 package com.example.cinemakiosk.controller;
 
-import com.example.cinemakiosk.dto.RequestDTO.TheaterRequest;
+import com.example.cinemakiosk.dto.requestDTO.TheaterRequest;
 import com.example.cinemakiosk.dto.SeatPolicyDTO;
 import com.example.cinemakiosk.dto.TheaterDTO;
 import com.example.cinemakiosk.service.TheaterService;

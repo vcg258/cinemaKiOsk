@@ -1,6 +1,6 @@
 package com.example.cinemakiosk.service;
 
-import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
+import com.example.cinemakiosk.dto.requestDTO.ActivationRequest;
 import com.example.cinemakiosk.dto.ScheduleDTO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;

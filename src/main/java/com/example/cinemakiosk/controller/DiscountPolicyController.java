@@ -1,9 +1,8 @@
 package com.example.cinemakiosk.controller;
 
-import com.example.cinemakiosk.dto.BonusPolicyDTO;
 import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
-import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
+import com.example.cinemakiosk.dto.requestDTO.ActivationRequest;
 import com.example.cinemakiosk.service.DiscountPolicyService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

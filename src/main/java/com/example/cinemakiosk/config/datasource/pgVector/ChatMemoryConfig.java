@@ -1,4 +1,4 @@
-package com.example.cinemakiosk.config.DataSourceConfig.PGVectorConfig;
+package com.example.cinemakiosk.config.datasource.pgVector;
 
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.ChatMemoryRepository;

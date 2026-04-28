@@ -1,4 +1,4 @@
-package com.example.cinemakiosk.controller.AiController;
+package com.example.cinemakiosk.controller.aicontroller;
 
 import com.example.cinemakiosk.service.Ai.ETLService;
 import io.swagger.v3.oas.annotations.Operation;

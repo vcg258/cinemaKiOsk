@@ -1,6 +1,6 @@
 package com.example.cinemakiosk.repository.AdminRepository;
 
-import com.example.cinemakiosk.domain.adminDomain.AdminRoleMapEntity;
+import com.example.cinemakiosk.domain.admindomain.AdminRoleMapEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

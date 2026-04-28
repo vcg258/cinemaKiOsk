@@ -1,6 +1,6 @@
-package com.example.cinemakiosk.dto.AdminDTO;
+package com.example.cinemakiosk.dto.adminDTO;
 
-import com.example.cinemakiosk.domain.adminDomain.AdminEntity;
+import com.example.cinemakiosk.domain.admindomain.AdminEntity;
 import com.example.cinemakiosk.vo.AdminVO;
 import lombok.*;
 

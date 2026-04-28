@@ -6,7 +6,9 @@ import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
+import org.springframework.ai.rag.generation.augmentation.ContextualQueryAugmenter;
 import org.springframework.ai.rag.preretrieval.query.transformation.CompressionQueryTransformer;
 import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
 import org.springframework.ai.vectorstore.VectorStore;
@@ -67,6 +69,26 @@ public class RagService {
                 = RetrievalAugmentationAdvisor.builder()
                 .queryTransformers(compressionQueryTransformer()) // 압축 쿼리 변환기 추가
                 .documentRetriever(createVectorStoreDocumentRetriever(score, source)) // 지정 임계점수에 맞게 검색하는 모듈 추가
+                .queryAugmenter(
+                        ContextualQueryAugmenter.builder()
+                                .promptTemplate(PromptTemplate.builder()
+                                        .template("""
+                                        아래는 참고할 문서 내용입니다.
+                                        
+                                        ---------------------
+                                        {context}
+                                        ---------------------
+                                        
+                                        위 내용을 바탕으로 다음 질문에 한국어로 답변하세요.
+                                        문서에 관련 내용이 있으면 반드시 그 내용을 기반으로 답변하세요.
+                                        
+                                        질문: {query}
+                                        
+                                        답변:
+                                        """)
+                                        .build())
+                                .build()
+                )
                 .build();
 
         String content = chatClient.prompt()

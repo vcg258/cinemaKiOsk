@@ -1,4 +1,4 @@
-package com.example.cinemakiosk.config.DataSourceConfig.PGVectorConfig;
+package com.example.cinemakiosk.config.datasource.pgVector;
 
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.vectorstore.VectorStore;

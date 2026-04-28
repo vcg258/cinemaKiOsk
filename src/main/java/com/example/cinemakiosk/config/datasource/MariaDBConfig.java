@@ -1,4 +1,4 @@
-package com.example.cinemakiosk.config.DataSourceConfig;
+package com.example.cinemakiosk.config.datasource;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
