@@ -4,7 +4,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
-import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
@@ -21,10 +20,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class RagService {
     private final ChatMemory chatMemory; // 대화 내용 기억 (DB 저장)
-    private final ChatClient chatClient;
-    private final VectorStore vectorStore;
-    private final JdbcTemplate jdbcTemplate;
-    private final ChatModel chatModel;
+    private final ChatClient chatClient; // LLM 옵션 적용
+    private final VectorStore vectorStore; // 벡터 등록
+    private final JdbcTemplate jdbcTemplate; // VectorDB에는 전체 삭제가 없음 전체삭제시 활용(총 관리자 전용)
+    private final ChatModel chatModel; // 쿼리 압축기 때 사용 (압축변환기의 로그를 보기 위함)
+
+    public void clearVectorStore() {
+        jdbcTemplate.update("TRUNCATE TABLE rag.vector_store");
+    }
 
     public RagService(ChatClient.Builder builder,
                       VectorStore vectorStore,
@@ -33,12 +36,11 @@ public class RagService {
                       ChatModel chatModel) {
         this.chatClient = builder
                 .defaultAdvisors(
-                        MessageChatMemoryAdvisor.builder(chatMemory).build(),
                         new SimpleLoggerAdvisor(Ordered.LOWEST_PRECEDENCE - 1))
                 .defaultSystem(
                         """
                         당신은 영화관 직원 교육을 돕는 AI 어시스턴트입니다.
-                        제공된 매뉴얼 문서를 기반으로 정확하게 답변하세요.
+                        제공된 매뉴얼 문서(DB)를 기반으로 정확하게 답변하세요.
                         매뉴얼에 없는 내용은 "해당 내용은 매뉴얼에서 찾을 수 없습니다"라고 안내하세요.
                         답변은 한국어로 해주세요.
                         """
@@ -69,8 +71,11 @@ public class RagService {
 
         String content = chatClient.prompt()
                 .user(question)
-                .advisors(retrievalAugmentationAdvisor)
-                .advisors(advisorSpec -> advisorSpec.param(ChatMemory.CONVERSATION_ID, conversationId))
+                .advisors(
+                        MessageChatMemoryAdvisor.builder(chatMemory)
+                                .conversationId(conversationId)
+                                .build(),
+                        retrievalAugmentationAdvisor)
                 .call()
                 .content();
 

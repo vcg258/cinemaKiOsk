@@ -28,8 +28,8 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class ETLService {
-    private final ChatModel chatModel;
-    private final VectorStore vectorStore;
+    private final ChatModel chatModel; // 키워드 추출 할때 사용
+    private final VectorStore vectorStore; // VectorDB에 적용
 
     // TODO 직원 메뉴얼이면 HTML추출까지는 필요없어보여서 file과 json만 넣음
     /**

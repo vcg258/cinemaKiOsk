@@ -1,4 +1,4 @@
-package com.example.cinemakiosk.controller;
+package com.example.cinemakiosk.controller.AiController;
 
 import com.example.cinemakiosk.service.Ai.ETLService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,9 +12,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 @RestController
-@RequestMapping("/api/admin/ai")
+@RequestMapping("/api/admin/etl")
 @RequiredArgsConstructor
-public class AiController {
+public class EtlController {
     private final ETLService etlService;
 
     @Operation(summary = "Upload Text File -> ETL PGVector ADD")
