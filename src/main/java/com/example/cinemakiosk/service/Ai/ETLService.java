@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentReader;
+import org.springframework.ai.model.transformer.KeywordMetadataEnricher;
 import org.springframework.ai.reader.JsonMetadataGenerator;
 import org.springframework.ai.reader.JsonReader;
 import org.springframework.ai.reader.TextReader;
@@ -15,6 +16,7 @@ import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +32,7 @@ import java.util.Map;
 public class ETLService {
     private final ChatModel chatModel; // 키워드 추출 할때 사용
     private final VectorStore vectorStore; // VectorDB에 적용
+    private final JdbcTemplate jdbcTemplate; // VectorDB에는 전체 삭제가 없음 새로운 메뉴얼을 넣을때는 전체 삭제를 하고 최신거만 추가하기 위함
 
     // TODO 직원 메뉴얼이면 HTML추출까지는 필요없어보여서 file과 json만 넣음
     /**
@@ -41,6 +44,10 @@ public class ETLService {
      * @throws IOException 잘못된 업로드 파일 예외
      */
     public String etlFromFile (String title, String author, MultipartFile file) throws IOException {
+        // 새로 추가시 테이블을 비움
+        clearVectorStore();
+        log.info("새로운 업로드 기존값 제거...");
+
         List<Document> documents = extractFromFile(file);
         if (documents == null) {
             throw new IOException(".txt, .json, .pdf, .doc, .docx 파일 중에 하나를 올려주세요.");
@@ -60,12 +67,11 @@ public class ETLService {
                     "source", file.getOriginalFilename()));
         }
 
-        log.info("변환된 Document 수 : {}", documents.size());
-
         // 청킹
-        documents = transform(documents);
+        List<Document> transform = transform(documents);
+        log.info("변환된 Document 수 : {}", transform.size());
 
-        vectorStore.add(documents);
+        vectorStore.add(transform);
 
         return "올린 문서 추출-변환-적재 완료";
     }
@@ -77,6 +83,10 @@ public class ETLService {
      * @throws MalformedURLException 잘못된 JSON URL 예외
      */
     public String etlFromJson(String url) throws MalformedURLException {
+        // 새로 추가시 테이블을 비움
+        clearVectorStore();
+        log.info("새로운 업로드 기존값 제거...");
+
         Resource resource = new UrlResource(url);
 
         JsonReader jsonReader = new JsonReader(resource,
@@ -95,15 +105,25 @@ public class ETLService {
         List<Document> documents = jsonReader.read();
         log.info("추출된 Documents 수 : {}개", documents);
 
-        TokenTextSplitter tokenTextSplitter = new TokenTextSplitter();
-        List<Document> apply = tokenTextSplitter.apply(documents);
+//        TokenTextSplitter tokenTextSplitter = new TokenTextSplitter();
+        List<Document> apply = transform(documents);
         log.info("변환된 Document 수: {}개", apply.size());
 
         vectorStore.add(apply);
         return "JSON 추출-변환-적재 완료";
     }
 
+
+
     // Helper Method
+
+    /**
+     * VectorDB 전체 삭제
+     */
+    public void clearVectorStore() {
+        jdbcTemplate.update("TRUNCATE TABLE rag.vector_store");
+    }
+
     /**
      * 업로드된 파일 내용 바이트로 추출
      * @param file 업로드 파일
@@ -154,14 +174,20 @@ public class ETLService {
         List<Document> transformedDocuments = null;
 
         // Document 기준으로 청크후 분할함 (기본 토큰수 1000)
-        TokenTextSplitter tokenTextSplitter = new TokenTextSplitter();
+        TokenTextSplitter tokenTextSplitter = TokenTextSplitter.builder()
+                .withChunkSize(300) // 청크당 최대 토큰 수
+                .withMinChunkSizeChars(100) // 청크 간 오버랩 토큰 수 (문맥 유지)
+                .withMinChunkLengthToEmbed(5) // 최소 청크 토큰 수
+                .withMaxNumChunks(10000) // 최대 청크 토큰 수
+                .withKeepSeparator(true) // 문장 경계에서 분할 여부
+                .build();
         // 토큰 기준으로 분할한 리스트로 변환
         transformedDocuments = tokenTextSplitter.apply(documents);
 
-//        // 청크마다 키워드 5개 추출 -> 메타데이터 추가 (일단 주석 -> 토큰이 좀 그럼; 10청크 -> 50개 추출)
-//        KeywordMetadataEnricher keywordMetadataEnricher = new KeywordMetadataEnricher(chatModel, 5);
-//        // 청크마다 키워드 메타데이터가 추가된 리스트 변환
-//        transformedDocuments = keywordMetadataEnricher.apply(transformedDocuments);
+        // 청크마다 키워드 5개 추출 -> 메타데이터 추가 (일단 주석 -> 토큰이 좀 그럼; 10청크 -> 50개 추출)
+        KeywordMetadataEnricher keywordMetadataEnricher = new KeywordMetadataEnricher(chatModel, 5);
+        // 청크마다 키워드 메타데이터가 추가된 리스트 변환
+        transformedDocuments = keywordMetadataEnricher.apply(transformedDocuments);
         return transformedDocuments;
     }
 }

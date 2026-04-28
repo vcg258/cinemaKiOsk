@@ -12,12 +12,12 @@ public class RagController {
     private final RagService ragService;
 
     // DTO record를 이용해서 생성
-    public record RagRequest(String question, String source, String conversationId) {}
+    public record RagRequest(String question, String title, String conversationId) {}
 
     @PostMapping("/chat")
     public ResponseEntity<String> chat(@RequestBody RagRequest ragRequest) {
         String chat = ragService.chat(
-                ragRequest.question(), 0.7, ragRequest.source(), ragRequest.conversationId()
+                ragRequest.question(), 0.3, ragRequest.title(), ragRequest.conversationId()
         );
         return ResponseEntity.ok().body(chat);
     }
