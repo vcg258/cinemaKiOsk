@@ -130,7 +130,7 @@ public class MovieController {
     // 영화 사진 반환
     @Operation(summary = "영화 사진 반환",
             description = "1. 영화 제목 입력시 영화 이미지 반환\n 2. 맨 앞에 s_ 붙일 시 썸네일 이미지 반환\n - 영화 제목이 중복일시 에러")
-    @GetMapping("/{titleName}")
+    @GetMapping("/{titleName}/getImage")
     public ResponseEntity<Resource> image(@PathVariable String titleName) {
         try {
             File directory = new File(uploadPath);
