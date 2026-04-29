@@ -65,11 +65,22 @@ public class PaymentDetailsEntity {
      */
     public static PaymentDetailsDTO toDTO(PaymentDetailsEntity paymentDetailsEntity){
 
+        BonusPolicyDTO bonusPolicyDTO = null;
+        if (paymentDetailsEntity.getBonusPolicyEntity() != null) {
+            bonusPolicyDTO = BonusPolicyEntity.toDTO(paymentDetailsEntity.getBonusPolicyEntity());
+        }
+
+        // couponEntity null 체크
+        CouponDTO couponDTO = null;
+        if (paymentDetailsEntity.getCouponEntity() != null) {
+            couponDTO = CouponEntity.toDTO(paymentDetailsEntity.getCouponEntity());
+        }
+
         return PaymentDetailsDTO.builder()
                 .id(paymentDetailsEntity.getId())
                 .reservation(ReservationDetailsEntity.toDTO(paymentDetailsEntity.getReservationDetailsEntity()))
-                .bonusPolicy(BonusPolicyEntity.toDTO(paymentDetailsEntity.getBonusPolicyEntity()))
-                .couponNum(CouponEntity.toDTO(paymentDetailsEntity.getCouponEntity()))
+                .bonusPolicy(bonusPolicyDTO)
+                .couponNum(couponDTO)
                 .cost(paymentDetailsEntity.getCost())
                 .createAt(paymentDetailsEntity.getCreateAt())
                 .usePoint(paymentDetailsEntity.getUsePoint())

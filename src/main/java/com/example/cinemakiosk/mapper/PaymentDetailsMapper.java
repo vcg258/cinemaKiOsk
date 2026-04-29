@@ -10,5 +10,5 @@ public interface PaymentDetailsMapper {
 
     PaymentDetailsVO selectOneById(String uuid);
 
-    List<PaymentDetailsVO> selectAll(int page);
+//    List<PaymentDetailsVO> selectAll(int page);
 }

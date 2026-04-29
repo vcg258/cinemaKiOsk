@@ -57,10 +57,18 @@ public class ReservationDetailsEntity{
      * @return DTO
      */
     public static ReservationDetailsDTO toDTO(ReservationDetailsEntity reservationDetailsEntity) {
+        List<ReservationSeatDTO> seats = new ArrayList<>();
+        if (reservationDetailsEntity.getReservationSeatEntity() != null) {
+            for (ReservationSeatEntity seatEntity : reservationDetailsEntity.getReservationSeatEntity()) {
+                seats.add(ReservationSeatEntity.toDTO(seatEntity));
+            }
+        }
+
         return ReservationDetailsDTO.builder()
                 .id(reservationDetailsEntity.getId())
                 .schedule(ScheduleEntity.toDTO(reservationDetailsEntity.getScheduleEntity()))
                 .phone(MemberEntity.toDTO(reservationDetailsEntity.getMemberEntity()))
+                .seats(seats)
                 .createAt(reservationDetailsEntity.getCreateAt())
                 .build();
     }

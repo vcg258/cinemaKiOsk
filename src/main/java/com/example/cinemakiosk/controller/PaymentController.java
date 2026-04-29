@@ -165,7 +165,7 @@ public class PaymentController {
 
     @Operation(summary = "결제 내역 모두 조회 (페이징)")
     @GetMapping("/admin/payment/list")
-    public ResponseEntity<Page<PaymentDetailsDTO>> readAllPayment(int page) {
+    public ResponseEntity<Page<PaymentDetailsDTO>> readAllPayment(@RequestParam(defaultValue = "1") int page) {
         return ResponseEntity.ok(paymentDetailsService.readAll(page));
     }
 
