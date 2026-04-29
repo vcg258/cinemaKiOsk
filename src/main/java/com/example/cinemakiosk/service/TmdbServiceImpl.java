@@ -32,8 +32,8 @@ public class TmdbServiceImpl implements TmdbService {
     private final RestTemplate restTemplate;
 
     // 이미지 저장 경로
-    @Value("${my.upload.path}")
-    private String uploadPath;
+//    @Value("${my.upload.path}")
+//    private String uploadPath;
 
 
     private final String baseUrl = "tmdbConfig.getBaseUrl()";

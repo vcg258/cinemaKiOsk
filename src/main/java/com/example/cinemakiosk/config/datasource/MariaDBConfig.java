@@ -56,7 +56,7 @@ public class MariaDBConfig {
 
     // JPA 트랜잭션도 설정 지정
     @Primary
-    @Bean(name = "mariaTxManager")
+    @Bean(name = "transactionManager")
     public PlatformTransactionManager transactionManager(
             @Qualifier("entityManagerFactory") LocalContainerEntityManagerFactoryBean emf) {
         JpaTransactionManager tm = new JpaTransactionManager();
