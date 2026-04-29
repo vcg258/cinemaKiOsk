@@ -24,10 +24,9 @@ public class EtlController {
     )
     public ResponseEntity<String> uploadFile(
             @RequestPart(value = "title", required = false) String title,
-            @RequestPart(value = "author", required = false) String author,
             @RequestPart("file") MultipartFile file
     ) throws IOException {
-        String result = etlService.etlFromFile(title, author, file);
+        String result = etlService.etlFromFile(title, file);
         return ResponseEntity.ok(result);
     }
 

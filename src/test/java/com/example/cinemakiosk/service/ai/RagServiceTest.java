@@ -12,7 +12,7 @@ class RagServiceTest {
 
     @Test
     void chat() {
-        ragService.chat("그럼 국회의원은?", 0.3, "", "admin12");
+        ragService.chat("헌법", 0.3, "", "admin12");
     }
 
     @Test

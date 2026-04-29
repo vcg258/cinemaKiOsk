@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentReader;
+import org.springframework.ai.model.transformer.KeywordMetadataEnricher;
 import org.springframework.ai.reader.JsonMetadataGenerator;
 import org.springframework.ai.reader.JsonReader;
 import org.springframework.ai.reader.TextReader;
@@ -23,8 +24,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Log4j2
 @Service
@@ -34,43 +39,59 @@ public class ETLService {
     private final VectorStore vectorStore; // VectorDB에 적용
     @Qualifier("pgJdbcTemplate") private final JdbcTemplate jdbcTemplate; // VectorDB에는 전체 삭제가 없음 새로운 메뉴얼을 넣을때는 전체 삭제를 하고 최신거만 추가하기 위함
 
-    // TODO 직원 메뉴얼이면 HTML추출까지는 필요없어보여서 file과 json만 넣음
+    // ETL추출을 할때 title 키워드를 지정하기 위해 @title = title로 형식 지정 (싱글턴)
+    private static final Pattern TITLE_PATTERN = Pattern.compile("@title:\\s*(.+?)\\s*$", Pattern.MULTILINE);
+
     /**
      * 업로드 파일 텍스트 추출 -> 변환 -> 적재
      * @param title 제목
-     * @param author 작성자
      * @param file 업로드 파일
      * @return ETL 과정 완료 멘트(?)
      * @throws IOException 잘못된 업로드 파일 예외
      */
-    public String etlFromFile (String title, String author, MultipartFile file) throws IOException {
+    public String etlFromFile (String title, MultipartFile file) throws IOException {
         // 새로 추가시 테이블을 비움
-        clearVectorStore();
-        log.info("새로운 메뉴얼 업데이트 기존값 제거...");
-        clearChatMemory();
-        log.info("새로운 메뉴얼 업데이트 사용자 기록 제거...");
+        initializeStores();
 
         List<Document> documents = extractFromFile(file);
         if (documents == null) {
             throw new IOException(".txt, .json, .pdf, .doc, .docx 파일 중에 하나를 올려주세요.");
         }
-        log.info("추출된 documents 수 : {}", documents);
+        log.info("추출된 documents 수 : {}", documents.size());
 
         // 제목이 존재한다면 지정된 title을 넣고 아니면 파일명
         String titleText = StringUtils.hasText(title) ? title : file.getOriginalFilename();
-        String authorText = StringUtils.hasText(author) ? author : "미상";
+        String contentType = file.getContentType();
 
-        // 메타 데이터 공통 정보 추가 (틀을 만들어서 추가함)
-        for (Document doc : documents) {
-            Map<String, Object> metadata = doc.getMetadata();
-            metadata.putAll(Map.of(
-                    "title", titleText,
-//                    "author", authorText, // TODO 새로운 메뉴얼을 등록시 테이블을 비우고 새로운 메뉴얼만 들어가기떄문에 불필요함
-                    "source", file.getOriginalFilename()));
+        boolean isSectionable = contentType.equals("text/plain") || contentType.contains("wordprocessingml");
+        List<Document> finalDocuments;
+
+        if (isSectionable) {
+            StringBuilder sb = new StringBuilder();
+            for (Document doc : documents) {
+                sb.append(doc.getText()).append("\n");
+            }
+            String rawText = sb.toString();
+
+            if (TITLE_PATTERN.matcher(rawText).find()) {
+                finalDocuments = parseByTitleMarker(rawText, file.getOriginalFilename());
+                log.info("@title 구분자 있음, 분리 : {}개",  finalDocuments.size());
+            } else {
+                documents.forEach(doc -> doc.getMetadata().putAll(
+                        Map.of("title", titleText, "source", file.getOriginalFilename())
+                ));
+                finalDocuments = documents;
+                log.info("@title 구분자 없음");
+            }
+        } else {
+            documents.forEach(doc -> doc.getMetadata().putAll(
+                    Map.of("title", titleText, "source", file.getOriginalFilename())
+            ));
+            finalDocuments = documents;
         }
 
         // 청킹
-        List<Document> transform = transform(documents);
+        List<Document> transform = transform(finalDocuments);
         log.info("변환된 Document 수 : {}", transform.size());
 
         vectorStore.add(transform);
@@ -86,10 +107,7 @@ public class ETLService {
      */
     public String etlFromJsonUrl(String url) throws MalformedURLException {
         // 새로 추가시 테이블을 비움
-        clearVectorStore();
-        log.info("새로운 메뉴얼 업데이트 기존값 제거...");
-        clearChatMemory();
-        log.info("새로운 메뉴얼 업데이트 사용자 기록 제거...");
+        initializeStores();
 
         Resource resource = new UrlResource(url);
 
@@ -98,16 +116,15 @@ public class ETLService {
                     @Override
                     public Map<String, Object> generate(Map<String, Object> jsonMap) {
                         return Map.of(
-                                // JSON 테스트 용 (url테스트할때는 author -> userId 주석, 주석해제)
+                                // JSON 테스트 용 (url테스트할때는 userId 주석해제)
 //                                "author", jsonMap.getOrDefault("userId", "미상").toString(),
                                 "title", jsonMap.getOrDefault("title", "제목없음"),
-                                "author", jsonMap.getOrDefault("author", "미상"),
                                 "url", url
                         );
                     }
                 });
         List<Document> documents = jsonReader.read();
-        log.info("추출된 Documents 수 : {}개", documents);
+        log.info("추출된 Documents 수 : {}개", documents.size());
 
         List<Document> apply = transform(documents);
         log.info("변환된 Document 수: {}개", apply.size());
@@ -119,6 +136,49 @@ public class ETLService {
 
 
     // Helper Method
+
+    /**
+     * 구분자 @title을 기준으로 분리 하는 메서드
+     * @param rawText title 제목
+     * @param sourceFileName source 파일명
+     * @return 구분자를 기준으로 title을 추가한 Document
+     */
+    private List<Document> parseByTitleMarker(String rawText, String sourceFileName) {
+        // split 사용을 위한 배열 사용
+        String[] blocks = rawText.split("(?=@title:)");
+        List<Document> result = new ArrayList<>();
+
+        for (String block : blocks) {
+            String trimmed = block.strip();
+            if (trimmed.isEmpty()) continue;
+
+            Matcher matcher = TITLE_PATTERN.matcher(trimmed);
+            if (!matcher.find()) continue;
+
+            String sectionTitle = matcher.group(1).strip();
+            String content = trimmed.substring(matcher.end()).strip();
+
+            if (content.isEmpty()) continue;
+
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("title", sectionTitle);
+            metadata.put("source", sourceFileName);
+
+            result.add(new Document(content, metadata));
+        }
+
+        return result;
+    }
+
+    /**
+     * 통합 제거
+     */
+    public void initializeStores() {
+        clearVectorStore();
+        log.info("새로운 메뉴얼 업데이트 기존값 제거...");
+        clearChatMemory();
+        log.info("새로운 메뉴얼 업데이트 사용자 기록 제거...");
+    }
 
     /**
      * VectorDB 전체 삭제
@@ -141,6 +201,11 @@ public class ETLService {
      * @throws IOException 업로드 파일이 이상할경우 예외
      */
     private List<Document> extractFromFile(MultipartFile file) throws IOException {
+        String contentType = file.getContentType();
+        if (contentType == null) {
+            throw new IOException("잘못된 파일 타입");
+        }
+
         // 파일내용 바이트배열로 가져옴
         Resource resource = new ByteArrayResource(file.getBytes());
         log.info("resource : {}", resource);
@@ -166,7 +231,6 @@ public class ETLService {
                         public Map<String, Object> generate(Map<String, Object> jsonMap) {
                             return Map.of(
                                     "title", jsonMap.getOrDefault("title", "제목없음"),
-                                    "author", jsonMap.getOrDefault("author", "미상"),
                                     "source", file.getOriginalFilename()
                             );
                         }
@@ -182,8 +246,6 @@ public class ETLService {
      * @return 텍스트를 토큰 단위로 분할 키워드 메타데이터를 추가한 리스트
      */
     private List<Document> transform(List<Document> documents) {
-        List<Document> transformedDocuments = null;
-
         // Document 기준으로 청크후 분할함 (기본 토큰수 1000)
         TokenTextSplitter tokenTextSplitter = TokenTextSplitter.builder()
                 .withChunkSize(300) // 청크당 최대 토큰 수
@@ -193,7 +255,7 @@ public class ETLService {
                 .withKeepSeparator(true) // 문장 경계에서 분할 여부
                 .build();
         // 토큰 기준으로 분할한 리스트로 변환
-        transformedDocuments = tokenTextSplitter.apply(documents);
+        List<Document> transformedDocuments = tokenTextSplitter.apply(documents);
 
 //        // 청크마다 키워드 5개 추출 -> 메타데이터 추가 (일단 주석 -> 토큰이 좀 그럼; 10청크 -> 50개 추출)
 //        KeywordMetadataEnricher keywordMetadataEnricher = new KeywordMetadataEnricher(chatModel, 5);
