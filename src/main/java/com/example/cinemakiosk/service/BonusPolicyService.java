@@ -1,7 +1,7 @@
 package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.dto.BonusPolicyDTO;
-import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
+import com.example.cinemakiosk.dto.requestDTO.ActivationRequest;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

@@ -1,14 +1,13 @@
 package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.dto.BonusPolicyDTO;
-import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
+import com.example.cinemakiosk.dto.requestDTO.ActivationRequest;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Log4j2

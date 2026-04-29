@@ -2,10 +2,10 @@ package com.example.cinemakiosk.controller;
 
 
 
-import com.example.cinemakiosk.dto.AdminDTO.AdminDTO;
-import com.example.cinemakiosk.dto.AdminDTO.AdminRoleDTO;
-import com.example.cinemakiosk.dto.AdminDTO.AdminRoleMapDTO;
-import com.example.cinemakiosk.dto.RequestDTO.AdminRoleMapRequest;
+import com.example.cinemakiosk.dto.adminDTO.AdminDTO;
+import com.example.cinemakiosk.dto.adminDTO.AdminRoleDTO;
+import com.example.cinemakiosk.dto.adminDTO.AdminRoleMapDTO;
+import com.example.cinemakiosk.dto.requestDTO.AdminRoleMapRequest;
 import com.example.cinemakiosk.service.AdminService.AdminRoleService;
 import com.example.cinemakiosk.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;

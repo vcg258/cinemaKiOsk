@@ -1,4 +1,4 @@
-package com.example.cinemakiosk.dto.RequestDTO;
+package com.example.cinemakiosk.dto.requestDTO;
 
 import lombok.Data;
 

@@ -2,7 +2,7 @@ package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.domain.SeatPolicyEntity;
 import com.example.cinemakiosk.domain.TheaterEntity;
-import com.example.cinemakiosk.dto.RequestDTO.TheaterRequest;
+import com.example.cinemakiosk.dto.requestDTO.TheaterRequest;
 import com.example.cinemakiosk.dto.SeatPolicyDTO;
 import com.example.cinemakiosk.dto.TheaterDTO;
 import com.example.cinemakiosk.mapper.SeatPolicyMapper;

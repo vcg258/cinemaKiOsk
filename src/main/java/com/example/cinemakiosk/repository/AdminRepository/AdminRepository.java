@@ -1,6 +1,6 @@
 package com.example.cinemakiosk.repository.AdminRepository;
 
-import com.example.cinemakiosk.domain.adminDomain.AdminEntity;
+import com.example.cinemakiosk.domain.admindomain.AdminEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

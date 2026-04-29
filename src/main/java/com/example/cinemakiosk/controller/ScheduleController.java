@@ -1,6 +1,6 @@
 package com.example.cinemakiosk.controller;
 
-import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
+import com.example.cinemakiosk.dto.requestDTO.ActivationRequest;
 import com.example.cinemakiosk.dto.ScheduleDTO;
 import com.example.cinemakiosk.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;

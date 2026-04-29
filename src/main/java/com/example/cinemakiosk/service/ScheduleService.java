@@ -1,6 +1,6 @@
 package com.example.cinemakiosk.service;
 
-import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
+import com.example.cinemakiosk.dto.requestDTO.ActivationRequest;
 import com.example.cinemakiosk.dto.ScheduleDTO;
 
 import java.util.List;

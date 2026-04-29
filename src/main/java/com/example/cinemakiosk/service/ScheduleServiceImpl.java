@@ -3,7 +3,7 @@ package com.example.cinemakiosk.service;
 import com.example.cinemakiosk.domain.MovieEntity;
 import com.example.cinemakiosk.domain.ScheduleEntity;
 import com.example.cinemakiosk.domain.TheaterEntity;
-import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
+import com.example.cinemakiosk.dto.requestDTO.ActivationRequest;
 import com.example.cinemakiosk.dto.ScheduleDTO;
 import com.example.cinemakiosk.mapper.ScheduleMapper;
 import com.example.cinemakiosk.repository.MovieRepository;

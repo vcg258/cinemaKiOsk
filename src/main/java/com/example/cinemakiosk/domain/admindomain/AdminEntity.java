@@ -1,6 +1,6 @@
-package com.example.cinemakiosk.domain.adminDomain;
+package com.example.cinemakiosk.domain.admindomain;
 
-import com.example.cinemakiosk.dto.AdminDTO.AdminDTO;
+import com.example.cinemakiosk.dto.adminDTO.AdminDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -44,7 +44,7 @@ public class AdminEntity{
     private String uuid;          // 자동 로그인 토큰
 
     @CreatedDate
-    @Column(nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
+    @Column(name = "create_at", nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
     private LocalDateTime createAt; // 계정 생성 일자
 
     @OnDelete(action= OnDeleteAction.CASCADE)

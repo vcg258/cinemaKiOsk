@@ -64,7 +64,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
         for (PaymentDetailsVO paymentDetailsVO : paymentDetailsVOS) {
             paymentDetailsDTOS.add(PaymentDetailsVO.toDTO(paymentDetailsVO));
         }
-        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("createAt").descending());
+        Pageable pageable = PageRequest.of(page - 1, 10);
 
         return new PageImpl<>(paymentDetailsDTOS, pageable, count);
     }
@@ -106,7 +106,6 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
         MemberDTO member = memberService.getMember(phone);
         BonusPolicyDTO bonusPolicy = bonusPolicyService.getBonusPolicy(bonusPolicyId);
         String couponStr = requestData.path("couponNum").asText("");
-        // TODO 쿠폰 null 예외처리
         CouponDTO couponNum = couponStr.isEmpty() ? null : discountPolicyService.getCoupon(couponStr);
         log.error("경계3");
 
@@ -178,9 +177,6 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
         log.error("경계11");
         // 멤버 실제 포인트 업데이트
         log.info("멤버 확인 : {}", member);
-//        TODO 이미 서비스 로직에 존재함 제거예정(?)
-//        member.setPoint(member.getPoint() - (int) usePoint + earnPoint);
-//        log.info("변경 멤버 확인 : {}", member);
 
 
         log.info("DB 저장 및 포인트 갱신 완료: 주문번호 {}", orderId);

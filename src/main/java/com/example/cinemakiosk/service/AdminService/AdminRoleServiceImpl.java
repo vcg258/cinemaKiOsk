@@ -1,12 +1,12 @@
 package com.example.cinemakiosk.service.AdminService;
 
-import com.example.cinemakiosk.domain.adminDomain.AdminEntity;
-import com.example.cinemakiosk.domain.adminDomain.AdminRoleEntity;
-import com.example.cinemakiosk.domain.adminDomain.AdminRoleMapEntity;
-import com.example.cinemakiosk.dto.AdminDTO.AdminDTO;
-import com.example.cinemakiosk.dto.AdminDTO.AdminRoleDTO;
-import com.example.cinemakiosk.dto.AdminDTO.AdminRoleMapDTO;
-import com.example.cinemakiosk.dto.RequestDTO.AdminRoleMapRequest;
+import com.example.cinemakiosk.domain.admindomain.AdminEntity;
+import com.example.cinemakiosk.domain.admindomain.AdminRoleEntity;
+import com.example.cinemakiosk.domain.admindomain.AdminRoleMapEntity;
+import com.example.cinemakiosk.dto.adminDTO.AdminDTO;
+import com.example.cinemakiosk.dto.adminDTO.AdminRoleDTO;
+import com.example.cinemakiosk.dto.adminDTO.AdminRoleMapDTO;
+import com.example.cinemakiosk.dto.requestDTO.AdminRoleMapRequest;
 import com.example.cinemakiosk.mapper.AdminMapper;
 import com.example.cinemakiosk.repository.AdminRepository.AdminRepository;
 import com.example.cinemakiosk.repository.AdminRepository.AdminRoleMapRepository;
@@ -18,7 +18,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Log4j2
 @Service

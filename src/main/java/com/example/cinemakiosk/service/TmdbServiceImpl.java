@@ -1,6 +1,5 @@
 package com.example.cinemakiosk.service;
 
-
 import com.example.cinemakiosk.config.TmdbConfig;
 import com.example.cinemakiosk.domain.enums.Rating;
 import com.example.cinemakiosk.dto.MovieDTO;
@@ -116,7 +115,7 @@ public class TmdbServiceImpl implements TmdbService {
 
         // poster_path에 imageUrl 붙여주기
         for (TmdbMovieDTO movieDTO : response.getResults()) {
-            log.info("moviePosterPath: " + movieDTO.getPosterPath());
+            log.info("moviePosterPath: {}", movieDTO.getPosterPath());
             movieDTO.setPosterPath(tmdbConfig.getImageUrl() + movieDTO.getPosterPath());
         }
 

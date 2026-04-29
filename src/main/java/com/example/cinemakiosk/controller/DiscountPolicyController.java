@@ -1,9 +1,8 @@
 package com.example.cinemakiosk.controller;
 
-import com.example.cinemakiosk.dto.BonusPolicyDTO;
 import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
-import com.example.cinemakiosk.dto.RequestDTO.ActivationRequest;
+import com.example.cinemakiosk.dto.requestDTO.ActivationRequest;
 import com.example.cinemakiosk.service.DiscountPolicyService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -57,7 +56,7 @@ public class DiscountPolicyController {
 
     @Operation(summary = "지정 정책에 쿠폰 발행")
     @PostMapping("/coupon/{policyId}")
-    public ResponseEntity<Void> addCoupon(@PathVariable Long policyId, @RequestParam(defaultValue = "1") int count) { // TODO 따로 DTO를 넣자는 의견이 있음 일단 보류
+    public ResponseEntity<Void> addCoupon(@PathVariable Long policyId, @RequestParam(defaultValue = "1") int count) {
         discountPolicyService.createCouponNum(policyId, count);
         return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 생성
     }

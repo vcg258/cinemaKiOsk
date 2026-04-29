@@ -1,13 +1,12 @@
 package com.example.cinemakiosk.service.AdminService;
 
-import com.example.cinemakiosk.domain.adminDomain.AdminEntity;
-import com.example.cinemakiosk.domain.adminDomain.AdminRoleMapEntity;
+import com.example.cinemakiosk.domain.admindomain.AdminEntity;
+import com.example.cinemakiosk.domain.admindomain.AdminRoleMapEntity;
 import com.example.cinemakiosk.repository.AdminRepository.AdminRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
