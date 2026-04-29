@@ -2,7 +2,7 @@ package com.example.cinemakiosk.service;
 
 
 import com.example.cinemakiosk.dto.MovieDTO;
-import com.example.cinemakiosk.dto.Tmdb.TmdbMovieDTO.TmdbMovieDTO;
+import com.example.cinemakiosk.dto.tmdb.TmdbMovieDTO.TmdbMovieDTO;
 
 import java.util.List;
 

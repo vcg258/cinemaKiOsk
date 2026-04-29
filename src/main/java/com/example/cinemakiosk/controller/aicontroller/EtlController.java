@@ -1,6 +1,6 @@
 package com.example.cinemakiosk.controller.aicontroller;
 
-import com.example.cinemakiosk.service.Ai.ETLService;
+import com.example.cinemakiosk.service.ai.ETLService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;

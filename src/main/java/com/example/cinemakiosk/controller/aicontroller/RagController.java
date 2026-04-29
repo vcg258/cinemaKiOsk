@@ -1,6 +1,6 @@
 package com.example.cinemakiosk.controller.aicontroller;
 
-import com.example.cinemakiosk.service.Ai.RagService;
+import com.example.cinemakiosk.service.ai.RagService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

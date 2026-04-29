@@ -1,7 +1,6 @@
 package com.example.cinemakiosk.handler;
 
-import com.example.cinemakiosk.service.AdminService.AdminDetails;
-import com.example.cinemakiosk.service.AdminService.AdminDetailsService;
+import com.example.cinemakiosk.service.adminservice.AdminDetails;
 import com.example.cinemakiosk.util.JwtUtil;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;

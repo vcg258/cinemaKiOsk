@@ -2,7 +2,7 @@ package com.example.cinemakiosk.controller;
 
 
 import com.example.cinemakiosk.dto.MovieDTO;
-import com.example.cinemakiosk.dto.Tmdb.TmdbMovieDTO.TmdbMovieDTO;
+import com.example.cinemakiosk.dto.tmdb.TmdbMovieDTO.TmdbMovieDTO;
 import com.example.cinemakiosk.service.TmdbService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

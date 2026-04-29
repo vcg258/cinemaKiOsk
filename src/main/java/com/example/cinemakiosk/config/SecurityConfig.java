@@ -4,7 +4,7 @@ import com.example.cinemakiosk.filter.APILoginFilter;
 import com.example.cinemakiosk.filter.RefreshTokenFilter;
 import com.example.cinemakiosk.filter.TokenCheckFilter;
 import com.example.cinemakiosk.handler.APILoginSuccessHandler;
-import com.example.cinemakiosk.service.AdminService.AdminDetailsService;
+import com.example.cinemakiosk.service.adminservice.AdminDetailsService;
 import com.example.cinemakiosk.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

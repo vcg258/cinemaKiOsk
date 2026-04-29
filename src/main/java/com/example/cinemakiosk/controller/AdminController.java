@@ -6,7 +6,7 @@ import com.example.cinemakiosk.dto.adminDTO.AdminDTO;
 import com.example.cinemakiosk.dto.adminDTO.AdminRoleDTO;
 import com.example.cinemakiosk.dto.adminDTO.AdminRoleMapDTO;
 import com.example.cinemakiosk.dto.requestDTO.AdminRoleMapRequest;
-import com.example.cinemakiosk.service.AdminService.AdminRoleService;
+import com.example.cinemakiosk.service.adminservice.AdminRoleService;
 import com.example.cinemakiosk.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
