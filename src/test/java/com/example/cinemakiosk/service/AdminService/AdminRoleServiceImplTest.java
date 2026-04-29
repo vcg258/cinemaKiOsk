@@ -1,7 +1,6 @@
 package com.example.cinemakiosk.service.AdminService;
 
 import com.example.cinemakiosk.dto.requestDTO.AdminRoleMapRequest;
-import com.example.cinemakiosk.repository.AdminRepository.AdminRoleMapRepository;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +12,6 @@ import java.util.List;
 @SpringBootTest
 class AdminRoleServiceImplTest {
     @Autowired private AdminRoleService adminRoleService;
-    @Autowired
-    private AdminRoleMapRepository adminRoleMapRepository;
 
     @Test
     void getAdmins() {
