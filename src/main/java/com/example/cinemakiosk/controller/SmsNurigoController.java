@@ -32,7 +32,7 @@ public class SmsNurigoController {
             description = "1. 문자받을 폰 번호 입력")
     @PostMapping("/random/{toPhone}")
     public ResponseEntity<Void> random(@PathVariable String toPhone) {
-        log.info("Sending random to " + toPhone);
+        log.info("Sending random to {}", toPhone);
         smsNurigoService.AuthenticationNumber(toPhone);
         return ResponseEntity.ok().build();
     }
@@ -42,7 +42,7 @@ public class SmsNurigoController {
             description = "- 대상 고객의 번호와 고객이 입력한 인증번호 입력\n -요청을 받을 때 인증번호가 만료(3분)되었거나 인증 성공시에 인증번호삭제")
     @PostMapping("/comparison/{toPhone}/{inputCode}")
     public ResponseEntity<String> comparison(@PathVariable String toPhone, @PathVariable String inputCode) {
-        log.info("comparison to" + inputCode);
+        log.info("comparison to {}", inputCode);
 
         return switch (smsNurigoService.comparison(toPhone, inputCode)) {
             case SUCCESS -> ResponseEntity.ok().body("인증 성공됐습니다.");
@@ -56,9 +56,9 @@ public class SmsNurigoController {
 
     @Operation(summary = "영수증",
             description = "")
-    @PostMapping("/receipt/{toPhone}/{no}/{uuid}")
-    public ResponseEntity<Void> receipt(@PathVariable String toPhone, @PathVariable String no, @PathVariable String uuid) {
-        smsNurigoService.receipt(toPhone, no, uuid);
+    @PostMapping("/receipt/{toPhone}/{uuid}")
+    public ResponseEntity<Void> receipt(@PathVariable String toPhone, @PathVariable String uuid) {
+        smsNurigoService.receipt(toPhone, uuid);
         return ResponseEntity.ok().build();
     }
 

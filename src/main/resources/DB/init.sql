@@ -150,7 +150,7 @@ CREATE TABLE IF NOT EXISTS statistics
 
 CREATE TABLE IF NOT EXISTS `reservation_details`
 (
-    `id`          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '예매 고유번호',
+    `id`          CHAR(36) PRIMARY KEY COMMENT '예매 고유번호',
     `schedule_id` BIGINT UNSIGNED                    NOT NULL COMMENT '스케쥴 아이디 FK',
     `phone`       VARCHAR(20)                        NULL COMMENT '회원 번호 FK', # NOT NULL -> NULL 이유 : 비회원일 경우 NULL
     `returned`    BOOLEAN  DEFAULT FALSE             NOT NULL COMMENT '',

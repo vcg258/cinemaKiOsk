@@ -31,6 +31,6 @@ class SmsNurigoServiceTest {
 
     @Test
     public void receiveSms() {
-        smsNurigoService.receipt("01049393069", "1", "11111111-1111-1111-1111-111111111111");
+        smsNurigoService.receipt("01049393069", "11111111-1111-1111-1111-111111111111");
     }
 }

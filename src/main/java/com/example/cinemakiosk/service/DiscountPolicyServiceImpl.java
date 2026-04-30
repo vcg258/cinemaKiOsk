@@ -153,7 +153,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
         CouponVO couponVO = couponMapper.checkCoupon(couponNum);
         // 정책이 없을 경우 (INNER JOIN을 하였기때문에 정책이 없다면 null)
         if (couponVO == null) {
-            throw new NoSuchElementException("authCoupon... 정책이 없음");
+            throw new NoSuchElementException("authCoupon... 해당하는 쿠폰 또는 정책이 없음");
         }
         // 정책이 비활성화 일 경우
         if (!couponVO.getDiscountPolicy().isActivation()) {

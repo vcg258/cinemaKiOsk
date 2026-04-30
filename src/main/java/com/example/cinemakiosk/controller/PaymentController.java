@@ -116,7 +116,7 @@ public class PaymentController {
         String paymentKey = requestData.get("paymentKey").asText();
         String paymentId = requestData.get("paymentId").asText();
 
-        if (paymentKey == null || paymentKey.isBlank()) {
+        if (paymentKey == null || paymentKey.isBlank() || paymentKey.equals("point")) {
             log.info("환불할 금액 0원 이므로 토스 호출 하지않음: {}", paymentId);
             refundService.refund(paymentId);
             return ResponseEntity.ok().build();

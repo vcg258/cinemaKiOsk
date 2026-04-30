@@ -39,6 +39,11 @@ public class RefundService {
             log.info("포인트 복구 : {}", pointHistoryVO1);
         }
 
+        String couponNum = paymentDetailsOne.getCouponNum().getCouponNum();
+        if (discountPolicyService.getCoupon(couponNum).isStatus()) {
+            throw new IllegalStateException("이미 환불 처리 된 쿠폰...");
+        }
+
         // 쿠폰 복구
         if (paymentDetailsOne.getCouponNum() != null) {
             CouponDTO couponDTO = CouponDTO.builder()

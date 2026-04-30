@@ -63,7 +63,7 @@ public class AdminController {
         adminRoleService.rememberMe(loginId);
 
         Cookie cookie = new Cookie("remember-me", adminRoleService.getAdmin(loginId).getUuid());
-        cookie.setHttpOnly(true); // JS 접근 불가 설정
+        cookie.setHttpOnly(true); // JS 접근 불가 설정 악성 스크립트도 동일 (XSS)
         cookie.setSecure(true); // HTTP 환경에서만 전송
         cookie.setMaxAge(60 * 60 * 24 * 7); // TODO 일주일 지정
         cookie.setPath("/"); // 쿠키 적용 경로
