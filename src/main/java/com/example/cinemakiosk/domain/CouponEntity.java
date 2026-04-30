@@ -26,8 +26,7 @@ public class CouponEntity {
     @Column(nullable = false, columnDefinition = "TINYINT DEFAULT FALSE")
     private boolean status; // 사용여부 (사용가능 = true, 불가능 = false)
 
-    @OnDelete(action= OnDeleteAction.CASCADE)
-    @OneToOne(mappedBy = "couponEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToOne(mappedBy = "couponEntity")
     private PaymentDetailsEntity paymentDetailsEntity;
 
     /**

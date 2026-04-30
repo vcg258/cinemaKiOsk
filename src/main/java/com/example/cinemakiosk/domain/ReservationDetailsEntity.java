@@ -39,12 +39,10 @@ public class ReservationDetailsEntity{
     @Column(nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
     private LocalDateTime createAt; //  예약 시간
 
-    @OnDelete(action= OnDeleteAction.CASCADE)
-    @OneToMany(mappedBy = "reservationDetailsEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "reservationDetailsEntity")
     private List<ReservationSeatEntity> reservationSeatEntity;
 
-    @OnDelete(action= OnDeleteAction.CASCADE)
-    @OneToMany(mappedBy = "reservationDetailsEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "reservationDetailsEntity")
     private List<PaymentDetailsEntity> paymentDetailsEntity;
 
     public void changeReturned(boolean returned) {

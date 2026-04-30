@@ -50,8 +50,7 @@ public class PaymentDetailsEntity {
     @Enumerated(EnumType.STRING)
     private Status status;         // ENUM ('PAY','RETURN','FAIL'), 결제 완료, 환불, 실패
 
-    @OnDelete(action= OnDeleteAction.CASCADE)
-    @OneToMany(mappedBy = "paymentDetailsEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "paymentDetailsEntity")
     private  List<PointHistoryEntity> pointHistoryEntity;
 
     public void changeStatus(Status status) {

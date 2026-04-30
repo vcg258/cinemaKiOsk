@@ -88,9 +88,9 @@ CREATE TABLE admin_role
 CREATE TABLE admin_role_map
 (
     id       BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '인덱스 (결합키 안쓰기 위해 넣음)',
-    admin_id BIGINT UNSIGNED UNIQUE NOT NULL COMMENT '관리자 아이디',
-    role_id  BIGINT UNSIGNED UNIQUE NOT NULL COMMENT '권한 아이디',
-    CONSTRAINT `uq_admin_role_map` UNIQUE (admin_id, role_id),  -- 복합 UNIQUE
+    admin_id BIGINT UNSIGNED NOT NULL COMMENT '관리자 아이디',
+    role_id  BIGINT UNSIGNED NOT NULL COMMENT '권한 아이디',
+    CONSTRAINT `uq_admin_role_map` UNIQUE (admin_id, role_id), -- 복합 UNIQUE
     CONSTRAINT `fk_admin_role_map_admin` FOREIGN KEY (admin_id) REFERENCES admin (admin_id),
     CONSTRAINT `fk_admin_role_map_admin_role` FOREIGN KEY (role_id) REFERENCES admin_role (id)
 ) COMMENT '관리자 계정의 권한 내역 (매핑 테이블)';
@@ -154,7 +154,7 @@ CREATE TABLE IF NOT EXISTS statistics
 
 CREATE TABLE IF NOT EXISTS `reservation_details`
 (
-    `id`          VARCHAR(36) PRIMARY KEY COMMENT '예매 고유번호',
+    `id`          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '예매 고유번호',
     `schedule_id` BIGINT UNSIGNED                    NOT NULL COMMENT '스케쥴 아이디 FK',
     `phone`       VARCHAR(20)                        NULL COMMENT '회원 번호 FK', # NOT NULL -> NULL 이유 : 비회원일 경우 NULL
     `returned`    BOOLEAN  DEFAULT FALSE             NOT NULL COMMENT '',
@@ -186,6 +186,7 @@ CREATE TABLE IF NOT EXISTS `payment_details`
     `coupon_num`      VARCHAR(12)                  NULL COMMENT '할인 쿠폰 FK',
     `cost`            BIGINT UNSIGNED              NOT NULL COMMENT '결제 금액',
     `create_at`       DATETIME                     NOT NULL COMMENT '결제 시간',
+    `payment_key`     VARCHAR(100)                 NOT NULL COMMENT '환불을 위한 키',
     `use_point`       BIGINT UNSIGNED              NULL DEFAULT 0 COMMENT '사용 포인트',
     `status`          ENUM ('PAY','RETURN','FAIL') NOT NULL COMMENT '결제 내용',
     CONSTRAINT `fk_payment_details_reservation_id` FOREIGN KEY (`reservation_id`) REFERENCES reservation_details (`id`)

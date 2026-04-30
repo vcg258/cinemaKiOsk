@@ -36,8 +36,7 @@ public class BonusPolicyEntity{
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean activation;      // 활성화 여부(중요할까?)
 
-    @OnDelete(action= OnDeleteAction.CASCADE)
-    @OneToMany(mappedBy = "bonusPolicyEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "bonusPolicyEntity")
     private List<PaymentDetailsEntity> paymentDetailsEntity;
 
     /**

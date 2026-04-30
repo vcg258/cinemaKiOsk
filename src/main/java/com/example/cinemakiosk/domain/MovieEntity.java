@@ -3,16 +3,13 @@ package com.example.cinemakiosk.domain;
 import com.example.cinemakiosk.domain.enums.Rating;
 import com.example.cinemakiosk.domain.enums.RatingConverter;
 import com.example.cinemakiosk.dto.MovieDTO;
-import com.example.cinemakiosk.dto.ScheduleDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.modelmapper.internal.bytebuddy.implementation.bind.annotation.Default;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity

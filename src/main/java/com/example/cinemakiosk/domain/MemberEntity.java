@@ -24,15 +24,12 @@ public class MemberEntity{
     @Column(nullable = false, columnDefinition = "DATETIME DEFAULT NOW()")
     private LocalDateTime createAt; // 생성일
 
-    @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "memberEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<PointHistoryEntity> pointHistoryEntity;
 
-    @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "memberEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<ReservationDetailsEntity> reservationDetailsEntity;
 
-//    @OnDelete(action= OnDeleteAction.CASCADE)
     @OneToOne(mappedBy = "memberEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private MemberDelLogEntity memberDelLogEntity;
 

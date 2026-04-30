@@ -28,8 +28,7 @@ public class SeatPolicyEntity {
     @Column(columnDefinition = "BIGINT UNSIGNED DEFAULT 0")
     private Long cost; // 좌석 비용
 
-    @OnDelete(action= OnDeleteAction.CASCADE)
-    @OneToMany(mappedBy = "seatPolicyEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "seatPolicyEntity")
     private List<TheaterEntity> theaterEntity; //1:다
 
     /**

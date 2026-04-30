@@ -33,8 +33,7 @@ public class TheaterEntity {
     @Column(columnDefinition = "BIGINT UNSIGNED DEFAULT 0")
     private Long cleanupTime; // 정리시간(분)
 
-    @OnDelete(action= OnDeleteAction.CASCADE)
-    @OneToMany(mappedBy = "theaterEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "theaterEntity")
     private List<ScheduleEntity> scheduleEntity; // 1:다
 
     /**

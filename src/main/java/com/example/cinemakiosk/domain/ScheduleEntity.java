@@ -37,8 +37,7 @@ public class ScheduleEntity {
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean activation; // 활성화 여부 (유효 = True, 비활성화 = False)
 
-    @OnDelete(action= OnDeleteAction.CASCADE)
-    @OneToMany(mappedBy = "scheduleEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "scheduleEntity")
     private List<ReservationDetailsEntity> reservationDetailsEntity;
 
     /**

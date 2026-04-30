@@ -29,8 +29,7 @@ public class AdminRoleEntity {
     @Column(length = 30)
     private String groupName; // 프론트 사이드바 섹션 그룹명 (예: 영화 관리, 상영관/좌석)
 
-    @OnDelete(action= OnDeleteAction.CASCADE)
-    @OneToMany(mappedBy = "adminRoleEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "adminRoleEntity")
     private List<AdminRoleMapEntity> adminRoleMapEntity; // 권한 아이디 FK
 
 

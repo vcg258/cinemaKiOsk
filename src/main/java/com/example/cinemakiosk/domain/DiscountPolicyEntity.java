@@ -47,8 +47,7 @@ public class DiscountPolicyEntity {
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean activation; // 활성화 여부
 
-    @OnDelete(action= OnDeleteAction.CASCADE)
-    @OneToMany(mappedBy = "discountPolicyEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "discountPolicyEntity")
     private List<CouponEntity> coupons;
 
     /**
