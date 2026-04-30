@@ -62,7 +62,7 @@ public class MovieServiceImpl implements MovieService {
         String filename = movieEntity.getMovieId() + ".jpg";  // movieId를 파일명으로
 
 //        영화 이미지 저장
-        saveImageFromDTO(movieDTO, filename);
+//        saveImageFromDTO(movieDTO, filename);
     }
 
 
@@ -106,7 +106,7 @@ public class MovieServiceImpl implements MovieService {
 
             // 영화 이미지 저장
             try {
-                saveImageFromDTO(movieDTO, filename);
+//                saveImageFromDTO(movieDTO, filename);
             } catch (IllegalStateException e) {
                 throw e;
             }
@@ -242,18 +242,6 @@ public class MovieServiceImpl implements MovieService {
             return movieDTOList;
         }
 
-        /**
-         * 10페이지씩 페이징 처리 (로그형식 전체)
-         * @param page 몇번째 페이지 부터 정할 변수
-         * @return 페이징 결과 1페이지 일경우 1 ~ 10번 까지
-         */
-        @Override
-        public Page<MovieDTO> getMoviePage ( int page){
-            Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("movieId").descending());
-            Page<MovieEntity> entityPage = movieRepository.findAll(pageable);
-            return entityPage.map(MovieEntity::toDTO);
-        }
-
 
 //
 //    /**
@@ -285,56 +273,56 @@ public class MovieServiceImpl implements MovieService {
 
 
         // 이미지 저장 필터
-        private void saveImageFromDTO (MovieDTO movieDTO, String filename){
-            // TMDB로 등록한 경우
-            if (movieDTO.getPosterPath() != null && movieDTO.getPosterPath().startsWith("https")) {
-
-                byte[] imageBytes = restTemplate.getForObject(movieDTO.getPosterPath(), byte[].class);
-
-                if (imageBytes == null || imageBytes.length == 0) {
-                    throw new IllegalStateException("이미지 다운로드에 실패했습니다: " + movieDTO.getPosterPath());
-                }
-
-                saveImage(imageBytes, filename);
-
-                // 직접 이미지 업로드한 경우
-            } else if (movieDTO.getImage() != null && !movieDTO.getImage().isEmpty()) {
-                try {
-                    saveImage(movieDTO.getImage().getBytes(), filename);
-                } catch (IOException e) {
-                    throw new IllegalStateException("이미지 저장에 실패했습니다: " + filename, e);
-                }
-            }
-        }
+//        private void saveImageFromDTO (MovieDTO movieDTO, String filename){
+//            // TMDB로 등록한 경우
+//            if (movieDTO.getPosterPath() != null && movieDTO.getPosterPath().startsWith("https")) {
+//
+//                byte[] imageBytes = restTemplate.getForObject(movieDTO.getPosterPath(), byte[].class);
+//
+//                if (imageBytes == null || imageBytes.length == 0) {
+//                    throw new IllegalStateException("이미지 다운로드에 실패했습니다: " + movieDTO.getPosterPath());
+//                }
+//
+//                saveImage(imageBytes, filename);
+//
+//                // 직접 이미지 업로드한 경우
+//            } else if (movieDTO.getImage() != null && !movieDTO.getImage().isEmpty()) {
+//                try {
+//                    saveImage(movieDTO.getImage().getBytes(), filename);
+//                } catch (IOException e) {
+//                    throw new IllegalStateException("이미지 저장에 실패했습니다: " + filename, e);
+//                }
+//            }
+//        }
 
 
         // 이미지 저장
-        public void saveImage ( byte[] imageBytes, String filename){
-            Path path = Paths.get(uploadPath, filename);
-
-            // 이미지 파일 저장
-            try {
-                Files.write(path, imageBytes);
-            } catch (IOException e) {
-                throw new IllegalStateException(" 파일 저장에 실패했습니다: " + filename, e);
-            }
-
-            // 썸네일 생성
-            String contentType = null;
-            try {
-                contentType = Files.probeContentType(path);
-            } catch (IOException e) {
-                throw new IllegalStateException("파일 타입 확인에 실패했습니다: " + filename, e);
-            }
-            if (contentType != null && contentType.startsWith("image")) {
-                File thumbnailFile = new File(uploadPath, "s_" + filename);
-                try {
-                    Thumbnailator.createThumbnail(path.toFile(), thumbnailFile, 200, 200);
-                } catch (IOException e) {
-                    throw new IllegalStateException("썸네일 생성에 실패했습니다: " + filename, e);
-                }
-            }
-        }
+//        public void saveImage ( byte[] imageBytes, String filename){
+//            Path path = Paths.get(uploadPath, filename);
+//
+//            // 이미지 파일 저장
+//            try {
+//                Files.write(path, imageBytes);
+//            } catch (IOException e) {
+//                throw new IllegalStateException(" 파일 저장에 실패했습니다: " + filename, e);
+//            }
+//
+//            // 썸네일 생성
+//            String contentType = null;
+//            try {
+//                contentType = Files.probeContentType(path);
+//            } catch (IOException e) {
+//                throw new IllegalStateException("파일 타입 확인에 실패했습니다: " + filename, e);
+//            }
+//            if (contentType != null && contentType.startsWith("image")) {
+//                File thumbnailFile = new File(uploadPath, "s_" + filename);
+//                try {
+//                    Thumbnailator.createThumbnail(path.toFile(), thumbnailFile, 200, 200);
+//                } catch (IOException e) {
+//                    throw new IllegalStateException("썸네일 생성에 실패했습니다: " + filename, e);
+//                }
+//            }
+//        }
 
 
 //    // 제목 키워드로 조회

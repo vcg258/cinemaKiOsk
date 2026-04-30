@@ -34,11 +34,8 @@ public interface MovieService {
     // 상영종료처리
     void modifyEndAt(long movieId);
 
-    // 페이징
-    Page<MovieDTO> getMoviePage(int page);
-
     // 영화 이미지 추가
-    void saveImage(byte[] imageBytes, String filename) throws IOException;
+//    void saveImage(byte[] imageBytes, String filename) throws IOException;
 
 
 //
