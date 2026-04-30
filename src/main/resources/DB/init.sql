@@ -91,7 +91,8 @@ CREATE TABLE admin_role_map
     admin_id BIGINT UNSIGNED NOT NULL COMMENT '관리자 아이디',
     role_id  BIGINT UNSIGNED NOT NULL COMMENT '권한 아이디',
     CONSTRAINT `uq_admin_role_map` UNIQUE (admin_id, role_id), -- 복합 UNIQUE
-    CONSTRAINT `fk_admin_role_map_admin` FOREIGN KEY (admin_id) REFERENCES admin (admin_id),
+    CONSTRAINT `fk_admin_role_map_admin` FOREIGN KEY (admin_id) REFERENCES admin (admin_id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_admin_role_map_admin_role` FOREIGN KEY (role_id) REFERENCES admin_role (id)
 ) COMMENT '관리자 계정의 권한 내역 (매핑 테이블)';
 
@@ -112,7 +113,6 @@ CREATE TABLE IF NOT EXISTS `coupon`
 #     `end_at`     DATETIME    NOT NULL COMMENT '유효기간',
     `status`     BOOLEAN                 NOT NULL DEFAULT FALSE COMMENT '사용여부 (사용가능 = true, 불가능 = false)',
     CONSTRAINT `fk_discount_policy_coupon_id` FOREIGN KEY (`policy_id`) REFERENCES discount_policy (`id`)
-        ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT '쿠폰 내역';
 
 CREATE TABLE IF NOT EXISTS `theater`
@@ -121,7 +121,6 @@ CREATE TABLE IF NOT EXISTS `theater`
     `policy_id`    BIGINT UNSIGNED NOT NULL COMMENT '좌석 정책 FK',
     `cleanup_time` BIGINT UNSIGNED NULL DEFAULT 0 COMMENT '정리시간',
     CONSTRAINT `fk_theater_policy_id` FOREIGN KEY (`policy_id`) REFERENCES seat_policy (`policy_id`)
-        ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT '상영관';
 
 CREATE TABLE IF NOT EXISTS `schedule`
@@ -132,11 +131,9 @@ CREATE TABLE IF NOT EXISTS `schedule`
     `start_at`   DATETIME             NULL COMMENT '상영 시작 시간', # NOT NULL? NULL?
     `end_at`     DATETIME             NULL COMMENT '상영 종료 시간', # NOT NULL? NULL?
     `activation` BOOLEAN DEFAULT TRUE NULL COMMENT '스케줄 활성화 여부 (활성화=True, 만료=False)',
-    CONSTRAINT `fk_schedule_theater_no` FOREIGN KEY (`no`) REFERENCES theater (`no`)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_schedule_theater_no` FOREIGN KEY (`no`) REFERENCES theater (`no`),
     CONSTRAINT `fk_schedule_movie_id` FOREIGN KEY (`movie_id`) REFERENCES movie (`movie_id`)
         ON DELETE CASCADE ON UPDATE CASCADE
-
 ) COMMENT '상영 스케줄';
 
 
@@ -149,7 +146,6 @@ CREATE TABLE IF NOT EXISTS statistics
     `customer_count` BIGINT UNSIGNED                                                                     NOT NULL COMMENT '관람객 수',
     `date`           DATE                                                                                NOT NULL COMMENT '통계 일자',
     CONSTRAINT `fk_statistics_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES schedule (`id`)
-        ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT '통계';
 
 CREATE TABLE IF NOT EXISTS `reservation_details`
@@ -159,10 +155,8 @@ CREATE TABLE IF NOT EXISTS `reservation_details`
     `phone`       VARCHAR(20)                        NULL COMMENT '회원 번호 FK', # NOT NULL -> NULL 이유 : 비회원일 경우 NULL
     `returned`    BOOLEAN  DEFAULT FALSE             NOT NULL COMMENT '',
     `create_at`   DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '예매 기준시',
-    CONSTRAINT `fk_reservation_details_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES schedule (`id`)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_reservation_details_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES schedule (`id`),
     CONSTRAINT `fk_reservation_details_member_phone` FOREIGN KEY (`phone`) REFERENCES member (`phone`)
-        ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT '예매 내역';
 
 
@@ -172,8 +166,6 @@ CREATE TABLE IF NOT EXISTS `reservation_seat`
     `reservation_id` varchar(36) NOT NULL COMMENT '예매 내역 FK',
     `seat_number`    VARCHAR(10) NOT NULL COMMENT '좌석 번호',
     CONSTRAINT `fk_reservation_seat_reservation_id` FOREIGN KEY (`reservation_id`) REFERENCES reservation_details (`id`)
-        ON DELETE CASCADE ON UPDATE CASCADE
-
 ) COMMENT '예매 좌석';
 
 
@@ -189,12 +181,9 @@ CREATE TABLE IF NOT EXISTS `payment_details`
     `payment_key`     VARCHAR(100)                 NOT NULL COMMENT '환불을 위한 키',
     `use_point`       BIGINT UNSIGNED              NULL DEFAULT 0 COMMENT '사용 포인트',
     `status`          ENUM ('PAY','RETURN','FAIL') NOT NULL COMMENT '결제 내용',
-    CONSTRAINT `fk_payment_details_reservation_id` FOREIGN KEY (`reservation_id`) REFERENCES reservation_details (`id`)
-        ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_payment_details_bonus_policy_id` FOREIGN KEY (`bonus_policy_id`) REFERENCES bonus_policy (`id`)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_payment_details_reservation_id` FOREIGN KEY (`reservation_id`) REFERENCES reservation_details (`id`),
+    CONSTRAINT `fk_payment_details_bonus_policy_id` FOREIGN KEY (`bonus_policy_id`) REFERENCES bonus_policy (`id`),
     CONSTRAINT `fk_payment_details_coupon_num` FOREIGN KEY (`coupon_num`) REFERENCES coupon (coupon_num)
-        ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT '결제 내역';
 
 
@@ -206,8 +195,6 @@ CREATE TABLE IF NOT EXISTS `point_history`
     `type`         ENUM ('EARN', 'USE', 'REFUND_EARN', 'REFUND_USE') NOT NULL COMMENT '적립 / 사용 / 환불-적립 / 환불-사용',
     `amount_point` INT UNSIGNED                                      NOT NULL COMMENT '적립/사용 포인트',
     `create_at`    DATETIME DEFAULT CURRENT_TIMESTAMP                NOT NULL COMMENT '포인트 변경일',
-    CONSTRAINT `fk_point_history_payment_id` FOREIGN KEY (`payment_id`) REFERENCES payment_details (`id`)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_point_history_payment_id` FOREIGN KEY (`payment_id`) REFERENCES payment_details (`id`),
     CONSTRAINT `fk_point_history_phone` FOREIGN KEY (`phone`) REFERENCES member (`phone`)
-        ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT '포인트 내역';
