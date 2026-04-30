@@ -86,45 +86,46 @@ public class MovieServiceImpl implements MovieService {
         // 2. 전체 수정
         movieEntity.update(movieDTO);
         movieRepository.save(movieEntity);
-
-//         3. 새 이미지가 있을 때만 처리
-        MultipartFile file1 = movieDTO.getImage();
-        String file2 = movieDTO.getPosterPath();
-
-        if ((file1 != null && !file1.isEmpty()) || (file2 != null && !file2.isEmpty())) {
-            String filename = movieDTO.getMovieId() + ".jpg";  // movieId로 파일명
-
-//            // 기존 이미지 삭제
-//           Path oldPath = Paths.get(uploadPath, filename);
-//            Path oldThumbPath = Paths.get(uploadPath, "s_" + filename);
+//
+////         3. 새 이미지가 있을 때만 처리
+//        MultipartFile file1 = movieDTO.getImage();
+//        String file2 = movieDTO.getPosterPath();
+//
+//        if ((file1 != null && !file1.isEmpty()) || (file2 != null && !file2.isEmpty())) {
+//            String filename = movieDTO.getMovieId() + ".jpg";  // movieId로 파일명
+//
+////            // 기존 이미지 삭제
+////           Path oldPath = Paths.get(uploadPath, filename);
+////            Path oldThumbPath = Paths.get(uploadPath, "s_" + filename);
+////            try {
+////                Files.deleteIfExists(oldPath);
+////                Files.deleteIfExists(oldThumbPath);
+////            } catch (IOException e) {
+////                log.warn("기존 이미지 삭제 실패");
+////            }
+//
+//            // 영화 이미지 저장
 //            try {
-//                Files.deleteIfExists(oldPath);
-//                Files.deleteIfExists(oldThumbPath);
-//            } catch (IOException e) {
-//                log.warn("기존 이미지 삭제 실패");
-//            }
-
-            // 영화 이미지 저장
-            try {
 //                saveImageFromDTO(movieDTO, filename);
-            } catch (IllegalStateException e) {
-                throw e;
-            }
-        }
+//            } catch (IllegalStateException e) {
+//                throw e;
+//            }
+//        }
     }
 
 
-        /**
-         * 영화 삭제
-         * @param movieId 영화 PK
-         */
-        @Override
-        public void remove ( long movieId){
-            MovieEntity movieEntity = movieRepository.findById(movieId)
-                    .orElseThrow(() -> new NoSuchElementException("movieId를 찾을 수 없습니다"));
+    /**
+     * 영화 삭제
+     *
+     * @param movieId 영화 PK
+     */
+    @Override
+    public void remove(long movieId) {
+        movieRepository.findById(movieId)
+                .orElseThrow(() -> new NoSuchElementException("movieId를 찾을 수 없습니다"));
 
-            movieRepository.deleteById(movieId);
-        }
+        movieRepository.deleteById(movieId);
+    }
 
 
         /**
@@ -170,7 +171,7 @@ public class MovieServiceImpl implements MovieService {
 //        if (movieEntityList.isEmpty()) {
 //            throw new NoSuchElementException("등록된 영화가 없습니다.");
 //        }
-            // 그냥 빈 리스트 반환하게 둠
+        // 그냥 빈 리스트 반환하게 둠
 
 
             List<MovieDTO> movieDTOList = new ArrayList<>();
@@ -271,8 +272,8 @@ public class MovieServiceImpl implements MovieService {
 //    }
 //
 
-
-        // 이미지 저장 필터
+//
+//        // 이미지 저장 필터
 //        private void saveImageFromDTO (MovieDTO movieDTO, String filename){
 //            // TMDB로 등록한 경우
 //            if (movieDTO.getPosterPath() != null && movieDTO.getPosterPath().startsWith("https")) {
@@ -294,9 +295,9 @@ public class MovieServiceImpl implements MovieService {
 //                }
 //            }
 //        }
-
-
-        // 이미지 저장
+//
+//
+//        // 이미지 저장
 //        public void saveImage ( byte[] imageBytes, String filename){
 //            Path path = Paths.get(uploadPath, filename);
 //
@@ -323,7 +324,7 @@ public class MovieServiceImpl implements MovieService {
 //                }
 //            }
 //        }
-
+//
 
 //    // 제목 키워드로 조회
 //    @Override
