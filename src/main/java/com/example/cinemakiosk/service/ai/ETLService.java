@@ -39,8 +39,8 @@ public class ETLService {
     private final VectorStore vectorStore; // VectorDB에 적용
     @Qualifier("pgJdbcTemplate") private final JdbcTemplate jdbcTemplate; // VectorDB에는 전체 삭제가 없음 새로운 메뉴얼을 넣을때는 전체 삭제를 하고 최신거만 추가하기 위함
 
-    // ETL추출을 할때 title 키워드를 지정하기 위해 @title = title로 형식 지정 (싱글턴)
-    private static final Pattern TITLE_PATTERN = Pattern.compile("@title:\\s*(.+?)\\s*$", Pattern.MULTILINE);
+    // ETL추출을 할때 title 키워드를 지정하기 위해 @title(@title:) = title로 형식 지정 (싱글턴)
+    private static final Pattern TITLE_PATTERN = Pattern.compile("@title:?\\s*(.+?)\\s*$", Pattern.MULTILINE);
 
     /**
      * 업로드 파일 텍스트 추출 -> 변환 -> 적재
@@ -145,7 +145,7 @@ public class ETLService {
      */
     private List<Document> parseByTitleMarker(String rawText, String sourceFileName) {
         // split 사용을 위한 배열 사용
-        String[] blocks = rawText.split("(?=@title:)");
+        String[] blocks = rawText.split("(?=@title)");
         List<Document> result = new ArrayList<>();
 
         for (String block : blocks) {

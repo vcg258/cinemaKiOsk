@@ -6,6 +6,7 @@ import com.example.cinemakiosk.domain.enums.Type;
 import com.example.cinemakiosk.dto.*;
 import com.example.cinemakiosk.mapper.PaymentDetailsMapper;
 import com.example.cinemakiosk.repository.PaymentDetailsRepository;
+import com.example.cinemakiosk.vo.CouponVO;
 import com.example.cinemakiosk.vo.PaymentDetailsVO;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,9 +58,12 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
     //결제 내역 전체조회
     @Override
     public Page<PaymentDetailsDTO> readAll(int page) {
-        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("createAt").descending());
-        Page<PaymentDetailsEntity> paymentDetailsEntityList = paymentDetailsRepository.findAll(pageable);
-        return paymentDetailsEntityList.map(PaymentDetailsEntity::toDTO);
+        int offset = (page - 1) * 10;
+        long count = paymentDetailsRepository.count();
+        List<PaymentDetailsVO> paymentDetailsVOS = paymentDetailsMapper.selectAll(offset);
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("status").descending());
+        log.info("{}번 ~ {}번", offset + 1, offset + 10);
+        return new PageImpl<>(paymentDetailsVOS.stream().map(PaymentDetailsVO::toDTO).toList(), pageable, count);
     }
 
     //결제 내역 변경
