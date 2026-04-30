@@ -28,4 +28,9 @@ class SmsNurigoServiceTest {
 
         System.out.println("생성된 6자리 숫자: " + randomNumber);
     }
+
+    @Test
+    public void receiveSms() {
+        smsNurigoService.receipt("01049393069", "1", "11111111-1111-1111-1111-111111111111");
+    }
 }

@@ -69,7 +69,9 @@ public class PaymentDetailsEntity {
                 .id(paymentDetailsEntity.getId())
                 .reservation(ReservationDetailsEntity.toDTO(paymentDetailsEntity.getReservationDetailsEntity()))
                 .bonusPolicy(BonusPolicyEntity.toDTO(paymentDetailsEntity.getBonusPolicyEntity()))
-                .couponNum(CouponEntity.toDTO(paymentDetailsEntity.getCouponEntity()))
+                .couponNum(paymentDetailsEntity.getCouponEntity() != null
+                        ? CouponEntity.toDTO(paymentDetailsEntity.getCouponEntity())
+                        : null)
                 .cost(paymentDetailsEntity.getCost())
                 .createAt(paymentDetailsEntity.getCreateAt())
                 .usePoint(paymentDetailsEntity.getUsePoint())

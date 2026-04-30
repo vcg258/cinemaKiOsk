@@ -2,6 +2,7 @@ package com.example.cinemakiosk.controller;
 
 
 import com.example.cinemakiosk.domain.enums.AuthResult;
+import com.example.cinemakiosk.dto.ReservationDetailsDTO;
 import com.example.cinemakiosk.dto.SmsNurigoDTO;
 import com.example.cinemakiosk.service.SmsNurigoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,11 +21,9 @@ public class SmsNurigoController {
 
     @Operation(summary = "문자발송",
             description = "1. 문자받을 폰 번호 입력\n 2. 내용 입력 (- 유무 상관없음)")
-    @PostMapping("/")
-    public ResponseEntity<Void> sms(@RequestBody SmsNurigoDTO smsNurigoDTO) {
-        log.info("Sending SMS to " + smsNurigoDTO.getToPhone());
-        log.info("content {} ", smsNurigoDTO.getContent());
-        smsNurigoService.sendSms(smsNurigoDTO.getToPhone(), smsNurigoDTO.getContent());
+    @PostMapping("/{toPhone}/{inputCode}")
+    public ResponseEntity<Void> sms(@PathVariable String toPhone, @PathVariable String inputCode) {
+        smsNurigoService.sendSms(toPhone, inputCode);
         return ResponseEntity.ok().build();
     }
 
@@ -40,7 +39,7 @@ public class SmsNurigoController {
 
 
     @Operation(summary = "인증번호 검증",
-            description = "- 대상 고객의 번호와 고객이 입력한 인증번호 입력\n -요청을 받을 때 인증번호가 만료(3분)되거나 인증 성공시에 인증번호삭제")
+            description = "- 대상 고객의 번호와 고객이 입력한 인증번호 입력\n -요청을 받을 때 인증번호가 만료(3분)되었거나 인증 성공시에 인증번호삭제")
     @PostMapping("/comparison/{toPhone}/{inputCode}")
     public ResponseEntity<String> comparison(@PathVariable String toPhone, @PathVariable String inputCode) {
         log.info("comparison to" + inputCode);
@@ -50,8 +49,18 @@ public class SmsNurigoController {
             case INVALID_FORMAT -> ResponseEntity.badRequest().body("인증번호는 6자리입니다.");
             case EXPIRED -> ResponseEntity.badRequest().body("인증번호가 만료됐습니다.");
             case MISMATCH -> ResponseEntity.badRequest().body("인증번호가 일치하지 않습니다.");
+            case None -> ResponseEntity.badRequest().body("발송된 인증번호가 없습니다. 인증번호를 다시 발송받으세요.");
         };
     }
 
 
-}
+    @Operation(summary = "영수증",
+            description = "")
+    @PostMapping("/receipt/{toPhone}/{no}/{uuid}")
+    public ResponseEntity<Void> receipt(@PathVariable String toPhone, @PathVariable String no, @PathVariable String uuid) {
+        smsNurigoService.receipt(toPhone, no, uuid);
+        return ResponseEntity.ok().build();
+    }
+
+
+    }

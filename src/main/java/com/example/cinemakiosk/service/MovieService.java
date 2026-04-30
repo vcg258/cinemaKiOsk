@@ -38,7 +38,7 @@ public interface MovieService {
     Page<MovieDTO> getMoviePage(int page);
 
     // 영화 이미지 추가
-    void saveImage(byte[] imageBytes, String filename) throws IOException;
+//    void saveImage(byte[] imageBytes, String filename) throws IOException;
 
 
 //

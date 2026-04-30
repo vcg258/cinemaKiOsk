@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PaymentDetailsRepository extends JpaRepository<PaymentDetailsEntity, String>{
 
+//    Optional<PaymentDetailsEntity> findByReservationDetailsEntity_Id(String reservationId);
+
 //    @Query("select b from Board b where b.title like concat('%',:keyword,'%')")
 //    Page<Board> findKeyword(String keyword, Pageable pageable);
 //
