@@ -46,6 +46,7 @@ public class PaymentController {
         log.info("결제 컨펌 로직 시작");
         log.info("jsonBody : {}", jsonBody);
 
+
         // 1. 파싱 (Jackson 사용)
         JsonNode requestData = objectMapper.readTree(jsonBody);
         String payType = requestData.path("payType").asText(); // 기본값 CARD
