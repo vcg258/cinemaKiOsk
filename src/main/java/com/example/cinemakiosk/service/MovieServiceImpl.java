@@ -124,9 +124,6 @@ public class MovieServiceImpl implements MovieService {
         movieRepository.findById(movieId)
                 .orElseThrow(() -> new NoSuchElementException("movieId를 찾을 수 없습니다"));
 
-        Optional<MovieEntity> byId = movieRepository.findById(movieId);
-        MovieEntity movieEntity = byId.get();
-
         movieRepository.deleteById(movieId);
     }
 
