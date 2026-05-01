@@ -10,7 +10,7 @@ public interface ScheduleRepository extends JpaRepository<ScheduleEntity, Long> 
     // 스케줄에서 지정영화만 전체 조회하기 위한 메서드
     List<ScheduleEntity> findByMovieEntity_MovieId(Long movieId);
 
-    List<ScheduleEntity> findByMovieEntity_MovieIdAndEndAtAfter(Long movieId, LocalDateTime now);
+    List<ScheduleEntity> findByMovieEntity_MovieIdAndStartAtAfter(Long movieId, LocalDateTime now);
 
     // 스케줄 오늘 포함 이후 날짜 전체 조회
     List<ScheduleEntity> findAllByEndAtAfter(LocalDateTime now);

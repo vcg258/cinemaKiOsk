@@ -506,7 +506,7 @@ VALUES ('testCoupon01', 2, TRUE),  -- 사용 가능
 
 -- 적립 정책
 INSERT IGNORE INTO bonus_policy (id, activation, end_at, give_value, policy_name, start_at)
-VALUES (1, 1, DATE_ADD(current_timestamp, INTERVAL 100 DAY), 5, '기본', current_timestamp),
+VALUES (1, 1, DATE_ADD(current_timestamp, INTERVAL 100 DAY), 5, 'NORMAL', current_timestamp),
        (2, 1, DATE_ADD(current_timestamp, INTERVAL 100 DAY), 10, 'VIP', current_timestamp);
 
 -- 스케줄 (영화 1~4번 각 상영관에 3타임씩)

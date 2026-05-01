@@ -172,9 +172,9 @@ public class ScheduleServiceImpl implements ScheduleService {
      * @return 해당하는 전체 영화 스케줄
      */
     @Override
-    public List<ScheduleDTO> getScheduleListByMovieWithCoustomer(Long movieId) {
+    public List<ScheduleDTO> getScheduleListByMovieWithCustomer(Long movieId) {
         List<ScheduleEntity> entityList =
-                scheduleRepository.findByMovieEntity_MovieIdAndEndAtAfter(movieId, LocalDateTime.now());
+                scheduleRepository.findByMovieEntity_MovieIdAndStartAtAfter(movieId, LocalDateTime.now());
         return entityList.stream().map(ScheduleEntity::toDTO).toList();
     }
 

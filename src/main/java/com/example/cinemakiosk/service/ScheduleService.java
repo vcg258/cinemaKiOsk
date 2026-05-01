@@ -25,7 +25,7 @@ public interface ScheduleService {
     List<ScheduleDTO> getScheduleListByMovie(Long movieId);
 
     // 영화에 해당하는 스케줄 목록 전체 조회 고객용 (현재 시간기준 지나간것들은 조회 안함)
-    List<ScheduleDTO> getScheduleListByMovieWithCoustomer(Long movieId);
+    List<ScheduleDTO> getScheduleListByMovieWithCustomer(Long movieId);
 
     // 스케줄 하나 조회
     ScheduleDTO getSchedule(Long id);

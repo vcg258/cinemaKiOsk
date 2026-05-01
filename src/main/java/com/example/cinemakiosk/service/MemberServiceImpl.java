@@ -40,6 +40,7 @@ public class MemberServiceImpl implements MemberService{
 
         MemberDTO dto = MemberDTO.builder()
                 .phone(memberDTO.getPhone())
+                .grade(Grade.NORMAL)
                 .point(memberDTO.getPoint())
                 .createAt(LocalDateTime.now())
                 .build();

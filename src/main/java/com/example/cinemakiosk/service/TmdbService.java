@@ -10,7 +10,7 @@ public interface TmdbService {
 
 
     // 인기 영화 목록 (검색없을 시 기본값)
-    public List<TmdbMovieDTO> getPopularMovies(int page);
+    List<TmdbMovieDTO> getPopularMovies(int page);
 
     // 검색 목록
     // id, title, poster(image url)

@@ -8,7 +8,6 @@ import com.example.cinemakiosk.dto.MovieDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,7 +44,7 @@ public class CustomerController {
     @Operation(summary = "지정 영화에 해당하는 전체 스케줄 조회")
     @GetMapping("/schedule/{id}/movie")
     public ResponseEntity<List<ScheduleDTO>> getScheduleByMovie(@PathVariable Long id) {
-        return ResponseEntity.ok(scheduleService.getScheduleListByMovieWithCoustomer(id));
+        return ResponseEntity.ok(scheduleService.getScheduleListByMovieWithCustomer(id));
     }
 
     // 상영중인 영화 조회
