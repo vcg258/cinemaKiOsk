@@ -1,5 +1,6 @@
 package com.example.cinemakiosk.service;
 
+import com.example.cinemakiosk.domain.enums.Grade;
 import com.example.cinemakiosk.dto.BonusPolicyDTO;
 import com.example.cinemakiosk.dto.requestDTO.ActivationRequest;
 import org.springframework.data.domain.Page;
@@ -22,8 +23,8 @@ public interface BonusPolicyService {
     // 적립 정책 전체 조회 (오늘 포함 이후 날짜 조회)
     List<BonusPolicyDTO> getBonusPolicies();
 
-    // 적립 정책 단일 조회
-    BonusPolicyDTO getBonusPolicy(Long id);
+    // 적립 정책 회원 등급별 단일 조회
+    BonusPolicyDTO getBonusPolicy(Grade grade);
 
     // 페이징 처리
     Page<BonusPolicyDTO> getBonusPolicyPage(int page);

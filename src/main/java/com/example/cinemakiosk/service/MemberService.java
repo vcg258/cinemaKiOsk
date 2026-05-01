@@ -1,5 +1,6 @@
 package com.example.cinemakiosk.service;
 
+import com.example.cinemakiosk.domain.enums.Grade;
 import com.example.cinemakiosk.dto.MemberDTO;
 import com.example.cinemakiosk.dto.PointHistoryDTO;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,9 @@ public interface MemberService {
 
     // 회원 단일 조회
     MemberDTO getMember(String phone);
+
+    // 회원 등급 변경
+    void updateGrade(String phone);
 
     // 전체 포인트 조회 (페이징)
     Page<PointHistoryDTO> getPointHistoryAll(int page);

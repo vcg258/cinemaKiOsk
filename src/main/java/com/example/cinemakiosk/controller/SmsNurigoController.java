@@ -50,8 +50,7 @@ public class SmsNurigoController {
     }
 
 
-    @Operation(summary = "영수증",
-            description = "")
+    @Operation(summary = "영수증")
     @PostMapping("/receipt/{toPhone}/{uuid}")
     public ResponseEntity<Void> receipt(@PathVariable String toPhone, @PathVariable String uuid) {
         smsNurigoService.receipt(toPhone, uuid);

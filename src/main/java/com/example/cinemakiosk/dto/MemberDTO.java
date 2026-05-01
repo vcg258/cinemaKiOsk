@@ -3,6 +3,7 @@ package com.example.cinemakiosk.dto;
 import com.example.cinemakiosk.domain.MemberEntity;
 import com.example.cinemakiosk.domain.PointHistoryEntity;
 import com.example.cinemakiosk.domain.ReservationDetailsEntity;
+import com.example.cinemakiosk.domain.enums.Grade;
 import com.example.cinemakiosk.vo.MemberVO;
 import com.example.cinemakiosk.vo.PointHistoryVO;
 import com.example.cinemakiosk.vo.ReservationDetailsVO;
@@ -18,6 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class MemberDTO {
     private String phone; // 회원 번호
+    private Grade grade; // 회원 등급
     private Integer point; // 포인트
     private LocalDateTime createAt; // 생성일
 
@@ -30,6 +32,7 @@ public class MemberDTO {
 
         return MemberEntity.builder()
                 .phone(memberDTO.getPhone())
+                .grade(memberDTO.getGrade())
                 .point(memberDTO.getPoint())
                 .createAt(memberDTO.getCreateAt())
                 .build();
@@ -44,6 +47,7 @@ public class MemberDTO {
 
         return MemberVO.builder()
                 .phone(memberDTO.getPhone())
+                .grade(memberDTO.getGrade())
                 .point(memberDTO.getPoint())
                 .createAt(memberDTO.getCreateAt())
                 .build();

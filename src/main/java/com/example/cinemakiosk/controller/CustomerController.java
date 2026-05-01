@@ -1,5 +1,6 @@
 package com.example.cinemakiosk.controller;
 
+import com.example.cinemakiosk.domain.enums.Grade;
 import com.example.cinemakiosk.dto.*;
 import com.example.cinemakiosk.service.*;
 
@@ -44,7 +45,7 @@ public class CustomerController {
     @Operation(summary = "지정 영화에 해당하는 전체 스케줄 조회")
     @GetMapping("/schedule/{id}/movie")
     public ResponseEntity<List<ScheduleDTO>> getScheduleByMovie(@PathVariable Long id) {
-        return ResponseEntity.ok(scheduleService.getScheduleListByMovie(id));
+        return ResponseEntity.ok(scheduleService.getScheduleListByMovieWithCoustomer(id));
     }
 
     // 상영중인 영화 조회
@@ -68,7 +69,7 @@ public class CustomerController {
 
     @PostMapping("/member/{phone}")
     public ResponseEntity<MemberDTO> postMemberById(@PathVariable String phone) {
-        memberService.createMember(new MemberDTO(phone, 0, null));
+        memberService.createMember(new MemberDTO(phone, Grade.NORMAL, 0, null));
         return ResponseEntity.ok(memberService.getMember(phone));
     }
 

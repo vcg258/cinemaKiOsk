@@ -1,5 +1,6 @@
 package com.example.cinemakiosk.service;
 
+import com.example.cinemakiosk.domain.enums.Grade;
 import com.example.cinemakiosk.dto.BonusPolicyDTO;
 import com.example.cinemakiosk.dto.requestDTO.ActivationRequest;
 import lombok.extern.log4j.Log4j2;
@@ -48,7 +49,7 @@ class BonusPolicyServiceImplTest {
 
     @Test
     void getBonusPolicy() {
-        log.info(bonusService.getBonusPolicy(5L));
+        log.info(bonusService.getBonusPolicy(Grade.NORMAL));
     }
 
     @Test

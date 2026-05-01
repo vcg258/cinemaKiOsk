@@ -2,6 +2,7 @@ package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.domain.MemberEntity;
 import com.example.cinemakiosk.domain.PointHistoryEntity;
+import com.example.cinemakiosk.domain.enums.Grade;
 import com.example.cinemakiosk.domain.enums.Type;
 import com.example.cinemakiosk.dto.MemberDTO;
 import com.example.cinemakiosk.dto.PointHistoryDTO;
@@ -191,6 +192,24 @@ public class MemberServiceImpl implements MemberService{
     public MemberDTO getMember(String phone) {
         MemberEntity entity = memberRepository.findById(phone).orElseThrow();
         return MemberEntity.toDTO(entity);
+    }
+
+    /**
+     * 회원 등급 변경 메서드
+     * @param phone 지정 회원
+     */
+    @Override
+    public void updateGrade(String phone) {
+        MemberEntity member = memberRepository.findById(phone).orElseThrow();
+        long pointCount = pointHistoryRepository.findByMemberEntity_Phone(phone).stream()
+                .filter(ph -> ph.getType() == Type.EARN).count();
+        if (pointCount >= 20) {
+            member.changeGrade(Grade.VIP);
+        } else {
+            log.info("포인트 내역 20건 이하 등업 X");
+            member.changeGrade(Grade.NORMAL);
+        }
+        memberRepository.save(member);
     }
 
     /**

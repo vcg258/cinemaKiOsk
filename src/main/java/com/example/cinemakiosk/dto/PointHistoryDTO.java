@@ -25,7 +25,7 @@ public class PointHistoryDTO {
     private Integer amountPoint; // 사용할 포인트
     private LocalDateTime createAt; // 포인트 변경일
 
-    private String title;
+    private String title; // 어떤 영화에서 포인트적립이 됐는지 사용을 했는지 뷰에서 표시하기 위한 변수(Mapper)
 
     /**
      * DTO -> Entity

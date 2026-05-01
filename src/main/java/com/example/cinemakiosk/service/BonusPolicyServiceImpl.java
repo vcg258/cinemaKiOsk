@@ -1,10 +1,12 @@
 package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.domain.BonusPolicyEntity;
+import com.example.cinemakiosk.domain.enums.Grade;
 import com.example.cinemakiosk.dto.BonusPolicyDTO;
 import com.example.cinemakiosk.dto.requestDTO.ActivationRequest;
 import com.example.cinemakiosk.mapper.BonusPolicyMapper;
 import com.example.cinemakiosk.repository.BonusPolicyRepository;
+import com.example.cinemakiosk.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -16,13 +18,14 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Log4j2
 @Service
 @RequiredArgsConstructor
 public class BonusPolicyServiceImpl implements BonusPolicyService {
     private final BonusPolicyRepository bonusPolicyRepository;
-    private final BonusPolicyMapper bonusPolicyMapper;
+    private final MemberRepository memberRepository;
 
     /**
      * 적립정책 추가 / 수정
@@ -106,12 +109,15 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
 
     /**
      * 적립정책 단일 조회
-     * @param id 적립정책 PK
+     * @param grade 회원등급
      * @return 지정 적립정책
      */
     @Override
-    public BonusPolicyDTO getBonusPolicy(Long id) {
-        BonusPolicyEntity policy = bonusPolicyRepository.findById(id).orElseThrow();
+    public BonusPolicyDTO getBonusPolicy(Grade grade) {
+        if (grade == null) {
+            throw new NoSuchElementException("지정 이름 적립정책 없음");
+        }
+        BonusPolicyEntity policy = bonusPolicyRepository.findByPolicyName(grade.name());
         return BonusPolicyEntity.toDTO(policy);
     }
 

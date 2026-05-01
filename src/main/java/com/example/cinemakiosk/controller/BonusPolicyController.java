@@ -1,5 +1,6 @@
 package com.example.cinemakiosk.controller;
 
+import com.example.cinemakiosk.domain.enums.Grade;
 import com.example.cinemakiosk.dto.BonusPolicyDTO;
 import com.example.cinemakiosk.dto.requestDTO.ActivationRequest;
 import com.example.cinemakiosk.service.BonusPolicyService;
@@ -53,9 +54,9 @@ public class BonusPolicyController {
     }
 
     @Operation(summary = "적립정책 단일 조회")
-    @GetMapping("/{id}")
-    public ResponseEntity<BonusPolicyDTO> getBonusPolicy(@PathVariable Long id) {
-        return ResponseEntity.ok(bonusPolicyService.getBonusPolicy(id));
+    @GetMapping("/{grade}")
+    public ResponseEntity<BonusPolicyDTO> getBonusPolicy(@PathVariable Grade grade) {
+        return ResponseEntity.ok(bonusPolicyService.getBonusPolicy(grade));
     }
 
     @Operation(summary = "적립 전체 로그 (페이징 처리 size=10 고정)")

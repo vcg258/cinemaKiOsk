@@ -40,6 +40,10 @@ public class MemberEntity{
     @OneToOne(mappedBy = "memberEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private MemberDelLogEntity memberDelLogEntity;
 
+    public void changeGrade(Grade grade){
+        this.grade = grade;
+    }
+
     public void changePoint(int point){
         this.point = point;
     }
@@ -53,6 +57,7 @@ public class MemberEntity{
 
         return MemberDTO.builder()
                 .phone(memberEntity.getPhone())
+                .grade(memberEntity.getGrade())
                 .point(memberEntity.getPoint())
                 .createAt(memberEntity.getCreateAt())
                 .build();

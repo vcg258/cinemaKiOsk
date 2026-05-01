@@ -15,5 +15,8 @@ public interface BonusPolicyRepository extends JpaRepository<BonusPolicyEntity, 
     // 적립 정책 오늘 포함 이후 날짜 모두 조회 만료일이 NULL 이면 무기한이므로 포함
     @Query("SELECT B FROM BonusPolicyEntity AS B WHERE B.endAt IS NULL OR B.endAt >= :NOW")
     List<BonusPolicyEntity> findAllBonusPolicy(@Param("NOW") LocalDateTime now);
+
+    // 회원의 등급에 해당하는 적립을 하기위한 조회 메서드
+    BonusPolicyEntity findByPolicyName(String policyName);
 }
 

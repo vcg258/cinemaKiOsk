@@ -85,7 +85,10 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
         String orderId = requestData.get("orderId").asText();
         String phone = requestData.get("phone").asText();
         String paymentKey = requestData.get("paymentKey").asText();
-        long bonusPolicyId = requestData.get("bonusPolicyId").asLong();
+
+        MemberDTO member = memberService.getMember(phone);
+        BonusPolicyDTO bonusPolicy = bonusPolicyService.getBonusPolicy(member.getGrade());
+
         long usePoint = requestData.get("usePoint").asLong();
         Long scheduleIdValue = requestData.path("scheduleId").path("scheduleId").asLong();
         log.error("경계1");
@@ -100,8 +103,6 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
         }
         log.error("경계2 {}", seats);
         ScheduleDTO schedule = scheduleService.getScheduleDTO(scheduleIdValue);
-        MemberDTO member = memberService.getMember(phone);
-        BonusPolicyDTO bonusPolicy = bonusPolicyService.getBonusPolicy(bonusPolicyId);
         String couponStr = requestData.path("couponNum").asText("");
         CouponDTO couponNum = couponStr.isEmpty() ? null : discountPolicyService.getCoupon(couponStr);
         log.error("경계3");
@@ -166,12 +167,14 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
         if (earnPoint > 0) {
             memberService.pointHistoryCreate(PointHistoryDTO.builder()
                     .paymentId(orderId).phone(phone).type(Type.EARN).amountPoint(earnPoint)
-                    .createAt(LocalDateTime.now()).title("영화 예매 포인트 적립")
+                    .createAt(LocalDateTime.now())
                     .build());
             log.info("Point Earn {}", earnPoint);
 
         }
         log.error("경계11");
+        // 회원 등급 확인
+        memberService.updateGrade(member.getPhone());
         // 멤버 실제 포인트 업데이트
         log.info("멤버 확인 : {}", member);
 

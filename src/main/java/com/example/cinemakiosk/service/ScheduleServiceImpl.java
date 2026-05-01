@@ -158,11 +158,23 @@ public class ScheduleServiceImpl implements ScheduleService {
     /**
      * 영화에 해당하는 스케줄 전체 조회
      * @param movieId 영화 PK
-     * @return 해당하는 전체 영화 리스트
+     * @return 해당하는 전체 영화 스케줄
      */
     @Override
     public List<ScheduleDTO> getScheduleListByMovie(Long movieId) {
         List<ScheduleEntity> entityList = scheduleRepository.findByMovieEntity_MovieId(movieId);
+        return entityList.stream().map(ScheduleEntity::toDTO).toList();
+    }
+
+    /**
+     * 영화에 해당하는 스케줄 전체 조회 (고객용)
+     * @param movieId 영화 PK
+     * @return 해당하는 전체 영화 스케줄
+     */
+    @Override
+    public List<ScheduleDTO> getScheduleListByMovieWithCoustomer(Long movieId) {
+        List<ScheduleEntity> entityList =
+                scheduleRepository.findByMovieEntity_MovieIdAndEndAtAfter(movieId, LocalDateTime.now());
         return entityList.stream().map(ScheduleEntity::toDTO).toList();
     }
 
