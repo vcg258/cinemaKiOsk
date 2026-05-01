@@ -10,6 +10,7 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -24,6 +25,7 @@ import javax.sql.DataSource;
 public class MemberConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
+    @Qualifier("mariaDB")
     private final DataSource dataSource;
     private final MemberCleanupWriter memberCleanupWriter;
 
@@ -39,7 +41,6 @@ public class MemberConfig {
         return new StepBuilder("memberCleanupStep", jobRepository)
                 .<String, String>chunk(100, transactionManager) // 100건씩 처리
                 .reader(inactiveMemberReader())
-//                .processor(inactiveMemberProcessor())
                 .writer(memberCleanupWriter)
                 .build();
     }
@@ -65,13 +66,4 @@ public class MemberConfig {
                 .rowMapper((rs, rowNum) -> rs.getString("phone"))
                 .build();
     }
-
-    // process
-//    @Bean
-//    public ItemProcessor<String, String> inactiveMemberProcessor() {
-//        return phone -> {
-//            log.info("MemberCleanup 삭제 대상 phone: {}", phone);
-//            return phone;
-//        };
-//    }
 }

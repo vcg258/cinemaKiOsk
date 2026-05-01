@@ -17,9 +17,8 @@ public class MemberDelLogEntity {
     @Column(columnDefinition = "BIGINT UNSIGNED")
     @Id private Long memberId; // 인덱스
 
-    @OneToOne
-    @JoinColumn(name = "phone", nullable = true, foreignKey = @ForeignKey(name = "fk_member_cleanup_log_member_phone"))
-    private MemberEntity memberEntity; // 회원 번호
+    @Column(length = 20)
+    private String phone; // 회원 번호
 
     @Column(nullable = false, columnDefinition = "INT UNSIGNED DEFAULT 0")
     private int point; // 포인트

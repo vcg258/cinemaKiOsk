@@ -41,45 +41,12 @@ public class StatisticConfig {
                 .build();
     }
 
-//    @Bean
-//    public Step cleanupStep() {
-//        return new StepBuilder("cleanupStep", jobRepository)
-//                .tasklet(cleanupTasklet(), transactionManager)
-//                .build();
-//    }
-
     @Bean
     public Step generateStep() {
         return new StepBuilder("generateStep", jobRepository)
                 .tasklet(generateTasklet(), transactionManager)
                 .build();
     }
-
-
-//    @Bean
-//    @StepScope
-//    public Tasklet cleanupTasklet() { // 삭제 로직 (폐기)
-//        return new Tasklet() {
-//            @Override
-//            @Nullable
-//            public RepeatStatus execute(StepContribution contribution,
-//                                        ChunkContext chunkContext) throws Exception {
-//
-//                // jobParameters에서 전달되는 날짜 targetDate를 가져옴
-//                String targetDateStr = chunkContext.getStepContext()
-//                        .getJobParameters()
-//                        .get("targetDate")
-//                        .toString();
-//                LocalDate targetDate = LocalDate.parse(targetDateStr);
-//
-//                // targetDate에 해당하는 통계 삭제
-//                statisticsRepository.deleteStatsByDate(targetDate);
-//                log.info("StatisticsBatch 기존 데이터 삭제 완료 (date={})", targetDate);
-//
-//                return RepeatStatus.FINISHED;
-//            }
-//        };
-//    }
 
     @Bean
     @StepScope

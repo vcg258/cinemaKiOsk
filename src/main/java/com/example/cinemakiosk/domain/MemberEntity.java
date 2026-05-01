@@ -37,9 +37,6 @@ public class MemberEntity{
     @OneToMany(mappedBy = "memberEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<ReservationDetailsEntity> reservationDetailsEntity;
 
-    @OneToOne(mappedBy = "memberEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
-    private MemberDelLogEntity memberDelLogEntity;
-
     public void changeGrade(Grade grade){
         this.grade = grade;
     }
