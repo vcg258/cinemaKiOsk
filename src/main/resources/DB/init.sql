@@ -27,8 +27,9 @@ CREATE TABLE IF NOT EXISTS `admin` # FK (X)
 CREATE TABLE IF NOT EXISTS `member` # FK (X)
 (
     `phone`     VARCHAR(20) PRIMARY KEY COMMENT '회원 번호',
-    `point`     INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '포인트',
-    `create_at` DATETIME     NOT NULL COMMENT '생성일' # NULL -> NOT NULL
+    `grade`     ENUM ('NORMAL, VIP') NOT NULL DEFAULT 'NORMAL' COMMENT '회원 등급(포인트 내역 20회 이상 VIP)',
+    `point`     INT UNSIGNED         NOT NULL DEFAULT 0 COMMENT '포인트',
+    `create_at` DATETIME             NOT NULL COMMENT '생성일'
 ) COMMENT '회원(포인트)';
 
 
@@ -128,8 +129,8 @@ CREATE TABLE IF NOT EXISTS `schedule`
     `id`         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '스케줄 인덱스',
     `no`         BIGINT UNSIGNED      NOT NULL COMMENT '상영관 번호 FK',
     `movie_id`   BIGINT UNSIGNED      NOT NULL COMMENT '영화 번호 FK',
-    `start_at`   DATETIME             NULL COMMENT '상영 시작 시간', # NOT NULL? NULL?
-    `end_at`     DATETIME             NULL COMMENT '상영 종료 시간', # NOT NULL? NULL?
+    `start_at`   DATETIME             NULL COMMENT '상영 시작 시간',
+    `end_at`     DATETIME             NULL COMMENT '상영 종료 시간',
     `activation` BOOLEAN DEFAULT TRUE NULL COMMENT '스케줄 활성화 여부 (활성화=True, 만료=False)',
     CONSTRAINT `fk_schedule_theater_no` FOREIGN KEY (`no`) REFERENCES theater (`no`),
     CONSTRAINT `fk_schedule_movie_id` FOREIGN KEY (`movie_id`) REFERENCES movie (`movie_id`)
@@ -152,7 +153,7 @@ CREATE TABLE IF NOT EXISTS `reservation_details`
 (
     `id`          CHAR(36) PRIMARY KEY COMMENT '예매 고유번호',
     `schedule_id` BIGINT UNSIGNED                    NOT NULL COMMENT '스케쥴 아이디 FK',
-    `phone`       VARCHAR(20)                        NULL COMMENT '회원 번호 FK', # NOT NULL -> NULL 이유 : 비회원일 경우 NULL
+    `phone`       VARCHAR(20)                        NULL COMMENT '회원 번호 FK',
     `returned`    BOOLEAN  DEFAULT FALSE             NOT NULL COMMENT '',
     `create_at`   DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '예매 기준시',
     CONSTRAINT `fk_reservation_details_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES schedule (`id`),
@@ -174,7 +175,7 @@ CREATE TABLE IF NOT EXISTS `payment_details`
 (
     `id`              CHAR(36) PRIMARY KEY COMMENT '결제 고유번호',
     `reservation_id`  varchar(36)                  NOT NULL COMMENT '예매 내역 FK',
-    `bonus_policy_id` BIGINT UNSIGNED              NULL COMMENT '적립 정책 FK', # NOT NULL -> NULL 이유 : 비회원일 경우 NULL
+    `bonus_policy_id` BIGINT UNSIGNED              NULL COMMENT '적립 정책 FK',
     `coupon_num`      VARCHAR(12)                  NULL COMMENT '할인 쿠폰 FK',
     `cost`            BIGINT UNSIGNED              NOT NULL COMMENT '결제 금액',
     `create_at`       DATETIME                     NOT NULL COMMENT '결제 시간',

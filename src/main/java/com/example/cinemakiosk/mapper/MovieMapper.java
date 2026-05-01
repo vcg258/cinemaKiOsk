@@ -1,10 +1,7 @@
 package com.example.cinemakiosk.mapper;
 
-import com.example.cinemakiosk.domain.MovieEntity;
-import com.example.cinemakiosk.domain.enums.Rating;
 import com.example.cinemakiosk.vo.MovieVO;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 

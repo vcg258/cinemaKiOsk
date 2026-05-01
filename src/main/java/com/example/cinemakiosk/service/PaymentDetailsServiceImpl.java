@@ -61,7 +61,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
         int offset = (page - 1) * 10;
         long count = paymentDetailsRepository.count();
         List<PaymentDetailsVO> paymentDetailsVOS = paymentDetailsMapper.selectAll(offset);
-        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("status").descending());
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("createAt").descending());
         log.info("{}번 ~ {}번", offset + 1, offset + 10);
         return new PageImpl<>(paymentDetailsVOS.stream().map(PaymentDetailsVO::toDTO).toList(), pageable, count);
     }

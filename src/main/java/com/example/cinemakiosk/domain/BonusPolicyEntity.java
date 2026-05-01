@@ -34,7 +34,7 @@ public class BonusPolicyEntity{
     private LocalDateTime endAt;//	만료일
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean activation;      // 활성화 여부(중요할까?)
+    private boolean activation;      // 활성화 여부
 
     @OneToMany(mappedBy = "bonusPolicyEntity")
     private List<PaymentDetailsEntity> paymentDetailsEntity;

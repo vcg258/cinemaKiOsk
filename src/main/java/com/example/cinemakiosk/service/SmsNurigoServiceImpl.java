@@ -1,13 +1,11 @@
 package com.example.cinemakiosk.service;
 
-import com.example.cinemakiosk.domain.MovieEntity;
 import com.example.cinemakiosk.domain.PaymentDetailsEntity;
 import com.example.cinemakiosk.domain.enums.AuthResult;
 import com.example.cinemakiosk.domain.enums.Rating;
 import com.example.cinemakiosk.domain.enums.Status;
 import com.example.cinemakiosk.dto.PaymentDetailsDTO;
 import com.example.cinemakiosk.dto.ReservationDetailsDTO;
-import com.example.cinemakiosk.dto.SmsNurigoDTO;
 import com.example.cinemakiosk.mapper.ReservationDetailsMapper;
 import com.example.cinemakiosk.repository.PaymentDetailsRepository;
 import com.example.cinemakiosk.vo.ReservationDetailsVO;

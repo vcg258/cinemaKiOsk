@@ -1,15 +1,11 @@
 package com.example.cinemakiosk.controller;
 
 
-import com.example.cinemakiosk.domain.enums.AuthResult;
-import com.example.cinemakiosk.dto.ReservationDetailsDTO;
-import com.example.cinemakiosk.dto.SmsNurigoDTO;
 import com.example.cinemakiosk.service.SmsNurigoService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Log4j2

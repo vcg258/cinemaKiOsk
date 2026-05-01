@@ -65,7 +65,7 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
     }
 
     /**
-     * 적립정책 만료여부
+     * 적립정책 만료여부 변경
      * @param request 요청 DTO
      */
     @Override

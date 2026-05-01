@@ -13,7 +13,7 @@ public interface BonusPolicyService {
     // 적립 정책 종료 (23시 59분으로 지정 활성화 여부 FALSE)
     void finishActivation(Long id);
 
-    // 적립 정책 만료여부
+    // 적립 정책 만료여부 변경
     void changeActivation(ActivationRequest request);
 
     // 적립 정책 삭제

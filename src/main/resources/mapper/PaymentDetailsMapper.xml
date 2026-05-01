@@ -183,6 +183,7 @@
                st.seat_number    as rd_st_seat_number
 
         from (select * from cinema_kiosk.payment_details
+              order by create_at desc, id desc
                        limit 10 offset #{page}) as pm
                  left join cinema_kiosk.bonus_policy bp on bp.id = pm.bonus_policy_id
                  left join cinema_kiosk.coupon cp on cp.coupon_num = pm.coupon_num
@@ -194,6 +195,6 @@
                  inner join cinema_kiosk.seat_policy sp on th.policy_id = sp.policy_id
                  inner join cinema_kiosk.member mb on rd.phone = mb.phone
                  inner join cinema_kiosk.reservation_seat st on rd.id = st.reservation_id
-        order by pm.create_at desc
+        order by pm.create_at desc, pm.id DESC
     </select>
 </mapper>
