@@ -93,7 +93,7 @@ public class AdminController {
 
     @Operation(summary = "로그아웃")
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(String loginId, HttpServletResponse response) {
+    public ResponseEntity<Void> logout(@RequestParam String loginId, HttpServletResponse response) {
 
         // UUID null처리
         adminRoleService.logout(loginId);
