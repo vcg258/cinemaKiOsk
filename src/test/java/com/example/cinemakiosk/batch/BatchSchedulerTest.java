@@ -18,7 +18,7 @@ class BatchSchedulerTest {
 
     @Test
     void runJob() {
-        batchScheduler.runJob(LocalDate.now().minusDays(1));
+        batchScheduler.runJob(LocalDate.now());
 
     }
     @Test

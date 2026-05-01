@@ -3,6 +3,7 @@ package com.example.cinemakiosk.repository;
 import com.example.cinemakiosk.domain.enums.Days;
 import com.example.cinemakiosk.vo.StatisticsVO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @Repository
 public class StatisticsRepository {
 
+    @Qualifier("mariaDBJdbcTemplate")
     private final JdbcTemplate jdbcTemplate;
 
     // 날짜별 스케줄 통계 집계 조회

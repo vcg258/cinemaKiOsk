@@ -17,15 +17,13 @@ import java.time.LocalDateTime;
 public class BatchScheduler {
 
     private final JobLauncher jobLauncher;
-
-    @Qualifier("statisticsJob")
     private final Job statisticsJob;
-
-    @Qualifier("memberCleanupJob")
     private final Job memberCleanupJob;
 
     // Job빈이 여러개이니 @Qualifier를 사용하여 특정 Job을 지정
-    public BatchScheduler(JobLauncher jobLauncher, Job statisticsJob, Job memberCleanupJob) {
+    public BatchScheduler(JobLauncher jobLauncher,
+                          @Qualifier("statisticsJob") Job statisticsJob,
+                          @Qualifier("memberCleanupJob") Job memberCleanupJob) {
         this.jobLauncher = jobLauncher;
         this.statisticsJob = statisticsJob;
         this.memberCleanupJob = memberCleanupJob;
@@ -33,7 +31,7 @@ public class BatchScheduler {
 
 
 
-    @Scheduled(cron = "0 0 3 * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void statistisRun() {
 
         // 어제를 가져옴
@@ -66,7 +64,7 @@ public class BatchScheduler {
         }
     }
 
-    @Scheduled(cron = "0 00 04 * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void runMemberCleanupJob() throws Exception {
         log.info("MemberCleanup 실행 요청");
         try {
