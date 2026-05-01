@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -34,16 +33,7 @@ public class TmdbServiceImpl implements TmdbService {
 //    @Value("${my.upload.path}")
 //    private String uploadPath;
 
-
     private final String baseUrl = "tmdbConfig.getBaseUrl()";
-
-
-
-
-
-
-
-
 
     // 인기 영화 목록 수정
     public List<TmdbMovieDTO> getPopularMovies(int page) {
@@ -156,7 +146,6 @@ public class TmdbServiceImpl implements TmdbService {
             throw new NoSuchElementException("해당 영화를 찾을 수 없습니다. tmdbId=" + tmdbId);
         }
 
-
         // 상세조회(배우, 감독)
 //        String creditsUrl = tmdbConfig.getBaseUrl() + "/movie/" + tmdbId
 //                + "/credits?api_key=" + tmdbConfig.getApiKey()
@@ -171,11 +160,6 @@ public class TmdbServiceImpl implements TmdbService {
                         .build())
                 .retrieve()
                 .body(TmdbCreditsDTO.class);
-
-
-
-
-
 
         // 크레딧 정보 없을 때
         if (credits == null) {
@@ -223,56 +207,49 @@ public class TmdbServiceImpl implements TmdbService {
                 .build();
     }
 
-
-
-
-
     /**
-     * TMDB release_dates API로 한국(KR) 관람 등급 조회
-     * certification 값 → Rating enum 변환
-     *
-     *   "All" / ""  → ALL (전체관람가)
-     *   "12"        → TWELVE (12세이상)
-     *   "15"        → FIFTEEN (15세이상)
-     *   "18" / "19" → NINETEEN (청소년관람불가)
+     * TMDB release_dates API로 관람 등급 조회
+     * <p>
+     * 조회 우선순위:
+     * 1. KR(한국) certification — TMDB에 한국 개봉 데이터가 있는 경우
+     * 2. US certification — KR 데이터 없을 때 미국 등급으로 대체 매핑
+     * 3. 둘 다 없으면 ALL 기본값
+     * <p>
+     * KR 매핑:
+     * "12"                      → TWELVE
+     * "15"                      → FIFTEEN
+     * "18" / "19" / "청소년관람불가" → NINETEEN
+     * 그 외("All", "", ...)      → ALL
+     * <p>
+     * US 대체 매핑:
+     * G           → ALL
+     * PG          → TWELVE
+     * PG-13       → FIFTEEN
+     * R / NC-17   → NINETEEN
      *
      * @param tmdbId TMDB 영화 ID
      * @return Rating enum (조회 실패 시 ALL 기본값)
      */
     private Rating fetchKoreanRating(Long tmdbId) {
         try {
-//            String url = tmdbConfig.getBaseUrl() + "/movie/" + tmdbId
-//                    + "/release_dates?api_key=" + tmdbConfig.getApiKey();
-//
-//            TmdbReleaseDatesDTO response = restTemplate.getForObject(url, TmdbReleaseDatesDTO.class);
-
-            // 1. RestClient 초기화
             RestClient restClient = RestClient.builder()
                     .baseUrl(tmdbConfig.getBaseUrl())
                     .build();
 
-            // 2. API 호출
             TmdbReleaseDatesDTO response = restClient.get()
-                    .uri(uriBuilder -> {
-                        URI uri = uriBuilder
-                                .path("/movie/" + tmdbId + "/release_dates")
-                                .queryParam("api_key=", tmdbConfig.getApiKey())
-                                .build();
-                        log.info("uri: {}", uri);
-                        return uriBuilder.build();
-                    })
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/movie/" + tmdbId + "/release_dates")
+                            .queryParam("api_key", tmdbConfig.getApiKey())
+                            .build())
                     .retrieve()
                     .body(TmdbReleaseDatesDTO.class);
 
-
-
             if (response == null || response.getResults() == null) {
-                log.warn("fetchKoreanRating... release_dates 응답 없음, 기본값 ALL 사용");
                 return Rating.ALL;
             }
 
-            // KR 항목 찾기
-            String certification = response.getResults().stream()
+            // 1단계: KR 등급 우선 조회
+            String krCert = response.getResults().stream()
                     .filter(r -> "KR".equals(r.getIso31661()))
                     .flatMap(r -> r.getReleaseDates().stream())
                     .map(ReleaseDate::getCertification)
@@ -280,24 +257,41 @@ public class TmdbServiceImpl implements TmdbService {
                     .findFirst()
                     .orElse("");
 
-            log.info("fetchKoreanRating... KR certification='{}'", certification);
+            log.info("fetchKoreanRating... KR certification='{}'", krCert);
 
-            // certification → Rating enum 변환
-            return switch (certification) {
-                case "12"       -> Rating.TWELVE;
-                case "15"       -> Rating.FIFTEEN;
-                case "18", "19" -> Rating.NINETEEN;
-                default         -> Rating.ALL; // "All", "", 기타 → 전체관람가
+            if (!krCert.isBlank()) {
+                return switch (krCert) {
+                    case "12" -> Rating.TWELVE;
+                    case "15" -> Rating.FIFTEEN;
+                    case "18", "19", "청소년관람불가" -> Rating.NINETEEN;
+                    default -> Rating.ALL;
+                };
+            }
+
+            // 2단계: KR 데이터 없으면 US 등급으로 대체
+            String usCert = response.getResults().stream()
+                    .filter(r -> "US".equals(r.getIso31661()))
+                    .flatMap(r -> r.getReleaseDates().stream())
+                    .map(ReleaseDate::getCertification)
+                    .filter(c -> c != null && !c.isBlank())
+                    .findFirst()
+                    .orElse("");
+
+            log.info("fetchKoreanRating... KR 없음, US certification='{}'으로 대체", usCert);
+
+            return switch (usCert) {
+                case "G" -> Rating.ALL;
+                case "PG" -> Rating.TWELVE;
+                case "PG-13" -> Rating.FIFTEEN;
+                case "R", "NC-17" -> Rating.NINETEEN;
+                default -> Rating.ALL;
             };
 
         } catch (Exception e) {
-            // 등급 조회 실패해도 상세 조회 자체는 성공해야 하므로 기본값 반환
             log.warn("fetchKoreanRating... 등급 조회 실패, 기본값 ALL 사용: {}", e.getMessage());
             return Rating.ALL;
         }
     }
-
-
 
 
     // 이미지 url 다운로드
