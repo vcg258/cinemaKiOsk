@@ -212,14 +212,4 @@ public class MemberServiceImpl implements MemberService{
         }
         memberRepository.save(member);
     }
-
-    /**
-     * 회원 포인트 갱신하는 기능
-     * @param memberDTO
-     */
-    @Override
-    public void updateMember(MemberDTO memberDTO) {
-        MemberEntity entity = MemberDTO.toEntity(memberDTO);
-        memberRepository.save(entity);
-    }
 }
