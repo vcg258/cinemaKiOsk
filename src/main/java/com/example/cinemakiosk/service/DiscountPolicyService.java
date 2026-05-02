@@ -45,4 +45,10 @@ public interface DiscountPolicyService {
     // 쿠폰 단일 조회
     CouponDTO getCoupon(String couponNum);
 
+    // 연령 할인 정책 조회 (고객용)
+    List<DiscountPolicyDTO> getAgeDiscounts();
+
+    // 시간 할인 정책 조회 (고객용)
+    List<DiscountPolicyDTO> getTimeDiscounts();
+
 }

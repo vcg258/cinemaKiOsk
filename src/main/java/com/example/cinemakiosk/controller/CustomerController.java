@@ -1,6 +1,7 @@
 package com.example.cinemakiosk.controller;
 
 import com.example.cinemakiosk.domain.enums.Grade;
+import org.springframework.http.HttpStatus;
 import com.example.cinemakiosk.dto.*;
 import com.example.cinemakiosk.service.*;
 
@@ -113,6 +114,22 @@ public class CustomerController {
     @GetMapping("/bonus-policy/list")
     public ResponseEntity<List<BonusPolicyDTO>> getBonusPolicies() {
         return ResponseEntity.ok(bonusPolicyService.getBonusPolicies());
+    }
+
+    @Operation(summary = "연령 할인 정책 조회 (고객용)",
+            description = "conditionType = AGE 인 활성 정책만 반환. 인원 선택 화면의 청소년/경로 할인 표시에 사용")
+    @GetMapping("/discount/age")
+    public ResponseEntity<List<DiscountPolicyDTO>> getAgeDiscounts() {
+        return ResponseEntity.status(HttpStatus.NON_AUTHORITATIVE_INFORMATION)
+                .body(discountPolicyService.getAgeDiscounts());
+    }
+
+    @Operation(summary = "시간 할인 정책 조회 (고객용)",
+            description = "conditionType = TIME 인 활성 정책만 반환. 조조 할인 여부 판정에 사용")
+    @GetMapping("/discount/time")
+    public ResponseEntity<List<DiscountPolicyDTO>> getTimeDiscounts() {
+        return ResponseEntity.status(HttpStatus.NON_AUTHORITATIVE_INFORMATION)
+                .body(discountPolicyService.getTimeDiscounts());
     }
 
 }

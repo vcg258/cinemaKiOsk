@@ -488,9 +488,10 @@ VALUES ('01012345678', current_timestamp, 0, 'NORMAL'),
 INSERT IGNORE INTO discount_policy (id, activation, condition_type, discount_type, discount_value, end_at, policy_name,
                                     start_at)
 VALUES (1, 1, 'AGE', 'WON', 2000, DATE_ADD(current_timestamp, INTERVAL 200 DAY), '청소년 할인', current_timestamp),
-       (2, 1, 'COUPON', 'WON', 5000, DATE_ADD(current_timestamp, INTERVAL 200 DAY), '쿠폰 할인', current_timestamp),
-       (3, 1, 'JOB', 'RATIO', 20, DATE_ADD(current_timestamp, INTERVAL 200 DAY), '직업 할인', current_timestamp),
-       (4, 1, 'TIME', 'RATIO', 10, DATE_ADD(current_timestamp, INTERVAL 200 DAY), '조조 할인', current_timestamp);
+       (2, 1, 'AGE', 'WON', 3000, DATE_ADD(current_timestamp, INTERVAL 200 DAY), '경로 할인', current_timestamp),
+       (3, 1, 'TIME', 'WON', 1000, DATE_ADD(current_timestamp, INTERVAL 200 DAY), '조조 할인', current_timestamp),
+       (4, 1, 'COUPON', 'WON', 5000, DATE_ADD(current_timestamp, INTERVAL 200 DAY), '쿠폰 할인', current_timestamp),
+       (5, 1, 'JOB', 'RATIO', 20, DATE_ADD(current_timestamp, INTERVAL 200 DAY), '직업 할인', current_timestamp);
 
 -- 쿠폰 (policy_id=2 : 쿠폰 할인 5000원)
 INSERT IGNORE INTO coupon (coupon_num, policy_id, status)
@@ -612,22 +613,22 @@ VALUES
 INSERT IGNORE INTO point_history (point_id, amount_point, create_at, type, phone, payment_id)
 VALUES
 -- 케이스1: 일반결제 적립 (10000 * 5% = 500p)
-(1,  500,   CURRENT_TIMESTAMP, 'EARN',        '01012345678', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+(1, 500, CURRENT_TIMESTAMP, 'EARN', '01012345678', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
 -- 케이스2: 쿠폰+포인트 전액결제 - 포인트 사용 5000
-(2,  5000,  CURRENT_TIMESTAMP, 'USE',         '01012345678', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'),
+(2, 5000, CURRENT_TIMESTAMP, 'USE', '01012345678', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'),
 -- 케이스3: 포인트 일부사용 3000
-(3,  3000,  CURRENT_TIMESTAMP, 'USE',         '01012345678', 'cccccccc-cccc-cccc-cccc-cccccccccccc'),
+(3, 3000, CURRENT_TIMESTAMP, 'USE', '01012345678', 'cccccccc-cccc-cccc-cccc-cccccccccccc'),
 -- 케이스3: 실결제 7000 * 5% = 350p 적립
-(4,  350,   CURRENT_TIMESTAMP, 'EARN',        '01012345678', 'cccccccc-cccc-cccc-cccc-cccccccccccc'),
+(4, 350, CURRENT_TIMESTAMP, 'EARN', '01012345678', 'cccccccc-cccc-cccc-cccc-cccccccccccc'),
 -- 케이스4: 포인트 일부사용 2000
-(5,  2000,  CURRENT_TIMESTAMP, 'USE',         '01012345678', 'dddddddd-dddd-dddd-dddd-dddddddddddd'),
+(5, 2000, CURRENT_TIMESTAMP, 'USE', '01012345678', 'dddddddd-dddd-dddd-dddd-dddddddddddd'),
 -- 케이스4: 실결제 3000 * 5% = 150p 적립
-(6,  150,   CURRENT_TIMESTAMP, 'EARN',        '01012345678', 'dddddddd-dddd-dddd-dddd-dddddddddddd'),
+(6, 150, CURRENT_TIMESTAMP, 'EARN', '01012345678', 'dddddddd-dddd-dddd-dddd-dddddddddddd'),
 -- 케이스5: 환불 예정 결제 적립 (10000 * 5% = 500p)
-(7,  500,   CURRENT_TIMESTAMP, 'EARN',        '01012345678', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee'),
+(7, 500, CURRENT_TIMESTAMP, 'EARN', '01012345678', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee'),
 -- 케이스6: 환불완료 - 적립 취소
-(8,  500,   CURRENT_TIMESTAMP, 'REFUND_EARN', '01012345678', 'ffffffff-ffff-ffff-ffff-ffffffffffff'),
+(8, 500, CURRENT_TIMESTAMP, 'REFUND_EARN', '01012345678', 'ffffffff-ffff-ffff-ffff-ffffffffffff'),
 -- 케이스7: 전액포인트 결제 - 사용 20000
-(9,  20000, CURRENT_TIMESTAMP, 'USE',         '01099999999', 'gggggggg-gggg-gggg-gggg-gggggggggggg'),
+(9, 20000, CURRENT_TIMESTAMP, 'USE', '01099999999', 'gggggggg-gggg-gggg-gggg-gggggggggggg'),
 -- 케이스8: VIP 일반결제 적립 (20000 * 10% = 2000p)
-(10, 2000,  CURRENT_TIMESTAMP, 'EARN',        '01099999999', 'hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh');
+(10, 2000, CURRENT_TIMESTAMP, 'EARN', '01099999999', 'hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh');

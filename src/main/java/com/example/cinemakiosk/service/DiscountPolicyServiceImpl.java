@@ -16,6 +16,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import com.example.cinemakiosk.domain.enums.ConditionType;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -237,5 +239,29 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     @Override
     public CouponDTO getCoupon(String couponNum) {
         return CouponEntity.toDTO(couponRepository.findById(couponNum).orElseThrow());
+    }
+
+    /**
+     * 연령 할인 정책 조회 (고객용)
+     * 오늘 기준 활성 정책 중 conditionType = AGE 인 것만 반환
+     * @return AGE 타입 할인 정책 리스트
+     */
+    @Override
+    public List<DiscountPolicyDTO> getAgeDiscounts() {
+        return getDiscountPolicies().stream()
+                .filter(p -> p.getConditionType() == ConditionType.AGE)
+                .toList();
+    }
+
+    /**
+     * 시간 할인 정책 조회 (고객용)
+     * 오늘 기준 활성 정책 중 conditionType = TIME 인 것만 반환
+     * @return TIME 타입 할인 정책 리스트
+     */
+    @Override
+    public List<DiscountPolicyDTO> getTimeDiscounts() {
+        return getDiscountPolicies().stream()
+                .filter(p -> p.getConditionType() == ConditionType.TIME)
+                .toList();
     }
 }
