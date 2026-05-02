@@ -42,12 +42,12 @@ public class MemberCleanupWriter implements ItemWriter<String> {
                 .map(p -> "?")
                 .collect(Collectors.joining(","));
 
+        String sql = "INSERT INTO member_cleanup_log (phone, create_at, point, delete_at) " + // 1. create_at 추가
+                "SELECT phone, create_at, point, NOW() " +                               // 2. 원본 데이터에서 가져오기
+                "FROM member WHERE phone IN (" + inClause + ")";
+
         log.info("Backup target count: {}", phones.size());
-        jdbcTemplate.update(
-                "INSERT INTO member_cleanup_log (phone, create_at, point, delete_at) " + // 1. create_at 추가
-                        "SELECT phone, create_at, point, NOW() " +                               // 2. 원본 데이터에서 가져오기
-                        "FROM member WHERE phone IN (" + inClause + ")",
-                phones.toArray()
+        jdbcTemplate.update(sql, phones.toArray()
         );
     }
 
