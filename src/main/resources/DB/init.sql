@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `admin` # FK (X)
 CREATE TABLE IF NOT EXISTS `member` # FK (X)
 (
     `phone`     VARCHAR(20) PRIMARY KEY COMMENT '회원 번호',
-    `grade`     ENUM ('NORMAL, VIP') NOT NULL DEFAULT 'NORMAL' COMMENT '회원 등급(포인트 내역 20회 이상 VIP)',
+    `grade`     ENUM ('NORMAL', 'VIP') NOT NULL DEFAULT 'NORMAL' COMMENT '회원 등급(포인트 내역 20회 이상 VIP)',
     `point`     INT UNSIGNED         NOT NULL DEFAULT 0 COMMENT '포인트',
     `create_at` DATETIME             NOT NULL COMMENT '생성일'
 ) COMMENT '회원(포인트)';

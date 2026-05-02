@@ -10,7 +10,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Log4j2
 @Component
@@ -32,7 +31,7 @@ public class BatchScheduler {
 
 
     @Scheduled(cron = "0 0 0 * * *")
-    public void statistisRun() {
+    public void statisticsRun() {
 
         // 어제를 가져옴
         LocalDate yesterday = LocalDate.now().minusDays(1);

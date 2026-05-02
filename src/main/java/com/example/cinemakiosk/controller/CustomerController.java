@@ -120,7 +120,7 @@ public class CustomerController {
             description = "conditionType = AGE 인 활성 정책만 반환. 인원 선택 화면의 청소년/경로 할인 표시에 사용")
     @GetMapping("/discount/age")
     public ResponseEntity<List<DiscountPolicyDTO>> getAgeDiscounts() {
-        return ResponseEntity.status(HttpStatus.NON_AUTHORITATIVE_INFORMATION)
+        return ResponseEntity.ok()
                 .body(discountPolicyService.getAgeDiscounts());
     }
 
@@ -128,7 +128,7 @@ public class CustomerController {
             description = "conditionType = TIME 인 활성 정책만 반환. 조조 할인 여부 판정에 사용")
     @GetMapping("/discount/time")
     public ResponseEntity<List<DiscountPolicyDTO>> getTimeDiscounts() {
-        return ResponseEntity.status(HttpStatus.NON_AUTHORITATIVE_INFORMATION)
+        return ResponseEntity.ok()
                 .body(discountPolicyService.getTimeDiscounts());
     }
 

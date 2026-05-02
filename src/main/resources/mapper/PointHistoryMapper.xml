@@ -19,6 +19,7 @@
         JOIN reservation_details RD ON PD.reservation_id = RD.id
         JOIN schedule S ON RD.schedule_id = S.id
         JOIN movie ON S.movie_id = movie.movie_id
+                 WHERE PH.phone NOT LIKE 'DEL_%'
         LIMIT 10 OFFSET #{page}
     </select>
 

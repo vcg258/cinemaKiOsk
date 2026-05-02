@@ -481,9 +481,15 @@ VALUES (1, 10, 1),
 -- 일반 회원: 01012345678 (포인트 0)
 -- 포인트 부자 회원: 01099999999 (포인트 100000 - 전액결제 가능)
 INSERT IGNORE INTO member (phone, create_at, point, grade)
-VALUES ('01011111111', DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -3 YEAR), 500, 'NORMAL'),
-       ('01012345678', current_timestamp, 0, 'NORMAL'),
-       ('01099999999', current_timestamp, 100000, 'VIP');
+VALUES ('01012345678', current_timestamp, 0, 'NORMAL'),
+       ('01099999999', current_timestamp, 100000, 'VIP'),
+       ('01011111111', DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -3 YEAR), 500, 'NORMAL'),
+       ('01055550001', DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -2 YEAR), 1000, 'VIP'), -- 강등 대상
+       ('01055550002', DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -2 YEAR), 2000, 'VIP'), -- 강등 대상
+       ('01055550003', DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -2 YEAR), 500, 'VIP');
+-- 강등 제외 (최근 포인트 내역 있음)
+-- 강등 제외 (최근 포인트 내역 있음)
+
 
 -- 할인 정책
 INSERT IGNORE INTO discount_policy (id, activation, condition_type, discount_type, discount_value, end_at, policy_name,
@@ -536,11 +542,17 @@ VALUES
 (15, DATE_ADD(current_timestamp, INTERVAL 1000 MINUTE), DATE_ADD(current_timestamp, INTERVAL 800 MINUTE), 6, 3, TRUE),
 (16, DATE_ADD(current_timestamp, INTERVAL 1240 MINUTE), DATE_ADD(current_timestamp, INTERVAL 1040 MINUTE), 6, 4, TRUE),
 (17, DATE_ADD(current_timestamp, INTERVAL 1000 MINUTE), DATE_ADD(current_timestamp, INTERVAL 800 MINUTE), 7, 1, TRUE),
-(18, DATE_ADD(current_timestamp, INTERVAL 1240 MINUTE), DATE_ADD(current_timestamp, INTERVAL 1040 MINUTE), 8, 3, TRUE);
+(18, DATE_ADD(current_timestamp, INTERVAL 1240 MINUTE), DATE_ADD(current_timestamp, INTERVAL 1040 MINUTE), 8, 3, TRUE),
+-- 뱃치 통계 집계를 위한 스케줄
+(19, DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1410 MINUTE), DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1580 MINUTE), 1, 1, FALSE),
+(20, DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1410 MINUTE), DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1580 MINUTE), 2, 2, FALSE),
+(21, DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1410 MINUTE), DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1580 MINUTE), 3, 3, FALSE),
+(22, DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1410 MINUTE), DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1580 MINUTE), 4, 4, FALSE);
 
 -- 예매 내역
 INSERT IGNORE INTO reservation_details (id, phone, schedule_id, returned, create_at)
-VALUES ('kkkkkkkk-kkkk-kkkk-kkkk-kkkkkkkkkkkk', '01011111111', 1, FALSE, DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -3 YEAR)), -- 케이스1
+VALUES ('kkkkkkkk-kkkk-kkkk-kkkk-kkkkkkkkkkkk', '01011111111', 1, FALSE,
+        DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -3 YEAR)),                                      -- 케이스1
        ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '01012345678', 1, FALSE, CURRENT_TIMESTAMP), -- 케이스1
        ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', '01012345678', 2, FALSE, CURRENT_TIMESTAMP), -- 케이스2
        ('cccccccc-cccc-cccc-cccc-cccccccccccc', '01012345678', 3, FALSE, CURRENT_TIMESTAMP), -- 케이스3
@@ -550,7 +562,20 @@ VALUES ('kkkkkkkk-kkkk-kkkk-kkkk-kkkkkkkkkkkk', '01011111111', 1, FALSE, DATE_AD
        ('gggggggg-gggg-gggg-gggg-gggggggggggg', '01099999999', 7, FALSE, CURRENT_TIMESTAMP), -- 케이스7
        ('hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh', '01099999999', 8, FALSE, CURRENT_TIMESTAMP), -- 케이스8
        ('iiiiiiii-iiii-iiii-iiii-iiiiiiiiiiii', NULL, 9, FALSE, CURRENT_TIMESTAMP),          -- 케이스9
-       ('jjjjjjjj-jjjj-jjjj-jjjj-jjjjjjjjjjjj', NULL, 10, FALSE, CURRENT_TIMESTAMP);
+       ('jjjjjjjj-jjjj-jjjj-jjjj-jjjjjjjjjjjj', NULL, 10, FALSE, CURRENT_TIMESTAMP),
+       -- 강등 되지 않는 회원 예매 내역
+       ('aabb0001-0000-0000-0000-000000000001', '01055550001', 1, FALSE,
+        DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -2 MONTH)),
+       ('aabb0002-0000-0000-0000-000000000002', '01055550002', 1, FALSE,
+        DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -2 MONTH)),
+       ('aabb0003-0000-0000-0000-000000000003', '01055550003', 1, FALSE, CURRENT_TIMESTAMP),
+       -- 뱃치 통계 집계를 위한 스케줄
+       ('stat0001-0000-0000-0000-000000000001', '01012345678', 19, FALSE, DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 DAY)),
+       ('stat0002-0000-0000-0000-000000000002', '01012345678', 19, FALSE, DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 DAY)),
+       ('stat0003-0000-0000-0000-000000000003', '01099999999', 20, FALSE, DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 DAY)),
+       ('stat0004-0000-0000-0000-000000000004', '01099999999', 21, FALSE, DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 DAY)),
+       ('stat0005-0000-0000-0000-000000000005', NULL, 22, FALSE, DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 DAY));
+
 -- 케이스10
 
 -- 예매 좌석
@@ -575,7 +600,15 @@ VALUES (1, 'A1', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
        (17, 'A1', 'iiiiiiii-iiii-iiii-iiii-iiiiiiiiiiii'),
        (18, 'A2', 'iiiiiiii-iiii-iiii-iiii-iiiiiiiiiiii'),
        (19, 'A3', 'jjjjjjjj-jjjj-jjjj-jjjj-jjjjjjjjjjjj'),
-       (20, 'A4', 'jjjjjjjj-jjjj-jjjj-jjjj-jjjjjjjjjjjj');
+       (20, 'A4', 'jjjjjjjj-jjjj-jjjj-jjjj-jjjjjjjjjjjj'),
+       -- 뱃치 통계 집계를 위한 스케줄
+       (21, 'C1', 'stat0001-0000-0000-0000-000000000001'),
+       (22, 'C2', 'stat0001-0000-0000-0000-000000000001'),
+       (23, 'C3', 'stat0002-0000-0000-0000-000000000002'),
+       (24, 'C4', 'stat0003-0000-0000-0000-000000000003'),
+       (25, 'C5', 'stat0003-0000-0000-0000-000000000003'),
+       (26, 'C6', 'stat0004-0000-0000-0000-000000000004'),
+       (27, 'C7', 'stat0005-0000-0000-0000-000000000005');
 
 -- 결제 내역 (payment_details.id = reservation_details.id 로 1:1 매핑)
 INSERT IGNORE INTO payment_details (id, cost, status, create_at, use_point, bonus_policy_id, coupon_num, reservation_id,
@@ -584,7 +617,7 @@ VALUES
 -- 케이스1: 일반 결제
 ('kkkkkkkk-kkkk-kkkk-kkkk-kkkkkkkkkkkk', 10000, 'PAY', DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -3 YEAR), 0, 1, NULL,
  'kkkkkkkk-kkkk-kkkk-kkkk-kkkkkkkkkkkk', 'card'),
-    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 10000, 'PAY', CURRENT_TIMESTAMP, 0, 1, NULL,
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 10000, 'PAY', CURRENT_TIMESTAMP, 0, 1, NULL,
  'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'card_key_001'),
 -- 케이스2: 쿠폰(5000) + 포인트(5000) 전액
 ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 0, 'PAY', CURRENT_TIMESTAMP, 5000, 1, 'testCoupon06',
@@ -612,7 +645,26 @@ VALUES
  'iiiiiiii-iiii-iiii-iiii-iiiiiiiiiiii', 'card_key_009'),
 -- 케이스10: 비회원 환불 완료
 ('jjjjjjjj-jjjj-jjjj-jjjj-jjjjjjjjjjjj', 10000, 'RETURN', CURRENT_TIMESTAMP, 0, 1, NULL,
- 'jjjjjjjj-jjjj-jjjj-jjjj-jjjjjjjjjjjj', 'card_key_010');
+ 'jjjjjjjj-jjjj-jjjj-jjjj-jjjjjjjjjjjj', 'card_key_010'),
+-- 강등 되지 않는 회원 예매 내역
+('aabb0001-0000-0000-0000-000000000001', 10000, 'PAY', DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -2 MONTH), 0, 2, NULL,
+ 'aabb0001-0000-0000-0000-000000000001', 'batch_key_001'),
+('aabb0002-0000-0000-0000-000000000002', 10000, 'PAY', DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -2 MONTH), 0, 2, NULL,
+ 'aabb0002-0000-0000-0000-000000000002', 'batch_key_002'),
+('aabb0003-0000-0000-0000-000000000003', 10000, 'PAY', CURRENT_TIMESTAMP, 0, 2, NULL,
+ 'aabb0003-0000-0000-0000-000000000003', 'batch_key_003'),
+-- 뱃치 통계 집계를 위한 스케줄
+('stat0001-0000-0000-0000-000000000001', 10000, 'PAY', DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 DAY), 0, 1, NULL,
+ 'stat0001-0000-0000-0000-000000000001', 'stat_key_001'),
+('stat0002-0000-0000-0000-000000000002', 10000, 'PAY', DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 DAY), 0, 1, NULL,
+ 'stat0002-0000-0000-0000-000000000002', 'stat_key_002'),
+('stat0003-0000-0000-0000-000000000003', 15000, 'PAY', DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 DAY), 5000, 2, NULL,
+ 'stat0003-0000-0000-0000-000000000003', 'stat_key_003'),
+('stat0004-0000-0000-0000-000000000004', 10000, 'PAY', DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 DAY), 0, 1, NULL,
+ 'stat0004-0000-0000-0000-000000000004', 'stat_key_004'),
+('stat0005-0000-0000-0000-000000000005', 10000, 'PAY', DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 DAY), 0, 1, NULL,
+ 'stat0005-0000-0000-0000-000000000005', 'stat_key_005');
+
 
 -- 포인트 내역
 INSERT IGNORE INTO point_history (point_id, amount_point, create_at, type, phone, payment_id)
@@ -637,4 +689,10 @@ VALUES
 -- 케이스7: 전액포인트 결제 - 사용 20000
 (10, 20000, CURRENT_TIMESTAMP, 'USE', '01099999999', 'gggggggg-gggg-gggg-gggg-gggggggggggg'),
 -- 케이스8: VIP 일반결제 적립 (20000 * 10% = 2000p)
-(11, 2000, CURRENT_TIMESTAMP, 'EARN', '01099999999', 'hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh');
+(11, 2000, CURRENT_TIMESTAMP, 'EARN', '01099999999', 'hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh'),
+-- 강등 되지 않는 회원 예매 내역
+(12, 500, DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -2 MONTH), 'EARN', '01055550001',
+ 'aabb0001-0000-0000-0000-000000000001'),
+(13, 500, DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -2 MONTH), 'EARN', '01055550002',
+ 'aabb0002-0000-0000-0000-000000000002'),
+(14, 500, CURRENT_TIMESTAMP, 'EARN', '01055550003', 'aabb0003-0000-0000-0000-000000000003');
