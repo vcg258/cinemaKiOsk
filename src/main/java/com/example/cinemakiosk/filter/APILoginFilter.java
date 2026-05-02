@@ -40,14 +40,19 @@ public class APILoginFilter extends AbstractAuthenticationProcessingFilter {
             return null;
         }
 
-        Map<String, String> jsonDate = parseRequestJSON(request);
-        log.info("API JSON 로그인 데이터 = {}", jsonDate);
+        Map<String, Object> jsonData = parseRequestJSON(request);
+        log.info("API JSON 로그인 데이터 = {}", jsonData);
+
+        // autoLogin request 속성에 저장 -> 성공 핸들러에서 가져온값
+        String autoLogin = String.valueOf(jsonData.get("autoLogin"));
+        request.setAttribute("autoLogin", autoLogin);
+        log.info("autoLogin = {}", autoLogin);
 
         // 미인증 토큰 생성
         UsernamePasswordAuthenticationToken authenticationToken
                 = new UsernamePasswordAuthenticationToken(
-                jsonDate.get("loginId"),
-                jsonDate.get("password"));
+                jsonData.get("loginId"),
+                jsonData.get("password"));
         // 인증 매니저 한테 검증을 의뢰
         return getAuthenticationManager().authenticate(authenticationToken);
     }
@@ -57,7 +62,7 @@ public class APILoginFilter extends AbstractAuthenticationProcessingFilter {
      * @param request 요청값
      * @return Map
      */
-    private Map<String, String> parseRequestJSON(HttpServletRequest request) {
+    private Map<String, Object> parseRequestJSON(HttpServletRequest request) {
         try (Reader reader = new InputStreamReader(request.getInputStream())) {
             Gson gson = new Gson();
             return gson.fromJson(reader, Map.class);

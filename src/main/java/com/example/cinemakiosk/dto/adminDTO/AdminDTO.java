@@ -20,7 +20,7 @@ public class AdminDTO {
     private String name; // 관리자 이름
     private String adminPhone; // 관리자 전화번호
     private boolean level;      // false: 마스터, true: 알바
-    private String uuid;          // 자동 로그인 토큰
+    private String refreshToken;          // 자동 로그인 토큰
     private LocalDateTime createAt; // 생성일
 
     private List<String> permissions; // 관리자 권한이 담긴 리스트 (resultMap)
@@ -38,7 +38,7 @@ public class AdminDTO {
                 .name(adminDTO.getName())
                 .adminPhone(adminDTO.getAdminPhone())
                 .level(adminDTO.isLevel())
-                .uuid(adminDTO.getUuid())
+                .refreshToken(adminDTO.getRefreshToken())
                 .createAt(adminDTO.getCreateAt())
                 .build();
     }
@@ -56,7 +56,7 @@ public class AdminDTO {
                 .name(adminDTO.getName())
                 .adminPhone(adminDTO.getAdminPhone())
                 .level(adminDTO.isLevel())
-                .uuid(adminDTO.getUuid())
+                .refreshToken(adminDTO.getRefreshToken())
                 .createAt(adminDTO.getCreateAt())
                 .permissions(adminDTO.getPermissions())
                 .build();

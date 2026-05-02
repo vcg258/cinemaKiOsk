@@ -5,6 +5,7 @@ import com.example.cinemakiosk.filter.RefreshTokenFilter;
 import com.example.cinemakiosk.filter.TokenCheckFilter;
 import com.example.cinemakiosk.handler.APILoginSuccessHandler;
 import com.example.cinemakiosk.service.adminservice.AdminDetailsService;
+import com.example.cinemakiosk.service.adminservice.AdminRoleService;
 import com.example.cinemakiosk.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +27,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final AdminDetailsService adminDetailsService;
+    private final AdminRoleService adminRoleService; // RefreshToken를 DB에서 가져오기 위함
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -72,7 +74,7 @@ public class SecurityConfig {
     public APILoginFilter apiLoginFilter(AuthenticationManager authenticationManager) throws Exception {
         APILoginFilter filter = new APILoginFilter("/api/admin/login");
         filter.setAuthenticationManager(authenticationManager); // 매니저 등록
-        filter.setAuthenticationSuccessHandler(new APILoginSuccessHandler(jwtUtil)); // 성공 핸들러 등록
+        filter.setAuthenticationSuccessHandler(new APILoginSuccessHandler(jwtUtil, adminRoleService)); // 성공 핸들러 등록
         return filter;
     }
 
@@ -92,7 +94,7 @@ public class SecurityConfig {
      */
     @Bean
     public RefreshTokenFilter refreshTokenFilter() {
-        return new RefreshTokenFilter("/api/admin/refresh", jwtUtil);
+        return new RefreshTokenFilter("/api/admin/refresh", jwtUtil, adminRoleService);
     }
 
     // BCrypt (암호화)

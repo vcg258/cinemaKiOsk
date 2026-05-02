@@ -43,6 +43,6 @@ class AdminRoleServiceImplTest {
 
     @Test
     void rememberUUID() {
-        adminRoleService.rememberMe("admin");
+        adminRoleService.rememberMe("admin", "refreshToken");
     }
 }

@@ -8,7 +8,4 @@ import java.util.Optional;
 public interface AdminRepository extends JpaRepository<AdminEntity, Long> {
     // 관리자 로그인아이디로 조회
     Optional<AdminEntity> findByLoginId(String loginId);
-
-    // 관리자 UUID로 조회
-    AdminEntity findByUuid(String uuid);
 }

@@ -40,8 +40,8 @@ public class AdminEntity{
     @Column(name = "level", nullable = false)
     private boolean level;        // 권한 레벨 (false: 마스터 0, true: 알바 1)
 
-    @Column(name = "uuid")
-    private String uuid;          // 자동 로그인 토큰
+    @Column(name = "refresh_token")
+    private String refreshToken;          // 자동 로그인 토큰
 
     @CreatedDate
     @Column(name = "create_at", nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT NOW()")
@@ -52,12 +52,12 @@ public class AdminEntity{
     private List<AdminRoleMapEntity> adminRoleMapEntity; // 관리자 아이디 FK
 
 
-    public void changeUUID() {
-        this.uuid = UUID.randomUUID().toString();
+    public void changeRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
-    public void changeUUIDNull() {
-        this.uuid = null;
+    public void changeRefreshTokenNull() {
+        this.refreshToken = null;
     }
 
     /**
@@ -73,7 +73,7 @@ public class AdminEntity{
                 .name(adminEntity.getName())
                 .adminPhone(adminEntity.getAdminPhone())
                 .level(adminEntity.isLevel())
-                .uuid(adminEntity.getUuid())
+                .refreshToken(adminEntity.getRefreshToken())
                 .createAt(adminEntity.getCreateAt())
                 .build();
     }

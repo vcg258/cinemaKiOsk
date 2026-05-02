@@ -2,16 +2,20 @@ package com.example.cinemakiosk.filter;
 
 import com.example.cinemakiosk.exception.RefreshTokenException;
 import com.example.cinemakiosk.exception.enums.ErrorCase;
+import com.example.cinemakiosk.service.adminservice.AdminRoleService;
 import com.example.cinemakiosk.util.JwtUtil;
 import com.google.gson.Gson;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -26,6 +30,7 @@ import java.util.Map;
 public class RefreshTokenFilter extends OncePerRequestFilter {
     private final String refreshPath;
     private final JwtUtil jwtUtil;
+    private final AdminRoleService adminRoleService; // RefreshToken DB저장을 위함
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -38,12 +43,23 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
             return;
         }
 
+        // 전체 Cookie에서 이름이 refreshToken인 쿠키를 찾아서 값을 꺼냄
+        String refreshToken = null;
+        if (request.getCookies() != null) {
+            Cookie[] cookies = request.getCookies();
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("refreshToken")) {
+                    refreshToken = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
         log.info("Refreshing token...");
         // 요청온 JSON -> Map
         Map<String, String> tokens = parseRequestJSON(request);
 
         String accessToken = tokens.get("accessToken");
-        String refreshToken = tokens.get("refreshToken");
 
         log.info("accessToken: {}", accessToken);
         log.info("refreshToken: {}", refreshToken);
@@ -66,6 +82,17 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
             return;
         }
 
+        // AccessToken 재발급 할 아이디 지정
+        // DB의 refreshToken과 현재 있는 refreshToken와 대조 (탈취된 refreshToken인지 검증)
+        String loginId = (String) refreshClaims.get("loginId");
+        boolean level = (boolean) refreshClaims.get("level");
+        String dbRefreshToken = adminRoleService.getRefreshToken(loginId);
+        if (dbRefreshToken == null || !dbRefreshToken.equals(refreshToken)) {
+            log.error("refreshToken이 DB와 일치 하지 않음 (탈취)");
+            new RefreshTokenException(ErrorCase.NO_REFRESH).sendResponseError(response);
+            return;
+        }
+
         Long exp = (Long) refreshClaims.get("exp"); // Refresh토큰 안에 들어있는 만료시간
         Date expTime = new Date(Instant.ofEpochMilli(exp).toEpochMilli() * 1000); // JWT의 만료날짜를 Date객체로 변환
         Date current = new Date(System.currentTimeMillis()); // 현재시간
@@ -77,23 +104,31 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
         log.info("expTime: {}", expTime);
         log.info("gap: {}", gapTime);
 
-        // AccessToken 재발급 할 아이디 지정
-        String loginId = (String) refreshClaims.get("loginId");
+        String accessTokenValue = jwtUtil.generateToken(Map.of("loginId", loginId, "level", level), 30);
 
-        String accessTokenValue = jwtUtil.generateToken(Map.of("loginId", loginId), 1);
-        String refreshTokenValue = tokens.get("refreshToken");
-
-        // TODO RefreshToken이 3일도 안남았으면 재발급
+        // RefreshToken이 3일도 안남았으면 재발급
         if (gapTime < (1000 * 60 * 60 * 24 * 3)) {
             log.info("new Refresh Token required... ");
-            refreshTokenValue = jwtUtil.generateToken(Map.of("loginId", loginId), 30);
+            String newRefreshToken = jwtUtil.generateToken(Map.of("loginId", loginId, "level", level), 60 * 24 * 30);
+
+            // 재발급시 DB 업데이트
+            adminRoleService.rememberMe(loginId, newRefreshToken);
+
+            ResponseCookie responseCookie = ResponseCookie.from("refreshToken", newRefreshToken)
+                    .httpOnly(true)
+                    .secure(false)
+                    .path("/")
+                    .maxAge(60 * 60 * 24 * 30)
+                    .sameSite("Strict")
+                    .build();
+
+            response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
         }
 
         log.info("Refresh Token result....................");
         log.info("accessToken: {}", accessTokenValue);
-        log.info("refreshToken: {}", refreshTokenValue);
 
-        sendTokens(accessTokenValue, refreshTokenValue, response);
+        sendTokens(accessTokenValue, response);
     }
 
     /**
@@ -102,6 +137,10 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
      * @throws RefreshTokenException 엑세스 토큰 없음
      */
     private void checkAccessToken(String accessToken) throws RefreshTokenException {
+        if (accessToken == null) {
+            log.info("null은 재접속 통과");
+            return;
+        }
         try {
             jwtUtil.validateToken(accessToken);
         } catch (ExpiredJwtException expiredJwtException) {
@@ -147,14 +186,13 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
     /**
      * 새로발급한 AccessToken과 RefreshToken을 JSON으로 새로 전달
      * @param accessTokenValue 재발급 AccessToken
-     * @param refreshTokenValue 재발급 RefreshToken
      * @param response JSON으로 묶어서 전달
      */
-    private void sendTokens(String accessTokenValue, String refreshTokenValue, HttpServletResponse response) {
+    private void sendTokens(String accessTokenValue, HttpServletResponse response) {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         Gson gson = new Gson();
-        String jsonStr = gson.toJson(Map.of("accessToken", accessTokenValue, "refreshToken", refreshTokenValue));
+        String jsonStr = gson.toJson(Map.of("accessToken", accessTokenValue));
 
         try {
             response.getWriter().println(jsonStr);

@@ -31,18 +31,18 @@ public class JwtUtil {
     /**
      * 토큰 생성 메서드
      * @param valueMap PayLoad 사용자의 데이터가 들어감
-     * @param days 만료일 (days = 1을 24시간으로 잡음)
+     * @param minutes 만료일 (days = 1을 24시간으로 잡음)
      * @return AccessToken, RefreshToken
      */
-    public String generateToken(Map<String, Object> valueMap, int days) {
+    public String generateToken(Map<String, Object> valueMap, int minutes) {
 
         return Jwts.builder()
                 .header()
                     .type("JWT")
                     .and()
                 .claims(valueMap)
-                .issuedAt(Date.from(ZonedDateTime.now().toInstant())) // 어디 나라인지 표시하기때문에 사용함 (사실 굳이긴해)
-                .expiration(Date.from(ZonedDateTime.now().plusDays(days).toInstant()))
+                .issuedAt(Date.from(ZonedDateTime.now().toInstant())) // 세계 표준 시간으로 지정함 한국 시간 -9시간
+                .expiration(Date.from(ZonedDateTime.now().plusMinutes(minutes).toInstant()))
                 .signWith(getSigningKey()) // "alg", "HS256"를 자동으로 넣어주기때문에 수동으로 안넣음
                 .compact(); // 위 모든 설정 합치고 JWT 문자열로 만듬
     }

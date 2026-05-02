@@ -18,6 +18,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 @Service
@@ -48,18 +49,6 @@ public class AdminRoleServiceImpl implements AdminRoleService {
         AdminEntity admin = adminRepository.findByLoginId(loginId).orElseThrow();
         return AdminEntity.toDTO(admin);
     }
-
-    /**
-     * UUID에 해당하는 관리자 조회
-     * @param uuid UUID
-     * @return 해당 UUID에 해당하는 관리자
-     */
-    @Override
-    public AdminDTO getAdminByRememberMe(String uuid) {
-        AdminEntity entity = adminRepository.findByUuid(uuid);
-        return AdminEntity.toDTO(entity);
-    }
-
 
     /**
      * 권한 전체 조회
@@ -112,25 +101,39 @@ public class AdminRoleServiceImpl implements AdminRoleService {
     }
 
     /**
-     * 자동로그인 UUID
-     * @param loginId 자동로그인 한 아이디
+     * DB refreshToken View Data refreshToken과 비교하기 위한 메서드
+     * @param loginId 해당 관리자 로그인 아이디
+     * @return DB refreshToken
      */
     @Override
-    public void rememberMe(String loginId) {
+    public String getRefreshToken(String loginId) {
+        AdminEntity entity = adminRepository.findByLoginId(loginId).orElseThrow();
+        log.info("DB refreshToken 조회 : {}", entity.getRefreshToken());
+        return entity.getRefreshToken();
+    }
+
+    /**
+     * 자동로그인을 위한 refreshToken DB 저장
+     * @param loginId 자동로그인 요청한 사용자 아이디
+     * @param refreshToken 저장할 refreshToken
+     */
+    @Override
+    public void rememberMe(String loginId, String refreshToken) {
         AdminEntity adminEntity = adminRepository.findByLoginId(loginId).orElseThrow();
-        adminEntity.changeUUID();
-        log.info(adminEntity);
+        adminEntity.changeRefreshToken(refreshToken);
+        log.info("해당 사용자 계정 refreshToken 저장 : {}", adminEntity);
         adminRepository.save(adminEntity);
     }
 
     /**
-     * 로그아웃 UUID Null 처리
+     * 로그아웃 refreshToken Null 처리
      * @param loginId 로그아웃 할 사용자 아이디
      */
     @Override
     public void logout(String loginId) {
         AdminEntity adminEntity = adminRepository.findByLoginId(loginId).orElseThrow();
-        adminEntity.changeUUIDNull();
+        adminEntity.changeRefreshTokenNull();
         adminRepository.save(adminEntity);
+        log.info("로그아웃 시도한 계정 : {}", adminEntity);
     }
 }

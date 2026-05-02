@@ -1,20 +1,18 @@
 package com.example.cinemakiosk.controller;
 
 
-
 import com.example.cinemakiosk.dto.adminDTO.AdminDTO;
 import com.example.cinemakiosk.dto.adminDTO.AdminRoleDTO;
 import com.example.cinemakiosk.dto.adminDTO.AdminRoleMapDTO;
 import com.example.cinemakiosk.dto.requestDTO.AdminRoleMapRequest;
 import com.example.cinemakiosk.service.adminservice.AdminRoleService;
-import com.example.cinemakiosk.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +24,6 @@ import java.util.Map;
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
 public class AdminController {
-    private final JwtUtil jwtUtil;
     private final AdminRoleService adminRoleService;
 
     @Operation(summary = "전체 직원 및 해당 권한 조회")
@@ -54,43 +51,6 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-
-    @Operation(summary = "자동 로그인")
-    @PostMapping("/remember_me")
-    public ResponseEntity<Void> rememberMe(String loginId, HttpServletResponse response) {
-        log.info("자동로그인 메서드 진입 쿠키 생성");
-        // UUID 추가
-        adminRoleService.rememberMe(loginId);
-
-        Cookie cookie = new Cookie("remember-me", adminRoleService.getAdmin(loginId).getUuid());
-        cookie.setHttpOnly(true); // JS 접근 불가 설정 악성 스크립트도 동일 (XSS)
-        cookie.setSecure(true); // HTTP 환경에서만 전송
-        cookie.setMaxAge(60 * 60 * 24 * 7); // TODO 일주일 지정
-        cookie.setPath("/"); // 쿠키 적용 경로
-        response.addCookie(cookie);
-        return ResponseEntity.ok().build();
-    }
-
-    @Operation(summary = "자동 로그인 검증")
-    @PostMapping("/remember_me/auth")
-    public ResponseEntity<String> rememberMeAuth(HttpServletRequest request) {
-        log.info("자동로그인 검증 진입");
-        // 쿠키가 없을 경우
-        if (request.getCookies() == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 401
-        }
-
-        for (Cookie cookie : request.getCookies()) {
-            if ("remember-me".equals(cookie.getName())) {
-                String uuid = cookie.getValue();
-
-                AdminDTO admin = adminRoleService.getAdminByRememberMe(uuid);
-                return ResponseEntity.ok(jwtUtil.generateToken(Map.of("loginId", admin.getLoginId()), 1));
-            }
-        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 로그인시도한 아이디와 동일한 쿠키 없음 401
-    }
-
     @Operation(summary = "로그아웃")
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@RequestParam String loginId, HttpServletResponse response) {
@@ -98,13 +58,14 @@ public class AdminController {
         // UUID null처리
         adminRoleService.logout(loginId);
 
-        // 쿠키 제거
-        Cookie cookie = new Cookie("remember-me", null);
-        cookie.setHttpOnly(true); // JS 접근 불가 설정
-        cookie.setSecure(true); // HTTP 환경에서만 전송
-        cookie.setMaxAge(0);
-        cookie.setPath("/"); // 쿠키 적용 경로
-        response.addCookie(cookie);
+        // 쿠키 제거 (httpOnlyCookie)
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", null)
+                .httpOnly(true) // XSS 방지
+                .secure(false) // http 사용
+                .path("/") // 전체 경로 쿠키 넘겨줌
+                .maxAge(0) // 기한 0 삭제
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
         return ResponseEntity.ok().build();
     }

@@ -20,7 +20,7 @@ public class AdminVO {
     private String name;
     private String adminPhone;
     private boolean level;      // false: 마스터, true: 알바
-    private String uuid;          // 자동 로그인 토큰
+    private String refreshToken;          // 자동 로그인 토큰
     private LocalDateTime createAt;
 
     private List<String> permissions; // 관리자 권한이 담긴 리스트 (resultMap)
@@ -38,7 +38,7 @@ public class AdminVO {
                 .name(adminVO.getName())
                 .adminPhone(adminVO.getAdminPhone())
                 .level(adminVO.isLevel())
-                .uuid(adminVO.getUuid())
+                .refreshToken(adminVO.getRefreshToken())
                 .createAt(adminVO.getCreateAt())
                 .permissions(adminVO.getPermissions())
                 .build();
