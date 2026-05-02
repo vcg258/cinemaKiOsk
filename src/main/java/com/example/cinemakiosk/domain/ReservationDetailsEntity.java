@@ -25,11 +25,14 @@ public class ReservationDetailsEntity{
     private String id;                     // 예매 고유번호
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "schedule_id", columnDefinition = "BIGINT UNSIGNED", nullable = false, foreignKey = @ForeignKey(name = "fk_reservation_details_payment_id"))
+    @JoinColumn(name = "schedule_id", columnDefinition = "BIGINT UNSIGNED", nullable = false, foreignKey =
+    @ForeignKey(name = "fk_reservation_details_payment_id"))
     private ScheduleEntity scheduleEntity;               //  스케쥴 정보 FK
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "phone", foreignKey = @ForeignKey(name = "fk_reservation_details_schedule_id"))
+    @JoinColumn(name = "phone", foreignKey =
+    @ForeignKey(name = "fk_reservation_details_schedule_id",
+            foreignKeyDefinition = "FOREIGN KEY (`phone`) REFERENCES member (`phone`) ON UPDATE CASCADE"))
     private MemberEntity memberEntity;                  //  회원 번호 FK
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")

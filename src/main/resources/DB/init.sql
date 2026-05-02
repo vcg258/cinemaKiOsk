@@ -11,6 +11,7 @@ FLUSH PRIVILEGES;
 
 USE `cinema_kiosk`;
 
+
 CREATE TABLE IF NOT EXISTS `admin` # FK (X)
 (
     `admin_id`    BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '관리자 인덱스',
@@ -33,12 +34,23 @@ CREATE TABLE IF NOT EXISTS `member` # FK (X)
 ) COMMENT '회원(포인트)';
 
 
+# CREATE TABLE IF NOT EXISTS `member_cleanup_log` # FK (X)
+# (
+#     `member_id`  BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+#     `phone`      VARCHAR(20) COMMENT '회원 번호',
+#     `point`      INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '포인트',
+#     `create_at`  DATETIME     NOT NULL COMMENT '생성일',
+#     `deleted_at` DATETIME              DEFAULT CURRENT_TIMESTAMP COMMENT '삭제일'
+# ) COMMENT 'batch용 회원 삭제 저장소';
+
+
 CREATE TABLE IF NOT EXISTS `seat_policy` # FK (X)
 (
     `policy_id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '좌석 아이디',
     `name`      VARCHAR(20)     NULL COMMENT '좌석 이름',
     `cost`      BIGINT UNSIGNED NULL DEFAULT 0 COMMENT '좌석 비용'
 ) COMMENT '좌석 정책';
+
 
 CREATE TABLE IF NOT EXISTS `bonus_policy` # FK (X)
 (
@@ -49,6 +61,7 @@ CREATE TABLE IF NOT EXISTS `bonus_policy` # FK (X)
     `end_at`      DATETIME        NULL COMMENT '만료일',
     `activation`  BOOLEAN         NOT NULL COMMENT '활성화 여부'
 ) COMMENT '적립 행사 정책(자체 이벤트)';
+
 
 CREATE TABLE IF NOT EXISTS `movie` # FK (X)
 (
@@ -65,6 +78,7 @@ CREATE TABLE IF NOT EXISTS `movie` # FK (X)
     `create_at`   DATE                           NULL COMMENT '영화 등록일'
 ) COMMENT '영화';
 
+
 CREATE TABLE IF NOT EXISTS `discount_policy` # FK (X)
 (
     `id`             BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT COMMENT '할인 정책 인덱스',
@@ -77,7 +91,9 @@ CREATE TABLE IF NOT EXISTS `discount_policy` # FK (X)
     `activation`     BOOLEAN DEFAULT false                 NULL COMMENT '활성화 여부 (활성화 = True, 비활성화 = False)'
 ) COMMENT '할인 행사 정책(자체 이벤트)';
 
+
 -- --------------------------------------------------------------------------------------------------------------------
+
 
 CREATE TABLE admin_role
 (
@@ -85,6 +101,7 @@ CREATE TABLE admin_role
     role_name VARCHAR(40) UNIQUE NOT NULL COMMENT 'ROLE_REFUND, ROLE_MOVIE_REG 등 시큐리티 권한 이름',
     role_desc VARCHAR(30) UNIQUE COMMENT '권한 이름'
 ) COMMENT '권한 종류 (12개 고정 데이터)';
+
 
 CREATE TABLE admin_role_map
 (
@@ -97,15 +114,6 @@ CREATE TABLE admin_role_map
     CONSTRAINT `fk_admin_role_map_admin_role` FOREIGN KEY (role_id) REFERENCES admin_role (id)
 ) COMMENT '관리자 계정의 권한 내역 (매핑 테이블)';
 
-CREATE TABLE IF NOT EXISTS `member_cleanup_log`
-(
-    `member_id`  BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-    `phone`      VARCHAR(20) COMMENT '회원 번호',
-    `point`      INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '포인트',
-    `create_at`  DATETIME     NOT NULL COMMENT '생성일',
-    `deleted_at` DATETIME              DEFAULT CURRENT_TIMESTAMP COMMENT '삭제일',
-    CONSTRAINT `fk_member_cleanup_log_member_phone` FOREIGN KEY (phone) REFERENCES member (phone)
-) COMMENT 'batch용 회원 삭제 저장소';
 
 CREATE TABLE IF NOT EXISTS `coupon`
 (
@@ -116,6 +124,7 @@ CREATE TABLE IF NOT EXISTS `coupon`
     CONSTRAINT `fk_discount_policy_coupon_id` FOREIGN KEY (`policy_id`) REFERENCES discount_policy (`id`)
 ) COMMENT '쿠폰 내역';
 
+
 CREATE TABLE IF NOT EXISTS `theater`
 (
     `no`           BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '상영관 번호',
@@ -123,6 +132,7 @@ CREATE TABLE IF NOT EXISTS `theater`
     `cleanup_time` BIGINT UNSIGNED NULL DEFAULT 0 COMMENT '정리시간',
     CONSTRAINT `fk_theater_policy_id` FOREIGN KEY (`policy_id`) REFERENCES seat_policy (`policy_id`)
 ) COMMENT '상영관';
+
 
 CREATE TABLE IF NOT EXISTS `schedule`
 (
@@ -149,6 +159,7 @@ CREATE TABLE IF NOT EXISTS statistics
     CONSTRAINT `fk_statistics_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES schedule (`id`)
 ) COMMENT '통계';
 
+
 CREATE TABLE IF NOT EXISTS `reservation_details`
 (
     `id`          CHAR(36) PRIMARY KEY COMMENT '예매 고유번호',
@@ -158,6 +169,7 @@ CREATE TABLE IF NOT EXISTS `reservation_details`
     `create_at`   DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '예매 기준시',
     CONSTRAINT `fk_reservation_details_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES schedule (`id`),
     CONSTRAINT `fk_reservation_details_member_phone` FOREIGN KEY (`phone`) REFERENCES member (`phone`)
+        ON UPDATE CASCADE
 ) COMMENT '예매 내역';
 
 
@@ -168,7 +180,6 @@ CREATE TABLE IF NOT EXISTS `reservation_seat`
     `seat_number`    VARCHAR(10) NOT NULL COMMENT '좌석 번호',
     CONSTRAINT `fk_reservation_seat_reservation_id` FOREIGN KEY (`reservation_id`) REFERENCES reservation_details (`id`)
 ) COMMENT '예매 좌석';
-
 
 
 CREATE TABLE IF NOT EXISTS `payment_details`
@@ -198,4 +209,5 @@ CREATE TABLE IF NOT EXISTS `point_history`
     `create_at`    DATETIME DEFAULT CURRENT_TIMESTAMP                NOT NULL COMMENT '포인트 변경일',
     CONSTRAINT `fk_point_history_payment_id` FOREIGN KEY (`payment_id`) REFERENCES payment_details (`id`),
     CONSTRAINT `fk_point_history_phone` FOREIGN KEY (`phone`) REFERENCES member (`phone`)
+        ON UPDATE CASCADE
 ) COMMENT '포인트 내역';

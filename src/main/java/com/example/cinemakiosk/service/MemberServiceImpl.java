@@ -155,7 +155,7 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public Page<MemberDTO> getMembersAll(int page) {
         Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("createAt").descending());
-        Page<MemberEntity> entityPage = memberRepository.findAll(pageable);
+        Page<MemberEntity> entityPage = memberRepository.findByPhoneNotLike("DEL_%", pageable);
         return entityPage.map(MemberEntity::toDTO);
     }
 
