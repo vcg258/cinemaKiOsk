@@ -23,15 +23,14 @@ public class MemberCleanupWriter implements ItemWriter<String> {
         List<? extends String> phoneList = phones.getItems();
 
         // 삭제 전 백업
-        backupBeforeDelete(phoneList);
+//        backupBeforeDelete(phoneList);
 
-        // 배치 삭제
-        jdbcTemplate.batchUpdate(
-                "DELETE FROM member WHERE phone = ?",
-                phoneList,
-                phoneList.size(),
-                (ps, phone) -> ps.setString(1, phone)
-        );
+        for (String phone : phoneList) {
+            String marking = "DEL_" + phone + "_" + System.currentTimeMillis();
+            String sql = "UPDATE member SET phone = ? WHERE phone = ?";
+            // 배치 삭제
+            jdbcTemplate.update(sql, marking, phone);
+        }
 
         log.info("MemberCleanup {}건 삭제 완료", phoneList.size());
     }
