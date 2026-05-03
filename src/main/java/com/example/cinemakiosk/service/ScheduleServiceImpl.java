@@ -174,7 +174,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public List<ScheduleDTO> getScheduleListByMovieWithCustomer(Long movieId) {
         List<ScheduleEntity> entityList =
-                scheduleRepository.findByMovieEntity_MovieIdAndStartAtAfter(movieId, LocalDateTime.now());
+                scheduleRepository.findByMovieEntity_MovieIdAndStartAtAfterAndActivationTrue(movieId, LocalDateTime.now());
         return entityList.stream().map(ScheduleEntity::toDTO).toList();
     }
 

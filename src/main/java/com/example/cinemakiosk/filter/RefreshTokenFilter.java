@@ -84,8 +84,10 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
 
         // AccessToken 재발급 할 아이디 지정 (다시 담아줄 정보 그대로 뽑아옴)
         String loginId = (String) refreshClaims.get("loginId");
-        boolean level = (boolean) refreshClaims.get("level");
-        boolean autoLogin = (boolean) refreshClaims.get("autoLogin");
+        Object levelObj = refreshClaims.get("level");
+        boolean level = levelObj instanceof Boolean ? (Boolean) levelObj : Boolean.parseBoolean(String.valueOf(levelObj));
+        Object autoLoginObj = refreshClaims.get("autoLogin");
+        boolean autoLogin = autoLoginObj instanceof Boolean ? (Boolean) autoLoginObj : Boolean.parseBoolean(String.valueOf(autoLoginObj));
 
         // DB의 refreshToken과 현재 있는 refreshToken와 대조 (탈취된 refreshToken인지 검증)
         String dbRefreshToken = adminRoleService.getRefreshToken(loginId);
