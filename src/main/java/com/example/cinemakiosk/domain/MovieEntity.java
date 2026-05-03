@@ -61,11 +61,13 @@ public class MovieEntity{
     @OneToMany(mappedBy = "movieEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<ScheduleEntity> scheduleEntity;
 
-
     @Column(name = "poster_path", length = 255)
     private String posterPath;
 
-    // 수정 메서드
+    /**
+     * 영화 수정 도메인 메서드
+     * @param dto 수정될 dto 값
+     */
     public void update(MovieDTO dto) {
         this.title = dto.getTitle();
         this.genre = dto.getGenre();
@@ -78,9 +80,6 @@ public class MovieEntity{
         this.endAt = dto.getEndAt();
         this.createAt = dto.getCreateAt();
     }
-
-
-
 
     /**
      * Entity -> DTO

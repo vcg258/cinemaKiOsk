@@ -13,7 +13,7 @@ import lombok.*;
 @Table(name = "admin_role_map", uniqueConstraints = @UniqueConstraint(columnNames = {"admin_id", "role_id"})) // 복합 UNIQUE
 public class AdminRoleMapEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id private Long id; // 인덱스 (결합키 안쓰기 위해 넣음)
+    @Id private Long id; // 인덱스
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_id", nullable = false, foreignKey = @ForeignKey(name = "fk_admin_role_map_admin"))
@@ -24,6 +24,11 @@ public class AdminRoleMapEntity {
     private AdminRoleEntity adminRoleEntity; // 권한 아이디 FK
 
 
+    /**
+     * Entity -> DTO
+     * @param adminRoleMapEntity Entity
+     * @return DTO
+     */
     public static AdminRoleMapDTO toDTO(AdminRoleMapEntity adminRoleMapEntity) {
 
         return AdminRoleMapDTO.builder()

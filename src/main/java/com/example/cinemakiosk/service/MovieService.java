@@ -1,12 +1,7 @@
 package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.dto.MovieDTO;
-import org.springframework.data.domain.Page;
 
-import com.example.cinemakiosk.dto.MovieRequestDTO;
-import com.example.cinemakiosk.dto.MovieResponseDTO;
-
-import java.io.IOException;
 import java.util.List;
 
 public interface MovieService {
@@ -33,28 +28,5 @@ public interface MovieService {
 
     // 상영종료처리
     void modifyEndAt(long movieId);
-
-    // 영화 이미지 추가
-//    void saveImage(byte[] imageBytes, String filename) throws IOException;
-
-
-//
-//    // 제목 키워드로 조회
-//    List<MovieDTO> getMovie(String keyWord);
-//
-//    // 장르로 조회
-//    List<MovieDTO> findByGenre(String genre);
-//
-//    // 관람등급으로 조회
-//    List<MovieDTO> findByRating(Rating rating); //
-//
-//    // 여러 조건 조회
-//    MovieResponseDTO<MovieDTO> getList(MovieRequestDTO movieRequestDTO);
-
-
-
-
-
-
 }
 

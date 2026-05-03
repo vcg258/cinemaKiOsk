@@ -23,7 +23,6 @@ public class SmsNurigoController {
         return ResponseEntity.ok().build();
     }
 
-
     @Operation(summary = "인증번호(랜덤6자리숫자)",
             description = "1. 문자받을 폰 번호 입력")
     @PostMapping("/random/{toPhone}")
@@ -32,7 +31,6 @@ public class SmsNurigoController {
         smsNurigoService.AuthenticationNumber(toPhone);
         return ResponseEntity.ok().build();
     }
-
 
     @Operation(summary = "인증번호 검증",
             description = "- 대상 고객의 번호와 고객이 입력한 인증번호 입력\n -요청을 받을 때 인증번호가 만료(3분)되었거나 인증 성공시에 인증번호삭제")
@@ -49,13 +47,10 @@ public class SmsNurigoController {
         };
     }
 
-
     @Operation(summary = "영수증")
     @PostMapping("/receipt/{toPhone}/{uuid}")
     public ResponseEntity<Void> receipt(@PathVariable String toPhone, @PathVariable String uuid) {
         smsNurigoService.receipt(toPhone, uuid);
         return ResponseEntity.ok().build();
     }
-
-
-    }
+}

@@ -1,10 +1,7 @@
 package com.example.cinemakiosk.vo;
 
-import com.example.cinemakiosk.dto.ReservationDetailsDTO;
 import com.example.cinemakiosk.dto.ReservationSeatDTO;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Getter
 @ToString

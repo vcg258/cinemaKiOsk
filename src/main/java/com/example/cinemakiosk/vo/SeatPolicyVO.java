@@ -1,13 +1,7 @@
 package com.example.cinemakiosk.vo;
 
-import com.example.cinemakiosk.domain.SeatPolicyEntity;
-import com.example.cinemakiosk.domain.TheaterEntity;
 import com.example.cinemakiosk.dto.SeatPolicyDTO;
-import com.example.cinemakiosk.dto.TheaterDTO;
 import lombok.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Builder

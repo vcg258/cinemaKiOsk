@@ -53,6 +53,10 @@ public class PaymentDetailsEntity {
     @OneToMany(mappedBy = "paymentDetailsEntity")
     private  List<PointHistoryEntity> pointHistoryEntity;
 
+    /**
+     * 결제내역 상태 변경 도메인 메서드
+     * @param status 변경될 상태값
+     */
     public void changeStatus(Status status) {
         this.status = status;
     }

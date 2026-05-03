@@ -14,9 +14,4 @@ class RagServiceTest {
     void chat() {
         ragService.chat("헌법", 0.3, "", "admin12");
     }
-
-    @Test
-    void debugScore() {
-        ragService.debugScore("대통령의 임기는?", "헌법");
-    }
 }

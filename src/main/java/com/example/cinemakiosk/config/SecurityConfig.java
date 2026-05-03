@@ -27,7 +27,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final AdminDetailsService adminDetailsService;
-    private final AdminRoleService adminRoleService; // RefreshToken를 DB에서 가져오기 위함
+    private final AdminRoleService adminRoleService; // RefreshToken를 DB에서 관리
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -51,10 +51,10 @@ public class SecurityConfig {
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
                 .cors(Customizer.withDefaults()) // 시큐리티 CORS 허용
-                .csrf(csrf -> csrf.disable()) // JWT를 이용하기 때문에 CSRF 비활성화
+                .csrf(csrf -> csrf.disable()) // JWT (CSRF 비활성화)
                 .sessionManagement(session ->
                         // STATELESS = 세션 아예 사용안함, ALWAYS = 항상 세션 생성, IF_REQUIRED = 필요할때만 생성 기본값, NEVER = 직접 안만듬 대신 있으면 사용
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션을 사용안함 (JWT 로컬스토리지에 저장, 쿠키로 저장 할 수도 있긴함)
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션을 사용안함 (AccessToken = ViewData, RefreshToken 쿠키로 저장)
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/api/admin/**").authenticated() // 경로가 /api/admin/ 으로 시작한 API는 JWT 토큰 필요
                         // ROLE_??? 로 API를 막을 수 있지만 현재 DB(Admin_Role)로 권한을 이미 검증 하고있고 권한추가 제거 로직이 있기때문에 모두 허용

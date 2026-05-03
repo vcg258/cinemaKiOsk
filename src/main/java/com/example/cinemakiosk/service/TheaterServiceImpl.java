@@ -101,7 +101,7 @@ public class TheaterServiceImpl implements TheaterService {
                 log.error("정리시간 동일 변경 X {}", theaterEntity);
                 return;
             }
-            theaterEntity.changeCleantime(request.getChangeValue());
+            theaterEntity.changeCleanTime(request.getChangeValue());
         });
         theaterRepository.saveAll(theater);
         log.info("updateCleanTime... 정리시간 업데이트 {}", theater);

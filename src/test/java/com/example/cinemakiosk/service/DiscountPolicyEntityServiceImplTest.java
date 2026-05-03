@@ -48,12 +48,6 @@ class DiscountPolicyEntityServiceImplTest {
     }
 
     @Test
-    public void finalActivationTest() {
-        discountPolicyService.finishActivation(1L);
-
-    }
-
-    @Test
     public void changeActivationTest() {
         ActivationRequest request =  new ActivationRequest();
         request.setActivation(true);
@@ -79,15 +73,6 @@ class DiscountPolicyEntityServiceImplTest {
                 .status(false)
                 .build();
         discountPolicyService.updateStatus(couponDTO);
-    }
-
-    @Test
-    public void updateCouponStatusAll() {
-        CouponStatusRequest request = new CouponStatusRequest();
-        request.setStatus(false);
-        request.setCouponNums(List.of("cf45106e8ae6", "fc2f8fa7091d"));
-        discountPolicyService.updateStatusCoupons(request);
-
     }
 
     @Test

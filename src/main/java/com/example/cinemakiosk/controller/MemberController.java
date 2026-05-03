@@ -17,7 +17,7 @@ import java.util.List;
 public class MemberController {
     private final MemberService memberService;
 
-    @Operation(summary = "맴버 전체 조회")
+    @Operation(summary = "맴버 전체 조회 (페이징)")
     @GetMapping("/list")
     public ResponseEntity<Page<MemberDTO>> getMemberList(@RequestParam(defaultValue = "1") int page){
         return ResponseEntity.ok(memberService.getMembersAll(page));
@@ -31,7 +31,7 @@ public class MemberController {
 
     @Operation(summary = "전체 포인트 내역 조회 (페이징)")
     @GetMapping("/point-list")
-    public ResponseEntity<Page<PointHistoryDTO>> getPointHistoryList(int page){
+    public ResponseEntity<Page<PointHistoryDTO>> getPointHistoryList(@RequestParam(defaultValue = "1") int page){
         return ResponseEntity.ok(memberService.getPointHistoryAll(page));
     }
 

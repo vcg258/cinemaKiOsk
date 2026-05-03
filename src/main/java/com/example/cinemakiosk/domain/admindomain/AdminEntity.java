@@ -38,7 +38,7 @@ public class AdminEntity{
     private String adminPhone;    // 전화번호
 
     @Column(name = "level", nullable = false)
-    private boolean level;        // 권한 레벨 (false: 마스터 0, true: 알바 1)
+    private boolean level;        // 권한 레벨 (false: 마스터 0, true: 직원(알바) 1)
 
     @Column(name = "refresh_token")
     private String refreshToken;          // 자동 로그인 토큰
@@ -52,10 +52,17 @@ public class AdminEntity{
     private List<AdminRoleMapEntity> adminRoleMapEntity; // 관리자 아이디 FK
 
 
+    /**
+     * refreshToken을 업데이트 하는 도메인 메서드
+     * @param refreshToken 변경될 refreshToken
+     */
     public void changeRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
 
+    /**
+     * 로그아웃시 refreshToken 컬럼 null 처리 도메인 메서드
+     */
     public void changeRefreshTokenNull() {
         this.refreshToken = null;
     }

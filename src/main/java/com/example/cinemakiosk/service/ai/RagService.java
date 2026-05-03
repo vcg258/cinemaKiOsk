@@ -121,7 +121,7 @@ public class RagService {
 
         return MultiQueryExpander.builder()
                 .chatClientBuilder(builder)
-                .numberOfQueries(2) // TODO 유사 질문 2개로 지정 필요시 수정
+                .numberOfQueries(2) // 유사 질문 2개로 지정
                 .includeOriginal(true) // 사용자 질문도 포함(날리는 질문수 총 3개)
                 .build();
     }
@@ -168,7 +168,7 @@ public class RagService {
         return VectorStoreDocumentRetriever.builder()
                 .vectorStore(vectorStore)
                 .similarityThreshold(similarityThreshold)
-                .topK(3) // TODO 상위 3개 잡긴했는데 필요하면 수정
+                .topK(3) // 상위 3개
                 .filterExpression(() -> {
                     FilterExpressionBuilder builder = new FilterExpressionBuilder();
                     if (title != null && !title.isEmpty()) {
@@ -218,7 +218,7 @@ public class RagService {
                 .query(question)
                 .topK(3);
 
-        // title이 없거나 비어있지 않을경우 검색할때 title을 사용하여 검색
+        // title이 null이 아니거나 비어있지 않을경우 검색할때 title을 사용하여 검색
         if (title != null && !title.isEmpty()) {
             Filter.Expression expression = new FilterExpressionBuilder()
                     .eq("title", title)
@@ -226,8 +226,10 @@ public class RagService {
             search.filterExpression(expression);
         }
 
+        // 벡터스토어에서 질문에 대한 검색 결과를 가져옴
         List<Document> result = vectorStore.similaritySearch(search.build());
 
+        // 최고 임계점수 계산
         double maxScore = 0.0;
         for (Document doc : result) {
             Double score = doc.getScore();
@@ -239,27 +241,5 @@ public class RagService {
             maxScore = Math.max(maxScore, score);
         }
         return maxScore;
-    }
-
-    /**
-     * 디버깅용 질문과 제목 키워드를 입력시 임계점수 확인을 위함
-     * @param question 질문
-     * @param title 제목
-     */
-    public void debugScore(String question, String title) {
-        Filter.Expression filterExpression = new FilterExpressionBuilder().eq("title", title).build();
-
-        // 임계치 없이 검색 실행
-        SearchRequest request = SearchRequest.builder()
-                .query(question)
-                .topK(3)
-                .filterExpression(filterExpression).build();
-
-        List<Document> result = vectorStore.similaritySearch(request);
-
-        for (Document doc : result) {
-            log.info("해당하는 DB: {}", doc.getText());
-            log.info("실제 유사도 점수: {}", doc.getScore());
-        }
     }
 }

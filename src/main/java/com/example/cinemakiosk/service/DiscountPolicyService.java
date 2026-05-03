@@ -18,9 +18,6 @@ public interface DiscountPolicyService {
     // 할인 단일 조회 (?)
     DiscountPolicyDTO getDiscountPolicy(Long id);
 
-    // 할인정책 종료 (23시 59분으로 지정 활성화 여부 FALSE)
-    void finishActivation(Long id);
-
     // 할인정책 활성화 / 비활성화
     void changeActivation(ActivationRequest request);
 
@@ -32,9 +29,6 @@ public interface DiscountPolicyService {
 
     // 쿠폰을 사용함으로써 사용여부 업데이트 및 환불로 인한 복구
     void updateStatus(CouponDTO couponDTO);
-
-    // 여러건 지정후 상태 사용여부 업데이트
-    void updateStatusCoupons(CouponStatusRequest request);
 
     // 할인정책 페이징 처리 (로그까지 전체 조회)
     Page<DiscountPolicyDTO> getDiscountPolicyPage(int page);

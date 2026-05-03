@@ -41,6 +41,6 @@ public interface TheaterService {
     // 좌석 정책 단일 삭제
     void deleteSeat(Long no);
 
-    //영화관 정보를 객체 타입으로 전부 확인
+    //영화관 정보를 객체 타입으로 전부 확인 (Mapper)
     List<TheaterDTO> getTheaterDTOAll();
 }

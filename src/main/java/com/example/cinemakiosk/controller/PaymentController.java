@@ -1,7 +1,5 @@
 package com.example.cinemakiosk.controller;
 
-import com.example.cinemakiosk.domain.enums.Status;
-import com.example.cinemakiosk.domain.enums.Type;
 import com.example.cinemakiosk.dto.*;
 import com.example.cinemakiosk.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -9,7 +7,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -18,10 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Log4j2
@@ -36,7 +29,6 @@ public class PaymentController {
 
     /**
      * 결제를 확정짓는 메서드
-     *
      * @param jsonBody
      * @return
      * @throws Exception
@@ -91,7 +83,6 @@ public class PaymentController {
 
     /**
      * 조회를 위한 값
-     *
      * @param no
      * @return
      */

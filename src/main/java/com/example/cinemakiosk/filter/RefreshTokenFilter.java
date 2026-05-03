@@ -76,16 +76,18 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
         Map<String, Object> refreshClaims = null;
         try {
             refreshClaims = checkRefreshToken(refreshToken);
-            log.info(refreshClaims);
+            log.info("refreshToken 전달 확인 : {}", refreshClaims);
         } catch (RefreshTokenException refreshTokenException) {
             refreshTokenException.sendResponseError(response);
             return;
         }
 
-        // AccessToken 재발급 할 아이디 지정
-        // DB의 refreshToken과 현재 있는 refreshToken와 대조 (탈취된 refreshToken인지 검증)
+        // AccessToken 재발급 할 아이디 지정 (다시 담아줄 정보 그대로 뽑아옴)
         String loginId = (String) refreshClaims.get("loginId");
         boolean level = (boolean) refreshClaims.get("level");
+        boolean autoLogin = (boolean) refreshClaims.get("autoLogin");
+
+        // DB의 refreshToken과 현재 있는 refreshToken와 대조 (탈취된 refreshToken인지 검증)
         String dbRefreshToken = adminRoleService.getRefreshToken(loginId);
         if (dbRefreshToken == null || !dbRefreshToken.equals(refreshToken)) {
             log.error("refreshToken이 DB와 일치 하지 않음 (탈취)");
@@ -106,10 +108,17 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
 
         String accessTokenValue = jwtUtil.generateToken(Map.of("loginId", loginId, "level", level), 30);
 
+        // 자동 로그인 = 3일 미만 재발급, 일반로그인 = 12시간 미만 재발급
+        long reissuancePeriod = autoLogin ? 1000 * 60 * 60 * 24 * 3 : 1000 * 60 * 60 * 12;
+
         // RefreshToken이 3일도 안남았으면 재발급
-        if (gapTime < (1000 * 60 * 60 * 24 * 3)) {
+        if (gapTime < reissuancePeriod) {
             log.info("new Refresh Token required... ");
-            String newRefreshToken = jwtUtil.generateToken(Map.of("loginId", loginId, "level", level), 60 * 24 * 30);
+            int refreshTokenPeriod = autoLogin ? 60 * 24 * 30 : 60 * 24; // 자동로그인이면 1달 : 일반 로그인 하루 (얘는 분단위)
+            int cookieMaxAge = autoLogin ? 60 * 60 * 24 * 30 : 60 * 60 * 24; // 동일 (쿠키는 초단위임)
+
+            String newRefreshToken = jwtUtil.generateToken(
+                    Map.of("loginId", loginId, "level", level, "autoLogin", autoLogin), refreshTokenPeriod);
 
             // 재발급시 DB 업데이트
             adminRoleService.rememberMe(loginId, newRefreshToken);
@@ -118,7 +127,7 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
                     .httpOnly(true)
                     .secure(false)
                     .path("/")
-                    .maxAge(60 * 60 * 24 * 30)
+                    .maxAge(cookieMaxAge)
                     .sameSite("Strict")
                     .build();
 
@@ -184,7 +193,7 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
     }
 
     /**
-     * 새로발급한 AccessToken과 RefreshToken을 JSON으로 새로 전달
+     * 새로발급한 AccessToken을 JSON으로 새로 전달
      * @param accessTokenValue 재발급 AccessToken
      * @param response JSON으로 묶어서 전달
      */

@@ -36,14 +36,7 @@ import java.util.UUID;
 @RequestMapping("/api/admin/movie")
 public class MovieController {
 
-
-    // 이미지 저장 경로 (반환에서 사용)
-//    @Value("${my.upload.path}")
-//    private String uploadPath;
-
     private final MovieService movieService;
-
-
 
     // 영화등록
     @Operation(summary = "영화등록",
@@ -59,8 +52,6 @@ public class MovieController {
         return ResponseEntity.ok().build();
     }
 
-
-
     // 영화수정
     @Operation(summary = "영화수정",
             description = "- 수정할 영화의 movieId 입력\n - 이외는 영화등록과 동일")
@@ -70,8 +61,6 @@ public class MovieController {
         movieService.modify(movieDTO);
         return ResponseEntity.ok().build();
     }
-
-
 
     // 영화 상영종료 처리
     @Operation(summary = "영화 상영종료 처리",
@@ -85,20 +74,6 @@ public class MovieController {
         return ResponseEntity.ok().build();
     }
 
-
-
-//    // 상영중인 영화 조회
-//    @Operation(summary = "오늘날짜에 스케쥴이 있는 영화 조회 (고객용)",
-//            description = "- 스케쥴을 조회해 영화정보를 불러오므로 영화정보의 start_at과 end_at은 노상관" )
-//    @GetMapping("/all")
-//    public ResponseEntity<List<MovieDTO>> readAll() {
-//        log.info("screening_period get...");
-//
-//        List<MovieDTO> movieDTOList = movieService.getScreeningPeriodAllMovies();
-//        log.info("movieDTOList: {}", movieDTOList);
-//        return ResponseEntity.ok(movieDTOList);
-//    }
-
     // 전체 영화 조회
     @Operation(summary = "전체영화 조회 (관리자용)")
     @GetMapping("/readAll")
@@ -109,9 +84,6 @@ public class MovieController {
         return ResponseEntity.ok(movieDTOList);
     }
 
-
-
-
     // 영화삭제
     @Operation(summary = "영화삭제",
             description = "삭제할 영화의 movieId 입력")
@@ -121,61 +93,4 @@ public class MovieController {
         movieService.remove(movieId);
         return ResponseEntity.ok().build();
     }
-
-
-
-
-
-
-    // 영화 사진 반환
-//    @Operation(summary = "영화 사진 반환",
-//            description = "1. 영화 제목 입력시 영화 이미지 반환\n 2. 맨 앞에 s_ 붙일 시 썸네일 이미지 반환\n - 영화 제목이 중복일시 에러")
-//    @GetMapping("/{title}/getImage")
-//    public ResponseEntity<Resource> image(@PathVariable String title) {
-//        try {
-//            File directory = new File(uploadPath);
-//
-//            String title2 = title;
-//
-//            // 썸네일 요청일시
-//            if (title.startsWith("s_")) {
-//                title2 = title.substring(2);
-//            }
-//            // 얻은 영화 제목으로 movieId 찾기
-//            MovieDTO movieDTO = movieService.getMovieByTitle(title2);
-//            Long movieId = movieDTO.getMovieId();
-//
-//            // movieId로 파일 찾기
-//            File[] files = directory.listFiles((dir, name) -> {
-//                int lastDot = name.lastIndexOf('.');
-//                // 썸네일 요청일시
-//                if (title.startsWith("s_")){
-//                    return name.substring(0, lastDot).equals(String.valueOf("s_" + movieId));
-//                }
-//                return name.substring(0, lastDot).equals(String.valueOf(movieId));
-//            });
-//
-//            // 파일이 존재하지 않는 경우
-//            if (files == null || files.length == 0) {
-//                log.info("파일이 존재하지 않습니다.");
-//                return ResponseEntity.notFound().build();
-//            }
-//
-//            File targetFile = files[0]; // 매칭되는 첫 번째 파일 선택
-//            Resource resource = new FileSystemResource(targetFile);
-//
-//            HttpHeaders headers = new HttpHeaders();
-//            // 실제 파일의 확장자에 맞는 MIME 타입을 추출 (jpg, png, webp같은)
-//            headers.add("Content-Type", Files.probeContentType(targetFile.toPath()));
-//
-//            // 확장자와 파일반환
-//            log.info("파일 반환");
-//            return ResponseEntity.ok().headers(headers).body(resource);
-//
-//        } catch (IOException e) {
-//            throw new RuntimeException("파일을 읽는 중 오류가 발생했습니다.", e);
-//        }
-//    }
-
-
 }

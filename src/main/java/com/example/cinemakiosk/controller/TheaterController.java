@@ -31,7 +31,7 @@ public class TheaterController {
         return ResponseEntity.ok(theaterService.getTheaterAll());
     }
 
-    @Operation(summary = "사영관 단일 조회")
+    @Operation(summary = "상영관 단일 조회")
     @GetMapping("/theater/{no}")
     public ResponseEntity<TheaterDTO> getTheater(@PathVariable Long no) {
         return ResponseEntity.ok(theaterService.getTheater(no));

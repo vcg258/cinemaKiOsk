@@ -1,16 +1,9 @@
 package com.example.cinemakiosk.domain;
 
-import com.example.cinemakiosk.dto.ScheduleDTO;
-import com.example.cinemakiosk.dto.SeatPolicyDTO;
 import com.example.cinemakiosk.dto.TheaterDTO;
-import com.example.cinemakiosk.vo.ScheduleVO;
-import com.example.cinemakiosk.vo.TheaterVO;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -51,7 +44,7 @@ public class TheaterEntity {
      * 상영관 정리시간 업데이트 도메인 메서드
      * @param cleanupTime 정리시간 수정시 사용
      */
-    public void changeCleantime(Long cleanupTime) {
+    public void changeCleanTime(Long cleanupTime) {
         this.cleanupTime = cleanupTime;
     }
 

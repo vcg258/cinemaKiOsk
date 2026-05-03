@@ -34,16 +34,6 @@ CREATE TABLE IF NOT EXISTS `member` # FK (X)
 ) COMMENT '회원(포인트)';
 
 
-# CREATE TABLE IF NOT EXISTS `member_cleanup_log` # FK (X)
-# (
-#     `member_id`  BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-#     `phone`      VARCHAR(20) COMMENT '회원 번호',
-#     `point`      INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '포인트',
-#     `create_at`  DATETIME     NOT NULL COMMENT '생성일',
-#     `deleted_at` DATETIME              DEFAULT CURRENT_TIMESTAMP COMMENT '삭제일'
-# ) COMMENT 'batch용 회원 삭제 저장소';
-
-
 CREATE TABLE IF NOT EXISTS `seat_policy` # FK (X)
 (
     `policy_id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '좌석 아이디',
@@ -90,9 +80,6 @@ CREATE TABLE IF NOT EXISTS `discount_policy` # FK (X)
     `end_at`         DATETIME                              NULL COMMENT '만료일',
     `activation`     BOOLEAN DEFAULT false                 NULL COMMENT '활성화 여부 (활성화 = True, 비활성화 = False)'
 ) COMMENT '할인 행사 정책(자체 이벤트)';
-
-
--- --------------------------------------------------------------------------------------------------------------------
 
 
 CREATE TABLE admin_role

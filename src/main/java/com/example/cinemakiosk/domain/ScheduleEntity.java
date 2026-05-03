@@ -19,8 +19,7 @@ import java.util.List;
 public class ScheduleEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT UNSIGNED")
-    @Id
-    private Long id; // 스케줄 인덱스
+    @Id private Long id; // 스케줄 인덱스
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "no", nullable = false, columnDefinition = "BIGINT UNSIGNED", foreignKey = @ForeignKey(name = "fk_schedule_theater_no"))
@@ -45,9 +44,6 @@ public class ScheduleEntity {
      * @param activation 스케줄 활성화 여부
      */
     public void changeActivation(boolean activation) {
-        if (this.activation == activation) {
-            return;
-        }
         this.activation = activation;
     }
 

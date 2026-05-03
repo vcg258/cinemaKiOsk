@@ -40,18 +40,11 @@ public class DiscountPolicyController {
         return ResponseEntity.ok(discountPolicyService.getDiscountPolicy(id));
     }
 
-    @Operation(summary = "할인정책 종료지정")
-    @PatchMapping("/{id}/finish")
-    public ResponseEntity<Void> finishDiscountPolicy(@PathVariable Long id) {
-        discountPolicyService.finishActivation(id);
-        return ResponseEntity.ok().build();
-    }
-
     @Operation(summary = "할인정책 활성화 비활성화")
     @PatchMapping("/activation")
     public ResponseEntity<Void> changeDiscountPolicyActivation(@RequestBody ActivationRequest request) {
         discountPolicyService.changeActivation(request);
-        return ResponseEntity.noContent().build(); // 204 변경됨 하지만 다시 값을 보여줄 필요는 없음
+        return ResponseEntity.noContent().build(); // 204
     }
 
     @Operation(summary = "지정 정책에 쿠폰 발행")
@@ -63,7 +56,7 @@ public class DiscountPolicyController {
 
     @Operation(summary = "쿠폰 전체 조회 (폐이징 처리)")
     @GetMapping("/coupon/list")
-    public ResponseEntity<Page<CouponDTO>> getCoupons(@RequestParam Integer page) {
+    public ResponseEntity<Page<CouponDTO>> getCoupons(@RequestParam(defaultValue = "1") int page) {
         return ResponseEntity.ok(discountPolicyService.getCouponAll(page));
     }
 

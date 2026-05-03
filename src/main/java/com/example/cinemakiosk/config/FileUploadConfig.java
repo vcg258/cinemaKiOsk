@@ -15,13 +15,13 @@ public class FileUploadConfig {
     public MultipartConfigElement multipartConfigElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();
 
-        // 현재 프로젝트의 루트 경로를 가져옵니다.
+        // 현재 프로젝트의 루트 경로를 가져옴
         String projectPath = System.getProperty("user.dir");
 
-        // 프로젝트 루트 아래의 'uploads' 폴더를 경로로 지정합니다.
+        // 프로젝트 루트 아래의 'uploads' 폴더를 경로로 지정
         String uploadPath = projectPath + File.separator + "uploads";
 
-        // 폴더가 없으면 생성합니다.
+        // 폴더가 없으면 생성
         File uploadDir = new File(uploadPath);
         if (!uploadDir.exists()) {
             uploadDir.mkdirs();
@@ -30,7 +30,7 @@ public class FileUploadConfig {
         // 업로드 임시 저장소 위치 설정
         factory.setLocation(uploadPath);
 
-        // 최대 파일 크기 설정 (예: 10MB)
+        // 최대 파일 크기 설정
         factory.setMaxFileSize(DataSize.ofMegabytes(10));
         factory.setMaxRequestSize(DataSize.ofMegabytes(10));
 

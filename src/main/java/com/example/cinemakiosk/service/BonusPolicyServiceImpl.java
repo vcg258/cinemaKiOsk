@@ -56,7 +56,7 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
      * @param id 적립 정책 PK
      */
     @Override
-    public void finishActivation(Long id) { // TODO batch 사용으로 만료시간이 되면 자동 비활성화로 변경 해야함
+    public void finishActivation(Long id) {
         BonusPolicyEntity bonusPolicyEntity = bonusPolicyRepository.findById(id).orElseThrow();
         if (LocalDateTime.now().isAfter(bonusPolicyEntity.getEndAt()) || !bonusPolicyEntity.isActivation()) {
             throw new IllegalStateException("적립정책이 이미 비활성화임 종료 지정 불가능");

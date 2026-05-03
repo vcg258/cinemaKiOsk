@@ -101,7 +101,7 @@ public class AdminRoleServiceImpl implements AdminRoleService {
     }
 
     /**
-     * DB refreshToken View Data refreshToken과 비교하기 위한 메서드
+     * DB refreshToken View, Data refreshToken과 비교하기 위한 메서드
      * @param loginId 해당 관리자 로그인 아이디
      * @return DB refreshToken
      */

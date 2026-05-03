@@ -1,11 +1,9 @@
 package com.example.cinemakiosk.service.ai;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentReader;
-import org.springframework.ai.model.transformer.KeywordMetadataEnricher;
 import org.springframework.ai.reader.JsonMetadataGenerator;
 import org.springframework.ai.reader.JsonReader;
 import org.springframework.ai.reader.TextReader;
@@ -33,11 +31,18 @@ import java.util.regex.Pattern;
 
 @Log4j2
 @Service
-@RequiredArgsConstructor
 public class ETLService {
     private final ChatModel chatModel; // 키워드 추출 할때 사용
     private final VectorStore vectorStore; // VectorDB에 적용
-    @Qualifier("pgJdbcTemplate") private final JdbcTemplate jdbcTemplate; // VectorDB에는 전체 삭제가 없음 새로운 메뉴얼을 넣을때는 전체 삭제를 하고 최신거만 추가하기 위함
+    private final JdbcTemplate jdbcTemplate; // VectorDB에는 전체 삭제가 없음 새로운 메뉴얼을 넣을때는 전체 삭제를 하고 최신거만 추가하기 위함
+
+    public ETLService(ChatModel chatModel,
+                      VectorStore vectorStore,
+                      @Qualifier("pgJdbcTemplate") JdbcTemplate jdbcTemplate) {
+        this.chatModel = chatModel;
+        this.vectorStore = vectorStore;
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     // ETL추출을 할때 title 키워드를 지정하기 위해 @title(@title:) = title로 형식 지정 (싱글턴)
     private static final Pattern TITLE_PATTERN = Pattern.compile("@title:?\\s*(.+?)\\s*$", Pattern.MULTILINE);
@@ -53,6 +58,7 @@ public class ETLService {
         // 새로 추가시 테이블을 비움
         initializeStores();
 
+        // 타입에 맞게 파일 내용을 바이트로 추출
         List<Document> documents = extractFromFile(file);
         if (documents == null) {
             throw new IOException(".txt, .json, .pdf, .doc, .docx 파일 중에 하나를 올려주세요.");
@@ -63,9 +69,11 @@ public class ETLService {
         String titleText = StringUtils.hasText(title) ? title : file.getOriginalFilename();
         String contentType = file.getContentType();
 
+        // PDF(파일 형식안에 넣어야함 얘는), JSON은 title을 이미 지정 해놨기때문에 제외함
         boolean isSectionable = contentType.equals("text/plain") || contentType.contains("wordprocessingml");
         List<Document> finalDocuments;
 
+        // txt파일 일 경우
         if (isSectionable) {
             StringBuilder sb = new StringBuilder();
             for (Document doc : documents) {

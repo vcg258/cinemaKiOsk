@@ -8,5 +8,4 @@ import java.util.List;
 public class ActivationRequest {
     private List<Long> ids; // 변경할 PKs
     private boolean activation;
-
 }

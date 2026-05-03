@@ -25,15 +25,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class TmdbServiceImpl implements TmdbService {
-
     private final TmdbConfig tmdbConfig;
-    private final RestTemplate restTemplate;
-
-    // 이미지 저장 경로
-//    @Value("${my.upload.path}")
-//    private String uploadPath;
-
-    private final String baseUrl = "tmdbConfig.getBaseUrl()";
 
     // 인기 영화 목록 수정
     public List<TmdbMovieDTO> getPopularMovies(int page) {
@@ -119,12 +111,6 @@ public class TmdbServiceImpl implements TmdbService {
             throw new IllegalArgumentException("tmdbId가 null입니다.");
         }
 
-        // 상세조회
-//        String url = tmdbConfig.getBaseUrl() + "/movie/" + tmdbId
-//                + "?api_key=" + tmdbConfig.getApiKey()
-//                + "&language=ko-KR";
-//        TmdbMovieDTO detail = restTemplate.getForObject(url, TmdbMovieDTO.class);
-
         // 1. RestClient 초기화
         RestClient restClient = RestClient.builder()
                 .baseUrl(tmdbConfig.getBaseUrl())
@@ -145,12 +131,6 @@ public class TmdbServiceImpl implements TmdbService {
         if (detail == null) {
             throw new NoSuchElementException("해당 영화를 찾을 수 없습니다. tmdbId=" + tmdbId);
         }
-
-        // 상세조회(배우, 감독)
-//        String creditsUrl = tmdbConfig.getBaseUrl() + "/movie/" + tmdbId
-//                + "/credits?api_key=" + tmdbConfig.getApiKey()
-//                + "&language=ko-KR";
-//        TmdbCreditsDTO credits = restTemplate.getForObject(creditsUrl, TmdbCreditsDTO.class);
 
         TmdbCreditsDTO credits = restClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -183,9 +163,6 @@ public class TmdbServiceImpl implements TmdbService {
         String genre = detail.getGenres().stream()
                 .map(GenreDTO::getName)
                 .collect(Collectors.joining(", "));
-
-        // 포스터 다운로드 및 저장
-//        downloadAndSavePoster(detail.getPosterPath(), detail.getTitle());
 
         // 한국 관람 등급 조회 (/movie/{id}/release_dates)
         Rating rating = fetchKoreanRating(tmdbId);
@@ -292,53 +269,4 @@ public class TmdbServiceImpl implements TmdbService {
             return Rating.ALL;
         }
     }
-
-
-    // 이미지 url 다운로드
-//    public void downloadAndSavePoster(String posterPath, String title) {
-//        // 입력값 유효성 검사
-//        if (posterPath == null || posterPath.isBlank()) {
-//            throw new IllegalArgumentException("포스터 경로가 없습니다.");
-//        }
-//        if (title == null || title.isBlank()) {
-//            throw new IllegalArgumentException("영화 제목이 없습니다.");
-//        }
-//
-//        String imageUrl = tmdbConfig.getImageUrl() + posterPath;
-//
-//        // URL에서 이미지 바이트 다운로드
-//        byte[] imageBytes = restTemplate.getForObject(imageUrl, byte[].class);
-//
-//        // 다운로드 실패 시
-//        if (imageBytes == null || imageBytes.length == 0) {
-//            throw new IllegalStateException("포스터 이미지 다운로드에 실패했습니다: " + imageUrl);
-//        }
-//
-//        // 영화 제목으로 파일명 설정 (특수문자 제거)
-//        String filename = title.replaceAll("[\\\\/:*?\"<>|]", "").trim() + ".jpg";
-//        Path path = Paths.get(uploadPath, filename);
-//
-//        // 이미지 파일 저장
-//        try {
-//            Files.write(path, imageBytes);
-//        } catch (IOException e) {
-//            throw new IllegalStateException("포스터 파일 저장에 실패했습니다: " + filename, e);
-//        }
-//
-//        // 썸네일 생성
-//        String contentType = null;
-//        try {
-//            contentType = Files.probeContentType(path);
-//        } catch (IOException e) {
-//            throw new IllegalStateException("파일 타입 확인에 실패했습니다: " + filename, e);
-//        }
-//        if (contentType != null && contentType.startsWith("image")) {
-//            File thumbnailFile = new File(uploadPath, "s_" + filename);
-//            try {
-//                Thumbnailator.createThumbnail(path.toFile(), thumbnailFile, 200, 200);
-//            } catch (IOException e) {
-//                throw new IllegalStateException("썸네일 생성에 실패했습니다: " + filename, e);
-//            }
-//        }
-//    }
 }

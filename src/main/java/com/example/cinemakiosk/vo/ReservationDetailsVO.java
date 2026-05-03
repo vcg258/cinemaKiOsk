@@ -1,14 +1,8 @@
 package com.example.cinemakiosk.vo;
 
-import com.example.cinemakiosk.domain.ReservationDetailsEntity;
-import com.example.cinemakiosk.domain.ReservationSeatEntity;
-import com.example.cinemakiosk.dto.PaymentDetailsDTO;
 import com.example.cinemakiosk.dto.ReservationDetailsDTO;
 import com.example.cinemakiosk.dto.ReservationSeatDTO;
-import com.example.cinemakiosk.dto.ScheduleDTO;
 import lombok.*;
-import com.example.cinemakiosk.vo.ScheduleVO;
-import com.example.cinemakiosk.vo.ReservationSeatVO;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

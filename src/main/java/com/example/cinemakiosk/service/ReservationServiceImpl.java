@@ -6,7 +6,6 @@ import com.example.cinemakiosk.dto.ReservationSeatDTO;
 import com.example.cinemakiosk.mapper.ReservationDetailsMapper;
 import com.example.cinemakiosk.mapper.ReservationSeatMapper;
 import com.example.cinemakiosk.repository.ReservationDetailsRepository;
-import com.example.cinemakiosk.repository.ReservationSeatRepository;
 import com.example.cinemakiosk.vo.ReservationDetailsVO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReservationServiceImpl implements ReservationService {
     private final ReservationSeatMapper reservationSeatMapper;
-    private final ReservationSeatRepository reservationSeatRepository;
     private final ReservationDetailsMapper reservationDetailsMapper;
     private final ReservationDetailsRepository reservationDetailsRepository;
 

@@ -33,6 +33,11 @@ public class AdminRoleEntity {
     private List<AdminRoleMapEntity> adminRoleMapEntity; // 권한 아이디 FK
 
 
+    /**
+     * Entity -> DTO
+     * @param adminRoleEntity Entity
+     * @return DTO
+     */
     public static AdminRoleDTO toDTO(AdminRoleEntity adminRoleEntity) {
         return AdminRoleDTO.builder()
                 .id(adminRoleEntity.getId())

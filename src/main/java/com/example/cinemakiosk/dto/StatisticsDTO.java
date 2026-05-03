@@ -14,7 +14,6 @@ import java.time.LocalDate;
 @Builder
 @ToString
 public class StatisticsDTO {
-
     private Long id;
     private ScheduleDTO schedule;
     private Days day;

@@ -36,7 +36,7 @@ public class CustomerController {
         return ResponseEntity.ok(scheduleService.getScheduleList());
     }
 
-    @Operation(summary = "스케줄 객체 전체 조회")
+    @Operation(summary = "스케줄 전체 조회(Mapper)")
     @GetMapping("/schedule/DTOlist")
     public ResponseEntity<List<ScheduleDTO>> getScheduleDTOList() {
         return ResponseEntity.ok(scheduleService.getScheduleDTOList());
@@ -67,6 +67,7 @@ public class CustomerController {
         return ResponseEntity.ok(movieService.getMovieById(movieId));
     }
 
+    @Operation(summary = "회원 가입")
     @PostMapping("/member/{phone}")
     public ResponseEntity<MemberDTO> postMemberById(@PathVariable String phone) {
         memberService.createMember(new MemberDTO(phone, Grade.NORMAL, 0, null));

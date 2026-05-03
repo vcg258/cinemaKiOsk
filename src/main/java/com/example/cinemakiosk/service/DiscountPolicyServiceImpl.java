@@ -7,7 +7,6 @@ import com.example.cinemakiosk.dto.DiscountPolicyDTO;
 import com.example.cinemakiosk.dto.requestDTO.CouponStatusRequest;
 import com.example.cinemakiosk.dto.requestDTO.ActivationRequest;
 import com.example.cinemakiosk.mapper.CouponMapper;
-import com.example.cinemakiosk.mapper.DiscountPolicyMapper;
 import com.example.cinemakiosk.repository.CouponRepository;
 import com.example.cinemakiosk.repository.DiscountPolicyRepository;
 import com.example.cinemakiosk.vo.CouponVO;
@@ -29,7 +28,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class DiscountPolicyServiceImpl implements DiscountPolicyService {
-    private final DiscountPolicyMapper discountPolicyMapper;
     private final DiscountPolicyRepository discountPolicyRepository;
     private final CouponRepository couponRepository;
     private final CouponMapper couponMapper;
@@ -84,22 +82,6 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     }
 
     /**
-     * 할인정책 종료 (23시 59분으로 지정 활성화 여부 FALSE)
-     * @param id 정책 번호 FK
-     */
-    @Override
-    public void finishActivation(Long id) { // TODO batch 사용으로 만료시간이 되면 자동 비활성화로 변경 해야함
-        DiscountPolicyEntity discountPolicyEntity = discountPolicyRepository.findById(id).orElseThrow();
-        if (LocalDateTime.now().isAfter(discountPolicyEntity.getEndAt()) || !discountPolicyEntity.isActivation()) {
-            throw new IllegalStateException("이미 비활성화 된 정책입니다.");
-        }
-
-        discountPolicyEntity.finalDiscountPolicy(LocalDateTime.now().withHour(23).withMinute(59).withSecond(59));
-        DiscountPolicyEntity policy = discountPolicyRepository.save(discountPolicyEntity);
-        log.info("finishActivation... 할인정책 종료시간 지정 : {}", policy);
-    }
-
-    /**
      * 할인 정책 활성화 / 비활성화
      * @param request
      */
@@ -129,7 +111,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
             throw new IllegalArgumentException("지정한 할인정책이 없음 발행 X");
         }
 
-        // 여러 쿠폰을 발급 할 수 있게 수정
+        // 여러 쿠폰을 발급 할 수 있게
         List<CouponEntity> coupons = new ArrayList<>();
         for (int i = 1; i <= count; i++) {
             String couponNum = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
@@ -187,25 +169,6 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     }
 
     /**
-     * 지정한 여러건 쿠폰 상태 변경
-     * @param request 요청 DTO
-     */
-    @Override
-    public void updateStatusCoupons(CouponStatusRequest request) {
-        List<CouponEntity> couponEntities = couponRepository.findAllById(request.getCouponNums());
-        couponEntities.forEach(couponEntity -> {
-            if (couponEntity.isStatus() == request.isStatus()) {
-                log.warn("이미 사용한 쿠폰은 변경 안함");
-                return;
-            }
-            couponEntity.changeStatus(request.isStatus());
-            log.info("상태 변경 완료 {}", couponEntity);
-        });
-        couponRepository.saveAll(couponEntities);
-
-    }
-
-    /**
      * 할인 정책 10페이지씩 페이징 처리 (로그 포함 전체 조회)
      * @param page 몇번째 페이지 부터 가져올건지 정하는 변수
      * @return 페이징 결과 1페이지 일경우 1 ~ 10번 까지
@@ -214,7 +177,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     public Page<DiscountPolicyDTO> getDiscountPolicyPage(int page) {
         Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("id").descending());
         Page<DiscountPolicyEntity> policy = discountPolicyRepository.findAll(pageable);
-        return policy.map(discountPolicy -> DiscountPolicyEntity.toDTO(discountPolicy));
+        return policy.map(DiscountPolicyEntity::toDTO);
     }
 
     /**

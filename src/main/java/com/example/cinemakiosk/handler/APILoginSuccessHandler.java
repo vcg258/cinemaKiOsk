@@ -38,17 +38,20 @@ public class APILoginSuccessHandler implements AuthenticationSuccessHandler {
         AdminDetails adminDetails = (AdminDetails) authentication.getPrincipal();
         boolean level = adminDetails.isLevel();
 
-        // JWT 토큰에 담을 아이디와 권한 레벨
-        Map<String, Object> claim = Map.of(
-                "loginId", authentication.getName(),
-                "level", level
-        );
-
+        // 자동 로그인 여부 확인을 위한 값
         String autoLogin = (String) request.getAttribute("autoLogin");
         boolean isAutoLogin = "true".equals(autoLogin);
 
         int refreshTokenPeriod = isAutoLogin ? 60 * 24 * 30 : 60 * 24; // 자동로그인이면 1달 : 일반 로그인 하루 (얘는 분단위)
         int cookieMaxAge = isAutoLogin ? 60 * 60 * 24 * 30 : 60 * 60 * 24; // 동일 (쿠키는 초단위임)
+
+
+        // JWT 토큰에 담을 아이디와 권한 레벨
+        Map<String, Object> claim = Map.of(
+                "loginId", authentication.getName(),
+                "level", level,
+                "autoLogin", autoLogin
+        );
 
         log.info("autoLogin 값: {}, isAutoLogin: {}", autoLogin, isAutoLogin);
         log.info("refreshTokenPeriod: {}, cookieMaxAge: {}", refreshTokenPeriod, cookieMaxAge);

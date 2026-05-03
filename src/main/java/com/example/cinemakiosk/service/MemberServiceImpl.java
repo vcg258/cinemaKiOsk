@@ -57,10 +57,8 @@ public class MemberServiceImpl implements MemberService{
     public void pointHistoryCreate(PointHistoryDTO pointHistoryDTO) {
 
         // 회원 정보 존재하지 않을 경우
-        MemberEntity member = memberRepository.findById(pointHistoryDTO.getPhone()).orElse(null);
-        if (member == null) {
-            throw new NoSuchElementException("등록된 회원 정보가 존재하지 않습니다");
-        }
+        MemberEntity member = memberRepository.findById(pointHistoryDTO.getPhone()).orElseThrow(
+                () -> new NoSuchElementException("등록된 회원 정보가 존재하지 않습니다"));
 
         // 타입이 사용이고 잔여포인트 보다 사용금액이 더 많으면 예외처리
         if (pointHistoryDTO.getType() == Type.USE && pointHistoryDTO.getAmountPoint() > member.getPoint()) {
@@ -86,8 +84,7 @@ public class MemberServiceImpl implements MemberService{
         log.info("pointHistoryCreate... 포인트 업데이트 내역 : {}", pointHistory);
 
         member.changePoint(amount);
-//        memberRepository.save(member); // 회원 잔여포인트 업데이트
-
+        memberRepository.save(member); // 회원 잔여포인트 업데이트
     }
 
     /**

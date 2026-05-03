@@ -37,10 +37,18 @@ public class MemberEntity{
     @OneToMany(mappedBy = "memberEntity", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<ReservationDetailsEntity> reservationDetailsEntity;
 
+    /**
+     * 회원 등급 변경 도메인 메서드
+     * @param grade 변경할 등급
+     */
     public void changeGrade(Grade grade){
         this.grade = grade;
     }
 
+    /**
+     * 회원 포인트 변동 업데이트 도메인 메서드
+     * @param point 포인트
+     */
     public void changePoint(int point){
         this.point = point;
     }

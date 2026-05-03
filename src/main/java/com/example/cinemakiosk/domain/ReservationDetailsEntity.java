@@ -48,6 +48,10 @@ public class ReservationDetailsEntity{
     @OneToMany(mappedBy = "reservationDetailsEntity")
     private List<PaymentDetailsEntity> paymentDetailsEntity;
 
+    /**
+     * 환불 여부 변경 도메인 메서드
+     * @param returned 변경될 환불 여부
+     */
     public void changeReturned(boolean returned) {
         this.returned = returned;
     }

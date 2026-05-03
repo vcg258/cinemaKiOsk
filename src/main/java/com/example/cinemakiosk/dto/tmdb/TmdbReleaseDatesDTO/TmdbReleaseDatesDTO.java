@@ -6,7 +6,6 @@ import java.util.List;
 
 /**
  * TMDB /movie/{id}/release_dates API 응답 DTO
- *
  * 응답 구조:
  * {
  *   "results": [
@@ -18,7 +17,6 @@ import java.util.List;
  *     }
  *   ]
  * }
- *
  * KR iso_3166_1 항목에서 certification 값을 추출하여 Rating enum으로 변환
  */
 @Data

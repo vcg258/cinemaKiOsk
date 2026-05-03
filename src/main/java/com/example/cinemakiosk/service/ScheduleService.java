@@ -30,7 +30,9 @@ public interface ScheduleService {
     // 스케줄 하나 조회
     ScheduleDTO getSchedule(Long id);
 
+    // Mapper 전체 조회
     List<ScheduleDTO> getScheduleDTOList();
 
+    // Mapper 단일 조회
     ScheduleDTO getScheduleDTO(Long no);
 }

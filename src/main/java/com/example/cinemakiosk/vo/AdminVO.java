@@ -13,7 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class AdminVO {
-
     private Long adminId;
     private String loginId;
     private String password;    // 로그인 요청 시 사용, 응답 시엔 null로 두면 됨

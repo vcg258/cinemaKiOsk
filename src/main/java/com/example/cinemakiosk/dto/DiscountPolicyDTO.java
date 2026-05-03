@@ -23,7 +23,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DiscountPolicyDTO {
-    // JSON으로 Request는 하지 않음 Response만 허용
+    // JSON으로 Request는 하지 않음 읽기(Response)만 허용
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id; // 할인 정책 인덱스
     private String policyName; // 정책이름

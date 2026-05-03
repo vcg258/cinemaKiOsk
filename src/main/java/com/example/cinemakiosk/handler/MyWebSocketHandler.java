@@ -30,7 +30,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final Map<String, ScheduledFuture<?>> removalTasks = new ConcurrentHashMap<>();
 
-    //첫번째 접속을 했을 때 실행할 로직
+    // 첫번째 접속을 했을 때 실행할 로직
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         String query = session.getUri().getQuery();
@@ -60,7 +60,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
             log.info("사용자 [{}] 재접속 확인 - 좌석 삭제 작업 취소", userId);
         }
 
-        //3. 세션에 추가 내용을 등록
+        // 3. 세션에 추가 내용을 등록
         session.getAttributes().put("userId", userId);
         sessions.add(session);
         log.info("새 연결: userId={}", userId);
@@ -68,7 +68,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     }
 
 
-    //웹에서 send를 받았을 때 처리하는 메소드
+    // 웹에서 send를 받았을 때 처리하는 메소드
     @Override
     protected void handleTextMessage(WebSocketSession session, @NonNull TextMessage message) throws Exception {
         String payload = message.getPayload();
@@ -117,7 +117,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         }
     }
 
-    //연결이 종료되고나서 실행하는 메서드
+    // 연결이 종료되고나서 실행하는 메서드
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         String userId = (String) session.getAttributes().get("userId");
