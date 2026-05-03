@@ -83,11 +83,9 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
     public void savePaymentInfo(JsonNode requestData, long amount) {
         log.info("데이터 저장 로직 시작.");
         String orderId = requestData.get("orderId").asText();
-        String phone = requestData.get("phone").asText();
         String paymentKey = requestData.get("paymentKey").asText();
-
-        MemberDTO member = memberService.getMember(phone);
-        BonusPolicyDTO bonusPolicy = bonusPolicyService.getBonusPolicy(member.getGrade());
+        String phone = requestData.get("phone").asText(null); // 없으면 비회원 null 반환
+        boolean isGuest = phone == null || phone.isEmpty();
 
         long usePoint = requestData.get("usePoint").asLong();
         Long scheduleIdValue = requestData.path("scheduleId").path("scheduleId").asLong();
@@ -106,12 +104,19 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
         String couponStr = requestData.path("couponNum").asText("");
         CouponDTO couponNum = couponStr.isEmpty() ? null : discountPolicyService.getCoupon(couponStr);
         log.error("경계3");
+        MemberDTO member = null;
+        BonusPolicyDTO bonusPolicy = null;
+
+        if (!isGuest) {
+            member = memberService.getMember(phone);
+            bonusPolicy = bonusPolicyService.getBonusPolicy(member.getGrade());
+        }
 
         // 1. 예매 등록
         ReservationDetailsDTO reservation = ReservationDetailsDTO.builder()
                 .id(orderId)
                 .schedule(schedule)
-                .phone(member)
+                .phone(isGuest ? null : member) // 비회원 null
                 .seats(seats)
                 .returned(false)
                 .createAt(LocalDateTime.now())
@@ -127,11 +132,11 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
         PaymentDetailsDTO payment = PaymentDetailsDTO.builder()
                 .id(orderId)
                 .reservation(reservationDetailsDTO)
-                .bonusPolicy(bonusPolicy)
+                .bonusPolicy(isGuest ? null : bonusPolicy) // 비회원 null
                 .couponNum(couponNum)
                 .cost(amount)
                 .createAt(LocalDateTime.now())
-                .usePoint(usePoint)
+                .usePoint(isGuest ? 0L : usePoint) // 비회원 포인트 사용 X
                 .status(Status.PAY)
                 .paymentKey(paymentKey)
                 .build();
@@ -150,34 +155,35 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
         }
 
         // 3. 포인트 처리
-        int earnPoint = (int) (amount * bonusPolicy.getGiveValue() / 100);
+        if (!isGuest) {
+            int earnPoint = (int) (amount * bonusPolicy.getGiveValue() / 100);
 
-        log.error("경계9");
-        // 사용 내역 - 통과
-        if (usePoint > 0) {
-            memberService.pointHistoryCreate(PointHistoryDTO.builder()
-                    .paymentId(orderId).phone(phone).type(Type.USE).amountPoint((int) usePoint)
-                    .createAt(LocalDateTime.now()).title("영화 예매 포인트 사용")
-                    .build());
-            log.info("Point log");
+            log.error("경계9");
+            // 사용 내역 - 통과
+            if (usePoint > 0) {
+                memberService.pointHistoryCreate(PointHistoryDTO.builder()
+                        .paymentId(orderId).phone(phone).type(Type.USE).amountPoint((int) usePoint)
+                        .createAt(LocalDateTime.now()).title("영화 예매 포인트 사용")
+                        .build());
+                log.info("Point log");
+            }
+
+            log.error("경계10");
+            // 적립 내역 - 걸림
+            if (earnPoint > 0) {
+                memberService.pointHistoryCreate(PointHistoryDTO.builder()
+                        .paymentId(orderId).phone(phone).type(Type.EARN).amountPoint(earnPoint)
+                        .createAt(LocalDateTime.now())
+                        .build());
+                log.info("Point Earn {}", earnPoint);
+
+            }
+            log.error("경계11");
+            // 회원 등급 확인
+            memberService.updateGrade(member.getPhone());
+            // 멤버 실제 포인트 업데이트
+            log.info("멤버 확인 : {}", member);
         }
-
-        log.error("경계10");
-        // 적립 내역 - 걸림
-        if (earnPoint > 0) {
-            memberService.pointHistoryCreate(PointHistoryDTO.builder()
-                    .paymentId(orderId).phone(phone).type(Type.EARN).amountPoint(earnPoint)
-                    .createAt(LocalDateTime.now())
-                    .build());
-            log.info("Point Earn {}", earnPoint);
-
-        }
-        log.error("경계11");
-        // 회원 등급 확인
-        memberService.updateGrade(member.getPhone());
-        // 멤버 실제 포인트 업데이트
-        log.info("멤버 확인 : {}", member);
-
 
         log.info("DB 저장 및 포인트 갱신 완료: 주문번호 {}", orderId);
     }

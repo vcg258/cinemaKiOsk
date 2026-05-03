@@ -1,5 +1,6 @@
 package com.example.cinemakiosk.vo;
 
+import com.example.cinemakiosk.dto.MemberDTO;
 import com.example.cinemakiosk.dto.ReservationDetailsDTO;
 import com.example.cinemakiosk.dto.ReservationSeatDTO;
 import lombok.*;
@@ -37,7 +38,9 @@ public class ReservationDetailsVO {
         return ReservationDetailsDTO.builder()
                 .id(reservationDetailsVO.getId())
                 .schedule(ScheduleVO.toDTO(reservationDetailsVO.getSchedule()))
-                .phone(MemberVO.toDTO(reservationDetailsVO.getPhone()))
+                .phone(reservationDetailsVO.getPhone() != null
+                        ? MemberVO.toDTO(reservationDetailsVO.getPhone())
+                        : null)
                 .createAt(reservationDetailsVO.getCreateAt())
                 .seats(reservationSeatDTOs)
                 .build();

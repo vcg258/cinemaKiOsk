@@ -41,7 +41,9 @@ public class PaymentDetailsDTO {
         return PaymentDetailsEntity.builder()
                 .id(paymentDetailsDTO.getId())
                 .reservationDetailsEntity(ReservationDetailsDTO.toEntity(paymentDetailsDTO.getReservation()))
-                .bonusPolicyEntity(BonusPolicyDTO.toEntity(paymentDetailsDTO.getBonusPolicy()))
+                .bonusPolicyEntity(paymentDetailsDTO.getBonusPolicy() != null
+                        ? BonusPolicyDTO.toEntity(paymentDetailsDTO.getBonusPolicy())
+                        : null)
                 .couponEntity(couponEntity)
                 .cost(paymentDetailsDTO.getCost())
                 .createAt(paymentDetailsDTO.getCreateAt())
@@ -60,7 +62,9 @@ public class PaymentDetailsDTO {
         return PaymentDetailsVO.builder()
                 .id(paymentDetailsDTO.getId())
                 .reservation(ReservationDetailsDTO.toVO(paymentDetailsDTO.getReservation()))
-                .bonusPolicy(BonusPolicyDTO.toVO(paymentDetailsDTO.getBonusPolicy()))
+                .bonusPolicy(paymentDetailsDTO.getBonusPolicy() != null
+                        ? BonusPolicyDTO.toVO(paymentDetailsDTO.getBonusPolicy())
+                        : null)
                 .couponNum(CouponDTO.toVO(paymentDetailsDTO.getCouponNum()))
                 .cost(paymentDetailsDTO.getCost())
                 .createAt(paymentDetailsDTO.getCreateAt())

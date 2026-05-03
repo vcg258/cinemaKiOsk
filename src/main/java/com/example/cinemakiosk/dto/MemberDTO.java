@@ -29,7 +29,7 @@ public class MemberDTO {
      * @return Entity
      */
     public static MemberEntity toEntity(MemberDTO memberDTO){
-
+        if (memberDTO == null) return null;
         return MemberEntity.builder()
                 .phone(memberDTO.getPhone())
                 .grade(memberDTO.getGrade())
@@ -44,7 +44,7 @@ public class MemberDTO {
      * @return VO
      */
     public static MemberVO toVO(MemberDTO memberDTO){
-
+        if (memberDTO == null) return null;
         return MemberVO.builder()
                 .phone(memberDTO.getPhone())
                 .grade(memberDTO.getGrade())

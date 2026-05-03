@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Log4j2
 @Service
@@ -31,8 +32,7 @@ public class ReservationServiceImpl implements ReservationService {
         List<ReservationSeatDTO> seats = reservationDetailsDTO.getSeats();
 
         if (seats.isEmpty()){
-            log.info("좌석 정보가 없어서 등록 예외 발생.");
-            return;
+            throw new NoSuchElementException("좌석 정보가 없어서 등록 예외 발생.");
         }
 
         log.info("reservationDetails에 대한 부분을 등록");

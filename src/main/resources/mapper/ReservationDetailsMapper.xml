@@ -82,7 +82,7 @@
                  INNER JOIN cinema_kiosk.movie mv ON sc.movie_id = mv.movie_id
                  INNER JOIN cinema_kiosk.theater th ON sc.no = th.no
                  INNER JOIN cinema_kiosk.seat_policy sp ON th.policy_id = sp.policy_id
-                 inner join cinema_kiosk.member mb on rd.phone = mb.phone
+                 left join cinema_kiosk.member mb on rd.phone = mb.phone
                  inner join cinema_kiosk.reservation_seat st on rd.id = st.reservation_id
     </sql>
 

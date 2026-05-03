@@ -31,7 +31,9 @@ public class ReservationDetailsDTO {
         return ReservationDetailsEntity.builder()
                 .id(reservationDetailsDTO.getId())
                 .scheduleEntity(ScheduleDTO.toEntity(reservationDetailsDTO.getSchedule()))
-                .memberEntity(MemberDTO.toEntity(reservationDetailsDTO.getPhone()))
+                .memberEntity(reservationDetailsDTO.getPhone() != null
+                        ? MemberDTO.toEntity(reservationDetailsDTO.getPhone())
+                        : null)
                 .returned(reservationDetailsDTO.isReturned())
                 .createAt(reservationDetailsDTO.getCreateAt())
                 .build();

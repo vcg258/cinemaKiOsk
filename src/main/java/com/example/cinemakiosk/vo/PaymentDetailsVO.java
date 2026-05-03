@@ -32,7 +32,9 @@ public class PaymentDetailsVO {
         return PaymentDetailsDTO.builder()
                 .id(paymentDetailsVO.getId())
                 .reservation(ReservationDetailsVO.toDTO(paymentDetailsVO.getReservation()))
-                .bonusPolicy(BonusPolicyVO.toDTO(paymentDetailsVO.getBonusPolicy()))
+                .bonusPolicy(paymentDetailsVO.getBonusPolicy() != null
+                        ? BonusPolicyVO.toDTO(paymentDetailsVO.getBonusPolicy())
+                        : null)
                 .couponNum(paymentDetailsVO.getCouponNum() == null ? null : CouponVO.toDTO(paymentDetailsVO.getCouponNum()))
                 .cost(paymentDetailsVO.getCost())
                 .createAt(paymentDetailsVO.getCreateAt())
