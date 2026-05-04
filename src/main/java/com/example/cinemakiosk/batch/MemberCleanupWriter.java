@@ -22,9 +22,6 @@ public class MemberCleanupWriter implements ItemWriter<String> {
     public void write(Chunk<? extends String> phones) {
         List<? extends String> phoneList = phones.getItems();
 
-        // 삭제 전 백업
-//        backupBeforeDelete(phoneList);
-
         for (String phone : phoneList) {
             String marking = "DEL_" + phone + "_" + System.currentTimeMillis();
             String sql = "UPDATE member SET phone = ? WHERE phone = ?";
