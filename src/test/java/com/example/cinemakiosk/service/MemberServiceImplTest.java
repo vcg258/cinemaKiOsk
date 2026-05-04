@@ -67,7 +67,7 @@ class MemberServiceImplTest {
 
     @Test
     void getMembersAllLogTest() {
-        memberService.getMembersAllLog("01088771113").forEach(log::info);
+        memberService.getMembersAllLog("01099999999").forEach(log::info);
     }
 
     @Test

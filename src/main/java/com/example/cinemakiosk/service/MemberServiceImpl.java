@@ -163,7 +163,7 @@ public class MemberServiceImpl implements MemberService{
      */
     @Override
     public List<PointHistoryDTO> getMembersAllLog(String phone) {
-        List<PointHistoryEntity> entity = pointHistoryRepository.findByMemberEntity_Phone(phone);
+        List<PointHistoryEntity> entity = pointHistoryRepository.findByMemberEntity_PhoneOrderByCreateAtDesc(phone);
         return entity.stream().map(PointHistoryEntity::toDTO).toList();
     }
 
@@ -199,7 +199,7 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public void updateGrade(String phone) {
         MemberEntity member = memberRepository.findById(phone).orElseThrow();
-        long pointCount = pointHistoryRepository.findByMemberEntity_Phone(phone).stream()
+        long pointCount = pointHistoryRepository.findByMemberEntity_PhoneOrderByCreateAtDesc(phone).stream()
                 .filter(ph -> ph.getType() == Type.EARN).count();
         if (pointCount >= 20) {
             member.changeGrade(Grade.VIP);
