@@ -190,8 +190,19 @@ npm run dev
 
 ### React
 
-> ✏️ **[작성 필요]** 그 외 기술 선택, 트러블슈팅 경험이 있다면 이곳에 추가해주세요.
-> 백엔드와 프론트엔드를 분리하여 각자 담당해 개발했습니다. (들어갈 내용)
+> 첫 번째 프로젝트에서 백엔드 위주로 작업하며 서블릿과 JSP만 경험했던 터라, 이번 프로젝트에서는 프론트엔드라는 새로운 영역에 도전하고 싶었습니다.
+> 그 중심에 React를 선택한 이유는 컴포넌트 기반 개발과 선언적 UI 작성 방식이 현대 프론트엔드의 표준으로 자리잡고 있었기 때문입니다.
+> JSP의 서버 사이드 렌더링에 익숙했던 탓에 클라이언트 사이드 렌더링과 단방향 데이터 플로우는 처음에 낯설었지만, 
+> 컴포넌트를 재사용하고 상태를 관리하는 과정이 점차 자연스러워지면서 React의 강력함을 체감할 수 있었습니다.
+<br>
+> 빌드 도구로는 Vite를 선택했습니다. 
+> 빠른 개발 서버 구동 속도와 HMR(Hot Module Replacement) 덕분에 코드를 수정하고 즉시 결과를 확인할 수 있어 반복 개발 속도가 크게 향상되었습니다.
+> TypeScript를 함께 도입하여 백엔드 API 연동 시 런타임 오류를 컴파일 단계에서 미리 잡아낼 수 있었고, 타입 정의가 팀원 간의 계약서 역할을 하며 협업 효율도 높아졌습니다.
+<br>
+> UI 일관성을 위해 프로젝트 초반부터 CSS 디자인 시스템을 구축했습니다.
+> 골드 컬러를 메인 테마로 선정하고, 순수 색상 팔레트 -> 시맨틱 토큰 -> 컴포넌트 전용 토큰의 3계층 구조로 설계했습니다.
+> 이 구조 덕분에 고객 화면(다크)과 관리자 화면(라이트)의 테마 전환을 시맨틱 토큰 오버라이드만으로 처리할 수 있었고, 
+> 새로운 컴포넌트를 추가할 때마다 색상 고민 없이 이미 정의된 토큰을 가져다 쓸 수 있어 개발 속도와 UI 완성도를 동시에 높일 수 있었습니다.
 ---
 
 ## 시스템 아키텍처
@@ -898,6 +909,7 @@ cinemaKiosk/
 |------------|--------------------------------------------------------------------------------------------------------------|
 | 유스케이스 명세서  | [링크](https://docs.google.com/document/d/1kTD8A6RrQe-xDvIrj8cqbpsOa_vISxIrA7Gs83PyrOk/edit?tab=t.0)           |
 | 기획 / 설계 문서 | [링크](https://docs.google.com/spreadsheets/d/1nJuW53kMzQa5ZqNoAvmKcw8byYW75cnHN4dgb_IxMGI/edit?usp=sharing)   |
+| 테스트 시트 문서  | [링크]()                                                                                                       |
 | 팀원별 소감 문서  | 최민종 : [링크](https://docs.google.com/document/d/1qx7ITRKIKoYTpYBsNj1zuC9gppVau5n4DJBIl3SCTh0/edit?usp=sharing) |
 |            | 김준용 : [링크](https://docs.google.com/document/d/163KIsUe_emy04LP6BjiZVyxvawAl1ei8C_k4Ppfw68M/edit?usp=sharing) |
 |            | 강혜윰 : [링크](https://docs.google.com/document/d/1bENFeQ0zBpRFtLRqy5yvrvwdfdfyr-iBvuzOT9hak7w/edit?usp=sharing) |

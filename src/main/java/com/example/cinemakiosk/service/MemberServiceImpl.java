@@ -176,7 +176,7 @@ public class MemberServiceImpl implements MemberService{
         int offset = (page - 1) * 10;
         long count = memberRepository.count();
         List<PointHistoryVO> pointHistoryVO = pointHistoryMapper.selectByMovieNameAll(offset);
-        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("pointId").descending());
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("createAt").descending());
         log.info("{}번 ~ {}번", offset + 1, offset + 10);
         return new PageImpl<>(pointHistoryVO.stream().map(PointHistoryVO::toDTO).toList(), pageable, count);
     }

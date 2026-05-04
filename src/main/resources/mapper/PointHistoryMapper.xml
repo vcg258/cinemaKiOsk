@@ -20,6 +20,7 @@
         JOIN schedule S ON RD.schedule_id = S.id
         JOIN movie ON S.movie_id = movie.movie_id
                  WHERE PH.phone NOT LIKE 'DEL_%'
+                 ORDER BY PH.create_at DESC
         LIMIT 10 OFFSET #{page}
     </select>
 
