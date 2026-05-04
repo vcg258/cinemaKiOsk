@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentReader;
+import org.springframework.ai.model.transformer.KeywordMetadataEnricher;
 import org.springframework.ai.reader.JsonMetadataGenerator;
 import org.springframework.ai.reader.JsonReader;
 import org.springframework.ai.reader.TextReader;
@@ -265,10 +266,10 @@ public class ETLService {
         // 토큰 기준으로 분할한 리스트로 변환
         List<Document> transformedDocuments = tokenTextSplitter.apply(documents);
 
-//        // 청크마다 키워드 5개 추출 -> 메타데이터 추가 (일단 주석 -> 토큰이 좀 그럼; 10청크 -> 50개 추출)
-//        KeywordMetadataEnricher keywordMetadataEnricher = new KeywordMetadataEnricher(chatModel, 5);
-//        // 청크마다 키워드 메타데이터가 추가된 리스트 변환
-//        transformedDocuments = keywordMetadataEnricher.apply(transformedDocuments);
+        // 청크마다 키워드 5개 추출 -> 메타데이터 추가 (일단 주석 -> 토큰이 좀 그럼; 10청크 -> 50개 추출)
+        KeywordMetadataEnricher keywordMetadataEnricher = new KeywordMetadataEnricher(chatModel, 5);
+        // 청크마다 키워드 메타데이터가 추가된 리스트 변환
+        transformedDocuments = keywordMetadataEnricher.apply(transformedDocuments);
         return transformedDocuments;
     }
 }
