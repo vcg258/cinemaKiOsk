@@ -211,9 +211,11 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public List<DiscountPolicyDTO> getAgeDiscounts() {
-        return getDiscountPolicies().stream()
-                .filter(p -> p.getConditionType() == ConditionType.AGE)
+        List<DiscountPolicyDTO> agePolicy = getDiscountPolicies().stream()
+                .filter(p -> p.isActivation() && p.getConditionType() == ConditionType.AGE)
                 .toList();
+        if (agePolicy.isEmpty()) throw new IllegalStateException("연령 할인정책이 없거나 활성화 돼있지 않음 할인 X");
+        return  agePolicy;
     }
 
     /**
@@ -223,8 +225,10 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public List<DiscountPolicyDTO> getTimeDiscounts() {
-        return getDiscountPolicies().stream()
-                .filter(p -> p.getConditionType() == ConditionType.TIME)
+        List<DiscountPolicyDTO> timePolicy = getDiscountPolicies().stream()
+                .filter(p -> p.isActivation() && p.getConditionType() == ConditionType.TIME)
                 .toList();
+        if (timePolicy.isEmpty()) throw new IllegalStateException("조조 할인정책이 없거나 활성화 돼있지 않음 할인 X");
+        return timePolicy;
     }
 }

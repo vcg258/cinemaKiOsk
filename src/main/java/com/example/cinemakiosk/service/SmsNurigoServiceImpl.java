@@ -62,6 +62,10 @@ public class SmsNurigoServiceImpl implements SmsNurigoService{
      * @param content
      */
     public void sendSms(String toPhone, String content) {
+        if (toPhone == null || toPhone.isEmpty()) {
+            log.info("비회원임 전화번호 없음");
+            toPhone = null;
+        }
 
         messageService = SolapiClient.INSTANCE.createInstance(apiKey, apiSecret);
         Message message = new Message();

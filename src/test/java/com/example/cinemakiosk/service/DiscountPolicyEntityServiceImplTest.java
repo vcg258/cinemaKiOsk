@@ -56,6 +56,11 @@ class DiscountPolicyEntityServiceImplTest {
     }
 
     @Test
+    public void getAgeDiscountsTest() {
+        discountPolicyService.getAgeDiscounts().forEach(log::info);
+    }
+
+    @Test
     public void createCouponNumTest() {
         discountPolicyService.createCouponNum(2L, 20);
     }

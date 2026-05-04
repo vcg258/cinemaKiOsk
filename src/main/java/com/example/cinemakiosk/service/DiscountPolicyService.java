@@ -15,7 +15,7 @@ public interface DiscountPolicyService {
     // 오늘 포함 시작일 종료일 사이에 있는 할인 전체 조회
     List<DiscountPolicyDTO> getDiscountPolicies();
 
-    // 할인 단일 조회 (?)
+    // 할인 단일 조회
     DiscountPolicyDTO getDiscountPolicy(Long id);
 
     // 할인정책 활성화 / 비활성화

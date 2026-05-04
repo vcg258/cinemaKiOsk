@@ -59,6 +59,7 @@ public class MemberEntity{
      * @return DTO
      */
     public static MemberDTO toDTO(MemberEntity memberEntity){
+        if (memberEntity == null) return null;
 
         return MemberDTO.builder()
                 .phone(memberEntity.getPhone())
