@@ -13,7 +13,10 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "point_history")
+@Table(name = "point_history", indexes = {
+        @Index(name = "idx_point_history_payment_id", columnList = "payment_id"),
+        @Index(name = "idx_point_history_phone", columnList = "phone")
+})
 public class PointHistoryEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT UNSIGNED")

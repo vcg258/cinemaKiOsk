@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "reservation_seat")
+@Table(name = "reservation_seat", indexes = @Index(name = "idx_reservation_seat_reservation_id", columnList = "reservation_id"))
 public class ReservationSeatEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

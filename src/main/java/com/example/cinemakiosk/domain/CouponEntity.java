@@ -13,7 +13,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @ToString (exclude = "discountPolicyEntity")
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "coupon")
+@Table(name = "coupon", indexes = @Index(name = "idx_coupon_policy_id", columnList = "policy_id"))
 public class CouponEntity {
     @Column(length = 12)
     @Id
