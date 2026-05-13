@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "theater")
+@Table(name = "theater", indexes = @Index(name = "idx_theater_policy_id", columnList = "policy_id"))
 public class TheaterEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT UNSIGNED")

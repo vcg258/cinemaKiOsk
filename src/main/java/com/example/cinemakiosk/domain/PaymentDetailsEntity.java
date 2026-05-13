@@ -17,7 +17,11 @@ import java.util.List;
 @ToString(exclude = {"pointHistoryEntity", "reservationDetailsEntity", "couponEntity", "bonusPolicyEntity"})
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "payment_details")
+@Table(name = "payment_details", indexes = {
+        @Index(name = "idx_payment_details_reservation_id", columnList = "reservation_id"),
+        @Index(name = "idx_payment_details_coupon_num", columnList = "coupon_num"),
+        @Index(name = "idx_payment_details_bonus_policy_id", columnList = "bonus_policy_id")
+})
 public class PaymentDetailsEntity {
     @Id
     @Column(length = 36)

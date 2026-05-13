@@ -15,7 +15,10 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "schedule")
+@Table(name = "schedule", indexes = {
+        @Index(name = "idx_schedule_no", columnList = "no"),
+        @Index(name = "idx_schedule_movie_id", columnList = "movie_id")
+})
 public class ScheduleEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT UNSIGNED")

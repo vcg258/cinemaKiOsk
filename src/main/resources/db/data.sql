@@ -82,8 +82,7 @@ VALUES (2, 1), -- ROLE_REFUND (환불 처리)
        (2, 2), -- ROLE_MOVIE_LIST (영화 목록)
        (2, 6), -- ROLE_THEATER_LIST (좌석 목록)
        (2, 8), -- ROLE_POLICY_LIST (정책 목록)
-       (2, 11);
--- ROLE_MEMBER_MANAGEMENT (회원 정보 관리)
+       (2, 11); -- ROLE_MEMBER_MANAGEMENT (회원 정보 관리)
 
 -- 직원2 (staff02, admin_id=3) 권한 부여
 INSERT IGNORE INTO admin_role_map (admin_id, role_id)
@@ -91,38 +90,7 @@ VALUES (3, 1), -- ROLE_REFUND (환불 처리)
        (3, 2), -- ROLE_MOVIE_LIST (영화 목록)
        (3, 6), -- ROLE_THEATER_LIST (좌석 목록)
        (3, 8), -- ROLE_POLICY_LIST (정책 목록)
-       (3, 11);
--- ROLE_MEMBER_MANAGEMENT (회원 정보 관리)
-
--- FK 인덱스 적용
--- coupon
-CREATE INDEX IF NOT EXISTS idx_coupon_policy_id ON coupon (policy_id);
-
--- theater
-CREATE INDEX IF NOT EXISTS idx_theater_policy_id ON theater (policy_id);
-
--- schedule
-CREATE INDEX IF NOT EXISTS idx_schedule_no ON schedule (no);
-CREATE INDEX IF NOT EXISTS idx_schedule_movie_id ON schedule (movie_id);
-
--- statistics
-CREATE INDEX IF NOT EXISTS idx_statistics_schedule_id ON statistics (schedule_id);
-
--- reservation_details
-CREATE INDEX IF NOT EXISTS idx_reservation_details_schedule_id ON reservation_details (schedule_id);
-CREATE INDEX IF NOT EXISTS idx_reservation_details_phone ON reservation_details (phone);
-
--- reservation_seat
-CREATE INDEX IF NOT EXISTS idx_reservation_seat_reservation_id ON reservation_seat (reservation_id);
-
--- payment_details
-CREATE INDEX IF NOT EXISTS idx_payment_details_reservation_id ON payment_details (reservation_id);
-CREATE INDEX IF NOT EXISTS idx_payment_details_bonus_policy_id ON payment_details (bonus_policy_id);
-CREATE INDEX IF NOT EXISTS idx_payment_details_coupon_num ON payment_details (coupon_num);
-
--- point_history
-CREATE INDEX IF NOT EXISTS idx_point_history_payment_id ON point_history (payment_id);
-CREATE INDEX IF NOT EXISTS idx_point_history_phone ON point_history (phone);
+       (3, 11); -- ROLE_MEMBER_MANAGEMENT (회원 정보 관리)
 
 -- 1. 인터스텔라
 INSERT INTO movie (title, genre, rating, runtime, director, actors, description, start_at, end_at, create_at,

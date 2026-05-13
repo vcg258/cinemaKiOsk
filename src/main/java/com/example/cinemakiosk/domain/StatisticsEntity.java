@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "statistics")
+@Table(name = "statistics", indexes = @Index(name = "idx_statistics_schedule_id", columnList = "schedule_id"))
 public class StatisticsEntity {
 
     @Id
