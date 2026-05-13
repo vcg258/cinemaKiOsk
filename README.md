@@ -107,9 +107,26 @@ docker run -d \
   -p 5432:5432 \
   pgvector/pgvector:pg16
 ```
+```bash
+docker exec -it pgvector psql -U postgres
+```
 
-``` postgresql
-CREATE SCHEMA rag;
+**데이터베이스 생성**
+
+```postgresql
+CREATE DATABASE rag;
+```
+
+**생성한 데이터베이스 선택**
+
+```bash
+\c rag
+```
+
+**PGVector Extension 설치**
+
+```postgresql
+CREATE EXTENSION IF NOT EXISTS vector;
 ```
 
 **4. 환경 변수 설정**
