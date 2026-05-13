@@ -193,14 +193,14 @@ public class ETLService {
      * VectorDB 전체 삭제
      */
     public void clearVectorStore() {
-        jdbcTemplate.update("TRUNCATE TABLE rag.vector_store");
+        jdbcTemplate.update("TRUNCATE TABLE rag.public.vector_store");
     }
 
     /**
      * ChatMemory 전체 삭제
      */
     public void clearChatMemory() {
-        jdbcTemplate.update("TRUNCATE TABLE rag.spring_ai_chat_memory");
+        jdbcTemplate.update("TRUNCATE TABLE rag.public.spring_ai_chat_memory");
     }
 
     /**
