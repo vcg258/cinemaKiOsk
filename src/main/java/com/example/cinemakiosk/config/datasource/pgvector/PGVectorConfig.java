@@ -44,7 +44,7 @@ public class PGVectorConfig {
                 .dimensions(1536)
                 .distanceType(PgVectorStore.PgDistanceType.COSINE_DISTANCE)
                 .initializeSchema(true) // VectorDB 자동 생성
-                .schemaName("rag") // 스키마 지정
+                .schemaName("public") // 스키마 지정
                 .build();
     }
 }
