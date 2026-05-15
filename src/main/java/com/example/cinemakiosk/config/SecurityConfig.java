@@ -1,6 +1,6 @@
 package com.example.cinemakiosk.config;
 
-import com.example.cinemakiosk.filter.APILoginFilter;
+import com.example.cinemakiosk.filter.ApiLoginFilter;
 import com.example.cinemakiosk.filter.RefreshTokenFilter;
 import com.example.cinemakiosk.filter.TokenCheckFilter;
 import com.example.cinemakiosk.handler.APILoginSuccessHandler;
@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
                 .cors(Customizer.withDefaults()) // 시큐리티 CORS 허용
-                .csrf(csrf -> csrf.disable()) // JWT (CSRF 비활성화)
+                .csrf(csrf -> csrf.disable()) // API서버기 때문에 필요없음 (CSRF 비활성화)
                 .sessionManagement(session ->
                         // STATELESS = 세션 아예 사용안함, ALWAYS = 항상 세션 생성, IF_REQUIRED = 필요할때만 생성 기본값, NEVER = 직접 안만듬 대신 있으면 사용
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션을 사용안함 (AccessToken = ViewData, RefreshToken 쿠키로 저장)
@@ -71,8 +71,8 @@ public class SecurityConfig {
      * @return 검증된 정보
      * @throws Exception 예외
      */
-    public APILoginFilter apiLoginFilter(AuthenticationManager authenticationManager) throws Exception {
-        APILoginFilter filter = new APILoginFilter("/api/admin/login");
+    public ApiLoginFilter apiLoginFilter(AuthenticationManager authenticationManager) throws Exception {
+        ApiLoginFilter filter = new ApiLoginFilter("/api/admin/login");
         filter.setAuthenticationManager(authenticationManager); // 매니저 등록
         filter.setAuthenticationSuccessHandler(new APILoginSuccessHandler(jwtUtil, adminRoleService)); // 성공 핸들러 등록
         return filter;

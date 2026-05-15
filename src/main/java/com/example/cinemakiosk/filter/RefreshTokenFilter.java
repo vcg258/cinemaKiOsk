@@ -97,7 +97,7 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        Long exp = (Long) refreshClaims.get("exp"); // Refresh토큰 안에 들어있는 만료시간
+        Long exp = (Long) refreshClaims.get("exp"); // Refresh 만료시간
         Date expTime = new Date(Instant.ofEpochMilli(exp).toEpochMilli() * 1000); // JWT의 만료날짜를 Date객체로 변환
         Date current = new Date(System.currentTimeMillis()); // 현재시간
 
@@ -113,7 +113,7 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
         // 자동 로그인 = 3일 미만 재발급, 일반로그인 = 12시간 미만 재발급
         long reissuancePeriod = autoLogin ? 1000 * 60 * 60 * 24 * 3 : 1000 * 60 * 60 * 12;
 
-        // RefreshToken이 3일도 안남았으면 재발급
+        // RefreshToken 재발급
         if (gapTime < reissuancePeriod) {
             log.info("new Refresh Token required... ");
             int refreshTokenPeriod = autoLogin ? 60 * 24 * 30 : 60 * 24; // 자동로그인이면 1달 : 일반 로그인 하루 (얘는 분단위)
@@ -145,7 +145,7 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
     /**
      * AccessToken 만료기간 체크 헬퍼 메서드
      * @param accessToken 엑세스 토큰
-     * @throws RefreshTokenException 엑세스 토큰 없음
+     * @throws RefreshTokenException 리프레시 토큰 없음
      */
     private void checkAccessToken(String accessToken) throws RefreshTokenException {
         if (accessToken == null) {

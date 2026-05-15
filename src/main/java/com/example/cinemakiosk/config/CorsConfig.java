@@ -1,21 +1,28 @@
-package com.example.cinemakiosk.config;
+package com.renovandelve.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
     /**
      * CORS에서 8080포트를 막아주는걸 허용하는 설정
-     * @param registry
      */
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-       registry.addMapping("/**") // URL 전체 허용
-               .allowedOrigins("http://localhost:3000")
-               .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE")
-               .allowCredentials(true) // 쿠키 전송 허용
-               .allowedHeaders("*"); // 헤더 접근 허용
+    @Bean
+    public CorsConfiguration addCorsMappings() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:4000"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
+        config.setAllowCredentials(true); // 쿠키 전송 허용
+        config.setAllowedHeaders(List.of("*"));// 헤더 접근 허용
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return config;
     }
 }

@@ -31,7 +31,7 @@ public class JwtUtil {
     /**
      * 토큰 생성 메서드
      * @param valueMap PayLoad 사용자의 데이터가 들어감
-     * @param minutes 만료일 (days = 1을 24시간으로 잡음)
+     * @param minutes 만료일
      * @return AccessToken, RefreshToken
      */
     public String generateToken(Map<String, Object> valueMap, int minutes) {
@@ -50,7 +50,7 @@ public class JwtUtil {
     /**
      * 토큰 검증
      * @param token 토큰
-     * @return 서명키, PayLoad 모든 검증이 통과된 토큰
+     * @return AccessToken, RefreshToken
      * @throws JwtException 검증 실패
      */
     public Map<String, Object> validateToken(String token) throws JwtException {
