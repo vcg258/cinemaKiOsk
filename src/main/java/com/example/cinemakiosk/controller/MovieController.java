@@ -6,28 +6,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import net.coobird.thumbnailator.Thumbnailator;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 
 
 @Log4j2
@@ -40,26 +24,24 @@ public class MovieController {
 
     // 영화등록
     @Operation(summary = "영화등록",
-            description = "1. application.properties혹은 MovieServiceImpl에서 이미지 저장경로 변경\n 2. movieId = 0 지우기 (비우기)\n " +
-                    "3. endAt 기본값중 마지막 Z 지우기\n" +
-                    "4. image = 사진 안올렸다면 Send empty value 체크 해제\n" +
-                    "5. posterPath = tmdb/search 에서 찾은 posterPath 입력\n" +
-                    "- image, posterPath 둘다 업로드시 posterPath 이미지로 저장됨")
+            description = "포스터 파일은 프론트 서버 uploads/ 에 저장됩니다. " +
+                    "posterPath(/uploads/영화명_yyyy-MM-dd.jpg)만 전달하세요. " +
+                    "movieId는 비우고, createAt은 yyyy-MM-dd 형식입니다.")
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> upload(@Valid @ModelAttribute MovieDTO movieDTO) {
+    public ResponseEntity<Map<String, Boolean>> upload(@Valid @ModelAttribute MovieDTO movieDTO) {
         log.info("upload post...");
         movieService.insertMovie(movieDTO);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(Map.of("success", true));
     }
 
     // 영화수정
     @Operation(summary = "영화수정",
             description = "- 수정할 영화의 movieId 입력\n - 이외는 영화등록과 동일")
     @PatchMapping(value = "/modify", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> modify(@ModelAttribute MovieDTO movieDTO) {
+    public ResponseEntity<Map<String, Boolean>> modify(@ModelAttribute MovieDTO movieDTO) {
         log.info("Modify post...");
         movieService.modify(movieDTO);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(Map.of("success", true));
     }
 
     // 영화 상영종료 처리

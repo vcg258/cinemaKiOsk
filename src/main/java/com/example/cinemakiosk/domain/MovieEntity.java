@@ -79,6 +79,9 @@ public class MovieEntity{
         this.startAt = dto.getStartAt();
         this.endAt = dto.getEndAt();
         this.createAt = dto.getCreateAt();
+        if (dto.getPosterPath() != null) {
+            this.posterPath = dto.getPosterPath();
+        }
     }
 
     /**
