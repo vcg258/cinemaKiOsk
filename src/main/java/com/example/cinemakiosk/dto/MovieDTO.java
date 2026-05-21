@@ -5,7 +5,6 @@ import com.example.cinemakiosk.domain.enums.Rating;
 import com.example.cinemakiosk.vo.MovieVO;
 import lombok.*;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -34,7 +33,6 @@ public class MovieDTO {
 
     private LocalDateTime endAt; // 오늘 날짜의 이후 시간에 더이상 상영 스케쥴이 없다면 표시하기 위해 LocalDateTime
     private LocalDate createAt;
-    private MultipartFile image;
     private String posterPath;
 
 

@@ -82,7 +82,7 @@ Spring Batch를 통한 자동 통계 집계 및 회원 관리, Spring AI(RAG)를
 |---------|-----|-------------------------------------------------------------------------------------|
 | Java    | 21+ | [다운로드](https://adoptium.net/)                                                       |
 | Node.js | 18+ | [다운로드](https://nodejs.org/)                                                         |
-| MariaDB | 8+  | [다운로드](https://mariadb.org/download/)                                               |
+| MariaDB | 11.4+  | [다운로드](https://mariadb.org/download/)                                            |
 | Docker  | 최신  | PostgreSQL + PGVector 실행용 / [다운로드](https://www.docker.com/products/docker-desktop/) |
 
 ### API 키 발급 (필수)
@@ -536,7 +536,7 @@ sequenceDiagram
 
 | 분류        | 기술                             |
 |-----------|--------------------------------|
-| Language  | TypeScript 6                   |
+| Language  | TypeScript 6.0.2               |
 | Framework | React 19                       |
 | Build     | Vite 6                         |
 | Routing   | React Router DOM v7            |

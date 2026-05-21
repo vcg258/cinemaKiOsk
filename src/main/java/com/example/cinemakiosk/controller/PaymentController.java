@@ -29,9 +29,9 @@ public class PaymentController {
 
     /**
      * 결제를 확정짓는 메서드
-     * @param jsonBody
-     * @return
-     * @throws Exception
+     * @param jsonBody 결제 요청 JSON 본문 (payType, orderId, amount, paymentKey 포함)
+     * @return 결제 처리 결과 ResponseEntity (성공 시 200, 실패 시 400)
+     * @throws Exception 외부 토스 결제 API 호출 실패 시
      */
     @PostMapping(value = "/payment/confirm")
     public ResponseEntity<JsonNode> confirmPayment(@RequestBody String jsonBody) throws Exception {
@@ -82,9 +82,9 @@ public class PaymentController {
     }
 
     /**
-     * 조회를 위한 값
-     * @param no
-     * @return
+     * 결제 내역 단일 조회
+     * @param no 조회할 결제 내역 UUID
+     * @return 조회된 결제 내역 DTO
      */
     @GetMapping("/admin/payment/read/{uuid}")
     public ResponseEntity<PaymentDetailsDTO> readOne(@PathVariable("uuid") String no) {
