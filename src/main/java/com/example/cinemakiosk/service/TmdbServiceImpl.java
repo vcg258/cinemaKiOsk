@@ -187,16 +187,16 @@ public class TmdbServiceImpl implements TmdbService {
          * 3. 둘 다 없으면 ALL 기본값
          * <p>
          * KR 매핑:
-         * "12" → TWELVE
-         * "15" → FIFTEEN
-         * "18" / "19" / "청소년관람불가" → NINETEEN
-         * 그 외("All", "", ...) → ALL
+         * "12" -> TWELVE
+         * "15" -> FIFTEEN
+         * "18" / "19" / "청소년관람불가" -> NINETEEN
+         * 그 외("All", "", ...) -> ALL
          * <p>
          * US 대체 매핑:
-         * G → ALL
-         * PG → TWELVE
-         * PG-13 → FIFTEEN
-         * R / NC-17 → NINETEEN
+         * G -> ALL
+         * PG -> TWELVE
+         * PG-13 -> FIFTEEN
+         * R / NC-17 -> NINETEEN
          *
          * @param tmdbId TMDB 영화 ID
          * @return Rating enum (조회 실패 시 ALL 기본값)
