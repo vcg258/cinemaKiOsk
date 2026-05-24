@@ -27,7 +27,7 @@ public class ReservationServiceImpl implements ReservationService {
     //예매 진행
     @Transactional
     @Override
-    public void create(ReservationDetailsDTO reservationDetailsDTO){
+    public ReservationDetailsDTO create(ReservationDetailsDTO reservationDetailsDTO){
         //seat와 예매에 대한 부분을 나눠서 repository와 mapper로 각각 등록.
         List<ReservationSeatDTO> seats = reservationDetailsDTO.getSeats();
 
@@ -45,6 +45,7 @@ public class ReservationServiceImpl implements ReservationService {
         reservationSeatMapper.insertSeats(reservationDetailsVO);
 
         log.info("예매정보 등록 완료");
+        return reservationDetailsDTO;
     }
 
     //예매 내역 조회

@@ -37,6 +37,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
     private final MemberService memberService; //포인트 관리를 위해서 작성.
     private final BonusPolicyService bonusPolicyService; //보너스 적립 비율 확인을 위해 사용
     private final ScheduleService scheduleService; // 스케쥴 정보를 그냥 받아오는게 빠를듯.
+    private final TheaterService theaterService; // 관리자 예매 시 좌석 정가 계산용
     private final DiscountPolicyService discountPolicyService;
     private final ObjectMapper objectMapper; // 스프링이 자동으로 주입해주는 JSON 변환기
 
@@ -124,11 +125,8 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
                 .build();
 
         log.error("경계4");
-        reservationService.create(reservation);
+        ReservationDetailsDTO reservationDetailsDTO = reservationService.create(reservation);
         log.error("경계5");
-        ReservationDetailsDTO reservationDetailsDTO = reservationService.read(orderId);
-
-        log.error("경계6");
         // 2. 결제 상세 등록
         PaymentDetailsDTO payment = PaymentDetailsDTO.builder()
                 .id(orderId)
@@ -213,15 +211,20 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
                 .createAt(LocalDateTime.now())
                 .build();
 
-        reservationService.create(reservation);
+        ReservationDetailsDTO savedReservation = reservationService.create(reservation);
 
-        // 2. 결제 내역 등록 (관리자 예매는 현장결제로 cost=0, paymentKey="admin")
+        // 2. 좌석 정가 계산: schedule.no → theater.policyId → seatPolicy.cost × 좌석 수
+        TheaterDTO theater = theaterService.getTheater(schedule.getNo());
+        SeatPolicyDTO seatPolicy = theaterService.readSeat(theater.getPolicyId());
+        long cost = seatPolicy.getCost() * request.getSeats().size();
+
+        // 3. 결제 내역 등록 (관리자 예매는 현장결제로 paymentKey="admin", 포인트/쿠폰 없음)
         PaymentDetailsDTO payment = PaymentDetailsDTO.builder()
                 .id(orderId)
-                .reservation(reservationService.read(orderId))
+                .reservation(savedReservation)
                 .bonusPolicy(null)
                 .couponNum(null)
-                .cost(0L)
+                .cost(cost)
                 .createAt(LocalDateTime.now())
                 .usePoint(0L)
                 .status(Status.PAY)

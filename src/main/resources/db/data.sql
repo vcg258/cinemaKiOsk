@@ -463,22 +463,21 @@ VALUES ('01012345678', current_timestamp, 0, 'NORMAL'),
 INSERT IGNORE INTO discount_policy (id, activation, condition_type, discount_type, discount_value, end_at, policy_name,
                                     start_at)
 VALUES (1, 1, 'AGE', 'WON', 2000, DATE_ADD(current_timestamp, INTERVAL 200 DAY), '청소년 할인', current_timestamp),
-       (2, 1, 'AGE', 'WON', 3000, DATE_ADD(current_timestamp, INTERVAL 200 DAY), '경로 할인', current_timestamp),
        (3, 1, 'TIME', 'WON', 1000, DATE_ADD(current_timestamp, INTERVAL 200 DAY), '조조 할인', current_timestamp),
        (4, 1, 'COUPON', 'WON', 5000, DATE_ADD(current_timestamp, INTERVAL 200 DAY), '쿠폰 할인', current_timestamp),
        (5, 1, 'JOB', 'RATIO', 20, DATE_ADD(current_timestamp, INTERVAL 200 DAY), '직업 할인', current_timestamp);
 
 -- 쿠폰 (policy_id=2 : 쿠폰 할인 5000원)
 INSERT IGNORE INTO coupon (coupon_num, policy_id, status)
-VALUES ('testCoupon01', 2, TRUE),  -- 사용 가능
-       ('testCoupon02', 2, TRUE),
-       ('testCoupon03', 2, TRUE),
-       ('testCoupon04', 2, TRUE),
-       ('testCoupon05', 2, TRUE),
-       ('testCoupon06', 2, FALSE), -- 사용 불가 (이미 사용됨)
-       ('testCoupon07', 2, FALSE),
-       ('usedCoupon01', 2, FALSE),
-       ('usedCoupon02', 2, FALSE);
+VALUES ('testCoupon01', 4, TRUE),  -- 사용 가능
+       ('testCoupon02', 4, TRUE),
+       ('testCoupon03', 4, TRUE),
+       ('testCoupon04', 4, TRUE),
+       ('testCoupon05', 4, TRUE),
+       ('testCoupon06', 4, FALSE), -- 사용 불가 (이미 사용됨)
+       ('testCoupon07', 4, FALSE),
+       ('usedCoupon01', 4, FALSE),
+       ('usedCoupon02', 4, FALSE);
 
 -- 적립 정책
 INSERT IGNORE INTO bonus_policy (id, activation, end_at, give_value, policy_name, start_at)
@@ -576,7 +575,14 @@ VALUES (1, 'A1', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
        (24, 'C4', 'stat0003-0000-0000-0000-000000000003'),
        (25, 'C5', 'stat0003-0000-0000-0000-000000000003'),
        (26, 'C6', 'stat0004-0000-0000-0000-000000000004'),
-       (27, 'C7', 'stat0005-0000-0000-0000-000000000005');
+       (27, 'C7', 'stat0005-0000-0000-0000-000000000005'),
+       -- 강등 되지 않는 회원 예매 내역
+       (28, 'A1', 'aabb0001-0000-0000-0000-000000000001'),
+       (29, 'A2', 'aabb0001-0000-0000-0000-000000000001'),
+       (30, 'A1', 'aabb0002-0000-0000-0000-000000000002'),
+       (31, 'A2', 'aabb0002-0000-0000-0000-000000000002'),
+       (32, 'A1', 'aabb0003-0000-0000-0000-000000000003'),
+       (33, 'A2', 'aabb0003-0000-0000-0000-000000000003');
 
 -- 결제 내역 (payment_details.id = reservation_details.id 로 1:1 매핑)
 INSERT IGNORE INTO payment_details (id, cost, status, create_at, use_point, bonus_policy_id, coupon_num, reservation_id,

@@ -174,7 +174,7 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public Page<PointHistoryDTO> getPointHistoryAll(int page) {
         int offset = (page - 1) * 10;
-        long count = memberRepository.count();
+        long count = pointHistoryRepository.countByMemberEntityPhoneNotLike("DEL_%");
         List<PointHistoryVO> pointHistoryVO = pointHistoryMapper.selectByMovieNameAll(offset);
         Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("createAt").descending());
         log.info("{}번 ~ {}번", offset + 1, offset + 10);
