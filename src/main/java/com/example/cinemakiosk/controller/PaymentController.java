@@ -1,6 +1,7 @@
 package com.example.cinemakiosk.controller;
 
 import com.example.cinemakiosk.dto.*;
+import com.example.cinemakiosk.dto.requestDTO.AdminReservationRequest;
 import com.example.cinemakiosk.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -107,8 +108,8 @@ public class PaymentController {
         String paymentKey = requestData.get("paymentKey").asText();
         String paymentId = requestData.get("paymentId").asText();
 
-        if (paymentKey == null || paymentKey.isBlank() || paymentKey.equals("point")) {
-            log.info("환불할 금액 0원 이므로 토스 호출 하지않음: {}", paymentId);
+        if (paymentKey == null || paymentKey.isBlank() || paymentKey.equals("point") || paymentKey.equals("admin")) {
+            log.info("환불할 금액 0원 이거나 관리자 예매(현장 결제를 가정함) 이므로 토스 호출 하지않음: {}", paymentId);
             refundService.refund(paymentId);
             return ResponseEntity.ok().build();
         }
@@ -159,6 +160,13 @@ public class PaymentController {
     @GetMapping("/admin/payment/list")
     public ResponseEntity<Page<PaymentDetailsDTO>> readAllPayment(@RequestParam(defaultValue = "1") int page) {
         return ResponseEntity.ok(paymentDetailsService.readAll(page));
+    }
+
+    @Operation(summary = "관리자 직접 예매")
+    @PostMapping("/admin/payment/admin-reserve")
+    public ResponseEntity<Void> adminReserve(@RequestBody AdminReservationRequest request) {
+        paymentDetailsService.saveAdminReservation(request);
+        return ResponseEntity.ok().build();
     }
 
 }

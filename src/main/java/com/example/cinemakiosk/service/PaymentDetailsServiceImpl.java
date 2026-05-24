@@ -4,6 +4,7 @@ import com.example.cinemakiosk.domain.PaymentDetailsEntity;
 import com.example.cinemakiosk.domain.enums.Status;
 import com.example.cinemakiosk.domain.enums.Type;
 import com.example.cinemakiosk.dto.*;
+import com.example.cinemakiosk.dto.requestDTO.AdminReservationRequest;
 import com.example.cinemakiosk.mapper.PaymentDetailsMapper;
 import com.example.cinemakiosk.repository.PaymentDetailsRepository;
 import com.example.cinemakiosk.vo.CouponVO;
@@ -186,6 +187,50 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
         }
 
         log.info("DB 저장 및 포인트 갱신 완료: 주문번호 {}", orderId);
+    }
+
+    /**
+     * 관리자 직접 예매 로직 (토스 결제 없이 바로 DB 저장)
+     */
+    @Transactional
+    @Override
+    public void saveAdminReservation(AdminReservationRequest request) {
+        String orderId = java.util.UUID.randomUUID().toString();
+
+        ScheduleDTO schedule = scheduleService.getScheduleDTO(request.getScheduleId());
+
+        List<ReservationSeatDTO> seats = request.getSeats().stream()
+                .map(seatNum -> ReservationSeatDTO.builder().seatNumber(seatNum).build())
+                .toList();
+
+        // 1. 예매 등록
+        ReservationDetailsDTO reservation = ReservationDetailsDTO.builder()
+                .id(orderId)
+                .schedule(schedule)
+                .phone(null)
+                .seats(seats)
+                .returned(false)
+                .createAt(LocalDateTime.now())
+                .build();
+
+        reservationService.create(reservation);
+
+        // 2. 결제 내역 등록 (관리자 예매는 현장결제로 cost=0, paymentKey="admin")
+        PaymentDetailsDTO payment = PaymentDetailsDTO.builder()
+                .id(orderId)
+                .reservation(reservationService.read(orderId))
+                .bonusPolicy(null)
+                .couponNum(null)
+                .cost(0L)
+                .createAt(LocalDateTime.now())
+                .usePoint(0L)
+                .status(Status.PAY)
+                .paymentKey("admin")
+                .build();
+
+        create(payment);
+
+        log.info("관리자 예매 완료: 주문번호 {}", orderId);
     }
 
     /**

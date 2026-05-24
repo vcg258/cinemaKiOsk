@@ -1,6 +1,7 @@
 package com.example.cinemakiosk.service;
 
 import com.example.cinemakiosk.dto.PaymentDetailsDTO;
+import com.example.cinemakiosk.dto.requestDTO.AdminReservationRequest;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.data.domain.Page;
 
@@ -24,4 +25,7 @@ public interface PaymentDetailsService {
 
     //토스 결제 확인 로직
     JsonNode confirmTossPayment(String orderId, long amount, String paymentKey) throws Exception;
+
+    //관리자 직접 예매
+    void saveAdminReservation(AdminReservationRequest request);
 }

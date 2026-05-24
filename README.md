@@ -35,12 +35,12 @@
 
 ## 팀원 소개
 
-| 팀원 이름   | 담당                                                                |
-|---------|-------------------------------------------------------------------|
-| 김준용(팀장) | Spring AI(RAG, ETL, VectorDB, ChatMemory), <br/> Security, JPA 설계 |
-| 최민종     | 스토리보드 작성, 프론트엔드 디자인, <br/> 프론트엔드 구현, API 명세서 작성                   |
-| 강혜윰     | DB설계, WebSocket 구현, TossPG 구현,<br/> 백엔드 구조 설계                          |
-| 조현재     | Spring Batch, TMDB API, 테스트 시트 작성                                 |
+| 팀원 이름    | 담당                                                                |
+|----------|-------------------------------------------------------------------|
+| 김준용 (팀장) | Spring AI(RAG, ETL, VectorDB, ChatMemory), <br/> Security, JPA 설계 |
+| 최민종      | 스토리보드 작성, 프론트엔드 디자인, <br/> 프론트엔드 구현, API 명세서 작성                   |
+| 강혜윰      | DB설계, WebSocket 구현, TossPG 구현,<br/> 백엔드 구조 설계                     |
+| 조현재      | Spring Batch, TMDB API, 테스트 시트 작성                                 |
 
 ---
 
@@ -66,7 +66,7 @@
 
 **cinemaKiosk**는 Spring Boot + React 기반의 영화관 무인 키오스크 풀스택 웹 애플리케이션입니다.
 
-고객은 영화 조회 -> 스케줄 확인 -> 실시간 좌석 선택 -> SMS 본인인증 -> 토스페이먼츠 결제까지 하나의 흐름으로 예매를 완료할 수 있으며, 관리자는 별도 대시보드에서 영화·스케줄·정책·통계 등 전반적인
+고객은 영화 조회 -> 스케줄 확인 -> 실시간 좌석 선택 -> SMS 본인인증 -> 토스페이먼츠 결제까지 하나의 흐름으로 예매를 완료할 수 있으며, 관리자는 별도 대시보드에서 영화 / 스케줄 / 정책 / 통계 등 전반적인
 운영을
 담당합니다.
 
@@ -78,12 +78,12 @@ Spring Batch를 통한 자동 통계 집계 및 회원 관리, Spring AI(RAG)를
 
 ### 사전 요구사항
 
-| 항목      | 버전  | 비고                                                                                  |
-|---------|-----|-------------------------------------------------------------------------------------|
-| Java    | 21+ | [다운로드](https://adoptium.net/)                                                       |
-| Node.js | 18+ | [다운로드](https://nodejs.org/)                                                         |
-| MariaDB | 11.4+  | [다운로드](https://mariadb.org/download/)                                            |
-| Docker  | 최신  | PostgreSQL + PGVector 실행용 / [다운로드](https://www.docker.com/products/docker-desktop/) |
+| 항목      | 버전    | 비고                                                                                  |
+|---------|-------|-------------------------------------------------------------------------------------|
+| Java    | 21+   | [다운로드](https://adoptium.net/)                                                       |
+| Node.js | 18+   | [다운로드](https://nodejs.org/)                                                         |
+| MariaDB | 11.4+ | [다운로드](https://mariadb.org/download/)                                               |
+| Docker  | 최신    | PostgreSQL + PGVector 실행용 / [다운로드](https://www.docker.com/products/docker-desktop/) |
 
 ### API 키 발급 (필수)
 

@@ -19,7 +19,7 @@ INSERT IGNORE INTO admin (login_id, password, name, admin_phone, level, refresh_
 VALUES ('staff02', '$2a$10$hJyoakWqW5R2Fn0VB5xC8.ksNIn7P8gi4dsCM3km8cSIckiw9Ocbe', '직원2', '010-3333-4444', 1, null,
         now());
 
--- 운영 권한 (일반 관리자 부여 가능) - 7개
+-- 운영 권한 (일반 관리자 부여 가능) - 8개
 -- ON DUPLICATE KEY UPDATE: 이미 행이 존재해도 role_desc/group_name이 갱신됨
 INSERT INTO admin_role (role_name, role_desc, group_name)
 VALUES ('ROLE_REFUND', '환불 처리', '정책/환불')
@@ -34,12 +34,12 @@ INSERT INTO admin_role (role_name, role_desc, group_name)
 VALUES ('ROLE_MOVIE_REGISTER', '영화 등록', '영화 관리')
 ON DUPLICATE KEY UPDATE role_desc  = VALUES(role_desc),
                         group_name = VALUES(group_name);
--- 영화 편집: 영화 목록에서 수정·삭제 버튼
+-- 영화 편집: 영화 목록에서 수정 / 삭제 버튼
 INSERT INTO admin_role (role_name, role_desc, group_name)
 VALUES ('ROLE_MOVIE_EDIT', '영화 편집', '영화 관리')
 ON DUPLICATE KEY UPDATE role_desc  = VALUES(role_desc),
                         group_name = VALUES(group_name);
--- 상영 관리: 스케줄 등록·수정·만료 처리
+-- 상영 관리: 스케줄 등록 / 수정 / 만료 처리
 INSERT INTO admin_role (role_name, role_desc, group_name)
 VALUES ('ROLE_MOVIE_DELETE', '상영 관리', '영화 관리')
 ON DUPLICATE KEY UPDATE role_desc  = VALUES(role_desc),
