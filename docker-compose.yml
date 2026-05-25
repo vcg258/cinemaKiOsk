@@ -3,6 +3,7 @@ services:
     image: mariadb:11.4
     container_name: cinema_db
     restart: unless-stopped
+    mem_limit: 256m
     environment:
       MARIADB_ROOT_PASSWORD: 4444
       MARIADB_DATABASE: cinema_kiosk
@@ -24,6 +25,7 @@ services:
     image: pgvector/pgvector:pg16
     container_name: cinema_pgvector
     restart: unless-stopped
+    mem_limit: 256m
     environment:
       POSTGRES_DB: rag
       POSTGRES_USER: postgres
@@ -58,6 +60,7 @@ services:
       PHONE: ${PHONE}
       TMDB_API_KEY: ${TMDB_API_KEY}
       JWT_KEY: ${JWT_KEY}
+      JAVA_OPTS: "-Xms128m -Xmx256m"
     volumes:
       - uploads_data:/app/uploads
     depends_on:
