@@ -1,0 +1,72 @@
+services:
+  db:
+    image: mariadb:11.4
+    container_name: cinema_db
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: 4444
+      MARIADB_DATABASE: cinema_kiosk
+      MARIADB_USER: task_master
+      MARIADB_PASSWORD: 4444
+      MARIADB_CHARACTER_SET_SERVER: utf8mb4
+      MARIADB_COLLATION_SERVER: utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgvector:
+    image: pgvector/pgvector:pg16
+    container_name: cinema_pgvector
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: rag
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgvector_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    image: vcg258/cinemakiosk:latest
+    container_name: cinema-app
+    restart: unless-stopped
+    platform: linux/amd64
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://db:3306/cinema_kiosk
+      SPRING_DATASOURCE_USERNAME: task_master
+      SPRING_DATASOURCE_PASSWORD: 4444
+      APP_DATASOURCE_URL: jdbc:postgresql://pgvector:5432/rag?currentSchema=public
+      APP_DATASOURCE_USERNAME: postgres
+      APP_DATASOURCE_PASSWORD: postgres
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      SMS_KEY: ${SMS_KEY}
+      SECRET_KEY: ${SECRET_KEY}
+      PHONE: ${PHONE}
+      TMDB_API_KEY: ${TMDB_API_KEY}
+      JWT_KEY: ${JWT_KEY}
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+      pgvector:
+        condition: service_healthy
+
+volumes:
+  db_data:
+  pgvector_data:
+  uploads_data:
