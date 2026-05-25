@@ -187,7 +187,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     @Override
     public Page<CouponDTO> getCouponAll(int page) {
         int offset = (page - 1) * 10;
-        long count = couponRepository.count();
+        long count = couponRepository.countByDiscountPolicyEntityConditionType(ConditionType.COUPON);
         List<CouponVO> couponVO = couponMapper.selectAllCouponByDiscount(offset);
         Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("status").descending());
         log.info("{}번 ~ {}번", offset + 1, offset + 10);

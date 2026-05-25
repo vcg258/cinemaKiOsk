@@ -35,12 +35,12 @@
 
 ## 팀원 소개
 
-| 팀원 이름   | 담당                                                                |
-|---------|-------------------------------------------------------------------|
-| 김준용(팀장) | Spring AI(RAG, ETL, VectorDB, ChatMemory), <br/> Security, JPA 설계 |
-| 최민종     | 스토리보드 작성, 프론트엔드 디자인, <br/> 프론트엔드 구현, API 명세서 작성                   |
-| 강혜윰     | DB설계, WebSocket 구현, TossPG 구현,<br/> 백엔드 구조 설계                          |
-| 조현재     | Spring Batch, TMDB API, 테스트 시트 작성                                 |
+| 팀원 이름    | 담당                                                                |
+|----------|-------------------------------------------------------------------|
+| 김준용 (팀장) | Spring AI(RAG, ETL, VectorDB, ChatMemory), <br/> Security, JPA 설계 |
+| 최민종      | 스토리보드 작성, 프론트엔드 디자인, <br/> 프론트엔드 구현, API 명세서 작성                   |
+| 강혜윰      | DB설계, WebSocket 구현, TossPG 구현,<br/> 백엔드 구조 설계                     |
+| 조현재      | Spring Batch, TMDB API, 테스트 시트 작성                                 |
 
 ---
 
@@ -66,7 +66,7 @@
 
 **cinemaKiosk**는 Spring Boot + React 기반의 영화관 무인 키오스크 풀스택 웹 애플리케이션입니다.
 
-고객은 영화 조회 -> 스케줄 확인 -> 실시간 좌석 선택 -> SMS 본인인증 -> 토스페이먼츠 결제까지 하나의 흐름으로 예매를 완료할 수 있으며, 관리자는 별도 대시보드에서 영화·스케줄·정책·통계 등 전반적인
+고객은 영화 조회 -> 스케줄 확인 -> 실시간 좌석 선택 -> SMS 본인인증 -> 토스페이먼츠 결제까지 하나의 흐름으로 예매를 완료할 수 있으며, 관리자는 별도 대시보드에서 영화 / 스케줄 / 정책 / 통계 등 전반적인
 운영을
 담당합니다.
 
@@ -78,12 +78,12 @@ Spring Batch를 통한 자동 통계 집계 및 회원 관리, Spring AI(RAG)를
 
 ### 사전 요구사항
 
-| 항목      | 버전  | 비고                                                                                  |
-|---------|-----|-------------------------------------------------------------------------------------|
-| Java    | 21+ | [다운로드](https://adoptium.net/)                                                       |
-| Node.js | 18+ | [다운로드](https://nodejs.org/)                                                         |
-| MariaDB | 8+  | [다운로드](https://mariadb.org/download/)                                               |
-| Docker  | 최신  | PostgreSQL + PGVector 실행용 / [다운로드](https://www.docker.com/products/docker-desktop/) |
+| 항목      | 버전    | 비고                                                                                  |
+|---------|-------|-------------------------------------------------------------------------------------|
+| Java    | 21+   | [다운로드](https://adoptium.net/)                                                       |
+| Node.js | 18+   | [다운로드](https://nodejs.org/)                                                         |
+| MariaDB | 11.4+ | [다운로드](https://mariadb.org/download/)                                               |
+| Docker  | 최신    | PostgreSQL + PGVector 실행용 / [다운로드](https://www.docker.com/products/docker-desktop/) |
 
 ### API 키 발급 (필수)
 
@@ -225,7 +225,7 @@ npm run dev
 > 현대적 표준인 React를 도입해 CSR과 단방향 데이터 흐름을 경험하며 컴포넌트 중심 개발 역량을 키웠습니다. 빌드 도구로는 Vite를 선택해 빠른 개발 서버 속도와 HMR로 생산성을 높였고,
 > TypeScript를 연동해 API 통신 시 런타임 오류를 차단하며 팀 내 협업 계약서로 활용했습니다.
 >
-> 디자인 시스템 구축 시에는 3계층 토큰 구조(색상→시맨틱→컴포넌트)를 설계하여, 토큰 오버라이드만으로 고객(다크) 및 관리자(라이트) 화면의 테마 전환을 효율적으로 처리하고 UI 일관성을 확보했습니다.
+> 디자인 시스템 구축 시에는 3계층 토큰 구조(색상->시맨틱->컴포넌트)를 설계하여, 토큰 오버라이드만으로 고객(다크) 및 관리자(라이트) 화면의 테마 전환을 효율적으로 처리하고 UI 일관성을 확보했습니다.
 >
 ---
 
@@ -318,7 +318,7 @@ graph TD
 - RefreshToken은 DB에 저장하여 정상 발급 여부를 대조 검증
 - 관리자 API (`/api/admin/**`) 전체에 JWT 인증 적용
 - 12종 역할(ROLE) 기반 권한 관리 (ROLE_REFUND, ROLE_MOVIE_REG 등)
-- Spring Security Filter Chain: `APILoginFilter` → `TokenCheckFilter` → `RefreshTokenFilter`
+- Spring Security Filter Chain: `APILoginFilter` -> `TokenCheckFilter` -> `RefreshTokenFilter`
 
 ### Spring AI (ETL Pipeline + RAG)
 
@@ -331,8 +331,8 @@ graph TD
 
 **RAG 동작 방식**
 
-1. ETL로 문서를 청크 분할 → `text-embedding-3-small`로 임베딩 → PGVector 저장
-2. 질문 입력 → 유사도 검색 (threshold 0.3) → GPT-4o-mini로 답변 생성
+1. ETL로 문서를 청크 분할 -> `text-embedding-3-small`로 임베딩 -> PGVector 저장
+2. 질문 입력 -> 유사도 검색 (threshold 0.3) -> GPT-4o-mini로 답변 생성
 3. `conversationId` 기반 대화 히스토리 유지 (JDBC Chat Memory)
 
 ### WebSocket (실시간 좌석)
@@ -475,7 +475,7 @@ sequenceDiagram
     App ->> Auth: JWT 인증 요청
     alt 인증 성공
         Auth -->> App: AccessToken 발급 (ViewData 저장, 30분)
-        Note right of App: RefreshToken → httpOnly Cookie + DB 저장
+        Note right of App: RefreshToken -> httpOnly Cookie + DB 저장
     else 인증 실패
         Auth -->> App: 401 Unauthorized
     end
@@ -502,7 +502,7 @@ sequenceDiagram
         Data ->> Pay: Cancel API 호출 (Toss Payments)
         alt API 환불 성공
             Pay -->> Data: 취소 승인 응답
-            Data ->> Data: DB 상태 변경 (PAY → RETURN)
+            Data ->> Data: DB 상태 변경 (PAY -> RETURN)
             Data -->> App: 환불 완료 알림
         else API 환불 실패
             Pay -->> Data: 에러 응답
@@ -536,7 +536,7 @@ sequenceDiagram
 
 | 분류        | 기술                             |
 |-----------|--------------------------------|
-| Language  | TypeScript 6                   |
+| Language  | TypeScript 6.0.2               |
 | Framework | React 19                       |
 | Build     | Vite 6                         |
 | Routing   | React Router DOM v7            |
@@ -747,8 +747,8 @@ sequenceDiagram
 
 | Method | URL                   | 설명                                             |
 |--------|-----------------------|------------------------------------------------|
-| POST   | `/api/admin/etl/file` | 파일 업로드 → ETL → PGVector 저장 (txt/json/doc/docx) |
-| POST   | `/api/admin/etl/json` | JSON URL 추출 → ETL → PGVector 저장                |
+| POST   | `/api/admin/etl/file` | 파일 업로드 -> ETL -> PGVector 저장 (txt/json/doc/docx) |
+| POST   | `/api/admin/etl/json` | JSON URL 추출 -> ETL -> PGVector 저장                |
 | POST   | `/api/admin/rag/chat` | RAG 기반 AI 챗봇 질의 (대화 히스토리 유지)                   |
 
 ---

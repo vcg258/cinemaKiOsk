@@ -19,7 +19,7 @@ INSERT IGNORE INTO admin (login_id, password, name, admin_phone, level, refresh_
 VALUES ('staff02', '$2a$10$hJyoakWqW5R2Fn0VB5xC8.ksNIn7P8gi4dsCM3km8cSIckiw9Ocbe', '직원2', '010-3333-4444', 1, null,
         now());
 
--- 운영 권한 (일반 관리자 부여 가능) - 7개
+-- 운영 권한 (일반 관리자 부여 가능) - 8개
 -- ON DUPLICATE KEY UPDATE: 이미 행이 존재해도 role_desc/group_name이 갱신됨
 INSERT INTO admin_role (role_name, role_desc, group_name)
 VALUES ('ROLE_REFUND', '환불 처리', '정책/환불')
@@ -34,12 +34,12 @@ INSERT INTO admin_role (role_name, role_desc, group_name)
 VALUES ('ROLE_MOVIE_REGISTER', '영화 등록', '영화 관리')
 ON DUPLICATE KEY UPDATE role_desc  = VALUES(role_desc),
                         group_name = VALUES(group_name);
--- 영화 편집: 영화 목록에서 수정·삭제 버튼
+-- 영화 편집: 영화 목록에서 수정 / 삭제 버튼
 INSERT INTO admin_role (role_name, role_desc, group_name)
 VALUES ('ROLE_MOVIE_EDIT', '영화 편집', '영화 관리')
 ON DUPLICATE KEY UPDATE role_desc  = VALUES(role_desc),
                         group_name = VALUES(group_name);
--- 상영 관리: 스케줄 등록·수정·만료 처리
+-- 상영 관리: 스케줄 등록 / 수정 / 만료 처리
 INSERT INTO admin_role (role_name, role_desc, group_name)
 VALUES ('ROLE_MOVIE_DELETE', '상영 관리', '영화 관리')
 ON DUPLICATE KEY UPDATE role_desc  = VALUES(role_desc),
@@ -463,22 +463,21 @@ VALUES ('01012345678', current_timestamp, 0, 'NORMAL'),
 INSERT IGNORE INTO discount_policy (id, activation, condition_type, discount_type, discount_value, end_at, policy_name,
                                     start_at)
 VALUES (1, 1, 'AGE', 'WON', 2000, DATE_ADD(current_timestamp, INTERVAL 200 DAY), '청소년 할인', current_timestamp),
-       (2, 1, 'AGE', 'WON', 3000, DATE_ADD(current_timestamp, INTERVAL 200 DAY), '경로 할인', current_timestamp),
        (3, 1, 'TIME', 'WON', 1000, DATE_ADD(current_timestamp, INTERVAL 200 DAY), '조조 할인', current_timestamp),
        (4, 1, 'COUPON', 'WON', 5000, DATE_ADD(current_timestamp, INTERVAL 200 DAY), '쿠폰 할인', current_timestamp),
        (5, 1, 'JOB', 'RATIO', 20, DATE_ADD(current_timestamp, INTERVAL 200 DAY), '직업 할인', current_timestamp);
 
 -- 쿠폰 (policy_id=2 : 쿠폰 할인 5000원)
 INSERT IGNORE INTO coupon (coupon_num, policy_id, status)
-VALUES ('testCoupon01', 2, TRUE),  -- 사용 가능
-       ('testCoupon02', 2, TRUE),
-       ('testCoupon03', 2, TRUE),
-       ('testCoupon04', 2, TRUE),
-       ('testCoupon05', 2, TRUE),
-       ('testCoupon06', 2, FALSE), -- 사용 불가 (이미 사용됨)
-       ('testCoupon07', 2, FALSE),
-       ('usedCoupon01', 2, FALSE),
-       ('usedCoupon02', 2, FALSE);
+VALUES ('testCoupon01', 4, TRUE),  -- 사용 가능
+       ('testCoupon02', 4, TRUE),
+       ('testCoupon03', 4, TRUE),
+       ('testCoupon04', 4, TRUE),
+       ('testCoupon05', 4, TRUE),
+       ('testCoupon06', 4, FALSE), -- 사용 불가 (이미 사용됨)
+       ('testCoupon07', 4, FALSE),
+       ('usedCoupon01', 4, FALSE),
+       ('usedCoupon02', 4, FALSE);
 
 -- 적립 정책
 INSERT IGNORE INTO bonus_policy (id, activation, end_at, give_value, policy_name, start_at)
@@ -576,7 +575,14 @@ VALUES (1, 'A1', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
        (24, 'C4', 'stat0003-0000-0000-0000-000000000003'),
        (25, 'C5', 'stat0003-0000-0000-0000-000000000003'),
        (26, 'C6', 'stat0004-0000-0000-0000-000000000004'),
-       (27, 'C7', 'stat0005-0000-0000-0000-000000000005');
+       (27, 'C7', 'stat0005-0000-0000-0000-000000000005'),
+       -- 강등 되지 않는 회원 예매 내역
+       (28, 'A1', 'aabb0001-0000-0000-0000-000000000001'),
+       (29, 'A2', 'aabb0001-0000-0000-0000-000000000001'),
+       (30, 'A1', 'aabb0002-0000-0000-0000-000000000002'),
+       (31, 'A2', 'aabb0002-0000-0000-0000-000000000002'),
+       (32, 'A1', 'aabb0003-0000-0000-0000-000000000003'),
+       (33, 'A2', 'aabb0003-0000-0000-0000-000000000003');
 
 -- 결제 내역 (payment_details.id = reservation_details.id 로 1:1 매핑)
 INSERT IGNORE INTO payment_details (id, cost, status, create_at, use_point, bonus_policy_id, coupon_num, reservation_id,

@@ -1,6 +1,5 @@
 package com.example.cinemakiosk.batch;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
@@ -9,15 +8,16 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 @Component
 @Log4j2
 public class MemberCleanupWriter implements ItemWriter<String> {
 
-    @Qualifier("mariaDBJdbcTemplate")
     private final JdbcTemplate jdbcTemplate;
+
+    public MemberCleanupWriter(@Qualifier("mariaDBJdbcTemplate") JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     public void write(Chunk<? extends String> phones) {
         List<? extends String> phoneList = phones.getItems();

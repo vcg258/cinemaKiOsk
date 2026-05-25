@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface ReservationService {
     //예매 진행
-    void create(ReservationDetailsDTO reservationDetailsDTO);
+    ReservationDetailsDTO create(ReservationDetailsDTO reservationDetailsDTO);
 
     //예매 내역 조회
     ReservationDetailsDTO read(String no);

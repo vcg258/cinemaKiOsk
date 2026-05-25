@@ -4,6 +4,7 @@ import com.example.cinemakiosk.domain.PaymentDetailsEntity;
 import com.example.cinemakiosk.domain.enums.Status;
 import com.example.cinemakiosk.domain.enums.Type;
 import com.example.cinemakiosk.dto.*;
+import com.example.cinemakiosk.dto.requestDTO.AdminReservationRequest;
 import com.example.cinemakiosk.mapper.PaymentDetailsMapper;
 import com.example.cinemakiosk.repository.PaymentDetailsRepository;
 import com.example.cinemakiosk.vo.CouponVO;
@@ -36,6 +37,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
     private final MemberService memberService; //포인트 관리를 위해서 작성.
     private final BonusPolicyService bonusPolicyService; //보너스 적립 비율 확인을 위해 사용
     private final ScheduleService scheduleService; // 스케쥴 정보를 그냥 받아오는게 빠를듯.
+    private final TheaterService theaterService; // 관리자 예매 시 좌석 정가 계산용
     private final DiscountPolicyService discountPolicyService;
     private final ObjectMapper objectMapper; // 스프링이 자동으로 주입해주는 JSON 변환기
 
@@ -123,11 +125,8 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
                 .build();
 
         log.error("경계4");
-        reservationService.create(reservation);
+        ReservationDetailsDTO reservationDetailsDTO = reservationService.create(reservation);
         log.error("경계5");
-        ReservationDetailsDTO reservationDetailsDTO = reservationService.read(orderId);
-
-        log.error("경계6");
         // 2. 결제 상세 등록
         PaymentDetailsDTO payment = PaymentDetailsDTO.builder()
                 .id(orderId)
@@ -186,6 +185,55 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
         }
 
         log.info("DB 저장 및 포인트 갱신 완료: 주문번호 {}", orderId);
+    }
+
+    /**
+     * 관리자 직접 예매 로직 (토스 결제 없이 바로 DB 저장)
+     */
+    @Transactional
+    @Override
+    public void saveAdminReservation(AdminReservationRequest request) {
+        String orderId = java.util.UUID.randomUUID().toString();
+
+        ScheduleDTO schedule = scheduleService.getScheduleDTO(request.getScheduleId());
+
+        List<ReservationSeatDTO> seats = request.getSeats().stream()
+                .map(seatNum -> ReservationSeatDTO.builder().seatNumber(seatNum).build())
+                .toList();
+
+        // 1. 예매 등록
+        ReservationDetailsDTO reservation = ReservationDetailsDTO.builder()
+                .id(orderId)
+                .schedule(schedule)
+                .phone(null)
+                .seats(seats)
+                .returned(false)
+                .createAt(LocalDateTime.now())
+                .build();
+
+        ReservationDetailsDTO savedReservation = reservationService.create(reservation);
+
+        // 2. 좌석 정가 계산: schedule.no → theater.policyId → seatPolicy.cost × 좌석 수
+        TheaterDTO theater = theaterService.getTheater(schedule.getNo());
+        SeatPolicyDTO seatPolicy = theaterService.readSeat(theater.getPolicyId());
+        long cost = seatPolicy.getCost() * request.getSeats().size();
+
+        // 3. 결제 내역 등록 (관리자 예매는 현장결제로 paymentKey="admin", 포인트/쿠폰 없음)
+        PaymentDetailsDTO payment = PaymentDetailsDTO.builder()
+                .id(orderId)
+                .reservation(savedReservation)
+                .bonusPolicy(null)
+                .couponNum(null)
+                .cost(cost)
+                .createAt(LocalDateTime.now())
+                .usePoint(0L)
+                .status(Status.PAY)
+                .paymentKey("admin")
+                .build();
+
+        create(payment);
+
+        log.info("관리자 예매 완료: 주문번호 {}", orderId);
     }
 
     /**

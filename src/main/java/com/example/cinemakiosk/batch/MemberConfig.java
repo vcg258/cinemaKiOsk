@@ -1,7 +1,6 @@
 package com.example.cinemakiosk.batch;
 
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jspecify.annotations.NonNull;
 import org.springframework.batch.core.Job;
@@ -23,14 +22,22 @@ import javax.sql.DataSource;
 
 @Log4j2
 @Configuration
-@RequiredArgsConstructor
 @EnableScheduling
 public class MemberConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
-    @Qualifier("mariaDB")
     private final DataSource dataSource;
     private final MemberCleanupWriter memberCleanupWriter;
+
+    public MemberConfig(JobRepository jobRepository,
+                        PlatformTransactionManager transactionManager,
+                        @Qualifier("mariaDB") DataSource dataSource,
+                        MemberCleanupWriter memberCleanupWriter) {
+        this.jobRepository = jobRepository;
+        this.transactionManager = transactionManager;
+        this.dataSource = dataSource;
+        this.memberCleanupWriter = memberCleanupWriter;
+    }
 
     /**
      * 포인트 내역이 2년 이상 없는 회원 정리 -> 포인트 내역이 1달 이상 없는 회원 등급 강등 순서로 실행되는 Job

@@ -4,9 +4,7 @@ import com.example.cinemakiosk.domain.BonusPolicyEntity;
 import com.example.cinemakiosk.domain.enums.Grade;
 import com.example.cinemakiosk.dto.BonusPolicyDTO;
 import com.example.cinemakiosk.dto.requestDTO.ActivationRequest;
-import com.example.cinemakiosk.mapper.BonusPolicyMapper;
 import com.example.cinemakiosk.repository.BonusPolicyRepository;
-import com.example.cinemakiosk.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -25,7 +23,6 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class BonusPolicyServiceImpl implements BonusPolicyService {
     private final BonusPolicyRepository bonusPolicyRepository;
-    private final MemberRepository memberRepository;
 
     /**
      * 적립정책 추가 / 수정

@@ -25,7 +25,7 @@ public enum Rating {
     }
 
     /**
-     * JSON 역직렬화 시 "12" → TWELVE 로 변환
+     * JSON 역직렬화 시 "12" -> TWELVE 로 변환
      * - @JsonCreator : Jackson이 요청 바디 파싱 시 이 메서드 사용
      */
     @JsonCreator
