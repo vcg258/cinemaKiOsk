@@ -94,3 +94,6 @@ Thumbs.db
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij,java,gradle
 /bin
+
+# 포스터 업로드 이미지
+/uploads/
