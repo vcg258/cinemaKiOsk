@@ -1,4 +1,4 @@
-package com.renovandelve.config;
+package com.example.cinemakiosk.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +16,10 @@ public class CorsConfig implements WebMvcConfigurer {
     @Bean
     public CorsConfiguration addCorsMappings() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "https://cineos-view.duckdns.org"
+        ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
         config.setAllowCredentials(true); // 쿠키 전송 허용
         config.setAllowedHeaders(List.of("*"));// 헤더 접근 허용

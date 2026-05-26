@@ -213,7 +213,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
 
         ReservationDetailsDTO savedReservation = reservationService.create(reservation);
 
-        // 2. 좌석 정가 계산: schedule.no → theater.policyId → seatPolicy.cost × 좌석 수
+        // 2. 좌석 정가 계산: schedule.no -> theater.policyId -> seatPolicy.cost × 좌석 수
         TheaterDTO theater = theaterService.getTheater(schedule.getNo());
         SeatPolicyDTO seatPolicy = theaterService.readSeat(theater.getPolicyId());
         long cost = seatPolicy.getCost() * request.getSeats().size();
