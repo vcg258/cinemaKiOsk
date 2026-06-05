@@ -79,6 +79,15 @@ dependencyManagement {
     }
 }
 
+configurations.configureEach {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        if (details.requested.group == 'org.jetbrains.kotlinx'
+                && details.requested.name.startsWith('kotlinx-serialization')) {
+            details.useVersion '1.6.3'
+        }
+    }
+}
+
 tasks.named('test') {
     useJUnitPlatform()
 }
