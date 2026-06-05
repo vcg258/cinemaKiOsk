@@ -83,7 +83,7 @@ configurations.configureEach {
     resolutionStrategy.eachDependency { DependencyResolveDetails details ->
         if (details.requested.group == 'org.jetbrains.kotlinx'
                 && details.requested.name.startsWith('kotlinx-serialization')) {
-            details.useVersion '1.6.3'
+            details.useVersion '1.9.0'
         }
     }
 }
