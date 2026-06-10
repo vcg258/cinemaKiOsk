@@ -171,7 +171,7 @@ npm install
 npm run dev
 ```
 
-키오스크 / 관리자 UI: `http://localhost:3000`
+키오스크 / 관리자 UI: `http://localhost:5173`
 
 ---
 
