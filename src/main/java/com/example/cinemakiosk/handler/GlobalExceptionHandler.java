@@ -18,13 +18,13 @@ public class GlobalExceptionHandler {
     // 중복, 이미 처리됨 예외
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<String> handlerIllegalStateException(IllegalStateException e) {
-        return ResponseEntity.accepted().body(e.getMessage()); // 400
+        return ResponseEntity.badRequest().body(e.getMessage()); // 400
     }
 
     // 매개변수와 비지니스로직은 정상 (해당값이 없음)
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<String> handlerNoSuchElementException(NoSuchElementException e) {
-        return ResponseEntity.notFound().build(); // 404
+        return ResponseEntity.status(404).body(e.getMessage()); // 404
     }
 
     // 그 외 서버에러
