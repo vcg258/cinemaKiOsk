@@ -63,7 +63,8 @@ public class BatchScheduler {
         }
     }
 
-    @Scheduled(cron = "0 0 0 * * *")
+    // 기본 스케줄러 스레드풀 크기가 1이라 statisticsRun()과 동일 시각이면 순차 대기가 발생하기 때문에 10분 간격을 둠
+    @Scheduled(cron = "0 10 0 * * *")
     public void runMemberCleanupJob() throws Exception {
         log.info("MemberCleanup 실행 요청");
         try {
