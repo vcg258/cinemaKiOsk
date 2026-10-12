@@ -25,10 +25,6 @@
         where rd.id = #{no};
     </select>
 
-    <select id="selectAll" resultMap="reservationVO">
-        <include refid="sql_selectAll"/>
-    </select>
-
     <select id="selectAllByMovieId" resultMap="reservationVO">
         <include refid="sql_selectAll"/>
         where sc.movie_id = #{movieId}

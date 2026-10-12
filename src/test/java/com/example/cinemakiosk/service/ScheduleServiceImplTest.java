@@ -59,11 +59,6 @@ class ScheduleServiceImplTest {
     }
 
     @Test
-    void getScheduleListByMovieWithCustomer() {
-        scheduleService.getScheduleListByMovieWithCustomer(1L).forEach(log::info);
-    }
-
-    @Test
     void getSchedule() {
         log.info(scheduleService.getSchedule(6L));
     }

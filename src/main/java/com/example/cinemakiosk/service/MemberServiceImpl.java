@@ -9,11 +9,13 @@ import com.example.cinemakiosk.dto.PointHistoryDTO;
 import com.example.cinemakiosk.mapper.PointHistoryMapper;
 import com.example.cinemakiosk.repository.MemberRepository;
 import com.example.cinemakiosk.repository.PointHistoryRepository;
+import com.example.cinemakiosk.service.adminservice.AdminRoleService;
 import com.example.cinemakiosk.vo.PointHistoryVO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -27,26 +29,7 @@ public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
     private final PointHistoryRepository pointHistoryRepository;
     private final PointHistoryMapper pointHistoryMapper;
-
-    /**
-     * 신규 회원등록
-     * @param memberDTO 회원 DTO
-     */
-    @Override
-    public void createMember(MemberDTO memberDTO) {
-        if (memberRepository.existsByPhone(memberDTO.getPhone())) {
-            throw new IllegalStateException("회원 존재함 생성 불가능");
-        }
-
-        MemberDTO dto = MemberDTO.builder()
-                .phone(memberDTO.getPhone())
-                .grade(Grade.NORMAL)
-                .point(memberDTO.getPoint())
-                .createAt(LocalDateTime.now())
-                .build();
-        log.info("createMember... 신규 회원 정보 : {}", dto);
-        memberRepository.save(MemberDTO.toEntity(dto));
-    }
+    private final AdminRoleService adminRoleService;
 
     /**
      * 포인트 업데이트 및 포인트 내역 추가
@@ -151,6 +134,10 @@ public class MemberServiceImpl implements MemberService{
      */
     @Override
     public Page<MemberDTO> getMembersAll(int page) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_MEMBER_MANAGEMENT");
+
         Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("createAt").descending());
         Page<MemberEntity> entityPage = memberRepository.findByPhoneNotLike("DEL_%", pageable);
         return entityPage.map(MemberEntity::toDTO);
@@ -163,6 +150,10 @@ public class MemberServiceImpl implements MemberService{
      */
     @Override
     public List<PointHistoryDTO> getMembersAllLog(String phone) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_MEMBER_MANAGEMENT");
+
         List<PointHistoryEntity> entity = pointHistoryRepository.findByMemberEntity_PhoneOrderByCreateAtDesc(phone);
         return entity.stream().map(PointHistoryEntity::toDTO).toList();
     }
@@ -173,6 +164,10 @@ public class MemberServiceImpl implements MemberService{
      */
     @Override
     public Page<PointHistoryDTO> getPointHistoryAll(int page) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_MEMBER_MANAGEMENT");
+
         int offset = (page - 1) * 10;
         long count = pointHistoryRepository.countByMemberEntityPhoneNotLike("DEL_%");
         List<PointHistoryVO> pointHistoryVO = pointHistoryMapper.selectByMovieNameAll(offset);
@@ -188,6 +183,10 @@ public class MemberServiceImpl implements MemberService{
      */
     @Override
     public MemberDTO getMember(String phone) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_MEMBER_MANAGEMENT");
+
         MemberEntity entity = memberRepository.findById(phone).orElseThrow();
         return MemberEntity.toDTO(entity);
     }

@@ -9,9 +9,11 @@ import com.example.cinemakiosk.mapper.SeatPolicyMapper;
 import com.example.cinemakiosk.mapper.TheaterMapper;
 import com.example.cinemakiosk.repository.SeatPolicyRepository;
 import com.example.cinemakiosk.repository.TheaterRepository;
+import com.example.cinemakiosk.service.adminservice.AdminRoleService;
 import com.example.cinemakiosk.vo.TheaterVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ public class TheaterServiceImpl implements TheaterService {
     private final SeatPolicyMapper seatPolicyMapper;
     private final TheaterRepository theaterRepository;
     private final TheaterMapper theaterMapper;
+    private final AdminRoleService adminRoleService;
 
     /**
      * 상영관 등록
@@ -32,6 +35,10 @@ public class TheaterServiceImpl implements TheaterService {
      */
     @Override
     public void createTheater(TheaterDTO theaterDTO) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_THEATER_EDIT");
+
         TheaterDTO dto = TheaterDTO.builder()
                 .policyId(theaterDTO.getPolicyId())
                 .cleanupTime(theaterDTO.getCleanupTime())
@@ -42,20 +49,15 @@ public class TheaterServiceImpl implements TheaterService {
     }
 
     /**
-     * 상영관 삭제
-     * @param no 삭제할 상영관 PK
-     */
-    @Override
-    public void removeTheater(Long no) {
-        theaterRepository.deleteById(no);
-    }
-
-    /**
      * 상영관 전체 조회
      * @return 상영관 전체를 담은 리스트
      */
     @Override
     public List<TheaterDTO> getTheaterAll() {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_THEATER_LIST");
+
         List<TheaterEntity> entityList = theaterRepository.findAll();
         return entityList.stream().map(TheaterEntity::toDTO).toList();
     }
@@ -66,6 +68,10 @@ public class TheaterServiceImpl implements TheaterService {
      */
     @Override
     public TheaterDTO getTheater(Long no) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_THEATER_LIST");
+
         TheaterEntity entity = theaterRepository.findById(no).orElseThrow();
         return TheaterEntity.toDTO(entity);
     }
@@ -76,6 +82,10 @@ public class TheaterServiceImpl implements TheaterService {
      */
     @Override
     public void updateSeatPolicy(TheaterRequest request) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_THEATER_EDIT");
+
         List<TheaterEntity> theater = theaterRepository.findAllById(request.getIds());
         SeatPolicyEntity seatPolicy = seatPolicyRepository.findById(request.getChangeValue()).orElseThrow();
         theater.forEach(theaterEntity -> {
@@ -95,6 +105,10 @@ public class TheaterServiceImpl implements TheaterService {
      */
     @Override
     public void updateCleanTime(TheaterRequest request) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_THEATER_EDIT");
+
         List<TheaterEntity> theater = theaterRepository.findAllById(request.getIds());
         theater.forEach(theaterEntity -> {
             if (theaterEntity.getSeatPolicyEntity().getPolicyId().equals(request.getChangeValue())) {
@@ -113,6 +127,10 @@ public class TheaterServiceImpl implements TheaterService {
      */
     @Override
     public void createSeat(SeatPolicyDTO seatPolicyDTO) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_THEATER_EDIT");
+
         SeatPolicyEntity dto = SeatPolicyEntity.builder()
                 .name(seatPolicyDTO.getName())
                 .cost(seatPolicyDTO.getCost())
@@ -133,24 +151,11 @@ public class TheaterServiceImpl implements TheaterService {
      */
     @Override
     public List<SeatPolicyDTO> readAllSeat() {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_THEATER_LIST");
+
         List<SeatPolicyEntity> policy = seatPolicyRepository.findAll();
-
-//        List<SeatPolicyDTO> dtos = new ArrayList<>();
-//
-//        for (SeatPolicyEntity dto : policy) {
-//            dtos.add(SeatPolicyEntity.toDTO(dto));
-//        }
-//
-//        return dtos;
-
-
-//        return policy.stream().map(item ->
-//            SeatPolicyDTO.builder()
-//                    .policyId(item.getPolicyId())
-//                    .name(item.getName())
-//                    .cost(item.getCost())
-//                    .build()).toList();
-
         return policy.stream().map(SeatPolicyEntity::toDTO).toList();
     }
 
@@ -161,6 +166,10 @@ public class TheaterServiceImpl implements TheaterService {
      */
     @Override
     public SeatPolicyDTO readSeat(Long policyId) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_THEATER_LIST");
+
         SeatPolicyEntity policy = seatPolicyRepository.findById(policyId).orElseThrow();
         return SeatPolicyEntity.toDTO(policy);
     }
@@ -171,6 +180,10 @@ public class TheaterServiceImpl implements TheaterService {
      */
     @Override
     public void updateSeat(SeatPolicyDTO seatPolicyDTO) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_THEATER_EDIT");
+
         SeatPolicyEntity policy = seatPolicyRepository.findById(seatPolicyDTO.getPolicyId()).orElseThrow();
         policy.updateSeatPolicy(seatPolicyDTO.getName(), seatPolicyDTO.getCost());
 
@@ -184,6 +197,10 @@ public class TheaterServiceImpl implements TheaterService {
      */
     @Override
     public void deleteSeat(Long policyId) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_THEATER_EDIT");
+
         if (theaterRepository.existsBySeatPolicyEntity_PolicyId(policyId)) {
             throw new IllegalStateException("현재 사용중인 좌석정책 삭제 불가");
         }
@@ -192,6 +209,10 @@ public class TheaterServiceImpl implements TheaterService {
 
     @Override
     public List<TheaterDTO> getTheaterDTOAll() {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_THEATER_LIST");
+
         List<TheaterVO> theaterVOS = theaterMapper.selectAll();
         List<TheaterDTO> theaterDTOS = new ArrayList<>();
         for (TheaterVO theaterVO : theaterVOS){

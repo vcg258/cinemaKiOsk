@@ -39,20 +39,6 @@ class MovieServiceImplTest {
         movieService.insertMovie(movieDTO);
     }
 
-    // 상세조회
-    @Test
-    void getMovieById() {
-        MovieDTO movieDTO = movieService.getMovieById(26L);
-        log.info(movieDTO);
-    }
-
-    // 제목으로 상세조회
-    @Test
-    void getMovieByTitle() {
-        MovieDTO movieDTO = movieService.getMovieByTitle("아이언맨3");
-        log.info(movieDTO);
-    }
-
     // 전체 조회
     @Test
     void getAllMovies() {
@@ -60,11 +46,6 @@ class MovieServiceImplTest {
         for (MovieDTO movieDTO : movieDTOList) {
             log.info(movieDTO);
         }
-    }
-
-    @Test
-    void getAllMoviesActivation() {
-        movieService.getScreeningPeriodAllMovies().forEach(log::info);
     }
 
 //    // 키워드로 조회

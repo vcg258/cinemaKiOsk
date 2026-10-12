@@ -23,29 +23,25 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class CustomerController {
-    private final ScheduleService scheduleService;
-    private final TheaterService theaterService;
-    private final DiscountPolicyService discountPolicyService;
-    private final MemberService memberService;
-    private final MovieService movieService;
-    private final BonusPolicyService bonusPolicyService;
+    private final MemberService memberService; // pointHistoryCreate()가 내부적으로 공유되어 유지
+    private final CustomerService customerService; // 고객 전용 조회/등록 로직
 
     @Operation(summary = "스케줄 전체 조회")
     @GetMapping("/schedule/list")
     public ResponseEntity<List<ScheduleDTO>> getScheduleList() {
-        return ResponseEntity.ok(scheduleService.getScheduleList());
+        return ResponseEntity.ok(customerService.getScheduleList());
     }
 
     @Operation(summary = "스케줄 전체 조회(Mapper)")
     @GetMapping("/schedule/DTOlist")
     public ResponseEntity<List<ScheduleDTO>> getScheduleDTOList() {
-        return ResponseEntity.ok(scheduleService.getScheduleDTOList());
+        return ResponseEntity.ok(customerService.getScheduleDTOList());
     }
 
     @Operation(summary = "지정 영화에 해당하는 전체 스케줄 조회")
     @GetMapping("/schedule/{id}/movie")
     public ResponseEntity<List<ScheduleDTO>> getScheduleByMovie(@PathVariable Long id) {
-        return ResponseEntity.ok(scheduleService.getScheduleListByMovieWithCustomer(id));
+        return ResponseEntity.ok(customerService.getScheduleListByMovieWithCustomer(id));
     }
 
     // 상영중인 영화 조회
@@ -54,7 +50,7 @@ public class CustomerController {
     @GetMapping("/movie/all")
     public ResponseEntity<List<MovieDTO>> readAll() {
         log.info("screening_period get...");
-        List<MovieDTO> movieDTOList = movieService.getScreeningPeriodAllMovies();
+        List<MovieDTO> movieDTOList = customerService.getScreeningPeriodAllMovies();
         log.info("movieDTOList: {}", movieDTOList);
         return ResponseEntity.ok(movieDTOList);
     }
@@ -64,14 +60,14 @@ public class CustomerController {
     @GetMapping("/movie/{movieId}/readOne")
     public ResponseEntity<MovieDTO> getMovieById(@PathVariable Long movieId) {
         log.info("getMovieById get... id={}", movieId);
-        return ResponseEntity.ok(movieService.getMovieById(movieId));
+        return ResponseEntity.ok(customerService.getMovieById(movieId));
     }
 
     @Operation(summary = "회원 가입")
     @PostMapping("/member/{phone}")
     public ResponseEntity<MemberDTO> postMemberById(@PathVariable String phone) {
-        memberService.createMember(new MemberDTO(phone, Grade.NORMAL, 0, null));
-        return ResponseEntity.ok(memberService.getMember(phone));
+        customerService.createMember(new MemberDTO(phone, Grade.NORMAL, 0, null));
+        return ResponseEntity.ok(customerService.getMember(phone));
     }
 
     @Operation(summary = "회원 포인트 사용 적립")
@@ -84,37 +80,37 @@ public class CustomerController {
     @Operation(summary = "쿠폰 검증")
     @PostMapping("/coupon/auth")
     public ResponseEntity<CouponDTO> authCoupon(@RequestParam String couponNum) {
-        return ResponseEntity.ok(discountPolicyService.authCoupon(couponNum));
+        return ResponseEntity.ok(customerService.authCoupon(couponNum));
     }
 
     @Operation(summary = "맴버 단일 조회")
     @GetMapping("/member/{phone}")
     public ResponseEntity<MemberDTO> getMemberById(@PathVariable String phone) {
-        return ResponseEntity.ok(memberService.getMember(phone));
+        return ResponseEntity.ok(customerService.getMember(phone));
     }
 
     @Operation(summary = "상영관 내용 객체타입 변수 확인")
     @GetMapping("/theater/dtoAll")
     public ResponseEntity<List<TheaterDTO>> getDTOAllTheater() {
-        return ResponseEntity.ok(theaterService.getTheaterDTOAll());
+        return ResponseEntity.ok(customerService.getTheaterDTOAll());
     }
 
     @Operation(summary = "상영관 전체 조회")
     @GetMapping("/theater/list")
     public ResponseEntity<List<TheaterDTO>> getAllTheater() {
-        return ResponseEntity.ok(theaterService.getTheaterAll());
+        return ResponseEntity.ok(customerService.getTheaterAll());
     }
 
     @Operation(summary = "좌석정책 전체 조회")
     @GetMapping("/seat-policy/list")
     public ResponseEntity<List<SeatPolicyDTO>> getAllSeatPolicies() {
-        return ResponseEntity.ok(theaterService.readAllSeat());
+        return ResponseEntity.ok(customerService.readAllSeat());
     }
 
     @Operation(summary = "적림정책 전체 조회")
     @GetMapping("/bonus-policy/list")
     public ResponseEntity<List<BonusPolicyDTO>> getBonusPolicies() {
-        return ResponseEntity.ok(bonusPolicyService.getBonusPolicies());
+        return ResponseEntity.ok(customerService.getBonusPolicies());
     }
 
     @Operation(summary = "연령 할인 정책 조회 (고객용)",
@@ -122,7 +118,7 @@ public class CustomerController {
     @GetMapping("/discount/age")
     public ResponseEntity<List<DiscountPolicyDTO>> getAgeDiscounts() {
         return ResponseEntity.ok()
-                .body(discountPolicyService.getAgeDiscounts());
+                .body(customerService.getAgeDiscounts());
     }
 
     @Operation(summary = "시간 할인 정책 조회 (고객용)",
@@ -130,7 +126,7 @@ public class CustomerController {
     @GetMapping("/discount/time")
     public ResponseEntity<List<DiscountPolicyDTO>> getTimeDiscounts() {
         return ResponseEntity.ok()
-                .body(discountPolicyService.getTimeDiscounts());
+                .body(customerService.getTimeDiscounts());
     }
 
 }

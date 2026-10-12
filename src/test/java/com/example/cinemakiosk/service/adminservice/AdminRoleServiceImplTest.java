@@ -20,7 +20,7 @@ class AdminRoleServiceImplTest {
 
     @Test
     void getAdmin() {
-        log.info(adminRoleService.getAdmin("admin"));
+        adminRoleService.validatePermission("staff01", "ROLE_MOVIE_LIST");
     }
 
     @Test
@@ -30,7 +30,7 @@ class AdminRoleServiceImplTest {
 
     @Test
     void getAdminRoleMaps() {
-        adminRoleService.getAdminRoleMaps(2L).forEach(log::info);
+        adminRoleService.getAdminRoleMaps("admin").forEach(log::info);
     }
 
     @Test

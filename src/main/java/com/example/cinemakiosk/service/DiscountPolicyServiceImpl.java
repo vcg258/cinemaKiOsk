@@ -4,15 +4,16 @@ import com.example.cinemakiosk.domain.CouponEntity;
 import com.example.cinemakiosk.domain.DiscountPolicyEntity;
 import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
-import com.example.cinemakiosk.dto.requestDTO.CouponStatusRequest;
 import com.example.cinemakiosk.dto.requestDTO.ActivationRequest;
 import com.example.cinemakiosk.mapper.CouponMapper;
 import com.example.cinemakiosk.repository.CouponRepository;
 import com.example.cinemakiosk.repository.DiscountPolicyRepository;
+import com.example.cinemakiosk.service.adminservice.AdminRoleService;
 import com.example.cinemakiosk.vo.CouponVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.example.cinemakiosk.domain.enums.ConditionType;
@@ -21,7 +22,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Log4j2
@@ -31,6 +31,7 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     private final DiscountPolicyRepository discountPolicyRepository;
     private final CouponRepository couponRepository;
     private final CouponMapper couponMapper;
+    private final AdminRoleService adminRoleService;
 
     /**
      * 할인 정책 추가 / 수정
@@ -38,6 +39,10 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public void createDiscountPolicy(DiscountPolicyDTO discountPolicyDTO) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_POLICY_EDIT");
+
         // 현재 활성화 된 할인정책 이름 중복 방지
         if (discountPolicyRepository.existsByPolicyNameAndEndAtAfter(discountPolicyDTO.getPolicyName(), LocalDateTime.now())) {
             throw new IllegalStateException("이미 사용하는 정책 이름입니다.");
@@ -64,6 +69,10 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public List<DiscountPolicyDTO> getDiscountPolicies() {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_POLICY_LIST");
+
         // 오늘 00:00:00 기준
         LocalDateTime todayStart = LocalDate.now().atStartOfDay();
         List<DiscountPolicyEntity> discountPolicies = discountPolicyRepository.findAllByEndAtAfter(todayStart);
@@ -77,6 +86,10 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public DiscountPolicyDTO getDiscountPolicy(Long id) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_POLICY_LIST");
+
         DiscountPolicyEntity discountPolicyEntity = discountPolicyRepository.findById(id).orElseThrow();
         return DiscountPolicyEntity.toDTO(discountPolicyEntity);
     }
@@ -87,6 +100,10 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public void changeActivation(ActivationRequest request) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_POLICY_EDIT");
+
         List<DiscountPolicyEntity> discountPolicies = discountPolicyRepository.findAllById(request.getIds());
         discountPolicies.forEach(policy -> {
             if (policy.isActivation() == request.isActivation()) {
@@ -106,6 +123,10 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public void createCouponNum(Long policyId, int count) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_POLICY_EDIT");
+
         DiscountPolicyEntity policy = discountPolicyRepository.findById(policyId).orElseThrow();
         if (!policy.getId().equals(policyId)) {
             throw new IllegalArgumentException("지정한 할인정책이 없음 발행 X");
@@ -128,40 +149,12 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
     }
 
     /**
-     * 쿠폰 사용 검증 (정책 기간, 사용여부, 정책에 해당하는 쿠폰, 쿠폰번호)
-     * @param couponNum 쿠폰번호
-     * @return 사용 검증 통과면 true, 아니면 false
-     */
-    @Override
-    public CouponDTO authCoupon(String couponNum) {
-        CouponVO couponVO = couponMapper.checkCoupon(couponNum);
-        // 정책이 없을 경우 (INNER JOIN을 하였기때문에 정책이 없다면 null)
-        if (couponVO == null) {
-            throw new NoSuchElementException("authCoupon... 해당하는 쿠폰 또는 정책이 없음");
-        }
-        // 정책이 비활성화 일 경우
-        if (!couponVO.getDiscountPolicy().isActivation()) {
-            throw new IllegalStateException("authCoupon... 정책 비활성화");
-        }
-        // 할인 정책이 만료된 경우
-        LocalDateTime now = LocalDateTime.now();
-        if (!(now.isBefore(couponVO.getDiscountPolicy().getEndAt()) && now.isAfter(couponVO.getDiscountPolicy().getStartAt()))) {
-            throw new IllegalStateException("authCoupon...정책 만료");
-        }
-        CouponEntity coupon = couponRepository
-                .findByCouponNumAndDiscountPolicyEntityIdAndStatusTrue(couponNum, couponVO.getDiscountPolicy().getId()).orElse(null);
-        if (coupon == null) {
-            throw new IllegalArgumentException("쿠폰 번호와 할인정책이 일치하고 사용여부가 true 인 녀셕 없음");
-        }
-        return CouponVO.toDTO(couponVO); // 위 조건문 다 통과 사용가능
-    }
-
-    /**
      * 쿠폰을 사용함으로써 사용여부 업데이트 및 환불시 쿠폰 복구
      * @param couponDTO 쿠폰 DTO
      */
     @Override
     public void updateStatus(CouponDTO couponDTO) {
+        // 컨트롤러에 직접 노출되지 않는 내부 전용 메서드 (고객 결제 흐름 쿠폰사용 / RefundService 쿠폰복구 양쪽에서 호출) - 권한 검증 없음
         CouponEntity couponEntity = couponRepository.findById(couponDTO.getCouponNum()).orElseThrow();
         couponEntity.changeStatus(couponDTO.isStatus()); // 사용후 변경
         couponRepository.save(couponEntity);
@@ -175,6 +168,10 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public Page<DiscountPolicyDTO> getDiscountPolicyPage(int page) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_POLICY_LIST");
+
         Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("id").descending());
         Page<DiscountPolicyEntity> policy = discountPolicyRepository.findAll(pageable);
         return policy.map(DiscountPolicyEntity::toDTO);
@@ -186,6 +183,10 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public Page<CouponDTO> getCouponAll(int page) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_POLICY_LIST");
+
         int offset = (page - 1) * 10;
         long count = couponRepository.countByDiscountPolicyEntityConditionType(ConditionType.COUPON);
         List<CouponVO> couponVO = couponMapper.selectAllCouponByDiscount(offset);
@@ -201,34 +202,11 @@ public class DiscountPolicyServiceImpl implements DiscountPolicyService {
      */
     @Override
     public CouponDTO getCoupon(String couponNum) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_POLICY_LIST");
+
         return CouponEntity.toDTO(couponRepository.findById(couponNum).orElseThrow());
     }
 
-    /**
-     * 연령 할인 정책 조회 (고객용)
-     * 오늘 기준 활성 정책 중 conditionType = AGE 인 것만 반환
-     * @return AGE 타입 할인 정책 리스트
-     */
-    @Override
-    public List<DiscountPolicyDTO> getAgeDiscounts() {
-        List<DiscountPolicyDTO> agePolicy = getDiscountPolicies().stream()
-                .filter(p -> p.isActivation() && p.getConditionType() == ConditionType.AGE)
-                .toList();
-        if (agePolicy.isEmpty()) throw new IllegalStateException("연령 할인정책이 없거나 활성화 돼있지 않음 할인 X");
-        return  agePolicy;
-    }
-
-    /**
-     * 시간 할인 정책 조회 (고객용)
-     * 오늘 기준 활성 정책 중 conditionType = TIME 인 것만 반환
-     * @return TIME 타입 할인 정책 리스트
-     */
-    @Override
-    public List<DiscountPolicyDTO> getTimeDiscounts() {
-        List<DiscountPolicyDTO> timePolicy = getDiscountPolicies().stream()
-                .filter(p -> p.isActivation() && p.getConditionType() == ConditionType.TIME)
-                .toList();
-        if (timePolicy.isEmpty()) throw new IllegalStateException("조조 할인정책이 없거나 활성화 돼있지 않음 할인 X");
-        return timePolicy;
-    }
 }

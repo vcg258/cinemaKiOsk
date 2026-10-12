@@ -11,14 +11,14 @@ public interface AdminRoleService {
     // 전체 직원 조회 (직원의 해당 권한까지 조회)
     List<AdminDTO> getAdmins();
 
-    // 지정 관리자 조회
-    AdminDTO getAdmin(String loginId);
+    // 지정 관리자 권한 검증
+    void validatePermission(String loginId, String permission);
 
     // 권한 전체 조회
     List<AdminRoleDTO> getRoles();
 
     // 해당 직원 권한 조회
-    List<AdminRoleMapDTO> getAdminRoleMaps(Long adminId);
+    List<AdminRoleMapDTO> getAdminRoleMaps(String loginId);
 
     // 해당 직원 권한 부여 (초기화 기능이 있기때문에 따로 삭제 기능 구현안함)
     void addRole(AdminRoleMapRequest adminRoleMapRequest);

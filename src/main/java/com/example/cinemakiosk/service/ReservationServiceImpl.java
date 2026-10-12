@@ -28,6 +28,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional
     @Override
     public ReservationDetailsDTO create(ReservationDetailsDTO reservationDetailsDTO){
+        // 컨트롤러에 직접 노출되지 않는 내부 전용 메서드 (고객 결제 흐름 / 관리자 즉석예매 양쪽에서 호출) - 권한 검증 없음
         //seat와 예매에 대한 부분을 나눠서 repository와 mapper로 각각 등록.
         List<ReservationSeatDTO> seats = reservationDetailsDTO.getSeats();
 
@@ -48,44 +49,9 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationDetailsDTO;
     }
 
-    //예매 내역 조회
-    @Override
-    public ReservationDetailsDTO read(String no){
-        ReservationDetailsVO reservationDetailsVO = reservationDetailsMapper.selectOneById(no);
-        log.info("조회한 예매 내역 : {} ",reservationDetailsVO);
-        return ReservationDetailsVO.toDTO(reservationDetailsVO);
-    }
-
-    //예매 내역 전체 조회
-    @Override
-    public List<ReservationDetailsDTO> readAll(){
-        List<ReservationDetailsVO> reservationDetailsVOS = reservationDetailsMapper.selectAll();
-        List<ReservationDetailsDTO> reservationDetailsDTOS = new ArrayList<>();
-
-        for (ReservationDetailsVO reservationVo : reservationDetailsVOS){
-            reservationDetailsDTOS.add(ReservationDetailsVO.toDTO(reservationVo));
-        }
-
-        return reservationDetailsDTOS;
-    }
-
     @Override
     public List<String> readAllReservationSeatByScheduleId(Long scheduleId) {
         return reservationSeatMapper.selectAllSeatByScheduleId(scheduleId);
-    }
-
-    //예매 내역 변경.
-    @Override
-    public void update(ReservationDetailsDTO reservationDetailsDTO){
-        ReservationDetailsEntity reservationDetailsEntity = ReservationDetailsDTO.toEntity(reservationDetailsDTO);
-        reservationDetailsRepository.save(reservationDetailsEntity);
-    }
-
-    //환불의 경우 예매 좌석 삭제 처리로 자리 잡을 수 있게 해줌.
-    //삭제하면 안되고 캔슬됨으로 변경해야함. returned를 true로 변경
-    @Override
-    public void returned(ReservationDetailsDTO reservationDetailsDTO){
-        reservationDetailsRepository.save(ReservationDetailsDTO.toEntity(reservationDetailsDTO));
     }
 
     @Override

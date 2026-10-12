@@ -7,7 +7,6 @@ import com.example.cinemakiosk.dto.*;
 import com.example.cinemakiosk.dto.requestDTO.AdminReservationRequest;
 import com.example.cinemakiosk.mapper.PaymentDetailsMapper;
 import com.example.cinemakiosk.repository.PaymentDetailsRepository;
-import com.example.cinemakiosk.vo.CouponVO;
 import com.example.cinemakiosk.vo.PaymentDetailsVO;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,11 +34,10 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
     private final PaymentDetailsRepository paymentDetailsRepository;
     private final ReservationService reservationService; //확정된 예매 등록을 위해서 작성
     private final MemberService memberService; //포인트 관리를 위해서 작성.
-    private final BonusPolicyService bonusPolicyService; //보너스 적립 비율 확인을 위해 사용
     private final ScheduleService scheduleService; // 스케쥴 정보를 그냥 받아오는게 빠를듯.
-    private final TheaterService theaterService; // 관리자 예매 시 좌석 정가 계산용
     private final DiscountPolicyService discountPolicyService;
     private final ObjectMapper objectMapper; // 스프링이 자동으로 주입해주는 JSON 변환기
+    private final CustomerService customerService; // 결제 처리 중 고객 조회는 권한 검증이 없는 고객 전용 서비스 사용
 
 
     //결제 시도 및 결과 등록
@@ -52,6 +50,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
     //결제 내역 조회
     @Override
     public PaymentDetailsDTO read(String uuid) {
+        // 결제내역 상세조회는 프론트에서 모든 로그인 관리자에게 열려있는 기능 + RefundService 내부에서도 재사용되므로 권한 검증 없음
         PaymentDetailsVO paymentDetailsVO = paymentDetailsMapper.selectOneById(uuid);
         return PaymentDetailsVO.toDTO(paymentDetailsVO);
     }
@@ -60,6 +59,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
     //결제 내역 전체조회
     @Override
     public Page<PaymentDetailsDTO> readAll(int page) {
+        // 결제내역 전체조회는 프론트에서 모든 로그인 관리자에게 열려있는 기능이라 권한 검증 없음
         int offset = (page - 1) * 10;
         long count = paymentDetailsRepository.count();
         List<PaymentDetailsVO> paymentDetailsVOS = paymentDetailsMapper.selectAll(offset);
@@ -104,14 +104,14 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
         log.error("경계2 {}", seats);
         ScheduleDTO schedule = scheduleService.getScheduleDTO(scheduleIdValue);
         String couponStr = requestData.path("couponNum").asText("");
-        CouponDTO couponNum = couponStr.isEmpty() ? null : discountPolicyService.getCoupon(couponStr);
+        CouponDTO couponNum = couponStr.isEmpty() ? null : customerService.getCoupon(couponStr); // 고객 결제 흐름 - 권한검증 없는 내부 조회로 교체
         log.error("경계3");
         MemberDTO member = null;
         BonusPolicyDTO bonusPolicy = null;
 
         if (!isGuest) {
-            member = memberService.getMember(phone);
-            bonusPolicy = bonusPolicyService.getBonusPolicy(member.getGrade());
+            member = customerService.getMember(phone); // 고객 결제 흐름 - 권한검증 없는 고객 전용 조회로 교체
+            bonusPolicy = customerService.getBonusPolicy(member.getGrade()); // 고객 결제 흐름 - 권한검증 없는 내부 조회로 교체
         }
 
         // 1. 예매 등록
@@ -193,6 +193,7 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
     @Transactional
     @Override
     public void saveAdminReservation(AdminReservationRequest request) {
+        // 관리자 직접예매는 프론트에서 모든 로그인 관리자에게 열려있는 기능이라 권한 검증 없음
         String orderId = java.util.UUID.randomUUID().toString();
 
         ScheduleDTO schedule = scheduleService.getScheduleDTO(request.getScheduleId());
@@ -214,8 +215,8 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
         ReservationDetailsDTO savedReservation = reservationService.create(reservation);
 
         // 2. 좌석 정가 계산: schedule.no -> theater.policyId -> seatPolicy.cost × 좌석 수
-        TheaterDTO theater = theaterService.getTheater(schedule.getNo());
-        SeatPolicyDTO seatPolicy = theaterService.readSeat(theater.getPolicyId());
+        TheaterDTO theater = customerService.getTheater(schedule.getNo()); // 관리자 즉석예매 - 권한검증 없는 내부 조회로 교체 (ROLE_THEATER_LIST 없어도 가능해야 함)
+        SeatPolicyDTO seatPolicy = customerService.readSeat(theater.getPolicyId());
         long cost = seatPolicy.getCost() * request.getSeats().size();
 
         // 3. 결제 내역 등록 (관리자 예매는 현장결제로 paymentKey="admin", 포인트/쿠폰 없음)

@@ -8,5 +8,8 @@ import java.util.List;
 @Mapper
 public interface AdminMapper {
     // 전체 관리자조회 및 관리자에 해당하는 권한 모두 조회
-    List<AdminVO> selectAdminByAdminRole();
+    List<AdminVO> selectAdminByAdminRoles();
+
+    // 지정 관리자 권한 조회
+    AdminVO selectAdminByAdminRole(String loginId);
 }

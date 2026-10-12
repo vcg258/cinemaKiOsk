@@ -15,10 +15,12 @@ import com.example.cinemakiosk.vo.AdminVO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 @Log4j2
 @Service
@@ -35,19 +37,33 @@ public class AdminRoleServiceImpl implements AdminRoleService {
      */
     @Override
     public List<AdminDTO> getAdmins() {
-        List<AdminVO> vo = adminMapper.selectAdminByAdminRole();
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        validatePermission(loginId, "ROLE_ADMIN_MANAGEMENT");
+
+        List<AdminVO> vo = adminMapper.selectAdminByAdminRoles();
         return vo.stream().map(AdminVO::toDTO).toList();
     }
 
     /**
-     * 지정 관리자 조회
-     * @param loginId 관리자 아이다
-     * @return 지정 관리자
+     * 지정 관리자 권한 검증
+     * @param loginId 관리자 로그인 아이디
+     * @param permission 검증 권한
      */
     @Override
-    public AdminDTO getAdmin(String loginId) {
-        AdminEntity admin = adminRepository.findByLoginId(loginId).orElseThrow();
-        return AdminEntity.toDTO(admin);
+    public void validatePermission(String loginId, String permission) {
+        AdminVO vo = adminMapper.selectAdminByAdminRole(loginId);
+        if (vo == null) {
+            throw new NoSuchElementException("해당 관리자는 존재하지 않습니다.");
+        }
+        if (!vo.isLevel()) {
+            log.info("마스터 관리자 권한 검증 불필요 패스");
+            return;
+        }
+        if (!vo.getPermissions().contains(permission)) {
+            throw new AccessDeniedException(permission + " 권한이 없습니다. 요청 기각");
+        }
+        log.info("{} 권한 확인 완료 검증 통과", permission);
     }
 
     /**
@@ -56,18 +72,26 @@ public class AdminRoleServiceImpl implements AdminRoleService {
      */
     @Override
     public List<AdminRoleDTO> getRoles() {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        validatePermission(loginId, "ROLE_ADMIN_MANAGEMENT");
+
         List<AdminRoleEntity> roleEntities = adminRoleRepository.findAll();
         return roleEntities.stream().map(AdminRoleEntity::toDTO).toList();
     }
 
     /**
      * 지정 관리자의 권한 조회
-     * @param adminId 관리자 FK
+     * @param loginId 관리자 로그인 아이디
      * @return 지정 회원 권한 조회
      */
     @Override
-    public List<AdminRoleMapDTO> getAdminRoleMaps(Long adminId) {
-        List<AdminRoleMapEntity> adminRoleMapEntities = adminRoleMapRepository.findByAdminEntity_AdminId(adminId);
+    public List<AdminRoleMapDTO> getAdminRoleMaps(String loginId) {
+        // 관리자 권한 검증 (요청자 본인의 권한을 검증해야 하며, 조회 대상(loginId)의 권한이 아님)
+        String requesterId = SecurityContextHolder.getContext().getAuthentication().getName();
+        validatePermission(requesterId, "ROLE_ADMIN_MANAGEMENT");
+
+        List<AdminRoleMapEntity> adminRoleMapEntities = adminRoleMapRepository.findByAdminEntity_LoginId(loginId);
         return adminRoleMapEntities.stream().map(AdminRoleMapEntity::toDTO).toList();
     }
 
@@ -78,6 +102,10 @@ public class AdminRoleServiceImpl implements AdminRoleService {
     @Override
     @Transactional
     public void addRole(AdminRoleMapRequest adminRoleMapRequest) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        validatePermission(loginId, "ROLE_ADMIN_MANAGEMENT");
+
         // 일단 해당 직원의 정책 모두 초기화
         adminRoleMapRepository.deleteAllByAdminId(adminRoleMapRequest.getAdminId());
 

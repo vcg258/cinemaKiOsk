@@ -1,14 +1,14 @@
 package com.example.cinemakiosk.service;
 
-import com.example.cinemakiosk.domain.enums.Status;
 import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.PaymentDetailsDTO;
-import com.example.cinemakiosk.dto.PointHistoryDTO;
 import com.example.cinemakiosk.mapper.PointHistoryMapper;
+import com.example.cinemakiosk.service.adminservice.AdminRoleService;
 import com.example.cinemakiosk.vo.PointHistoryVO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +21,7 @@ public class RefundService {
     private final MemberService memberService;
     private final PaymentDetailsService paymentDetailsService;
     private final PointHistoryMapper pointHistoryMapper;
+    private final AdminRoleService adminRoleService;
 
     /**
      * 환불
@@ -28,6 +29,10 @@ public class RefundService {
      */
     @Transactional
     public void refund(String reservationId){
+        // 요청전 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_REFUND");
+
         // 지정 결제 내역 조회
         PaymentDetailsDTO paymentDetailsOne = paymentDetailsService.read(reservationId);
         paymentDetailsService.updateToReturn(paymentDetailsOne);

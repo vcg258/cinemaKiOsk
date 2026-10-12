@@ -24,9 +24,6 @@ public interface DiscountPolicyService {
     // 특정 정책의 쿠폰 번호 발행
     void createCouponNum(Long policyId, int count);
 
-    // 쿠폰 사용 검증 (정책 기간, 사용여부, 정책에 해당하는 쿠폰)
-    CouponDTO authCoupon(String couponNum);
-
     // 쿠폰을 사용함으로써 사용여부 업데이트 및 환불로 인한 복구
     void updateStatus(CouponDTO couponDTO);
 
@@ -38,11 +35,5 @@ public interface DiscountPolicyService {
 
     // 쿠폰 단일 조회
     CouponDTO getCoupon(String couponNum);
-
-    // 연령 할인 정책 조회 (고객용)
-    List<DiscountPolicyDTO> getAgeDiscounts();
-
-    // 시간 할인 정책 조회 (고객용)
-    List<DiscountPolicyDTO> getTimeDiscounts();
 
 }

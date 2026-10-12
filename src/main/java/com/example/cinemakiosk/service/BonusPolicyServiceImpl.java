@@ -5,12 +5,14 @@ import com.example.cinemakiosk.domain.enums.Grade;
 import com.example.cinemakiosk.dto.BonusPolicyDTO;
 import com.example.cinemakiosk.dto.requestDTO.ActivationRequest;
 import com.example.cinemakiosk.repository.BonusPolicyRepository;
+import com.example.cinemakiosk.service.adminservice.AdminRoleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,6 +25,7 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class BonusPolicyServiceImpl implements BonusPolicyService {
     private final BonusPolicyRepository bonusPolicyRepository;
+    private final AdminRoleService adminRoleService;
 
     /**
      * 적립정책 추가 / 수정
@@ -30,6 +33,10 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
      */
     @Override
     public BonusPolicyDTO createBonusPolicy(BonusPolicyDTO bonusPolicyDTO) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_POLICY_EDIT");
+
         if (bonusPolicyRepository.existsByPolicyNameAndEndAtAfter(bonusPolicyDTO.getPolicyName(), LocalDateTime.now())) {
             throw new IllegalStateException("createBonusPolicy... 활성화된 정책중 이름이 중복됩니다 추가 / 수정 실패");
         }
@@ -54,6 +61,10 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
      */
     @Override
     public void finishActivation(Long id) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_POLICY_EDIT");
+
         BonusPolicyEntity bonusPolicyEntity = bonusPolicyRepository.findById(id).orElseThrow();
         if (LocalDateTime.now().isAfter(bonusPolicyEntity.getEndAt()) || !bonusPolicyEntity.isActivation()) {
             throw new IllegalStateException("적립정책이 이미 비활성화임 종료 지정 불가능");
@@ -70,6 +81,10 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
      */
     @Override
     public void changeActivation(ActivationRequest request) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_POLICY_EDIT");
+
         List<BonusPolicyEntity> bonusPolicyEntities = bonusPolicyRepository.findAllById(request.getIds());
         bonusPolicyEntities.forEach(bonusPolicyEntity -> {
             if (bonusPolicyEntity.isActivation() == request.isActivation()) {
@@ -88,6 +103,10 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
      */
     @Override
     public void deleteBonusPolicy(Long id) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_POLICY_EDIT");
+
         BonusPolicyEntity bonusPolicyEntity = bonusPolicyRepository.findById(id).orElseThrow();
         bonusPolicyRepository.delete(bonusPolicyEntity);
     }
@@ -98,6 +117,10 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
      */
     @Override
     public List<BonusPolicyDTO> getBonusPolicies() {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_POLICY_LIST");
+
         // 오늘 00:00:00 기준
         LocalDateTime todayStart = LocalDate.now().atStartOfDay();
         List<BonusPolicyEntity> policyEntities = bonusPolicyRepository.findAllBonusPolicy(todayStart);
@@ -111,6 +134,10 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
      */
     @Override
     public BonusPolicyDTO getBonusPolicy(Grade grade) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_POLICY_LIST");
+
         if (grade == null) {
             throw new NoSuchElementException("지정 이름 적립정책 없음");
         }
@@ -125,6 +152,10 @@ public class BonusPolicyServiceImpl implements BonusPolicyService {
      */
     @Override
     public Page<BonusPolicyDTO> getBonusPolicyPage(int page) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_POLICY_LIST");
+
         Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("id").descending());
         Page<BonusPolicyEntity> entityPage = bonusPolicyRepository.findAll(pageable);
         return entityPage.map(BonusPolicyEntity::toDTO);

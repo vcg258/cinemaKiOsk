@@ -8,9 +8,6 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface MemberService {
-    // 신규 회원등록
-    void createMember(MemberDTO memberDTO);
-
     // 포인트 보유포인트 처리 내역
     void pointHistoryCreate(PointHistoryDTO pointHistoryDTO);
 

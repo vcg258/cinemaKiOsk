@@ -1,6 +1,7 @@
 package com.example.cinemakiosk.handler;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -25,6 +26,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<String> handlerNoSuchElementException(NoSuchElementException e) {
         return ResponseEntity.status(404).body(e.getMessage()); // 404
+    }
+
+    // 관리자 권한 예외
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> handlerAccessDeniedException(AccessDeniedException e) {
+        return ResponseEntity.status(403).body(e.getMessage()); // 403
     }
 
     // 그 외 서버에러

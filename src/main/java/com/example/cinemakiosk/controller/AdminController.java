@@ -40,7 +40,7 @@ public class AdminController {
 
     @Operation(summary = "지정 관리자 권한 조회")
     @GetMapping("/role/{loginId}")
-    public ResponseEntity<List<AdminRoleMapDTO>> getAdminRole(@PathVariable Long loginId) {
+    public ResponseEntity<List<AdminRoleMapDTO>> getAdminRole(@PathVariable String loginId) {
         return ResponseEntity.ok(adminRoleService.getAdminRoleMaps(loginId));
     }
 

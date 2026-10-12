@@ -9,9 +9,11 @@ import com.example.cinemakiosk.mapper.ScheduleMapper;
 import com.example.cinemakiosk.repository.MovieRepository;
 import com.example.cinemakiosk.repository.ScheduleRepository;
 import com.example.cinemakiosk.repository.TheaterRepository;
+import com.example.cinemakiosk.service.adminservice.AdminRoleService;
 import com.example.cinemakiosk.vo.ScheduleVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -27,6 +29,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final ScheduleMapper scheduleMapper;
     private final MovieRepository movieRepository;
     private final TheaterRepository theaterRepository;
+    private final AdminRoleService adminRoleService;
 
     /**
      * 스케줄 등록 메서드
@@ -34,6 +37,9 @@ public class ScheduleServiceImpl implements ScheduleService {
      */
     @Override
     public void createSchedule(ScheduleDTO scheduleDTO) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_MOVIE_DELETE");
 
         // 영화조회와 런타임을 가져오기 위함
         MovieEntity movieEntity = movieRepository.findById(scheduleDTO.getMovieId()).orElseThrow();
@@ -68,6 +74,10 @@ public class ScheduleServiceImpl implements ScheduleService {
      */
     @Override
     public void updateSchedule(ScheduleDTO scheduleDTO) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_MOVIE_DELETE");
+
         // 수정할 스케줄 선택
         ScheduleEntity scheduleEntity = scheduleRepository.findById(scheduleDTO.getId()).orElseThrow();
         // 영화와 런타임을 가져오기 위함
@@ -111,6 +121,10 @@ public class ScheduleServiceImpl implements ScheduleService {
      */
     @Override
     public void updateActivation(ActivationRequest request) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_MOVIE_DELETE");
+
         List<ScheduleEntity> scheduleEntities = scheduleRepository.findAllById(request.getIds());
 
         scheduleEntities.forEach(scheduleEntity -> {
@@ -137,6 +151,10 @@ public class ScheduleServiceImpl implements ScheduleService {
      */
     @Override
     public void deleteSchedule(List<Long> ids) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_MOVIE_DELETE");
+
         List<ScheduleEntity> scheduleEntity = scheduleRepository.findAllById(ids);
         scheduleEntity.forEach(schedule -> {
             scheduleRepository.deleteById(schedule.getId());
@@ -149,6 +167,10 @@ public class ScheduleServiceImpl implements ScheduleService {
      */
     @Override
     public List<ScheduleDTO> getScheduleList() {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_MOVIE_LIST");
+
         // 오늘 00:00:00 기준
         LocalDateTime todayStart = LocalDate.now().atStartOfDay();
         List<ScheduleEntity> entityList = scheduleRepository.findAllByEndAtAfter(todayStart);
@@ -162,19 +184,11 @@ public class ScheduleServiceImpl implements ScheduleService {
      */
     @Override
     public List<ScheduleDTO> getScheduleListByMovie(Long movieId) {
-        List<ScheduleEntity> entityList = scheduleRepository.findByMovieEntity_MovieId(movieId);
-        return entityList.stream().map(ScheduleEntity::toDTO).toList();
-    }
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_MOVIE_LIST");
 
-    /**
-     * 영화에 해당하는 스케줄 전체 조회 (고객용)
-     * @param movieId 영화 PK
-     * @return 해당하는 전체 영화 스케줄
-     */
-    @Override
-    public List<ScheduleDTO> getScheduleListByMovieWithCustomer(Long movieId) {
-        List<ScheduleEntity> entityList =
-                scheduleRepository.findByMovieEntity_MovieIdAndStartAtAfterAndActivationTrue(movieId, LocalDateTime.now());
+        List<ScheduleEntity> entityList = scheduleRepository.findByMovieEntity_MovieId(movieId);
         return entityList.stream().map(ScheduleEntity::toDTO).toList();
     }
 
@@ -185,6 +199,10 @@ public class ScheduleServiceImpl implements ScheduleService {
      */
     @Override
     public ScheduleDTO getSchedule(Long id) {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_MOVIE_LIST");
+
         ScheduleEntity schedule = scheduleRepository.findById(id).orElseThrow();
         return ScheduleEntity.toDTO(schedule);
     }
@@ -192,6 +210,10 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<ScheduleDTO> getScheduleDTOList() {
+        // 관리자 권한 검증
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        adminRoleService.validatePermission(loginId, "ROLE_MOVIE_LIST");
+
         List<ScheduleVO> scheduleVOS = scheduleMapper.selectAll();
         List<ScheduleDTO> scheduleDTOS = new ArrayList<>();
 

@@ -4,7 +4,6 @@ import com.example.cinemakiosk.domain.enums.ConditionType;
 import com.example.cinemakiosk.domain.enums.DiscountType;
 import com.example.cinemakiosk.dto.CouponDTO;
 import com.example.cinemakiosk.dto.DiscountPolicyDTO;
-import com.example.cinemakiosk.dto.requestDTO.CouponStatusRequest;
 import com.example.cinemakiosk.dto.requestDTO.ActivationRequest;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
@@ -56,19 +55,8 @@ class DiscountPolicyEntityServiceImplTest {
     }
 
     @Test
-    public void getAgeDiscountsTest() {
-        discountPolicyService.getAgeDiscounts().forEach(log::info);
-    }
-
-    @Test
     public void createCouponNumTest() {
         discountPolicyService.createCouponNum(2L, 20);
-    }
-
-    @Test
-    public void authCouponTest() {
-        CouponDTO result = discountPolicyService.authCoupon("testCoupon02");
-        log.info("result: {}", result);
     }
 
     @Test

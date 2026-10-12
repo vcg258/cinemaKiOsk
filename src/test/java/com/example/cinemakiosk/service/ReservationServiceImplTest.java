@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -80,11 +79,5 @@ class ReservationServiceImplTest {
                 .build();
 
         reservationService.create(reservationDetailsDTO);
-    }
-
-    @Test
-    public void selectOne(){
-        ReservationDetailsDTO read = reservationService.read("3");
-        log.info(read);
     }
 }

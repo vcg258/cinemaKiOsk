@@ -25,11 +25,6 @@ class TheaterServiceImplTest {
     }
 
     @Test
-    void deleteTheater() {
-        theaterService.removeTheater(4L);
-    }
-
-    @Test
     void getTheaterAllTest() {
         theaterService.getTheaterAll().forEach(log::info);
     }

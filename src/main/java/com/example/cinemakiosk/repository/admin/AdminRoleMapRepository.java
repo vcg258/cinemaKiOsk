@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface AdminRoleMapRepository extends JpaRepository<AdminRoleMapEntity, Long> {
     // 지정 관리자 권한모두 조회
-    List<AdminRoleMapEntity> findByAdminEntity_AdminId(Long adminEntityAdminId);
+    List<AdminRoleMapEntity> findByAdminEntity_LoginId(String adminEntityLoginId);
 
     // 지정 관리자 권한 초기화
     @Modifying(clearAutomatically = true)

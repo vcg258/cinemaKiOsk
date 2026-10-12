@@ -16,9 +16,18 @@
         </collection>
     </resultMap>
 
-    <select id="selectAdminByAdminRole" resultMap="AdminByAdminRoleName">
+    <select id="selectAdminByAdminRoles" resultMap="AdminByAdminRoleName">
         SELECT * FROM admin A
         LEFT OUTER JOIN admin_role_map ARM ON A.admin_id = ARM.admin_id
         LEFT JOIN admin_role ON ARM.role_id = admin_role.id
     </select>
+
+    <select id="selectAdminByAdminRole" resultMap="AdminByAdminRoleName">
+        SELECT * FROM admin A
+        LEFT OUTER JOIN admin_role_map ARM ON A.admin_id = ARM.admin_id
+        LEFT JOIN admin_role ON ARM.role_id = admin_role.id
+        WHERE login_id = #{loginId}
+    </select>
+
+
 </mapper>
