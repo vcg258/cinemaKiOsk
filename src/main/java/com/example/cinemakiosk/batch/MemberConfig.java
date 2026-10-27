@@ -63,7 +63,7 @@ public class MemberConfig {
     }
 
     /**
-     * 1년 이상 포인트 내역이 없는 NORMAL 등급 회원을 강등하는 Step
+     * 1달 이상 포인트 내역이 없는 VIP 등급 회원을 강등하는 Step
      */
     @Bean
     public Step demoteStep() {
@@ -90,6 +90,7 @@ public class MemberConfig {
                             SELECT m.phone
                         FROM member m
                         WHERE m.create_at <= NOW() - INTERVAL 2 YEAR
+                        AND LEFT(m.phone, 4) <> 'DEL_'
                         AND NOT EXISTS (
                             SELECT 1
                             FROM point_history p
@@ -111,6 +112,7 @@ public class MemberConfig {
                         SELECT m.phone
                         FROM member m
                         WHERE m.grade = 'VIP'
+                        AND LEFT(m.phone, 4) <> 'DEL_'
                         AND NOT EXISTS (
                         SELECT 1 FROM point_history p
                         WHERE p.phone = m.phone
