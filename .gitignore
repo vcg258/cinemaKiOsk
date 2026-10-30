@@ -4,6 +4,7 @@
 # Environment variables
 .env
 .env.*
+*.iml
 QnA.md
 demo_seed.sql
 
